@@ -1,0 +1,49 @@
+{
+  "name": "pact-node",
+  "version": "0.0.1",
+  "description": "A wrapper for the Ruby version of Pact to work within Node",
+  "main": "./src/pact.js",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pact-js/pact-node.git"
+  },
+  "keywords": [
+    "pact",
+    "node",
+    "wrapper"
+  ],
+  "author": "Michel Boudreau",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pact-js/pact-node/issues"
+  },
+  "dependencies": {
+    "pact-mock-service": "0.5.3-1",
+    "check-types": "~3.3.1",
+    "commander": "~2.8.1"
+  },
+  "devDependencies": {
+    "chai": "^3.2.0",
+    "jscs": "^2.1.0",
+    "mocha": "^2.2.5",
+    "nodemon": "^1.4.1",
+    "rimraf": "^2.4.2",
+    "sinon": "^1.15.4",
+    "supertest": "^1.0.1"
+  },
+  "engine": {
+    "node": ">=0.12"
+  },
+  "scripts": {
+    "clean": "./node_modules/.bin/rimraf logs/*",
+    "lint": "./node_modules/.bin/jscs src",
+    "test": "./node_modules/.bin/mocha -R spec src/**/*.spec.js",
+    "watch": "./node_modules/.bin/nodemon -x npm run dev",
+    "watch:debug": "./node_modules/.bin/nodemon --debug -q -w assets/ --ext '.' --exec 'npm run lint'",
+    "dev": "npm run clean && npm run lint --force && npm test && node .",
+    "production": "./node_modules/.bin/forever start --append -o ./logs/forever.log -e ./logs/forever.log index.js",
+    "production:stop": "./node_modules/.bin/forever stop index.js",
+    "start": "npm run clean && npm run production",
+    "stop": "npm run production:stop"
+  }
+}
