@@ -32,7 +32,14 @@ function remove(server) {
 	}
 }
 
+function removeAll() {
+	for (var i=servers.length - 1; i > 0; i--) {
+		servers[i].delete();
+	}
+}
+
 module.exports = {
 	create: create,
-	list: list
+	list: list,
+	removeAll: removeAll
 };
