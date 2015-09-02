@@ -4,7 +4,8 @@ var check = require('check-types'),
 	path = require('path'),
 	fs = require('fs'),
 	cp = require('child_process'),
-	events = require('events');
+	events = require('events'),
+	noop = function(){};
 
 module.exports = function (options) {
 	options = options || {};
@@ -68,9 +69,11 @@ function Server(port, host, dir, ssl, cors, log, spec, consumer, provider) {
 
 Server.prototype = new events.EventEmitter;
 
-Server.prototype.start = function () {
+Server.prototype.start = function (callback) {
+	callback = callback || noop;
 	if (this.instance && this.instance.connected) {
 		console.warn('You already have a process running with PID: ' + this.instance.pid);
+		callback(this);
 		return;
 	}
 	var file,
@@ -137,10 +140,12 @@ Server.prototype.start = function () {
 		process.exit();
 	});
 
-	return this;
+	// TODO: add check here to make sure service is up before calling callback
+	callback(this);
 };
 
-Server.prototype.stop = function () {
+Server.prototype.stop = function (callback) {
+	callback = callback || noop;
 	if (this.instance) {
 		console.info('Killing Pact');
 		this.instance.removeAllListeners();
@@ -151,11 +156,14 @@ Server.prototype.stop = function () {
 		}
 		this.instance = undefined;
 	}
-	return this;
+	// TODO: add check here to make sure service is down before calling callback
+	callback(this);
 };
 
-Server.prototype.delete = function () {
-	this.stop();
-	this.emit('delete', this);
-	return this;
+Server.prototype.delete = function (callback) {
+	callback = callback || noop;
+	this.stop(function(){
+		this.emit('delete', this);
+		callback(this);
+	}.bind(this));
 };
