@@ -1,10 +1,10 @@
 'use strict';
 
 var check = require('check-types'),
-path = require('path'),
-fs = require('fs'),
-cp = require('child_process'),
-events = require('events');
+	path = require('path'),
+	fs = require('fs'),
+	cp = require('child_process'),
+	events = require('events');
 
 module.exports = function (options) {
 	options = options || {};
@@ -73,31 +73,50 @@ Server.prototype.start = function () {
 		console.warn('You already have a process running with PID: ' + this.process.pid);
 		return;
 	}
+	var file,
+		args = [],
+		opts = {
+			cwd: path.join(__dirname, '..', 'node_modules/.bin/'),
+			detached: (process.platform !== 'win32')
+		},
+		mapping = {
+			'port': '--port',
+			'host': '--host',
+			'log': '--log',
+			'ssl': '--ssl',
+			'cors': '--cors',
+			'dir': '--pact_dir',
+			'spec': '--pact_specification_version',
+			'consumer': '--consumer',
+			'provider': '--provider'
+		};
 
-	var cmd = /*(process.platform !== 'win32' ? "./", "") +*/ "pact-mock-service";
-	var args = [];
-	var mapping = {
-		'port': '--port',
-		'host': '--host',
-		'log': '--log',
-		'ssl': '--ssl',
-		'cors': '--cors',
-		'dir': '--pact_dir',
-		'spec': '--pact_specification_version',
-		'consumer': '--consumer',
-		'provider': '--provider'
-	};
 	for (var key in mapping) {
 		if (this[key]) {
 			args.push(mapping[key] + ' ' + this[key]);
 		}
 	}
-	this.process = cp.spawn(cmd, args, { cwd: path.join(__dirname, "node_modules/.bin/"), detached: (process.platform !== 'win32') });
+
+	var cmd = (process.platform !== 'win32' ? "./" : "") + "pact-mock-service " + args.join(' ');
+
+	if (process.platform === 'win32') {
+		file = 'cmd.exe';
+		args = ['/s', '/c', cmd];
+		opts.windowsVerbatimArguments = true;
+	} else {
+		file = '/bin/sh';
+		args = ['-c', cmd];
+	}
+
+
+	this.process = cp.spawn(file, args, opts);
 
 	this.process.stdout.setEncoding('utf8');
 	this.process.stdout.on('data', console.log);
 	this.process.stderr.setEncoding('utf8');
-	this.process.stderr.on('data',  console.error);
+	this.process.stderr.on('data', console.error);
+	this.process.on('error', console.error);
+
 
 	this.process.on('close', function (code) {
 		if (code !== 0) {

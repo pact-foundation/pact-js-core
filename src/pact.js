@@ -26,6 +26,7 @@ function remove(server) {
 	for (var i = 0, len = servers.length; i < len; i++) {
 		if (servers[i] === server) {
 			server.splice(i, 1);
+			server.removeAllListeners();
 			break;
 		}
 	}
