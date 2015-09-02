@@ -118,7 +118,6 @@ Server.prototype.start = function () {
 
 	console.info('Creating Pact with PID: ' + this.instance.pid);
 
-
 	this.instance.on('close', function (code) {
 		if (code !== 0) {
 			console.warn('Pact exited with code ' + code + '.');
@@ -126,14 +125,9 @@ Server.prototype.start = function () {
 		this.stop();
 	}.bind(this));
 
-	var onExit = function () {
-		console.info('exiting node');
-		this.delete();
-	}.bind(this);
-
 	// Kill process on node exit
-	process.once('exit', onExit);
-	process.once('SIGINT', function(){
+	process.once('exit', this.delete);
+	process.once('SIGINT', function() {
 		process.exit();
 	});
 
@@ -142,7 +136,7 @@ Server.prototype.start = function () {
 
 Server.prototype.stop = function () {
 	if (this.instance) {
-		console.info('Killing Pact');
+		console.info('Node exiting, killing Pact');
 		this.instance.removeAllListeners();
 		if (process.platform === 'win32') {
 			cp.execSync('taskkill /f /t /pid ' + this.instance.pid);
