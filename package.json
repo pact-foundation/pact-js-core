@@ -19,8 +19,7 @@
   },
   "dependencies": {
     "pact-mock-service": "0.5.3-1",
-    "check-types": "~3.3.1",
-    "commander": "~2.8.1"
+    "check-types": "~3.3.1"
   },
   "devDependencies": {
     "chai": "^3.2.0",
@@ -41,8 +40,6 @@
     "watch": "./node_modules/.bin/nodemon -x npm run dev",
     "watch:debug": "./node_modules/.bin/nodemon --debug -q -w assets/ --ext '.' --exec 'npm run lint'",
     "dev": "npm run clean && npm run lint --force && npm test && node .",
-    "production": "./node_modules/.bin/forever start --append -o ./logs/forever.log -e ./logs/forever.log index.js",
-    "production:stop": "./node_modules/.bin/forever stop index.js",
     "start": "npm run clean && npm run production",
     "stop": "npm run production:stop"
   }

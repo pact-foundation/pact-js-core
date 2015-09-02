@@ -3,39 +3,35 @@
 var check = require('check-types'),
 	serverFactory = require('./server');
 
-var servers = {};
+var servers = [];
 
-function create(name, port) {
-	if(servers[port]) {
-		return new Error('Wow, much port conflict, many sads. '+port);
-	}
+function create(options) {
 
-	var server = serverFactory(name, port);
-	servers[port] = server;
+	var server = serverFactory(options);
+	servers.push(server);
+
+	// Listen to server events
+	server.once("delete", function(server) {
+		remove(server);
+	});
 
 	return server;
-}
-
-function remove(port) {
-
-}
-
-function get(port) {
-	return servers[port];
-}
-
-function exists(port) {
-	return get(port) !== undefined;
 }
 
 function list() {
 	return servers;
 }
 
+function remove(server) {
+	for (var i = 0, len = servers.length; i < len; i++) {
+		if (servers[i] === server) {
+			server.splice(i, 1);
+			break;
+		}
+	}
+}
+
 module.exports = {
 	create: create,
-	remove: remove,
-	get: get,
-	exists: exists,
 	list: list
 };

@@ -1,9 +1,9 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
 
-var server          = require('./server.js'),
+var pact          = require('./pact.js'),
 	request      = require('supertest');
 
-describe("Server Spec", function() {
+describe("Pact Spec", function() {
 
 
 });
