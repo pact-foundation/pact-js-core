@@ -69,8 +69,8 @@ function Server(port, host, dir, ssl, cors, log, spec, consumer, provider) {
 Server.prototype = new events.EventEmitter;
 
 Server.prototype.start = function () {
-	if (this.process && this.process.connected) {
-		console.warn('You already have a process running with PID: ' + this.process.pid);
+	if (this.instance && this.instance.connected) {
+		console.warn('You already have a process running with PID: ' + this.instance.pid);
 		return;
 	}
 	var file,
@@ -108,40 +108,49 @@ Server.prototype.start = function () {
 		args = ['-c', cmd];
 	}
 
+	this.instance = cp.spawn(file, args, opts);
 
-	this.process = cp.spawn(file, args, opts);
+	this.instance.stdout.setEncoding('utf8');
+	this.instance.stdout.on('data', console.log);
+	this.instance.stderr.setEncoding('utf8');
+	this.instance.stderr.on('data', console.error);
+	this.instance.on('error', console.error);
 
-	this.process.stdout.setEncoding('utf8');
-	this.process.stdout.on('data', console.log);
-	this.process.stderr.setEncoding('utf8');
-	this.process.stderr.on('data', console.error);
-	this.process.on('error', console.error);
+	console.info('Creating Pact with PID: ' + this.instance.pid);
 
 
-	this.process.on('close', function (code) {
+	this.instance.on('close', function (code) {
 		if (code !== 0) {
 			console.warn('Pact exited with code ' + code + '.');
 		}
 		this.stop();
 	}.bind(this));
 
-	// Kill process on node exit
-	process.once('exit', function () {
+	var onExit = function () {
+		console.info('exiting node');
 		this.delete();
-	}.bind(this));
+	}.bind(this);
+
+	// Kill process on node exit
+	process.once('exit', onExit);
+	process.once('SIGINT', function(){
+		process.exit();
+	});
 
 	return this;
 };
 
 Server.prototype.stop = function () {
-	if (this.process) {
+	if (this.instance) {
+		console.info('Killing Pact');
+		this.instance.removeAllListeners();
 		if (process.platform === 'win32') {
-			cp.execSync('taskkill /f /t /pid ' + this.process.pid);
+			cp.execSync('taskkill /f /t /pid ' + this.instance.pid);
 		} else {
-			process.kill(-this.process.pid, 'SIGKILL');
+			process.kill(-this.instance.pid, 'SIGKILL');
 		}
+		this.instance = undefined;
 	}
-	this.process = undefined;
 	return this;
 };
 
