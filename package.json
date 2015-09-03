@@ -13,6 +13,12 @@
     "wrapper"
   ],
   "author": "Michel Boudreau",
+  "contributors": [
+	  {
+		  "name" : "David Stanciu",
+		  "email" : "davidstanciu29@gmail.com"
+	  }
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/pact-js/pact-node/issues"
