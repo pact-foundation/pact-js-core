@@ -5,6 +5,8 @@ var check = require('check-types'),
 	fs = require('fs'),
 	cp = require('child_process'),
 	events = require('events'),
+	http = require('http'),
+	https = require('https'),
 	noop = function(){};
 
 module.exports = function (options) {
@@ -71,9 +73,38 @@ Server.prototype = new events.EventEmitter;
 
 Server.prototype.start = function (callback) {
 	callback = callback || noop;
+
+	// Wait for pact-mock-service to be initialized and ready
+	var amount = 0;
+
+	var done = function () {
+		amount = 0;
+		console.info('Pact started');
+		callback(this);
+	}.bind(this);
+
+	var check = function () {
+		amount++;
+		(this.ssl ? https : http).request({
+			host: this.host,
+			port: this.port,
+			path: '/',
+			method: 'GET',
+			headers: {
+				'X-Pact-Mock-Service': true,
+				'Content-Type': 'application/json'
+			}
+		}, done).on('error', function () {
+			if (amount >= 10) {
+				throw "Pact setup failed; tried calling service 10 times with no result.";
+			}
+			setTimeout(check, 1000);
+		}).end();
+	}.bind(this);
+
 	if (this.instance && this.instance.connected) {
 		console.warn('You already have a process running with PID: ' + this.instance.pid);
-		callback(this);
+		check();
 		return;
 	}
 	var file,
@@ -134,8 +165,8 @@ Server.prototype.start = function (callback) {
 		process.exit();
 	});
 
-	// TODO: add check here to make sure service is up before calling callback
-	callback(this);
+	// check service is available
+	check();
 };
 
 Server.prototype.stop = function (callback) {
