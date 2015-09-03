@@ -7,7 +7,7 @@ var check = require('check-types'),
 	events = require('events'),
 	http = require('http'),
 	https = require('https'),
-	noop = function(){};
+	noop = function () {};
 
 module.exports = function (options) {
 	options = options || {};
@@ -96,7 +96,7 @@ Server.prototype.start = function (callback) {
 			}
 		}, done).on('error', function () {
 			if (amount >= 10) {
-				throw "Pact setup failed; tried calling service 10 times with no result.";
+				throw "Pact startup failed; tried calling service 10 times with no result.";
 			}
 			setTimeout(check, 1000);
 		}).end();
@@ -160,8 +160,8 @@ Server.prototype.start = function (callback) {
 	}.bind(this));
 
 	// Kill process on node exit
-	process.once('exit', this.delete);
-	process.once('SIGINT', function() {
+	process.once('exit', this.delete.bind(this));
+	process.once('SIGINT', function () {
 		process.exit();
 	});
 
@@ -171,8 +171,34 @@ Server.prototype.start = function (callback) {
 
 Server.prototype.stop = function (callback) {
 	callback = callback || noop;
+
+	var amount = 0;
+	var done = function () {
+		amount = 0;
+		console.info('Pact stopped');
+		callback(this);
+	}.bind(this);
+
+	var check = function () {
+		amount++;
+		(this.ssl ? https : http).request({
+			host: this.host,
+			port: this.port,
+			path: '/',
+			method: 'GET',
+			headers: {
+				'X-Pact-Mock-Service': true,
+				'Content-Type': 'application/json'
+			}
+		}, function () {
+			if (amount >= 10) {
+				throw "Pact stop failed; tried calling service 10 times with no result.";
+			}
+			setTimeout(check, 1000);
+		}).on('error', done).end();
+	}.bind(this);
+
 	if (this.instance) {
-		console.info('Node exiting, killing Pact');
 		this.instance.removeAllListeners();
 		if (process.platform === 'win32') {
 			cp.execSync('taskkill /f /t /pid ' + this.instance.pid);
@@ -181,13 +207,13 @@ Server.prototype.stop = function (callback) {
 		}
 		this.instance = undefined;
 	}
-	// TODO: add check here to make sure service is down before calling callback
-	callback(this);
+
+	check();
 };
 
 Server.prototype.delete = function (callback) {
 	callback = callback || noop;
-	this.stop(function(){
+	this.stop(function () {
 		this.emit('delete', this);
 		callback(this);
 	}.bind(this));

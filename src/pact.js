@@ -7,6 +7,7 @@ var servers = [];
 
 function create(options) {
 
+	// TODO: iterate through servers, look for port conflicts
 	var server = serverFactory(options);
 	servers.push(server);
 

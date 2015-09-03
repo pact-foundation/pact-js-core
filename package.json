@@ -1,6 +1,6 @@
 {
   "name": "pact-node",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "./src/pact.js",
   "repository": {
@@ -12,7 +12,11 @@
     "node",
     "wrapper"
   ],
-  "author": "Michel Boudreau",
+  "author": {
+    "name": "Michel Boudreau",
+    "email": "michelboudreau@gmail.com",
+    "url": "codinghitchhiker.com"
+  },
   "contributors": [
 	  {
 		  "name" : "David Stanciu",
@@ -20,7 +24,10 @@
 		  "url" : "https://github.com/dstanciu29"
 	  }
   ],
-  "license": "MIT",
+  "license": {
+    "type": "MIT",
+    "url": "https://github.com/pact-js/pact-node/blob/master/LICENSE"
+  },
   "bugs": {
     "url": "https://github.com/pact-js/pact-node/issues"
   },
@@ -37,7 +44,7 @@
     "sinon": "^1.15.4"
   },
   "engine": {
-    "node": ">=0.12"
+    "node": ">=0.12.0"
   },
   "scripts": {
     "clean": "./node_modules/.bin/rimraf logs/*",
@@ -46,7 +53,6 @@
     "watch": "./node_modules/.bin/nodemon -x npm run dev",
     "watch:debug": "./node_modules/.bin/nodemon --debug -q -w assets/ --ext '.' --exec 'npm run lint'",
     "dev": "npm run clean && npm run lint --force && npm test && node .",
-    "start": "npm run clean && npm run production",
-    "stop": "npm run production:stop"
+    "start": "npm run watch"
   }
 }
