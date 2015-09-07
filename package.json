@@ -1,6 +1,6 @@
 {
   "name": "pact-node",
-  "version": "0.0.3",
+  "version": "1.0.0",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "./src/pact.js",
   "repository": {
@@ -18,11 +18,11 @@
     "url": "codinghitchhiker.com"
   },
   "contributors": [
-	  {
-		  "name" : "David Stanciu",
-		  "email" : "davidstanciu29@gmail.com",
-		  "url" : "https://github.com/dstanciu29"
-	  }
+    {
+      "name": "David Stanciu",
+      "email": "davidstanciu29@gmail.com",
+      "url": "https://github.com/dstanciu29"
+    }
   ],
   "license": {
     "type": "MIT",
@@ -32,8 +32,9 @@
     "url": "https://github.com/pact-js/pact-node/issues"
   },
   "dependencies": {
+    "check-types": "~3.3.1",
     "pact-mock-service": "0.5.3-1",
-    "check-types": "~3.3.1"
+    "q": "^1.4.1"
   },
   "devDependencies": {
     "chai": "^3.2.0",
@@ -49,7 +50,7 @@
   "scripts": {
     "clean": "./node_modules/.bin/rimraf logs/*",
     "lint": "./node_modules/.bin/jscs src",
-    "test": "./node_modules/.bin/mocha -R spec src/**/*.spec.js",
+    "test": "./node_modules/.bin/mocha -R spec src/**/*.spec.js --timeout 10000",
     "watch": "./node_modules/.bin/nodemon -x npm run dev",
     "watch:debug": "./node_modules/.bin/nodemon --debug -q -w assets/ --ext '.' --exec 'npm run lint'",
     "dev": "npm run clean && npm run lint --force && npm test && node .",

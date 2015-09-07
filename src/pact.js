@@ -1,46 +1,44 @@
 'use strict';
 
 var check = require('check-types'),
-	serverFactory = require('./server');
+    serverFactory = require('./server'),
+    q = require('q');
 
 var servers = [];
 
 function create(options) {
 
-	// TODO: iterate through servers, look for port conflicts
-	var server = serverFactory(options);
-	servers.push(server);
+    // TODO: iterate through servers, look for port conflicts
+    var server = serverFactory(options);
+    servers.push(server);
 
-	// Listen to server events
-	server.once("delete", function(server) {
-		remove(server);
-	});
+    // Listen to serverFactory events
+    // TODO: look into event taking forever, removeListener doesn't seem to work and once doesn't pass test
+    server.on('delete', function (server) {
+        //serverFactory.removeListener('delete', this);
+        for (var i = 0, len = servers.length; i < len; i++) {
+            if (servers[i] === server) {
+                servers.splice(i, 1);
+                break;
+            }
+        }
+    });
 
-	return server;
+    return server;
 }
 
 function list() {
-	return servers;
-}
-
-function remove(server) {
-	for (var i = 0, len = servers.length; i < len; i++) {
-		if (servers[i] === server) {
-			servers.splice(i, 1);
-			server.removeAllListeners();
-			break;
-		}
-	}
+    return servers;
 }
 
 function removeAll() {
-	for (var i=servers.length - 1; i > 0; i--) {
-		servers[i].delete();
-	}
+    return q.all(servers.map(function (server) {
+        return server.delete();
+    }));
 }
 
 module.exports = {
-	create: create,
-	list: list,
-	removeAll: removeAll
+    create: create,
+    list: list,
+    removeAll: removeAll
 };
