@@ -23,11 +23,21 @@ describe("Pact Spec", function () {
         });
 
         context("when user specifies valid options", function () {
+            var fs = require('fs'),
+                path = require('path'),
+                dirPath = path.resolve(__dirname, '../.tmp'+Math.floor(Math.random()*1000));
+            beforeEach(function(done){
+                fs.mkdir(dirPath, done);
+            });
+            afterEach(function(done){
+                fs.rmdir(dirPath, done);
+            });
+
             it("should return serverFactory using specified options", function () {
                 var options = {
                     port: 9500,
                     host: 'localhost',
-                    dir: 'C:/temp',
+                    dir: dirPath,
                     ssl: true,
                     cors: true,
                     log: 'log.txt',
