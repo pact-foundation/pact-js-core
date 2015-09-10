@@ -116,7 +116,7 @@ Server.prototype.start = function () {
 	// if port isn't specified, listen for it when pact runs
 	function catchPort(data) {
 		var match = data.match(/port=([0-9]+)/);
-		if (match[1]) {
+		if (match && match[1]) {
 			this.port = parseInt(match[1]);
 			this.instance.stdout.removeListener('data', catchPort);
 			this.instance.stderr.removeListener('data', catchPort);
