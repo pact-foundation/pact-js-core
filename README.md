@@ -6,7 +6,7 @@ A wrapper for Ruby Pact for it to work with node.
 
 ### Node
 
-`npm install pact-node --save-dev`
+`npm install pact-node --save`
 
 ### Grunt
 

@@ -41,21 +41,28 @@ Server.prototype.start = function () {
 
 	var check = function () {
 		amount++;
-		(this.ssl ? https : http).request({
-			host: this.host,
-			port: this.port,
-			path: '/',
-			method: 'GET',
-			headers: {
-				'X-Pact-Mock-Service': true,
-				'Content-Type': 'application/json'
-			}
-		}, done).on('error', function () {
+
+		function retry() {
 			if (amount >= 10) {
 				deferred.reject(new Error("Pact startup failed; tried calling service 10 times with no result."));
 			}
 			setTimeout(check, CHECKTIME);
-		}).end();
+		}
+
+		if (this.port) {
+			(this.ssl ? https : http).request({
+				host: this.host,
+				port: this.port,
+				path: '/',
+				method: 'GET',
+				headers: {
+					'X-Pact-Mock-Service': true,
+					'Content-Type': 'application/json'
+				}
+			}, done).on('error', retry).end();
+		} else {
+			retry();
+		}
 	}.bind(this);
 
 	if (this.instance && this.instance.connected) {
@@ -103,8 +110,23 @@ Server.prototype.start = function () {
 	this.instance.stdout.setEncoding('utf8');
 	this.instance.stdout.on('data', console.log);
 	this.instance.stderr.setEncoding('utf8');
-	this.instance.stderr.on('data', console.error);
+	this.instance.stderr.on('data', console.log);
 	this.instance.on('error', console.error);
+
+	// if port isn't specified, listen for it when pact runs
+	function catchPort(data) {
+		var match = data.match(/port=([0-9]+)/);
+		if (match[1]) {
+			this.port = parseInt(match[1]);
+			this.instance.stdout.removeListener('data', catchPort);
+			this.instance.stderr.removeListener('data', catchPort);
+		}
+	}
+
+	if (!this.port) {
+		this.instance.stdout.on('data', catchPort.bind(this));
+		this.instance.stderr.on('data', catchPort.bind(this));
+	}
 
 	console.info('Creating Pact with PID: ' + this.instance.pid);
 
@@ -178,8 +200,7 @@ module.exports = function (options) {
 	options = options || {};
 
 	// defaults
-	// TODO: remove default port, parse STDOUT to see what port pact-mock-service gives you
-	options.port = options.port || 9700;
+	options.port = options.port;
 	options.ssl = options.ssl || false;
 	options.cors = options.cors || false;
 	// options.spec = options.spec || 1;
@@ -190,13 +211,15 @@ module.exports = function (options) {
 	// options.provider = options.provider || 'provider name';
 
 	// port checking
-	check.assert.number(options.port);
-	check.assert.integer(options.port);
-	check.assert.positive(options.port);
-	check.assert.inRange(options.port, 0, 65535);
+	if (options.port) {
+		check.assert.number(options.port);
+		check.assert.integer(options.port);
+		check.assert.positive(options.port);
+		check.assert.inRange(options.port, 0, 65535);
 
-	if (check.not.inRange(options.port, 1024, 49151)) {
-		console.warn("Like a Boss, you used a port range outside of the registered range (1024 to 49151); I too like to live dangerously.");
+		if (check.not.inRange(options.port, 1024, 49151)) {
+			console.warn("Like a Boss, you used a port range outside of the registered range (1024 to 49151); I too like to live dangerously.");
+		}
 	}
 
 	// ssl check
