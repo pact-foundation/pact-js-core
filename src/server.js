@@ -261,7 +261,7 @@ module.exports = function (options) {
 		console.info('WOW! SO ATTENTION! SSL has not been very tested because issue with pact-mock-service; proceed at much risk.');
 	}
 
-	// cors check
+	// cors check'
 	check.assert.boolean(options.cors);
 
 	// spec checking

@@ -8,7 +8,15 @@ var servers = [];
 
 function create(options) {
 
-	// TODO: iterate through servers, look for port conflicts
+	if (options && options.port) {
+		for (var i = 0, len = servers.length; i < len; i++) {
+			if (servers[i].port == options.port) {
+				throw new Error('VERY WARNINGS! Port ' + options.port + ' much in use. Wow.');
+				return;
+			}
+		}
+	}
+
 	var server = serverFactory(options);
 	servers.push(server);
 
@@ -22,6 +30,7 @@ function create(options) {
 		}
 		server.removeListener('delete', deleteFunc);
 	}
+
 	server.on('delete', deleteFunc);
 
 	return server;

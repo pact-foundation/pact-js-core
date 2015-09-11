@@ -86,6 +86,15 @@ describe("Pact Spec", function () {
 
 		});
 
+		context("when user specifies port that's currently in use", function () {
+			it("should return a port conflict error", function () {
+				pact.create({port:5100});
+				expect(function () {
+					pact.create({port: 5100})
+				}).to.throw(Error);
+			});
+		});
+
 		context("when user specifies invalid host", function () {
 			it("should return an error on non-string", function () {
 				expect(function () {
