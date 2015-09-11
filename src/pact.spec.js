@@ -5,7 +5,7 @@ var expect = require('chai').expect,
 
 describe("Pact Spec", function () {
 	afterEach(function (done) {
-		pact.removeAll().then(function () {
+		pact.removeAll().then(function(){
 			done();
 		});
 	});
@@ -185,7 +185,7 @@ describe("Pact Spec", function () {
 			});
 		});
 
-		context("when serverFactory is removed", function () {
+		context("when server is removed", function () {
 			it("should update the list", function (done) {
 				pact.create({port: 9200});
 				pact.create({port: 9300});

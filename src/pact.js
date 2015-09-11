@@ -13,16 +13,16 @@ function create(options) {
 	servers.push(server);
 
 	// Listen to serverFactory events
-	// TODO: look into event taking forever, removeListener doesn't seem to work and once doesn't pass test
-	server.on('delete', function (server) {
-		//serverFactory.removeListener('delete', this);
+	function deleteFunc(server) {
 		for (var i = 0, len = servers.length; i < len; i++) {
 			if (servers[i] === server) {
 				servers.splice(i, 1);
 				break;
 			}
 		}
-	});
+		server.removeListener('delete', deleteFunc);
+	}
+	server.on('delete', deleteFunc);
 
 	return server;
 }
