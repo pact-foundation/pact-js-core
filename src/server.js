@@ -31,6 +31,7 @@ Server.prototype.start = function () {
 	var that = this;
 	// Wait for pact-mock-service to be initialized and ready
 	var amount = 0;
+
 	function done() {
 		that.emit('stop', that);
 		deferred.resolve(that);
@@ -47,7 +48,7 @@ Server.prototype.start = function () {
 		}
 
 		if (that.port) {
-			(that.ssl ? https : http).request({
+			var options = {
 				host: that.host,
 				port: that.port,
 				path: '/',
@@ -56,7 +57,16 @@ Server.prototype.start = function () {
 					'X-Pact-Mock-Service': true,
 					'Content-Type': 'application/json'
 				}
-			}, done).on('error', retry).end();
+			};
+			var requester = http.request;
+			if (that.ssl) {
+				requester = https.request;
+				process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+				options.rejectUnauthorized = false;
+				options.requestCert = false;
+				options.agent = false;
+			}
+			requester(options, done).on('error', retry).end();
 		} else {
 			retry();
 		}
@@ -138,7 +148,7 @@ Server.prototype.start = function () {
 	var exitFunc = function () {
 		process.exit();
 	};
-	var deleteFunc = function() {
+	var deleteFunc = function () {
 		that.delete();
 	};
 	process.on('exit', deleteFunc);
@@ -168,7 +178,7 @@ Server.prototype.stop = function () {
 	function check() {
 		amount++;
 		if (that.port) {
-			(that.ssl ? https : http).request({
+			var options = {
 				host: that.host,
 				port: that.port,
 				path: '/',
@@ -177,7 +187,16 @@ Server.prototype.stop = function () {
 					'X-Pact-Mock-Service': true,
 					'Content-Type': 'application/json'
 				}
-			}, function () {
+			};
+			var requester = http.request;
+			if (that.ssl) {
+				requester = https.request;
+				process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+				options.rejectUnauthorized = false;
+				options.requestCert = false;
+				options.agent = false;
+			}
+			requester(options, function () {
 				if (amount >= 10) {
 					deferred.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
 				}
@@ -238,6 +257,9 @@ module.exports = function (options) {
 
 	// ssl check
 	check.assert.boolean(options.ssl);
+	if(options.ssl) {
+		console.info('WOW! SO ATTENTION! SSL has not been very tested because issue with pact-mock-service; proceed at much risk.');
+	}
 
 	// cors check
 	check.assert.boolean(options.cors);
