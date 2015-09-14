@@ -251,7 +251,7 @@ module.exports = function (options) {
 		check.assert.inRange(options.port, 0, 65535);
 
 		if (check.not.inRange(options.port, 1024, 49151)) {
-			console.warn("Like a Boss, you used a port range outside of the registered range (1024 to 49151); I too like to live dangerously.");
+			console.warn("Like a Boss, you used a port outside of the recommended range (1024 to 49151); I too like to live dangerously.");
 		}
 	}
 
