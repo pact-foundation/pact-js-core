@@ -237,7 +237,7 @@ module.exports = function (options) {
 	options.ssl = options.ssl || false;
 	options.cors = options.cors || false;
 	// options.spec = options.spec || 1;
-	options.dir = options.dir || process.cwd();
+	options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
 	// options.log = options.log || process.cwd();
 	options.host = options.host || 'localhost';
 	// options.consumer = options.consumer || 'consumer name';
@@ -257,7 +257,7 @@ module.exports = function (options) {
 
 	// ssl check
 	check.assert.boolean(options.ssl);
-	if(options.ssl) {
+	if (options.ssl) {
 		console.info('WOW! SO ATTENTION! SSL has not been very tested because issue with pact-mock-service; proceed at much risk.');
 	}
 
