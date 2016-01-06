@@ -5,7 +5,7 @@
   "main": "./src/pact.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/pact-js/pact-node.git"
+    "url": "git://github.com/pact-foundation/pact-node.git"
   },
   "keywords": [
     "pact",
@@ -26,10 +26,10 @@
   ],
   "license": {
     "type": "MIT",
-    "url": "https://github.com/pact-js/pact-node/blob/master/LICENSE"
+    "url": "https://github.com/pact-foundation/pact-node/blob/master/LICENSE"
   },
   "bugs": {
-    "url": "https://github.com/pact-js/pact-node/issues"
+    "url": "https://github.com/pact-foundation/pact-node/issues"
   },
   "dependencies": {
     "check-types": "~3.3.1",
