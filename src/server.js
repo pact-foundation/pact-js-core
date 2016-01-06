@@ -80,7 +80,7 @@ Server.prototype.start = function () {
 	var file,
 		args = [],
 		opts = {
-			cwd: path.join(__dirname, '..', 'node_modules/.bin/'),
+			cwd: path.join(process.env.PWD, 'node_modules/.bin/'),
 			detached: (process.platform !== 'win32')
 		},
 		mapping = {
