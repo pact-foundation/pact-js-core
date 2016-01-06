@@ -33,7 +33,7 @@
 	},
 	"dependencies": {
 		"check-types": "~3.3.1",
-		"pact-mock-service": "https://github.com/mboudreau/pact-mock-service-npm",
+		"pact-mock-service": "mboudreau/pact-mock-service-npm",
 		"q": "^1.4.1"
 	},
 	"devDependencies": {
