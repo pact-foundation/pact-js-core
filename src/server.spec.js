@@ -29,13 +29,13 @@ describe("Server Spec", function () {
 
 		context("when valid options are set", function () {
 			// TODO: Fix SSL, some kind of horrible issues with Ruby 1.9.3 and SSL on the Pact Mock Service side
-			/*it("should start correctly with ssl", function (done) {
+			it("should start correctly with ssl", function (done) {
 				server = serverFactory( { ssl: true});
 				server.start().then(function () {
 					expect(server.ssl).to.equal(true);
 					done();
 				});
-			});*/
+			});
 
 			it("should start correctly with cors", function (done) {
 				server = serverFactory( { cors: true});

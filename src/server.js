@@ -9,6 +9,14 @@ var check = require('check-types'),
 	https = require('https'),
 	q = require('q'),
 	util = require('util');
+const isWindows = process.platform === 'win32';
+
+var arch = "";
+if (process.platform === 'linux') {
+	arch = '-' + process.arch;
+}
+const packageName = 'pact-mock-service-' + process.platform + arch;
+const packagePath = require.resolve(packageName);
 
 var CHECKTIME = 500;
 
@@ -80,8 +88,8 @@ Server.prototype.start = function () {
 	var file,
 		args = [],
 		opts = {
-			cwd: path.join(process.cwd(), 'node_modules/.bin/'),
-			detached: (process.platform !== 'win32')
+			cwd: path.resolve(packagePath, '..'),
+			detached: !isWindows
 		},
 		mapping = {
 			'port': '--port',
@@ -101,13 +109,14 @@ Server.prototype.start = function () {
 		}
 	}
 
-	var cmd = (process.platform !== 'win32' ? "./" : "") + "pact-mock-service " + args.join(' ');
+	var cmd = [packagePath.split(path.sep).pop()].concat(args).join(' ');
 
-	if (process.platform === 'win32') {
+	if (isWindows) {
 		file = 'cmd.exe';
 		args = ['/s', '/c', cmd];
 		opts.windowsVerbatimArguments = true;
 	} else {
+		cmd = "./" + cmd;
 		file = '/bin/sh';
 		args = ['-c', cmd];
 	}
@@ -258,7 +267,7 @@ module.exports = function (options) {
 	// ssl check
 	check.assert.boolean(options.ssl);
 	if (options.ssl) {
-		console.info('WOW! SO ATTENTION! SSL has not been very tested because issue with pact-mock-service; proceed at much risk.');
+		console.info('WOW! SO ATTENTION! SSL has not been very tested because issue with pact-node; proceed at much risk.');
 	}
 
 	// cors check'

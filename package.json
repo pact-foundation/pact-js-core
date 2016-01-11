@@ -1,8 +1,13 @@
 {
   "name": "pact-node",
-  "version": "1.3.2",
+  "version": "1.4.0",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "./src/pact.js",
+  "os" : [ "darwin", "linux" , "win32"],
+  "cpu" : [ "x64", "ia32" ],
+  "engine": {
+    "node": ">=0.12.0"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/pact-foundation/pact-node.git"
@@ -10,7 +15,9 @@
   "keywords": [
     "pact",
     "node",
-    "wrapper"
+    "wrapper",
+    "mock",
+    "service"
   ],
   "author": {
     "name": "Michel Boudreau",
@@ -33,8 +40,16 @@
   },
   "dependencies": {
     "check-types": "~3.3.1",
-    "pact-mock-service": "mboudreau/pact-mock-service-npm",
     "q": "^1.4.1"
+  },
+  "optionalDependencies": {
+    "pact-mock-service-linux-ia32": "0.7.2-1",
+    "pact-mock-service-linux-x64": "0.7.2-1",
+    "pact-mock-service-win32": "0.7.2-1",
+    "pact-mock-service-darwin": "0.7.2-1"
+  },
+  "bin": {
+    "pact": "./bin/pact-node"
   },
   "devDependencies": {
     "chai": "^3.2.0",
@@ -43,9 +58,6 @@
     "nodemon": "^1.4.1",
     "rimraf": "^2.4.2",
     "sinon": "^1.15.4"
-  },
-  "engine": {
-    "node": ">=0.12.0"
   },
   "scripts": {
     "clean": "./node_modules/.bin/rimraf logs/*",

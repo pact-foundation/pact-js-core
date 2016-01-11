@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+'use strict';
+
+var pact = require('../src/pact');
+
+// TODO: make this a better command line utility, use commander
+pact.create().start();
