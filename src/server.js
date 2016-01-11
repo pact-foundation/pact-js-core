@@ -9,7 +9,7 @@ var check = require('check-types'),
 	https = require('https'),
 	q = require('q'),
 	util = require('util');
-const isWindows = process.platform === 'win32';
+var isWindows = process.platform === 'win32';
 
 var arch = "";
 if (process.platform === 'linux') {
@@ -153,22 +153,6 @@ Server.prototype.start = function () {
 		that.stop();
 	});
 
-	// Kill process on node exit
-	var exitFunc = function () {
-		process.exit();
-	};
-	var deleteFunc = function () {
-		that.delete();
-	};
-	process.on('exit', deleteFunc);
-	process.on('SIGINT', exitFunc);
-	var stopFunc = function () {
-		process.removeListener('exit', deleteFunc);
-		process.removeListener('SIGINT', exitFunc);
-		that.removeListener('stop', stopFunc);
-	};
-	that.on('stop', stopFunc);
-
 	// check service is available
 	check();
 	return deferred.promise;
@@ -217,8 +201,10 @@ Server.prototype.stop = function () {
 	}
 
 	if (that.instance) {
+		console.info('Removing Pact with PID: ' + that.instance.pid);
 		that.instance.removeAllListeners();
-		if (process.platform === 'win32') {
+		// Killing instance, since windows can't send signals, must kill process forcefully
+		if (isWindows) {
 			cp.execSync('taskkill /f /t /pid ' + that.instance.pid);
 		} else {
 			process.kill(-that.instance.pid, 'SIGKILL');
@@ -242,7 +228,7 @@ module.exports = function (options) {
 	options = options || {};
 
 	// defaults
-	options.port = options.port;
+	//options.port = options.port;
 	options.ssl = options.ssl || false;
 	options.cors = options.cors || false;
 	// options.spec = options.spec || 1;

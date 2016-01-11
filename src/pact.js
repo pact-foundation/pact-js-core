@@ -46,6 +46,18 @@ function removeAll() {
 	}));
 }
 
+// Kill process on node exit
+var exitFunc = function () {
+	process.removeListener('SIGINT', exitFunc);
+	process.exit();
+};
+var deleteFunc = function () {
+	process.removeListener('exit', deleteFunc);
+	removeAll();
+};
+process.on('exit', deleteFunc);
+process.on('SIGINT', exitFunc);
+
 module.exports = {
 	create: create,
 	list: list,
