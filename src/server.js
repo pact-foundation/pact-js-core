@@ -252,9 +252,6 @@ module.exports = function (options) {
 
 	// ssl check
 	check.assert.boolean(options.ssl);
-	if (options.ssl) {
-		console.info('WOW! SO ATTENTION! SSL has not been very tested because issue with pact-node; proceed at much risk.');
-	}
 
 	// cors check'
 	check.assert.boolean(options.cors);
