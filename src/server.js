@@ -15,8 +15,8 @@ var arch = "";
 if (process.platform === 'linux') {
 	arch = '-' + process.arch;
 }
-const packageName = 'pact-mock-service-' + process.platform + arch;
-const packagePath = require.resolve(packageName);
+var packageName = 'pact-mock-service-' + process.platform + arch;
+var packagePath = require.resolve(packageName);
 
 var CHECKTIME = 500;
 
