@@ -1,18 +1,19 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
 
 var serverFactory = require('./server.js'),
-	expect = require('chai').expect;
+	expect = require('chai').expect,
+	fs = require('fs'),
+	path = require('path');
 
 describe("Server Spec", function () {
 	var server;
 
 	afterEach(function (done) {
-		if(server) {
-			server.delete().then(function(){
+		if (server) {
+			server.delete().then(function () {
 				done();
 			});
-		}
-		else {
+		} else {
 			done();
 		}
 	});
@@ -28,9 +29,20 @@ describe("Server Spec", function () {
 		});
 
 		context("when valid options are set", function () {
+
+			var dirPath = path.resolve(__dirname, '../.tmp' + Math.floor(Math.random() * 1000));
+
+			beforeEach(function (done) {
+				fs.mkdir(dirPath, done);
+			});
+
+			afterEach(function (done) {
+				fs.rmdir(dirPath, done);
+			});
+
 			// TODO: Fix SSL, some kind of horrible issues with Ruby 1.9.3 and SSL on the Pact Mock Service side
 			it("should start correctly with ssl", function (done) {
-				server = serverFactory( { ssl: true});
+				server = serverFactory({ssl: true});
 				server.start().then(function () {
 					expect(server.ssl).to.equal(true);
 					done();
@@ -38,7 +50,7 @@ describe("Server Spec", function () {
 			});
 
 			it("should start correctly with cors", function (done) {
-				server = serverFactory( { cors: true});
+				server = serverFactory({cors: true});
 				server.start().then(function () {
 					expect(server.cors).to.equal(true);
 					done();
@@ -46,7 +58,7 @@ describe("Server Spec", function () {
 			});
 
 			it("should start correctly with port", function (done) {
-				server = serverFactory( { port: 9500});
+				server = serverFactory({port: 9500});
 				server.start().then(function () {
 					expect(server.port).to.equal(9500);
 					done();
@@ -54,7 +66,7 @@ describe("Server Spec", function () {
 			});
 
 			it("should start correctly with host", function (done) {
-				server = serverFactory( { host: 'localhost'});
+				server = serverFactory({host: 'localhost'});
 				server.start().then(function () {
 					expect(server.host).to.equal('localhost');
 					done();
@@ -62,24 +74,15 @@ describe("Server Spec", function () {
 			});
 
 			it("should start correctly with spec", function (done) {
-				server = serverFactory( { spec: 1});
+				server = serverFactory({spec: 1});
 				server.start().then(function () {
 					expect(server.spec).to.equal(1);
 					done();
 				});
 			});
 
-			var fs = require('fs'),
-				path = require('path'),
-				dirPath = path.resolve(__dirname, '../.tmp' + Math.floor(Math.random() * 1000));
-			beforeEach(function (done) {
-				fs.mkdir(dirPath, done);
-			});
-			afterEach(function (done) {
-				fs.rmdir(dirPath, done);
-			});
 			it("should start correctly with dir", function (done) {
-				server = serverFactory( { dir: dirPath});
+				server = serverFactory({dir: dirPath});
 				server.start().then(function () {
 					expect(server.dir).to.equal(dirPath);
 					done();
@@ -87,7 +90,7 @@ describe("Server Spec", function () {
 			});
 
 			it("should start correctly with log", function (done) {
-				server = serverFactory( { log: 'log.txt'});
+				server = serverFactory({log: 'log.txt'});
 				server.start().then(function () {
 					expect(server.log).to.equal('log.txt');
 					done();
@@ -95,7 +98,7 @@ describe("Server Spec", function () {
 			});
 
 			it("should start correctly with consumer name", function (done) {
-				server = serverFactory( { consumer: 'cName'});
+				server = serverFactory({consumer: 'cName'});
 				server.start().then(function () {
 					expect(server.consumer).to.equal('cName');
 					done();
@@ -103,7 +106,7 @@ describe("Server Spec", function () {
 			});
 
 			it("should start correctly with provider name", function (done) {
-				server = serverFactory( { provider: 'pName'});
+				server = serverFactory({provider: 'pName'});
 				server.start().then(function () {
 					expect(server.provider).to.equal('pName');
 					done();

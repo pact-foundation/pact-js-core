@@ -5,7 +5,7 @@ var expect = require('chai').expect,
 
 describe("Pact Spec", function () {
 	afterEach(function (done) {
-		pact.removeAll().then(function(){
+		pact.removeAll().then(function () {
 			done();
 		});
 	});
@@ -83,12 +83,11 @@ describe("Pact Spec", function () {
 					pact.create({port: 99999});
 				}).to.throw(Error);
 			});
-
 		});
 
 		context("when user specifies port that's currently in use", function () {
 			it("should return a port conflict error", function () {
-				pact.create({port:5100});
+				pact.create({port: 5100});
 				expect(function () {
 					pact.create({port: 5100})
 				}).to.throw(Error);
@@ -101,16 +100,14 @@ describe("Pact Spec", function () {
 					pact.create({host: 12});
 				}).to.throw(Error);
 			});
-
 		});
 
-		context("when user specifies invalid directory", function () {
+		context("when user specifies invalid pact directory", function () {
 			it("should return an error on invalid path", function () {
 				expect(function () {
 					pact.create({dir: 'M:/nms'});
 				}).to.throw(Error);
 			});
-
 		});
 
 		context("when user specifies invalid ssl", function () {
@@ -119,7 +116,6 @@ describe("Pact Spec", function () {
 					pact.create({ssl: 1});
 				}).to.throw(Error);
 			});
-
 		});
 
 		context("when user specifies invalid cors", function () {
@@ -128,7 +124,6 @@ describe("Pact Spec", function () {
 					pact.create({cors: 1});
 				}).to.throw(Error);
 			});
-
 		});
 
 		context("when user specifies invalid log", function () {
@@ -137,7 +132,6 @@ describe("Pact Spec", function () {
 					pact.create({log: 'abc/123'});
 				}).to.throw(Error);
 			});
-
 		});
 
 		context("when user specifies invalid spec", function () {
@@ -158,7 +152,6 @@ describe("Pact Spec", function () {
 					pact.create({spec: 3.14});
 				}).to.throw(Error);
 			});
-
 		});
 
 		context("when user specifies invalid consumer name", function () {

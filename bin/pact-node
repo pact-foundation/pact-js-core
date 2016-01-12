@@ -2,6 +2,20 @@
 'use strict';
 
 var pact = require('../src/pact');
+var program = require('commander');
+var pkg = require('./../package.json');
 
-// TODO: make this a better command line utility, use commander
-pact.create().start();
+program
+	.version(pkg.version)
+	.option('-p, --port', 'Port on which to run the service. Default is a random port.')
+	.option('-h, --host', 'Host on which to bind the service. Default is localhost.')
+	.option('-l, --log', 'File to which to log output to. Default is none.')
+	.option('-s, --ssl', 'Use a self-signed SSL cert to run the service over HTTPS. Default uses HTTP.')
+	.option('-o, --cors', 'Support browser security in tests by responding to OPTIONS requests and adding CORS headers to mocked responses.')
+	.option('-d, --pact_dir', 'Directory to which the pacts will be written.')
+	.option('-i, --pact_specification_version', 'The Pact specification version to use when writing the Pact files. Default is 1')
+	.option('--consumer', 'Specify consumer name for written Pact files.')
+	.option('--provider', 'Specify provider name for written Pact files.')
+	.parse(process.argv);
+
+pact.create(program).start();

@@ -66,8 +66,8 @@
   },
   "scripts": {
     "clean": "./node_modules/.bin/rimraf logs/*",
-    "lint": "./node_modules/.bin/jscs src",
-    "test": "./node_modules/.bin/mocha -R spec src/**/*.spec.js --timeout 10000",
+    "lint": "./node_modules/.bin/jscs .",
+    "test": "./node_modules/.bin/mocha -R spec ./**/*.spec.js --timeout 10000",
     "watch": "./node_modules/.bin/nodemon -x npm run dev",
     "watch:debug": "./node_modules/.bin/nodemon --debug -q -w assets/ --ext '.' --exec 'npm run lint'",
     "dev": "npm run clean && npm run lint --force && npm test && node .",

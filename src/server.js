@@ -264,7 +264,7 @@ module.exports = function (options) {
 	}
 
 	// dir check
-	check.assert(fs.statSync(path.normalize(options.dir)).isDirectory(), "Error on directory, not a valid directory");
+	check.assert(fs.statSync(path.normalize(options.dir)).isDirectory(), "Error on pact directory, not a valid directory");
 
 	// log check
 	if (options.log) {
