@@ -1,0 +1,20 @@
+language: node_js
+node_js:
+- '0.12'
+- '4.0'
+- '4.1'
+- '4.2'
+- '5.0'
+- '5.1'
+- '5.2'
+- '5.3'
+- '5.4'
+script:
+- npm test
+deploy:
+  - provider: npm
+    email: michelboudreau@gmail.com
+    api_key:
+        secure: nUvKxoOySO2UMM17oU197Yi8fbEWYWx19K/qACTtNp86RVNdEOOgGRzS07CAE6LSBYhLMTWvoKoHDzgm5OVfquChlfhq7wf3P18guIeczDOvBPR8Kp5AufmCCTUMTyIk8tm5BYuAXLtXAiCDxVfDWueG326NrN6L0FOgY0MATrUFO1tJSL9IgIcchG1OzH3oMAUFEeTurefoqoMuJxL3Pn6bLOQRD7jR+03T6mLXNdLi2PxbtS6kTYT2ivuOTAOiiJ+NXyWOxqkWBV3EMCoWCltW2xLENzLfW+58lR+8Bvfco+Wmh/41MpV8IEpVaLISLf/ARvfczHtTFVJ3te2RQUzhGATnKG5r2AZgnZM9r5WEgBeFJEXBJltloz7vSOZV0QS3AP5RZE8z7qlZOhUPYbb4v/Zx+NbZ+SKUZ1wPHHStLdscNocGfO3RxJtCD+C2+STuFVGHTITNLc5K8DYGGRoTbkySnNXnLrCeT9ig1Vh+TCiQQ/jZmEVAESWF5RM7Qx4Dpwkw29P/038uL4yF9J/BpD/JN08e+tyNLsvTQJhJp/O6GFXU4eXmUnwy1u9diQh2hB61adJjfeA6QKihSIpFZzx28+O7TaGBjn7KLqT2yImwFtCzDzhTL/yKAWKP1j3OfYLFTLEqGW4fm5pB8mtKHPYbvaObNnQkAQpn3/k=
+    on:
+      tags: true
