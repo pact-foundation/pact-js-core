@@ -12,5 +12,5 @@ try {
 	process.exit(1);
 }
 
-console.info("pact-node: install successful");
+console.info("pact-node: Platform specific dependency '" + packageName + "' installed successful");
 process.exit(0);
