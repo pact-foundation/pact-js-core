@@ -13,14 +13,15 @@ os:
   - linux
   - osx
 matrix:
+  fast_finish: true
   allow_failures:
     - os: osx
 before_install:
   - if [ $TRAVIS_OS_NAME == "darwin" ]; then
-      - git clone https://github.com/creationix/nvm.git /tmp/.nvm
-      - source /tmp/.nvm/nvm.sh
-      - nvm install $TRAVIS_NODE_VERSION
-      - nvm use $TRAVIS_NODE_VERSION
+      git clone https://github.com/creationix/nvm.git /tmp/.nvm;
+      source /tmp/.nvm/nvm.sh;
+      nvm install $TRAVIS_NODE_VERSION;
+      nvm use $TRAVIS_NODE_VERSION;
     fi
 script:
   - npm test
