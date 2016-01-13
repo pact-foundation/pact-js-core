@@ -1,4 +1,4 @@
-language: objective-c
+language: cpp
 env:
   - NODE_VERSION="0.12"
   - NODE_VERSION="4.0"
