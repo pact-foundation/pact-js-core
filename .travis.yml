@@ -9,8 +9,11 @@ node_js:
 - '5.2'
 - '5.3'
 - '5.4'
+os:
+  - linux
+  - osx
 script:
-- npm test
+  - npm test
 deploy:
   - provider: npm
     email: michelboudreau@gmail.com
