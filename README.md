@@ -1,3 +1,5 @@
+<img src="https://github.com/pact-foundation/pact-logo/blob/master/media/logo-black.png" width="200">
+
 # Pact Node
 
 A wrapper for Ruby Pact for it to work with node.
