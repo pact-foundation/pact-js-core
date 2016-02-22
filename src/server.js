@@ -155,7 +155,7 @@ Server.prototype.start = function () {
 
 	// check service is available
 	check();
-	return deferred.promise;
+	return deferred.promise.timeout(10000, "Couldn't start Pact with PID: " + that.instance.pid);
 };
 
 Server.prototype.stop = function () {
@@ -200,7 +200,9 @@ Server.prototype.stop = function () {
 		}
 	}
 
+	var pid = -1;
 	if (that.instance) {
+		pid = that.instance.pid;
 		console.info('Removing Pact with PID: ' + that.instance.pid);
 		that.instance.removeAllListeners();
 		// Killing instance, since windows can't send signals, must kill process forcefully
@@ -213,7 +215,7 @@ Server.prototype.stop = function () {
 	}
 
 	check();
-	return deferred.promise;
+	return deferred.promise.timeout(10000, "Couldn't stop Pact with PID: " + pid);
 };
 
 Server.prototype.delete = function () {
