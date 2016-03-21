@@ -41,7 +41,7 @@ Server.prototype.start = function () {
   var amount = 0;
 
   function done() {
-    that.emit('stop', that);
+    that.emit('start', that);
     deferred.resolve(that);
   }
 
