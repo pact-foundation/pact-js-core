@@ -1,6 +1,6 @@
 'use strict';
 
-var check = require('check-types'),
+var checkTypes = require('check-types'),
 	_ = require('underscore'),
 	logger = require('./logger'),
 	path = require('path'),
@@ -233,50 +233,50 @@ module.exports = function (options) {
 
 	// port checking
 	if (options.port) {
-		check.assert.number(options.port);
-		check.assert.integer(options.port);
-		check.assert.positive(options.port);
-		check.assert.inRange(options.port, 0, 65535);
+		checkTypes.assert.number(options.port);
+		checkTypes.assert.integer(options.port);
+		checkTypes.assert.positive(options.port);
+		checkTypes.assert.inRange(options.port, 0, 65535);
 
-		if (check.not.inRange(options.port, 1024, 49151)) {
+		if (checkTypes.not.inRange(options.port, 1024, 49151)) {
 			logger.warn("Like a Boss, you used a port outside of the recommended range (1024 to 49151); I too like to live dangerously.");
 		}
 	}
 
 	// ssl check
-	check.assert.boolean(options.ssl);
+	checkTypes.assert.boolean(options.ssl);
 
 	// cors check'
-	check.assert.boolean(options.cors);
+	checkTypes.assert.boolean(options.cors);
 
 	// spec checking
 	if (options.spec) {
-		check.assert.number(options.spec);
-		check.assert.integer(options.spec);
-		check.assert.positive(options.spec);
+		checkTypes.assert.number(options.spec);
+		checkTypes.assert.integer(options.spec);
+		checkTypes.assert.positive(options.spec);
 	}
 
 	// dir check
-	check.assert(fs.statSync(path.normalize(options.dir)).isDirectory(), "Error on pact directory, not a valid directory");
+	checkTypes.assert(fs.statSync(path.normalize(options.dir)).isDirectory(), "Error on pact directory, not a valid directory");
 
 	// log check
 	if (options.log) {
-		check.assert(fs.statSync(path.dirname(path.normalize(options.log))).isDirectory(), "Error on log, not a valid path");
+		checkTypes.assert(fs.statSync(path.dirname(path.normalize(options.log))).isDirectory(), "Error on log, not a valid path");
 	}
 
 	// host check
 	if (options.host) {
-		check.assert.string(options.host);
+		checkTypes.assert.string(options.host);
 	}
 
 	// consumer name check
 	if (options.consumer) {
-		check.assert.string(options.consumer);
+		checkTypes.assert.string(options.consumer);
 	}
 
 	// provider name check
 	if (options.provider) {
-		check.assert.string(options.provider);
+		checkTypes.assert.string(options.provider);
 	}
 
 	return new Server(options.port, options.host, options.dir, options.ssl, options.cors, options.log, options.spec, options.consumer, options.provider);
