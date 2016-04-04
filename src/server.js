@@ -54,29 +54,10 @@ Server.prototype.start = function () {
 		}
 
 		if (this.options.port) {
-			var options = {
-				uri: (this.options.ssl ? 'https' : 'http') + '://' + this.options.host + ':' + this.options.port,
-				method: 'GET',
-				headers: {
-					'X-Pact-Mock-Service': true,
-					'Content-Type': 'application/json'
-				}
-			};
-			if (this.options.ssl) {
-				process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-				options.agentOptions = {};
-				options.agentOptions.rejectUnauthorized = false;
-				options.agentOptions.requestCert = false;
-				options.agentOptions.agent = false;
-			}
-			http(options, (function (error, response) {
-				if (!error && response.statusCode == 200) {
-					this.emit('start', this);
-					deferred.resolve(this);
-				} else {
-					retry.call(this);
-				}
-			}).bind(this));
+			call(this.options).then((function () {
+				this.emit('start', this);
+				deferred.resolve(this);
+			}).bind(this), retry.bind(this));
 		} else {
 			retry.call(this);
 		}
@@ -170,31 +151,12 @@ Server.prototype.stop = function () {
 	function check() {
 		amount++;
 		if (this.options.port) {
-			var options = {
-				uri: (this.options.ssl ? 'https' : 'http') + '://' + this.options.host + ':' + this.options.port,
-				method: 'GET',
-				headers: {
-					'X-Pact-Mock-Service': true,
-					'Content-Type': 'application/json'
+			call(this.options).then((function () {
+				if (amount >= 10) {
+					deferred.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
 				}
-			};
-			if (this.options.ssl) {
-				process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-				options.rejectUnauthorized = false;
-				options.requestCert = false;
-				options.agent = false;
-			}
-			http(options, (function (error, response) {
-				if (!error && response.statusCode == 200) {
-					if (amount >= 10) {
-						deferred.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
-					}
-					setTimeout(check.bind(this), CHECKTIME);
-				} else {
-					this.emit('stop', this);
-					deferred.resolve(this);
-				}
-			}).bind(this));
+				setTimeout(check.bind(this), CHECKTIME);
+			}).bind(this), done.bind(this));
 		} else {
 			done.call(this);
 		}
@@ -225,6 +187,34 @@ Server.prototype.delete = function () {
 		return this;
 	}).bind(this));
 };
+
+function call(options) {
+	var deferred = q.defer();
+	var config = {
+		uri: (options.ssl ? 'https' : 'http') + '://' + options.host + ':' + options.port,
+		method: 'GET',
+		headers: {
+			'X-Pact-Mock-Service': true,
+			'Content-Type': 'application/json'
+		}
+	};
+	if (options.ssl) {
+		process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+		config.agentOptions = {};
+		config.agentOptions.rejectUnauthorized = false;
+		config.agentOptions.requestCert = false;
+		config.agentOptions.agent = false;
+	}
+	http(config, function (error, response) {
+		if (!error && response.statusCode == 200) {
+			deferred.resolve();
+		} else {
+			deferred.reject();
+		}
+	});
+
+	return deferred.promise;
+}
 
 // Creates a new instance of the pact server with the specified option
 module.exports = function (options) {

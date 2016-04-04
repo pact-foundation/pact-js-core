@@ -40,7 +40,6 @@ describe("Server Spec", function () {
 				fs.rmdir(dirPath, done);
 			});
 
-			// TODO: Fix SSL, some kind of horrible issues with Ruby 1.9.3 and SSL on the Pact Mock Service side
 			it("should start correctly with ssl", function (done) {
 				server = serverFactory({ssl: true});
 				server.start().then(function () {
