@@ -112,6 +112,22 @@ describe("Server Spec", function () {
 				});
 			});
 		});
+
+		it("should dispatch event when starting", function (done) {
+			server = serverFactory();
+			server.once('start', function () {
+				done();
+			});
+			server.start();
+		});
+
+		it("should change running state to true", function (done) {
+			server = serverFactory();
+			server.start().then(function () {
+				expect(server.running).to.be.true;
+				done();
+			});
+		});
 	});
 
 	describe("Stop server", function () {
@@ -121,6 +137,26 @@ describe("Server Spec", function () {
 				server.start().then(function () {
 					return server.stop();
 				}).then(function () {
+					done();
+				});
+			});
+
+			it("should dispatch event when stopping", function (done) {
+				server = serverFactory();
+				server.once('stop', function () {
+					done();
+				});
+				server.start().then(function () {
+					server.stop();
+				});
+			});
+
+			it("should change running state to false", function (done) {
+				server = serverFactory();
+				server.start().then(function () {
+					return server.stop();
+				}).then(function () {
+					expect(server.running).to.be.false;
 					done();
 				});
 			});
@@ -134,6 +170,26 @@ describe("Server Spec", function () {
 				server.start().then(function () {
 					return server.delete();
 				}).then(function () {
+					done();
+				});
+			});
+
+			it("should dispatch event when deleting", function (done) {
+				server = serverFactory();
+				server.once('delete', function () {
+					done();
+				});
+				server.start().then(function () {
+					server.delete();
+				});
+			});
+
+			it("should change running state to false", function (done) {
+				server = serverFactory();
+				server.start().then(function () {
+					return server.delete();
+				}).then(function () {
+					expect(server.running).to.be.false;
 					done();
 				});
 			});

@@ -33,6 +33,7 @@ function Server(port, host, dir, ssl, cors, log, spec, consumer, provider) {
 	this.options.spec = spec;
 	this.options.consumer = consumer;
 	this.options.provider = provider;
+	this.running = false;
 }
 
 util.inherits(Server, eventEmitter);
@@ -55,6 +56,7 @@ Server.prototype.start = function () {
 
 		if (this.options.port) {
 			call(this.options).then((function () {
+				this.running = true;
 				this.emit('start', this);
 				deferred.resolve(this);
 			}).bind(this), retry.bind(this));
@@ -144,6 +146,7 @@ Server.prototype.stop = function () {
 	var amount = 0;
 
 	function done() {
+		this.running = false;
 		this.emit('stop', this);
 		deferred.resolve(this);
 	}
