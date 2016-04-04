@@ -15,7 +15,8 @@ describe("Pact Spec", function () {
 			it("should use defaults and return serverFactory", function () {
 				var server = pact.create();
 				expect(server).to.be.an('object');
-				expect(server).to.contain.all.keys(['port', 'cors', 'ssl', 'host', 'dir', 'log', 'spec', 'consumer', 'provider']);
+				expect(server.options).to.be.an('object');
+				expect(server.options).to.contain.all.keys(['port', 'cors', 'ssl', 'host', 'dir', 'log', 'spec', 'consumer', 'provider']);
 				expect(server.start).to.be.a('function');
 				expect(server.stop).to.be.a('function');
 				expect(server.delete).to.be.a('function');
@@ -47,15 +48,16 @@ describe("Pact Spec", function () {
 				};
 				var server = pact.create(options);
 				expect(server).to.be.an('object');
-				expect(server.port).to.equal(options.port);
-				expect(server.host).to.equal(options.host);
-				expect(server.dir).to.equal(options.dir);
-				expect(server.ssl).to.equal(options.ssl);
-				expect(server.cors).to.equal(options.cors);
-				expect(server.log).to.equal(options.log);
-				expect(server.spec).to.equal(options.spec);
-				expect(server.consumer).to.equal(options.consumer);
-				expect(server.provider).to.equal(options.provider);
+				expect(server.options).to.be.an('object');
+				expect(server.options.port).to.equal(options.port);
+				expect(server.options.host).to.equal(options.host);
+				expect(server.options.dir).to.equal(options.dir);
+				expect(server.options.ssl).to.equal(options.ssl);
+				expect(server.options.cors).to.equal(options.cors);
+				expect(server.options.log).to.equal(options.log);
+				expect(server.options.spec).to.equal(options.spec);
+				expect(server.options.consumer).to.equal(options.consumer);
+				expect(server.options.provider).to.equal(options.provider);
 			});
 		});
 

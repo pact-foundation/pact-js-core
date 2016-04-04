@@ -44,7 +44,7 @@ describe("Server Spec", function () {
 			it("should start correctly with ssl", function (done) {
 				server = serverFactory({ssl: true});
 				server.start().then(function () {
-					expect(server.ssl).to.equal(true);
+					expect(server.options.ssl).to.equal(true);
 					done();
 				});
 			});
@@ -52,7 +52,7 @@ describe("Server Spec", function () {
 			it("should start correctly with cors", function (done) {
 				server = serverFactory({cors: true});
 				server.start().then(function () {
-					expect(server.cors).to.equal(true);
+					expect(server.options.cors).to.equal(true);
 					done();
 				});
 			});
@@ -60,7 +60,7 @@ describe("Server Spec", function () {
 			it("should start correctly with port", function (done) {
 				server = serverFactory({port: 9500});
 				server.start().then(function () {
-					expect(server.port).to.equal(9500);
+					expect(server.options.port).to.equal(9500);
 					done();
 				});
 			});
@@ -68,7 +68,7 @@ describe("Server Spec", function () {
 			it("should start correctly with host", function (done) {
 				server = serverFactory({host: 'localhost'});
 				server.start().then(function () {
-					expect(server.host).to.equal('localhost');
+					expect(server.options.host).to.equal('localhost');
 					done();
 				});
 			});
@@ -76,7 +76,7 @@ describe("Server Spec", function () {
 			it("should start correctly with spec", function (done) {
 				server = serverFactory({spec: 1});
 				server.start().then(function () {
-					expect(server.spec).to.equal(1);
+					expect(server.options.spec).to.equal(1);
 					done();
 				});
 			});
@@ -84,7 +84,7 @@ describe("Server Spec", function () {
 			it("should start correctly with dir", function (done) {
 				server = serverFactory({dir: dirPath});
 				server.start().then(function () {
-					expect(server.dir).to.equal(dirPath);
+					expect(server.options.dir).to.equal(dirPath);
 					done();
 				});
 			});
@@ -92,7 +92,7 @@ describe("Server Spec", function () {
 			it("should start correctly with log", function (done) {
 				server = serverFactory({log: 'log.txt'});
 				server.start().then(function () {
-					expect(server.log).to.equal('log.txt');
+					expect(server.options.log).to.equal('log.txt');
 					done();
 				});
 			});
@@ -100,7 +100,7 @@ describe("Server Spec", function () {
 			it("should start correctly with consumer name", function (done) {
 				server = serverFactory({consumer: 'cName'});
 				server.start().then(function () {
-					expect(server.consumer).to.equal('cName');
+					expect(server.options.consumer).to.equal('cName');
 					done();
 				});
 			});
@@ -108,7 +108,7 @@ describe("Server Spec", function () {
 			it("should start correctly with provider name", function (done) {
 				server = serverFactory({provider: 'pName'});
 				server.start().then(function () {
-					expect(server.provider).to.equal('pName');
+					expect(server.options.provider).to.equal('pName');
 					done();
 				});
 			});

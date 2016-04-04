@@ -1,12 +1,13 @@
 'use strict';
 
 var check = require('check-types'),
+	_ = require('underscore'),
+	logger = require('./logger'),
 	path = require('path'),
 	fs = require('fs'),
 	cp = require('child_process'),
 	eventEmitter = require('events').EventEmitter,
-	http = require('http'),
-	https = require('https'),
+	http = require('request'),
 	q = require('q'),
 	util = require('util');
 var isWindows = process.platform === 'win32';
@@ -20,30 +21,27 @@ var packagePath = require.resolve(packageName);
 
 var CHECKTIME = 500;
 
+// Constructor
 function Server(port, host, dir, ssl, cors, log, spec, consumer, provider) {
-	this.port = port;
-	this.host = host;
-	this.dir = dir;
-	this.ssl = ssl;
-	this.cors = cors;
-	this.log = log;
-	this.spec = spec;
-	this.consumer = consumer;
-	this.provider = provider;
+	this.options = {};
+	this.options.port = port;
+	this.options.host = host;
+	this.options.dir = dir;
+	this.options.ssl = ssl;
+	this.options.cors = cors;
+	this.options.log = log;
+	this.options.spec = spec;
+	this.options.consumer = consumer;
+	this.options.provider = provider;
 }
 
 util.inherits(Server, eventEmitter);
 
+// Let the mocking begin!
 Server.prototype.start = function () {
 	var deferred = q.defer();
-	var that = this;
 	// Wait for pact-mock-service to be initialized and ready
 	var amount = 0;
-
-	function done() {
-		that.emit('stop', that);
-		deferred.resolve(that);
-	}
 
 	function check() {
 		amount++;
@@ -52,41 +50,44 @@ Server.prototype.start = function () {
 			if (amount >= 10) {
 				deferred.reject(new Error("Pact startup failed; tried calling service 10 times with no result."));
 			}
-			setTimeout(check, CHECKTIME);
+			setTimeout(check.bind(this), CHECKTIME);
 		}
 
-		if (that.port) {
+		if (this.options.port) {
 			var options = {
-				host: that.host,
-				port: that.port,
-				path: '/',
+				uri: (this.options.ssl ? 'https' : 'http') + '://' + this.options.host + ':' + this.options.port,
 				method: 'GET',
 				headers: {
 					'X-Pact-Mock-Service': true,
 					'Content-Type': 'application/json'
 				}
 			};
-			var requester = http.request;
-			if (that.ssl) {
-				requester = https.request;
+			if (this.options.ssl) {
 				process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
-				options.rejectUnauthorized = false;
-				options.requestCert = false;
-				options.agent = false;
+				options.agentOptions = {};
+				options.agentOptions.rejectUnauthorized = false;
+				options.agentOptions.requestCert = false;
+				options.agentOptions.agent = false;
 			}
-			requester(options, done).on('error', retry).end();
+			http(options, (function (error, response) {
+				if (!error && response.statusCode == 200) {
+					this.emit('start', this);
+					deferred.resolve(this);
+				} else {
+					retry.call(this);
+				}
+			}).bind(this));
 		} else {
-			retry();
+			retry.call(this);
 		}
 	}
 
-	if (that.instance && that.instance.connected) {
-		console.warn('You already have a process running with PID: ' + that.instance.pid);
-		check();
+	if (this.instance && this.instance.connected) {
+		logger.warn('You already have a process running with PID: ' + this.instance.pid);
+		check.call(this);
 		return;
 	}
 	var file,
-		args = [],
 		opts = {
 			cwd: path.resolve(packagePath, '..'),
 			detached: !isWindows
@@ -103,11 +104,9 @@ Server.prototype.start = function () {
 			'provider': '--provider'
 		};
 
-	for (var key in mapping) {
-		if (that[key]) {
-			args.push(mapping[key] + ' ' + that[key]);
-		}
-	}
+	var args = _.compact(_.map(mapping, (function (value, key) {
+		return this.options[key] ? value + ' ' + this.options[key] : null;
+	}).bind(this)));
 
 	var cmd = [packagePath.split(path.sep).pop()].concat(args).join(' ');
 
@@ -121,111 +120,113 @@ Server.prototype.start = function () {
 		args = ['-c', cmd];
 	}
 
-	that.instance = cp.spawn(file, args, opts);
+	this.instance = cp.spawn(file, args, opts);
 
-	that.instance.stdout.setEncoding('utf8');
-	that.instance.stdout.on('data', console.log);
-	that.instance.stderr.setEncoding('utf8');
-	that.instance.stderr.on('data', console.log);
-	that.instance.on('error', console.error);
+	this.instance.stdout.setEncoding('utf8');
+	this.instance.stdout.on('data', logger.debug.bind(logger));
+	this.instance.stderr.setEncoding('utf8');
+	this.instance.stderr.on('data', logger.debug.bind(logger));
+	this.instance.on('error', logger.error.bind(logger));
 
 	// if port isn't specified, listen for it when pact runs
 	function catchPort(data) {
 		var match = data.match(/port=([0-9]+)/);
 		if (match && match[1]) {
-			that.port = parseInt(match[1]);
-			that.instance.stdout.removeListener('data', catchPort);
-			that.instance.stderr.removeListener('data', catchPort);
+			this.options.port = parseInt(match[1]);
+			this.instance.stdout.removeListener('data', catchPort.bind(this));
+			this.instance.stderr.removeListener('data', catchPort.bind(this));
 		}
 	}
 
-	if (!that.port) {
-		that.instance.stdout.on('data', catchPort);
-		that.instance.stderr.on('data', catchPort);
+	if (!this.options.port) {
+		this.instance.stdout.on('data', catchPort.bind(this));
+		this.instance.stderr.on('data', catchPort.bind(this));
 	}
 
-	console.info('Creating Pact with PID: ' + that.instance.pid);
+	logger.info('Creating Pact with PID: ' + this.instance.pid);
 
-	that.instance.on('close', function (code) {
+	this.instance.once('close', (function (code) {
 		if (code !== 0) {
-			console.warn('Pact exited with code ' + code + '.');
+			logger.warn('Pact exited with code ' + code + '.');
 		}
-		that.stop();
-	});
+		this.stop();
+	}).bind(this));
 
 	// check service is available
-	check();
-	return deferred.promise.timeout(10000, "Couldn't start Pact with PID: " + that.instance.pid);
+	check.call(this);
+	return deferred.promise.timeout(10000, "Couldn't start Pact with PID: " + this.instance.pid);
 };
 
+// Stop the server instance, no more mocking
 Server.prototype.stop = function () {
 	var deferred = q.defer();
-	var that = this;
 	var amount = 0;
 
 	function done() {
-		that.emit('stop', that);
-		deferred.resolve(that);
+		this.emit('stop', this);
+		deferred.resolve(this);
 	}
 
 	function check() {
 		amount++;
-		if (that.port) {
+		if (this.options.port) {
 			var options = {
-				host: that.host,
-				port: that.port,
-				path: '/',
+				uri: (this.options.ssl ? 'https' : 'http') + '://' + this.options.host + ':' + this.options.port,
 				method: 'GET',
 				headers: {
 					'X-Pact-Mock-Service': true,
 					'Content-Type': 'application/json'
 				}
 			};
-			var requester = http.request;
-			if (that.ssl) {
-				requester = https.request;
+			if (this.options.ssl) {
 				process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 				options.rejectUnauthorized = false;
 				options.requestCert = false;
 				options.agent = false;
 			}
-			requester(options, function () {
-				if (amount >= 10) {
-					deferred.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
+			http(options, (function (error, response) {
+				if (!error && response.statusCode == 200) {
+					if (amount >= 10) {
+						deferred.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
+					}
+					setTimeout(check.bind(this), CHECKTIME);
+				} else {
+					this.emit('stop', this);
+					deferred.resolve(this);
 				}
-				setTimeout(check, CHECKTIME);
-			}).on('error', done).end();
+			}).bind(this));
 		} else {
-			done();
+			done.call(this);
 		}
 	}
 
 	var pid = -1;
-	if (that.instance) {
-		pid = that.instance.pid;
-		console.info('Removing Pact with PID: ' + that.instance.pid);
-		that.instance.removeAllListeners();
+	if (this.instance) {
+		pid = this.instance.pid;
+		logger.info('Removing Pact with PID: ' + this.instance.pid);
+		this.instance.removeAllListeners();
 		// Killing instance, since windows can't send signals, must kill process forcefully
 		if (isWindows) {
-			cp.execSync('taskkill /f /t /pid ' + that.instance.pid);
+			cp.execSync('taskkill /f /t /pid ' + this.instance.pid);
 		} else {
-			process.kill(-that.instance.pid, 'SIGKILL');
+			process.kill(-this.instance.pid, 'SIGKILL');
 		}
-		that.instance = undefined;
+		this.instance = undefined;
 	}
 
-	check();
+	check.call(this);
 	return deferred.promise.timeout(10000, "Couldn't stop Pact with PID: " + pid);
 };
 
+// Deletes this server instance and emit an event
 Server.prototype.delete = function () {
-	var that = this;
-	return that.stop().then(function () {
-		that.emit('delete', that);
-		return that;
-	});
+	return this.stop().then((function () {
+		this.emit('delete', this);
+		return this;
+	}).bind(this));
 };
 
+// Creates a new instance of the pact server with the specified option
 module.exports = function (options) {
 	options = options || {};
 
@@ -248,7 +249,7 @@ module.exports = function (options) {
 		check.assert.inRange(options.port, 0, 65535);
 
 		if (check.not.inRange(options.port, 1024, 49151)) {
-			console.warn("Like a Boss, you used a port outside of the recommended range (1024 to 49151); I too like to live dangerously.");
+			logger.warn("Like a Boss, you used a port outside of the recommended range (1024 to 49151); I too like to live dangerously.");
 		}
 	}
 
