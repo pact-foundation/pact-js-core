@@ -1,5 +1,5 @@
 {
-  "name": "@pact/pact-node",
+  "name": "@pact-foundation/pact-node",
   "version": "2.0.0",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "./src/pact.js",
