@@ -13,7 +13,7 @@
     "ia32"
   ],
   "engine": {
-    "node": ">=4.0"
+    "node": ">=0.12"
   },
   "repository": {
     "type": "git",
