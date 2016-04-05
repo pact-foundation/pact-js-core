@@ -76,7 +76,6 @@
     "watch": "./node_modules/.bin/nodemon -x npm run dev",
     "watch:debug": "./node_modules/.bin/nodemon --debug -q -w assets/ --ext '.' --exec 'npm run lint'",
     "dev": "npm run clean && npm run lint --force && npm test && node .",
-    "start": "npm run watch",
-    "prepublish": "npm test"
+    "start": "npm run watch"
   }
 }
