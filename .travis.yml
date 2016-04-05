@@ -14,8 +14,6 @@ os:
 - osx
 matrix:
   fast_finish: true
-script:
-- npm test
 deploy:
 - provider: npm
   skip_cleanup: true
