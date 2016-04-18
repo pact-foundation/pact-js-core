@@ -36,7 +36,7 @@
   },
   "dependencies": {
     "bunyan": "^1.8.0",
-    "check-types": "~3.3.1",
+    "check-types": "~6.0.0",
     "commander": "^2.9.0",
     "q": "^1.4.1",
     "request": "^2.69.0",

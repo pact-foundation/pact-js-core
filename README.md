@@ -1,4 +1,4 @@
-<img src="https://github.com/pact-foundation/pact-logo/blob/master/media/logo-black.png" width="200">
+<img src="https://raw.githubusercontent.com/pact-foundation/pact-logo/master/media/logo-black.png" width="200">
 
 # Pact Node
 
@@ -27,7 +27,7 @@ server.start().then(function() {
 ```js
 var pact = require('@pact-foundation/pact-node');
 var server = pact.create({
-	port: <Number>, // Port number that the server runs on, defaults to random
+	port: <Number>, // Port number that the server runs on, defaults to 1234
 	host: <String>, // Host on which to bind the server on, defaults to 'localhost'
 	log: <String>, // File to log output on relative to current working directory, defaults to none
 	ssl: <Boolean>, // Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'

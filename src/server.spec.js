@@ -124,7 +124,7 @@ describe("Server Spec", function () {
 		it("should change running state to true", function (done) {
 			server = serverFactory();
 			server.start().then(function () {
-				expect(server.running).to.be.true;
+				expect(server.$running).to.be.true;
 				done();
 			});
 		});
@@ -156,7 +156,7 @@ describe("Server Spec", function () {
 				server.start().then(function () {
 					return server.stop();
 				}).then(function () {
-					expect(server.running).to.be.false;
+					expect(server.$running).to.be.false;
 					done();
 				});
 			});
@@ -189,7 +189,7 @@ describe("Server Spec", function () {
 				server.start().then(function () {
 					return server.delete();
 				}).then(function () {
-					expect(server.running).to.be.false;
+					expect(server.$running).to.be.false;
 					done();
 				});
 			});
