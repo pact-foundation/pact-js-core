@@ -1,26 +1,19 @@
-language: cpp
-env:
-- NODE_VERSION="0.12"
-- NODE_VERSION="4.0"
-- NODE_VERSION="4.1"
-- NODE_VERSION="4.2"
-- NODE_VERSION="5.0"
-- NODE_VERSION="5.1"
-- NODE_VERSION="5.2"
-- NODE_VERSION="5.3"
-- NODE_VERSION="5.4"
+language: node_js
+node_js:
+- '0.12'
+- '4.0'
+- '4.1'
+- '4.2'
+- '5.0'
+- '5.1'
+- '5.2'
+- '5.3'
+- '5.4'
 os:
 - linux
 - osx
 matrix:
   fast_finish: true
-before_install:
-- git clone https://github.com/creationix/nvm.git /tmp/.nvm; source /tmp/.nvm/nvm.sh;
-  nvm install $NODE_VERSION; nvm use --delete-prefix $NODE_VERSION;
-install:
-- npm install
-script:
-- npm test
 deploy:
 - provider: npm
   skip_cleanup: true

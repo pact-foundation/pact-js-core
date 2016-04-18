@@ -72,8 +72,7 @@
     "watch": "nodemon -x npm run dev",
     "watch:debug": "nodemon --debug -q -w assets/ --ext '.' --exec 'npm run lint'",
     "dev": "npm run clean && npm run lint --force && npm test && node .",
-    "start": "npm run watch",
-    "prepublish": "npm test"
+    "start": "npm run watch"
   },
   "homepage": "https://github.com/pact-foundation/pact-node#readme"
 }
