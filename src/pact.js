@@ -7,6 +7,16 @@ var logger = require('./logger'),
 
 var servers = [];
 
+function stringify(obj) {
+	var arr = [];
+	for(var k in obj) {
+		if(obj[k] !== undefined) {
+			arr.push(k + '=' + obj[k]);
+		}
+	}
+	return arr.join(', ');
+}
+
 // Creates server with specified options
 function create(options) {
 	if (options && options.port && _.some(servers, function(s) { return s.options.port == options.port })) {
@@ -17,11 +27,11 @@ function create(options) {
 
 	var server = serverFactory(options);
 	servers.push(server);
-	logger.info('Creating Pact Server with options: ' + JSON.stringify(server.options));
+	logger.info('Creating Pact Server with options: ' + stringify(server.options));
 
 	// Listen to server delete events, to remove from server list
 	server.once('delete', function (server) {
-		logger.info('Deleting Pact Server with options: ' + JSON.stringify(server.options));
+		logger.info('Deleting Pact Server with options: ' + stringify(server.options));
 		servers = _.without(servers, server);
 	});
 
