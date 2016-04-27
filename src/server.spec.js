@@ -72,10 +72,18 @@ describe("Server Spec", function () {
 				});
 			});
 
-			it("should start correctly with spec", function (done) {
+			it("should start correctly with spec version 1", function (done) {
 				server = serverFactory({spec: 1});
 				server.start().then(function () {
 					expect(server.options.spec).to.equal(1);
+					done();
+				});
+			});
+
+			it("should start correctly with spec version 2", function (done) {
+				server = serverFactory({spec: 2});
+				server.start().then(function () {
+					expect(server.options.spec).to.equal(2);
 					done();
 				});
 			});

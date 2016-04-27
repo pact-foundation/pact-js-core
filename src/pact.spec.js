@@ -182,18 +182,18 @@ describe("Pact Spec", function () {
 
 		context("when called and there are servers in list", function () {
 			it("should return a list of all servers", function () {
-				pact.create({port: 9200});
-				pact.create({port: 9300});
-				pact.create({port: 9400});
+				pact.create({port: 1234});
+				pact.create({port: 1235});
+				pact.create({port: 1236});
 				expect(pact.list()).to.have.length(3);
 			});
 		});
 
 		context("when server is removed", function () {
 			it("should update the list", function (done) {
-				pact.create({port: 9200});
-				pact.create({port: 9300});
-				pact.create({port: 9400}).delete().then(function () {
+				pact.create({port: 1234});
+				pact.create({port: 1235});
+				pact.create({port: 1236}).delete().then(function () {
 					expect(pact.list()).to.have.length(2);
 					done();
 				});
@@ -204,9 +204,9 @@ describe("Pact Spec", function () {
 	describe("Remove all servers", function () {
 		context("when removeAll() is called and there are servers to remove", function () {
 			it("should remove all servers", function (done) {
-				pact.create({port: 9200});
-				pact.create({port: 9300});
-				pact.create({port: 9400});
+				pact.create({port: 1234});
+				pact.create({port: 1235});
+				pact.create({port: 1236});
 				pact.removeAll().then(function () {
 					expect(pact.list()).to.be.empty;
 					done();
