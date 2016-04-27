@@ -82,10 +82,10 @@ describe("Pact CLI Spec", function () {
 
 	describe("run pact-node command", function () {
 		context("when no options are set", function () {
-			it("should use defaults and start running", function (done) {
-				//spawn();
-
-			});
+			/*it("should use defaults and start running", function (done) {
+				spawn();
+				done();
+			});*/
 		});
 
 		/*context("when user specifies valid options", function () {
