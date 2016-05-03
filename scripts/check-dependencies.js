@@ -1,16 +1,20 @@
-var arch = "";
-if (process.platform === 'linux') {
-	arch = '-' + process.arch;
+var pkg = require('../package.json');
+var success = false;
+var packageName;
+for (packageName in pkg.optionalDependencies) {
+	if (packageName.indexOf('pact-mock-service') !== -1) {
+		try {
+			require.resolve(packageName);
+			success = true;
+			break;
+		} catch (e) {}
+	}
 }
-var packageName = 'pact-mock-service-' + process.platform + arch;
 
-// Check to see if we can resolve the proper package for this computer
-try {
-	require.resolve(packageName);
-} catch (e) {
+if(success) {
+	console.info("pact-node: Platform specific dependency '" + packageName + "' installed successful");
+	process.exit(0);
+}else{
 	console.error("pact-node: Cannot resolve module '" + packageName + "'. Download/install must of failed, please try again.");
 	process.exit(1);
 }
-
-console.info("pact-node: Platform specific dependency '" + packageName + "' installed successful");
-process.exit(0);

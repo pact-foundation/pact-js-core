@@ -23,3 +23,6 @@ deploy:
   on:
     branch: master
     tags: true
+after_failure:
+- cat .npmrc
+- find . -iname '*.log' -print0 | xargs -0 cat
