@@ -16,7 +16,7 @@ var arch = "";
 if (process.platform === 'linux') {
 	arch = '-' + process.arch;
 }
-var packageName = 'pact-mock-service-' + process.platform + arch;
+var packageName = '@pact-foundation/pact-mock-service-' + process.platform + arch;
 var packagePath = require.resolve(packageName);
 
 var CHECKTIME = 500;
@@ -168,13 +168,13 @@ Server.prototype.stop = function () {
 	var pid = -1;
 	if (this.instance) {
 		pid = this.instance.pid;
-		logger.info('Removing Pact with PID: ' + this.instance.pid);
+		logger.info('Removing Pact with PID: ' + pid);
 		this.instance.removeAllListeners();
 		// Killing instance, since windows can't send signals, must kill process forcefully
 		if (isWindows) {
-			cp.execSync('taskkill /f /t /pid ' + this.instance.pid);
+			cp.execSync('taskkill /f /t /pid ' + pid);
 		} else {
-			process.kill(-this.instance.pid, 'SIGKILL');
+			process.kill(-pid, 'SIGINT');
 		}
 		this.instance = undefined;
 	}
