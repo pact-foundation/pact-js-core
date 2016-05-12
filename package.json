@@ -24,11 +24,14 @@
     "node",
     "wrapper",
     "mock",
-    "service"
+    "service",
+    "provider",
+    "verifier"
   ],
   "author": "Michel Boudreau <michelboudreau@gmail.com> (codinghitchhiker.com)",
   "contributors": [
-    "David Stanciu <davidstanciu29@gmail.com> (https://github.com/dstanciu29)"
+    "David Stanciu <davidstanciu29@gmail.com> (https://github.com/dstanciu29)",
+    "Matt Fellows <m@onegeek.com.au> (http://www.onegeek.com.au)"
   ],
   "license": "MIT",
   "bugs": {
@@ -44,11 +47,25 @@
     "underscore": "^1.8.3",
     "@pact-foundation/pact-mock-service": "0.8.6"
   },
+  "optionalDependencies": {
+    "@pact-foundation/pact-mock-service-linux-ia32": "0.8.6",
+    "@pact-foundation/pact-mock-service-linux-x64": "0.8.6",
+    "@pact-foundation/pact-mock-service-win32": "0.8.6",
+    "@pact-foundation/pact-mock-service-darwin": "0.8.6",
+    "@pact-foundation/pact-provider-verifier-linux-ia32": "0.0.3",
+    "@pact-foundation/pact-provider-verifier-linux-x64": "0.0.3",
+    "@pact-foundation/pact-provider-verifier-win32": "0.0.3",
+    "@pact-foundation/pact-provider-verifier-darwin": "0.0.3"
+  },
   "bin": {
     "pact": "./bin/pact-node"
   },
   "devDependencies": {
+    "body-parser": "^1.15.1",
     "chai": "^3.2.0",
+    "chai-as-promised": "^5.3.0",
+    "cors": "^2.7.1",
+    "express": "^4.13.4",
     "jscs": "^2.1.0",
     "mocha": "^2.2.5",
     "nodemon": "^1.4.1",

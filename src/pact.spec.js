@@ -1,11 +1,17 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
 
 var expect = require('chai').expect,
-	pact = require('./pact.js');
+	pact = require('./pact.js'),
+	path = require('path');
+	chai = require("chai"),
+	chaiAsPromised = require("chai-as-promised"),
+	provider = require('./integration/provider.js');
+
+chai.use(chaiAsPromised);
 
 describe("Pact Spec", function () {
 	afterEach(function (done) {
-		pact.removeAll().then(function () {
+		pact.removeAllServers().then(function () {
 			done();
 		});
 	});
@@ -13,7 +19,7 @@ describe("Pact Spec", function () {
 	describe("Create serverFactory", function () {
 		context("when no options are set", function () {
 			it("should use defaults and return serverFactory", function () {
-				var server = pact.create();
+				var server = pact.createServer();
 				expect(server).to.be.an('object');
 				expect(server.options).to.be.an('object');
 				expect(server.options).to.contain.all.keys(['port', 'cors', 'ssl', 'host', 'dir', 'log', 'spec', 'consumer', 'provider']);
@@ -46,7 +52,7 @@ describe("Pact Spec", function () {
 					consumer: 'consumerName',
 					provider: 'providerName'
 				};
-				var server = pact.create(options);
+				var server = pact.createServer(options);
 				expect(server).to.be.an('object');
 				expect(server.options).to.be.an('object');
 				expect(server.options.port).to.equal(options.port);
@@ -64,34 +70,34 @@ describe("Pact Spec", function () {
 		context("when user specifies invalid port", function () {
 			it("should return an error on negative port number", function () {
 				expect(function () {
-					pact.create({port: -42})
+					pact.createServer({port: -42})
 				}).to.throw(Error);
 			});
 
 			it("should return an error on non-integer", function () {
 				expect(function () {
-					pact.create({port: 42.42});
+					pact.createServer({port: 42.42});
 				}).to.throw(Error);
 			});
 
 			it("should return an error on non-number", function () {
 				expect(function () {
-					pact.create({port: '99'});
+					pact.createServer({port: '99'});
 				}).to.throw(Error);
 			});
 
 			it("should return an error on outside port range", function () {
 				expect(function () {
-					pact.create({port: 99999});
+					pact.createServer({port: 99999});
 				}).to.throw(Error);
 			});
 		});
 
 		context("when user specifies port that's currently in use", function () {
 			it("should return a port conflict error", function () {
-				pact.create({port: 5100});
+				pact.createServer({port: 5100});
 				expect(function () {
-					pact.create({port: 5100})
+					pact.createServer({port: 5100})
 				}).to.throw(Error);
 			});
 		});
@@ -99,7 +105,7 @@ describe("Pact Spec", function () {
 		context("when user specifies invalid host", function () {
 			it("should return an error on non-string", function () {
 				expect(function () {
-					pact.create({host: 12});
+					pact.createServer({host: 12});
 				}).to.throw(Error);
 			});
 		});
@@ -107,7 +113,7 @@ describe("Pact Spec", function () {
 		context("when user specifies invalid pact directory", function () {
 			it("should return an error on invalid path", function () {
 				expect(function () {
-					pact.create({dir: 'M:/nms'});
+					pact.createServer({dir: 'M:/nms'});
 				}).to.throw(Error);
 			});
 		});
@@ -115,7 +121,7 @@ describe("Pact Spec", function () {
 		context("when user specifies invalid ssl", function () {
 			it("should return an error on non-boolean", function () {
 				expect(function () {
-					pact.create({ssl: 1});
+					pact.createServer({ssl: 1});
 				}).to.throw(Error);
 			});
 		});
@@ -123,7 +129,7 @@ describe("Pact Spec", function () {
 		context("when user specifies invalid cors", function () {
 			it("should return an error on non-boolean", function () {
 				expect(function () {
-					pact.create({cors: 1});
+					pact.createServer({cors: 1});
 				}).to.throw(Error);
 			});
 		});
@@ -131,7 +137,7 @@ describe("Pact Spec", function () {
 		context("when user specifies invalid log", function () {
 			it("should return an error on invalid path", function () {
 				expect(function () {
-					pact.create({log: 'abc/123'});
+					pact.createServer({log: 'abc/123'});
 				}).to.throw(Error);
 			});
 		});
@@ -139,19 +145,19 @@ describe("Pact Spec", function () {
 		context("when user specifies invalid spec", function () {
 			it("should return an error on non-number", function () {
 				expect(function () {
-					pact.create({spec: '1'});
+					pact.createServer({spec: '1'});
 				}).to.throw(Error);
 			});
 
 			it("should return an error on negative number", function () {
 				expect(function () {
-					pact.create({spec: -12});
+					pact.createServer({spec: -12});
 				}).to.throw(Error);
 			});
 
 			it("should return an error on non-integer", function () {
 				expect(function () {
-					pact.create({spec: 3.14});
+					pact.createServer({spec: 3.14});
 				}).to.throw(Error);
 			});
 		});
@@ -159,7 +165,7 @@ describe("Pact Spec", function () {
 		context("when user specifies invalid consumer name", function () {
 			it("should return an error on non-string", function () {
 				expect(function () {
-					pact.create({consumer: 1234});
+					pact.createServer({consumer: 1234});
 				}).to.throw(Error);
 			});
 		});
@@ -167,7 +173,7 @@ describe("Pact Spec", function () {
 		context("when user specifies invalid provider name", function () {
 			it("should return an error on non-string", function () {
 				expect(function () {
-					pact.create({provider: 2341});
+					pact.createServer({provider: 2341});
 				}).to.throw(Error);
 			});
 		});
@@ -176,25 +182,25 @@ describe("Pact Spec", function () {
 	describe("List servers", function () {
 		context("when called and there are no servers", function () {
 			it("should return an empty list", function () {
-				expect(pact.list()).to.be.empty;
+				expect(pact.listServers()).to.be.empty;
 			});
 		});
 
 		context("when called and there are servers in list", function () {
 			it("should return a list of all servers", function () {
-				pact.create({port: 1234});
-				pact.create({port: 1235});
-				pact.create({port: 1236});
-				expect(pact.list()).to.have.length(3);
+				pact.createServer({port: 1234});
+				pact.createServer({port: 1235});
+				pact.createServer({port: 1236});
+				expect(pact.listServers()).to.have.length(3);
 			});
 		});
 
 		context("when server is removed", function () {
 			it("should update the list", function (done) {
-				pact.create({port: 1234});
-				pact.create({port: 1235});
-				pact.create({port: 1236}).delete().then(function () {
-					expect(pact.list()).to.have.length(2);
+				pact.createServer({port: 1234});
+				pact.createServer({port: 1235});
+				pact.createServer({port: 1236}).delete().then(function () {
+					expect(pact.listServers()).to.have.length(2);
 					done();
 				});
 			});
@@ -204,13 +210,25 @@ describe("Pact Spec", function () {
 	describe("Remove all servers", function () {
 		context("when removeAll() is called and there are servers to remove", function () {
 			it("should remove all servers", function (done) {
-				pact.create({port: 1234});
-				pact.create({port: 1235});
-				pact.create({port: 1236});
-				pact.removeAll().then(function () {
-					expect(pact.list()).to.be.empty;
+				pact.createServer({port: 1234});
+				pact.createServer({port: 1235});
+				pact.createServer({port: 1236});
+				pact.removeAllServers().then(function () {
+					expect(pact.listServers()).to.be.empty;
 					done();
 				});
+			});
+		});
+	});
+
+	describe("Verify Pacts", function () {
+		context("With provider states", function () {
+			it("should start the pact-provider-verifier service and verify pacts", function () {
+				var opts = {
+					providerBaseUrl: "http://localhost",
+					pactUrls: [ path.dirname(process.mainModule.filename) ]
+				};
+				return expect(pact.verifyPacts(opts)).to.eventually.be.resolved;
 			});
 		});
 	});

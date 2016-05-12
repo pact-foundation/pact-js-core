@@ -1,0 +1,28 @@
+{
+  "consumer": {
+    "name": "me"
+  },
+  "provider": {
+    "name": "they"
+  },
+  "interactions": [
+    {
+      "description": "Greeting fail",
+      "request": {
+        "method": "GET",
+        "path": "/fail"
+      },
+      "response": {
+        "status": 201,
+        "headers": {
+        },
+        "body": {
+          "greeting": "Oh yes!"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecificationVersion": "2.0.0"
+  }
+}
