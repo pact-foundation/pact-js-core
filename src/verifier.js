@@ -15,7 +15,7 @@ var arch = "";
 if (process.platform === 'linux') {
 	arch = '-' + process.arch;
 }
-var packageName = '@pact-foundation/pact-provider-verifier-' + process.platform + arch;
+var packageName = 'pact-provider-verifier-' + process.platform + arch;
 var packagePath = require.resolve(packageName);
 
 // Constructor
