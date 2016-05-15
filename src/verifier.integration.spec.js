@@ -6,7 +6,7 @@ var serverFactory = require('./verifier.js'),
 	path = require('path'),
 	chai = require("chai"),
 	chaiAsPromised = require("chai-as-promised"),
-	provider = require('./integration/provider.js')
+	provider = require('../test/integration/provider.js')
 
 chai.use(chaiAsPromised);
 
@@ -17,7 +17,8 @@ describe("Verifier Integration Spec", function () {
 		PORT = Math.floor(Math.random() * 999) + 9000,
 		providerBaseUrl = 'http://localhost:' + PORT,
 		providerStatesUrl = providerBaseUrl + '/provider-states',
-		providerStatesSetupUrl = providerBaseUrl + '/provider-state/';
+		providerStatesSetupUrl = providerBaseUrl + '/provider-state/',
+		pactBrokerBaseUrl = 'http://localhost:' + PORT;
 
 	before(function(done) {
     provider.listen(PORT, function () {
@@ -36,7 +37,7 @@ describe("Verifier Integration Spec", function () {
 				it("should return a successful promise with exit-code 0", function () {
 					var verifier = verifierFactory({
 						providerBaseUrl: providerBaseUrl,
-						pactUrls: [ __dirname + "/integration/me-they-success.json" ]
+						pactUrls: [ __dirname + "/../test/integration/me-they-success.json" ]
 					});
 					return expect(verifier.verify()).to.eventually.be.fulfilled;
 				});
@@ -46,7 +47,7 @@ describe("Verifier Integration Spec", function () {
 				it("should return a successful promise with exit-code 0", function () {
 					var verifier = verifierFactory({
 						providerBaseUrl: providerBaseUrl,
-						pactUrls: [ __dirname + "/integration/me-they-states.json" ],
+						pactUrls: [ __dirname + "/../test/integration/me-they-states.json" ],
 						providerStatesUrl: providerStatesUrl,
 						providerStatesSetupUrl: providerStatesSetupUrl
 					});
@@ -59,7 +60,7 @@ describe("Verifier Integration Spec", function () {
 			it("should return a rejected promise with exit-code > 0", function () {
 				var verifier = verifierFactory({
 					providerBaseUrl: providerBaseUrl,
-					pactUrls: [ __dirname + "/integration/me-they-fail.json" ]
+					pactUrls: [ __dirname + "/../test/integration/me-they-fail.json" ]
 				});
 				return expect(verifier.verify()).to.eventually.be.rejected;
 			});
@@ -69,7 +70,7 @@ describe("Verifier Integration Spec", function () {
 			it("should return a successful promise with exit-code 0", function () {
 				var verifier = verifierFactory({
 					providerBaseUrl: providerBaseUrl,
-					pactUrls: [ __dirname + "/integration/me-they-multi.json" ],
+					pactUrls: [ __dirname + "/../test/integration/me-they-multi.json" ],
 					providerStatesUrl: providerStatesUrl,
 					providerStatesSetupUrl: providerStatesSetupUrl
 				});
@@ -82,7 +83,7 @@ describe("Verifier Integration Spec", function () {
 				it("should return a successful promise with exit-code 0", function () {
 					var verifier = verifierFactory({
 						providerBaseUrl: providerBaseUrl,
-						pactUrls: [ __dirname + "/integration/me-they-success.json", __dirname + "/integration/me-they-multi.json" ],
+						pactUrls: [ __dirname + "/../test/integration/me-they-success.json", __dirname + "/../test/integration/me-they-multi.json" ],
 						providerStatesUrl: providerStatesUrl,
 						providerStatesSetupUrl: providerStatesSetupUrl
 					});
@@ -91,14 +92,44 @@ describe("Verifier Integration Spec", function () {
 			});
 
 			context("from a Pact Broker", function () {
-				it("should return a successful promise with exit-code 0", function () {
-					var verifier = verifierFactory({
-						providerBaseUrl: providerBaseUrl,
-						pactUrls: [providerBaseUrl + '/pacts/provider/they/consumer/me/latest', providerBaseUrl + '/pacts/provider/they/consumer/anotherclient/latest'],
-						providerStatesUrl: providerStatesUrl,
-						providerStatesSetupUrl: providerStatesSetupUrl
+				context("without authentication", function () {
+					it("should return a successful promise with exit-code 0", function () {
+						var verifier = verifierFactory({
+							providerBaseUrl: providerBaseUrl,
+							pactUrls: [pactBrokerBaseUrl + '/noauth/pacts/provider/they/consumer/me/latest', pactBrokerBaseUrl + '/noauth/pacts/provider/they/consumer/anotherclient/latest'],
+							providerStatesUrl: providerStatesUrl,
+							providerStatesSetupUrl: providerStatesSetupUrl
+						});
+						return expect(verifier.verify()).to.eventually.be.fulfilled;
 					});
-					return expect(verifier.verify()).to.eventually.be.fulfilled;
+				});
+				context("with authentication", function () {
+					context("and a valid user/password", function () {
+						it("should return a successful promise with exit-code 0", function () {
+							var verifier = verifierFactory({
+								providerBaseUrl: providerBaseUrl,
+								pactUrls: [pactBrokerBaseUrl + '/pacts/provider/they/consumer/me/latest', pactBrokerBaseUrl + '/pacts/provider/they/consumer/anotherclient/latest'],
+								providerStatesUrl: providerStatesUrl,
+								providerStatesSetupUrl: providerStatesSetupUrl,
+								pactBrokerUsername: 'foo',
+								pactBrokerPassword: 'bar'
+							});
+							return expect(verifier.verify()).to.eventually.be.fulfilled;
+						});
+					});
+					context("and an invalid user/password", function () {
+						it("should return a rejected promise with exit-code > 0", function () {
+							var verifier = verifierFactory({
+								providerBaseUrl: providerBaseUrl,
+								pactUrls: [pactBrokerBaseUrl + '/pacts/provider/they/consumer/me/latest', pactBrokerBaseUrl + '/pacts/provider/they/consumer/anotherclient/latest'],
+								providerStatesUrl: providerStatesUrl,
+								providerStatesSetupUrl: providerStatesSetupUrl,
+								pactBrokerUsername: 'foo',
+								pactBrokerPassword: 'baaoeur'
+							});
+							return expect(verifier.verify()).to.eventually.be.rejected;
+						});
+					});
 				});
 			});
 		});

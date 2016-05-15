@@ -19,12 +19,14 @@ var packageName = '@pact-foundation/pact-provider-verifier-' + process.platform 
 var packagePath = require.resolve(packageName);
 
 // Constructor
-function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl) {
+function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword) {
 	this.options = {};
 	this.options.providerBaseUrl = providerBaseUrl;
 	this.options.pactUrls = pactUrls;
 	this.options.providerStatesUrl = providerStatesUrl;
 	this.options.providerStatesSetupUrl = providerStatesSetupUrl;
+	this.options.pactBrokerUsername = pactBrokerUsername;
+	this.options.pactBrokerPassword = pactBrokerPassword;
 }
 
 util.inherits(Verifier, eventEmitter);
@@ -43,7 +45,9 @@ Verifier.prototype.verify = function () {
 			'providerBaseUrl': '--provider-base-url',
 			'pactUrls': '--pact-urls',
 			'providerStatesUrl': '--provider-states-url',
-			'providerStatesSetupUrl': '--provider-states-setup-url'
+			'providerStatesSetupUrl': '--provider-states-setup-url',
+			'pactBrokerUsername': '--broker-username',
+			'pactBrokerPassword': '--broker-password',
 		},
 		exitCode = 0;
 
@@ -123,6 +127,14 @@ module.exports = function (options) {
 		checkTypes.assert.string(options.providerStatesUrl);
 	}
 
+	if (options.pactBrokerUsername) {
+		checkTypes.assert.string(options.pactBrokerUsername);
+	}
+
+	if (options.pactBrokerPassword) {
+		checkTypes.assert.string(options.pactBrokerPassword);
+	}
+
 	if ( (options.providerStatesUrl && !options.providerStatesSetupUrl) || (options.providerStatesSetupUrl && !options.providerStatesUrl)) {
 		throw new Error('Must provide both or none of --provider-states-url and --provider-states-setup-url.');
 	}
@@ -135,5 +147,5 @@ module.exports = function (options) {
 		checkTypes.assert.string(options.providerBaseUrl);
 	}
 
-	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl);
+	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl, options.pactBrokerUsername, options.pactBrokerPassword);
 };

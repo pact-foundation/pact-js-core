@@ -5,7 +5,7 @@ var expect = require('chai').expect,
 	path = require('path');
 	chai = require("chai"),
 	chaiAsPromised = require("chai-as-promised"),
-	provider = require('./integration/provider.js');
+	provider = require('../test/integration/provider.js');
 
 chai.use(chaiAsPromised);
 
