@@ -70,10 +70,16 @@ Server.prototype.start = function () {
 		check.call(this);
 		return;
 	}
+	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
+	// Remove environment variable if there
+	// This is a hack to prevent some weird Travelling Ruby behaviour with Gems
+	// https://github.com/pact-foundation/pact-mock-service-npm/issues/16
+	delete envVars['RUBYGEMS_GEMDEPS'];
 	var file,
 		opts = {
 			cwd: path.resolve(packagePath, '..'),
-			detached: !isWindows
+			detached: !isWindows,
+			env: envVars
 		},
 		mapping = {
 			'port': '--port',

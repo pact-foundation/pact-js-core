@@ -1,6 +1,6 @@
 {
   "name": "@pact-foundation/pact-node",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "./src/pact.js",
   "os": [
@@ -41,13 +41,8 @@
     "commander": "^2.9.0",
     "q": "^1.4.1",
     "request": "^2.69.0",
-    "underscore": "^1.8.3"
-  },
-  "optionalDependencies": {
-    "@pact-foundation/pact-mock-service-linux-ia32": "0.8.3",
-    "@pact-foundation/pact-mock-service-linux-x64": "0.8.3",
-    "@pact-foundation/pact-mock-service-win32": "0.8.3",
-    "@pact-foundation/pact-mock-service-darwin": "0.8.3"
+    "underscore": "^1.8.3",
+    "@pact-foundation/pact-mock-service": "0.8.6"
   },
   "bin": {
     "pact": "./bin/pact-node"
@@ -60,8 +55,13 @@
     "rimraf": "^2.4.2",
     "sinon": "^1.15.4"
   },
+  "optionalDependencies": {
+    "@pact-foundation/pact-mock-service-darwin": "0.8.6",
+    "@pact-foundation/pact-mock-service-win32": "0.8.6",
+    "@pact-foundation/pact-mock-service-linux-x64": "0.8.6",
+    "@pact-foundation/pact-mock-service-linux-ia32": "0.8.6"
+  },
   "scripts": {
-    "postinstall": "node ./scripts/check-dependencies.js",
     "clean": "rimraf logs/*",
     "lint": "jscs .",
     "test": "mocha -R spec ./**/*.spec.js --timeout 15000",
