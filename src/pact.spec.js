@@ -232,4 +232,15 @@ describe("Pact Spec", function () {
 			});
 		});
 	});
+
+	describe("Publish Pacts", function () {
+		it("should start running the Pact publishig process", function () {
+			var opts = {
+				pactBroker: "http://localhost",
+				pactUrls: [ path.dirname(process.mainModule.filename) ],
+				consumerVersion: "1.0.0"
+			};
+			return expect(pact.publishPacts(opts)).to.eventually.be.resolved;
+		});
+	});
 });
