@@ -94,9 +94,4 @@ server.get('/noauth/pacts/provider/they/consumer/anotherclient/latest', function
   res.json(obj);
 });
 
-
-server.listen(8001, function () {
-  console.log('Listening on port: ' + 8001);
-});
-
 module.exports = server

@@ -1,0 +1,1 @@
+This is not a Pact file, but should also not break the test suite.

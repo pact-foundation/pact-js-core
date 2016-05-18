@@ -65,6 +65,23 @@ pact.verifyPacts(opts)).then(function () {
 });
 ```
 
+### Publish Pacts to a Broker
+
+```js
+var pact = require('@pact-foundation/pact-node');
+var opts = {
+	pactUrls: <Array>,               // Array of local Pact files or directories containing them. Required.
+	pactBroker: <String>,            // URL to fetch the provider states for the given provider API. Optional.
+	pactBrokerUsername: <String>,    // Username for Pact Broker basic authentication. Optional
+	pactBrokerPassword: <String>     // Password for Pact Broker basic authentication. Optional
+};
+
+pact.publishPacts(opts)).then(function () {
+	// do something
+});
+```
+
+
 ### List Mock Servers
 
 If you ever need to see which servers are currently created.

@@ -1,0 +1,22 @@
+{
+  "interactions": [
+    {
+      "description": "Greeting",
+      "request": {
+        "method": "GET",
+        "path": "/"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "greeting": "Hello"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecificationVersion": "2.0.0"
+  }
+}

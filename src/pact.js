@@ -4,6 +4,7 @@ var logger = require('./logger'),
 	_ = require('underscore'),
 	serverFactory = require('./server'),
 	verifierFactory = require('./verifier'),
+	publisherFactory = require('./publisher'),
 	q = require('q');
 
 var servers = [];
@@ -59,6 +60,12 @@ function verifyPacts(options) {
 	return verifierFactory(options).verify();
 }
 
+// Publish Pacts to a Pact Broker
+function publishPacts(options) {
+	logger.info('Publishing Pacts to Broker');
+	return publisherFactory(options).publish();
+}
+
 // Listen for Node exiting or someone killing the process
 // Must remove all the instances of Pact mock service
 process.once('exit', removeAllServers);
@@ -68,5 +75,6 @@ module.exports = {
 	createServer: createServer,
 	listServers: listServers,
 	removeAllServers: removeAllServers,
-	verifyPacts: verifyPacts
+	verifyPacts: verifyPacts,
+	publishPacts: publishPacts,
 };

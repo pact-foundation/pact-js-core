@@ -47,7 +47,7 @@ Verifier.prototype.verify = function () {
 			'providerStatesUrl': '--provider-states-url',
 			'providerStatesSetupUrl': '--provider-states-setup-url',
 			'pactBrokerUsername': '--broker-username',
-			'pactBrokerPassword': '--broker-password',
+			'pactBrokerPassword': '--broker-password'
 		},
 		exitCode = 0;
 
