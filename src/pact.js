@@ -3,6 +3,7 @@
 var logger = require('./logger'),
 	_ = require('underscore'),
 	serverFactory = require('./server'),
+	verifierFactory = require('./verifier'),
 	q = require('q');
 
 var servers = [];
@@ -18,7 +19,7 @@ function stringify(obj) {
 }
 
 // Creates server with specified options
-function create(options) {
+function createServer(options) {
 	if (options && options.port && _.some(servers, function(s) { return s.options.port == options.port })) {
 		var msg = 'Port `' + options.port + '` is already in use by another Pact server.';
 		logger.error(msg);
@@ -39,27 +40,33 @@ function create(options) {
 }
 
 // Return arrays of all servers
-function list() {
+function listServers() {
 	return servers;
 }
 
 // Remove all the servers that's been created
 // Return promise of all others
-function removeAll() {
+function removeAllServers() {
 	logger.info('Removing all Pact servers.');
 	return q.all(_.map(servers, function (server) {
 		return server.delete();
 	}));
 }
 
+// Run the Pact Verification process
+function verifyPacts(options) {
+	logger.info('Verifying Pacts.');
+	return verifierFactory(options).verify();
+}
 
 // Listen for Node exiting or someone killing the process
 // Must remove all the instances of Pact mock service
-process.once('exit', removeAll);
+process.once('exit', removeAllServers);
 process.once('SIGINT', process.exit);
 
 module.exports = {
-	create: create,
-	list: list,
-	removeAll: removeAll
+	createServer: createServer,
+	listServers: listServers,
+	removeAllServers: removeAllServers,
+	verifyPacts: verifyPacts
 };

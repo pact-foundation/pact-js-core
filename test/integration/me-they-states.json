@@ -1,0 +1,29 @@
+{
+  "consumer": {
+    "name": "me"
+  },
+  "provider": {
+    "name": "they"
+  },
+  "interactions": [
+    {
+      "description": "Provider state success",
+      "provider_state": "There is a greeting",
+      "request": {
+        "method": "GET",
+        "path": "/somestate"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+        },
+        "body": {
+          "greeting": "State data!"
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecificationVersion": "2.0.0"
+  }
+}
