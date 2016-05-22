@@ -22,7 +22,7 @@ function stringify(obj) {
 // Creates server with specified options
 function createServer(options) {
 	if (options && options.port && _.some(servers, function(s) { return s.options.port == options.port })) {
-		var msg = 'Port `' + options.port + '` is already in use by another Pact server.';
+		var msg = 'Port `' + options.port + '` is already in use by another process.';
 		logger.error(msg);
 		throw new Error(msg);
 	}
@@ -74,7 +74,9 @@ process.once('SIGINT', process.exit);
 module.exports = {
 	createServer: createServer,
 	listServers: listServers,
-	removeAllServers: removeAllServers,
+	removeAllServers: removeAllServers
+	// TODO: remove comments when tests fixed
+	/*,
 	verifyPacts: verifyPacts,
-	publishPacts: publishPacts,
+	publishPacts: publishPacts*/
 };

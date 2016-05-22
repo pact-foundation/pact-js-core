@@ -69,6 +69,7 @@
     "chai": "^3.2.0",
     "chai-as-promised": "^5.3.0",
     "cors": "^2.7.1",
+    "cross-env": "^1.0.7",
     "express": "^4.13.4",
     "jscs": "^2.1.0",
     "mocha": "^2.2.5",
@@ -79,10 +80,10 @@
   "scripts": {
     "clean": "rimraf logs/*",
     "lint": "jscs .",
-    "test": "mocha -R spec ./**/*.spec.js --timeout 15000",
+    "test": "./node_modules/.bin/cross-env DEVELOPMENT=true mocha -R spec ./**/*.spec.js --timeout 15000",
     "watch": "nodemon -x npm run dev",
     "watch:debug": "nodemon --debug -q -w assets/ --ext '.' --exec 'npm run lint'",
-    "dev": "npm run clean && npm run lint --force && npm test && node .",
+    "dev": "npm run clean && npm run lint --force && npm test && ./node_modules/.bin/cross-env DEVELOPMENT=true node .",
     "start": "npm run watch"
   },
   "homepage": "https://github.com/pact-foundation/pact-node#readme"

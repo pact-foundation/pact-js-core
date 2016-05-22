@@ -1,11 +1,11 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
 
-var publisherFactory = require('./publisher'),
+var publisherFactory = require('./../src/publisher'),
 	expect = require('chai').expect,
 	fs = require('fs'),
 	path = require('path'),
 	chai = require("chai"),
-	broker = require('../test/integration/brokerMock.js')
+	broker = require('./integration/brokerMock.js')
 	chaiAsPromised = require("chai-as-promised");
 
 chai.use(chaiAsPromised);

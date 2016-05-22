@@ -1,19 +1,19 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
 
-var serverFactory = require('./verifier.js'),
+var serverFactory = require('./../src/verifier.js'),
 	expect = require('chai').expect,
 	fs = require('fs'),
 	path = require('path'),
 	chai = require("chai"),
 	chaiAsPromised = require("chai-as-promised"),
-	provider = require('../test/integration/provider.js')
+	provider = require('./integration/provider.js')
 
 chai.use(chaiAsPromised);
 
 describe("Verifier Integration Spec", function () {
 
 	var pact,
-		verifierFactory = require('./verifier'),
+		verifierFactory = require('./../src/verifier'),
 		PORT = Math.floor(Math.random() * 999) + 9000,
 		providerBaseUrl = 'http://localhost:' + PORT,
 		providerStatesUrl = providerBaseUrl + '/provider-states',

@@ -38,7 +38,7 @@ Verifier.prototype.verify = function () {
 
 	var file,
 		opts = {
-			cwd: path.resolve(packagePath, '..'),
+			cwd: path.resolve(packagePath, '..', 'bin'),
 			detached: !isWindows
 		},
 		mapping = {
@@ -55,7 +55,7 @@ Verifier.prototype.verify = function () {
 		return this.options[key] ? value + ' ' + this.options[key] : null;
 	}).bind(this)));
 
-	var cmd = [packagePath.split(path.sep).pop()].concat(args).join(' ');
+	var cmd = [packagePath.trim().split(path.sep).pop() + (isWindows ? '.bat' : '')].concat(args).join(' ');
 
 	if (isWindows) {
 		file = 'cmd.exe';
