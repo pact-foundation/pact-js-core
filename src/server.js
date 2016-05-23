@@ -104,7 +104,7 @@ Server.prototype.start = function () {
 		args = ['/s', '/c', cmd];
 		opts.windowsVerbatimArguments = true;
 	} else {
-		cmd = "./" + cmd;
+		cmd = './' + cmd;
 		file = '/bin/sh';
 		args = ['-c', cmd];
 	}
