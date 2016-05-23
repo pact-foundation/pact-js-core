@@ -112,9 +112,9 @@ Server.prototype.start = function () {
 	this.instance = cp.spawn(file, args, opts);
 
 	this.instance.stdout.setEncoding('utf8');
-	this.instance.stdout.on('data', logger.debug.bind(logger));
+	this.instance.stdout.on('data', logger.info.bind(logger));
 	this.instance.stderr.setEncoding('utf8');
-	this.instance.stderr.on('data', logger.debug.bind(logger));
+	this.instance.stderr.on('data', logger.info.bind(logger));
 	this.instance.on('error', logger.error.bind(logger));
 
 	// if port isn't specified, listen for it when pact runs
