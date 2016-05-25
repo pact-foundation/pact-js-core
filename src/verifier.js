@@ -69,13 +69,13 @@ Verifier.prototype.verify = function () {
 
 	this.instance = cp.exec(cmd, opts, function (err, stdOut, stdErr) {
 		if (err) {
-			console.error(err);
+			logger.error(err);
 		}
 		if (stdErr) {
-			console.error(stdErr);
+			logger.error(stdErr);
 		}
 		if (stdOut) {
-			console.log(stdOut);
+			logger.debug(stdOut);
 		}
 		if (exitCode == 0) {
 			logger.info('Pact Verification failed.');

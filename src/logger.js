@@ -8,7 +8,7 @@ var config = {
 	name: 'pact-node@' + pkg.version,
 	streams: [
 		{
-			level: process.env.DEVELOPMENT?'debug':'info',
+			level: 'info',
 			type: 'raw',
 			stream: prettyStdOut
 		}

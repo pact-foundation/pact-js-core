@@ -31,7 +31,7 @@ Publisher.prototype.publish = function () {
 
 	_.each(this.options.pactUrls, function (uri) {
 		if (fs.statSync(path.normalize(uri)).isDirectory()) {
-			console.log('we are a dir: ' + uri)
+			logger.debug('we are a dir: ' + uri)
 			_.each(fs.readdirSync(uri, ''), function (file) {
 
 				// Ends with .json
@@ -68,7 +68,7 @@ Publisher.prototype.publish = function () {
 		}
 	}.bind(this));
 
-	console.log(uploadRequests.length)
+	logger.debug(uploadRequests.length)
 
 	// Return a merge of all promises...
 	return Promise.all(uploadRequests)
