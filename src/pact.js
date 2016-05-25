@@ -28,17 +28,17 @@ function createServer(options) {
 		logger.error(msg);
 		throw new Error(msg);
 	}
-	
+
 	var server = serverFactory(options);
 	servers.push(server);
 	logger.info('Creating Pact Server with options: \n' + stringify(server.options));
-	
+
 	// Listen to server delete events, to remove from server list
 	server.once('delete', function (server) {
 		logger.info('Deleting Pact Server with options: \n' + stringify(server.options));
 		servers = _.without(servers, server);
 	});
-	
+
 	return server;
 }
 
@@ -67,7 +67,6 @@ function publishPacts(options) {
 	logger.info('Publishing Pacts to Broker');
 	return publisherFactory(options).publish();
 }
-
 
 // Listen for Node exiting or someone killing the process
 // Must remove all the instances of Pact mock service

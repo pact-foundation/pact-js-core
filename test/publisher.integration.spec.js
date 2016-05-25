@@ -15,18 +15,18 @@ describe("Publish Spec", function () {
 		PORT = Math.floor(Math.random() * 999) + 9000,
 		pactBrokerBaseUrl = 'http://localhost:' + PORT,
 		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
-	
+
 	before(function (done) {
 		server = broker.listen(PORT, function () {
-			console.log('Broker (Mock) running on port: ' + PORT);
+			console.log('Pact Broker Mock listening on port: ' + PORT);
 			done();
 		});
 	});
-	
+
 	after(function () {
 		server.close();
 	});
-	
+
 	context("when publishing a to a broker", function () {
 		context("without authentication", function () {
 			context("and the Pact file is valid", function () {

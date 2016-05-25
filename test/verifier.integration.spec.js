@@ -4,6 +4,7 @@ var verifierFactory = require('./../src/verifier.js'),
 	expect = require('chai').expect,
 	fs = require('fs'),
 	path = require('path'),
+	_ = require('underscore'),
 	chai = require("chai"),
 	chaiAsPromised = require("chai-as-promised"),
 	provider = require('./integration/provider.js');
@@ -21,7 +22,7 @@ describe("Verifier Integration Spec", function () {
 
 	before(function (done) {
 		server = provider.listen(PORT, function () {
-			console.log('Listening on port: ' + PORT);
+			console.log('Pact Broker Mock listening on port: ' + PORT);
 			done();
 		});
 	});
@@ -126,6 +127,21 @@ describe("Verifier Integration Spec", function () {
 							pactBrokerPassword: 'baaoeur'
 						});
 						return expect(verifier.verify()).to.eventually.be.rejected;
+					});
+					it("should return the verifier error output in the returned promise", function () {
+						var verifier = verifierFactory({
+							providerBaseUrl: providerBaseUrl,
+							pactUrls: [pactBrokerBaseUrl + '/pacts/provider/they/consumer/me/latest', pactBrokerBaseUrl + '/pacts/provider/they/consumer/anotherclient/latest'],
+							providerStatesUrl: providerStatesUrl,
+							providerStatesSetupUrl: providerStatesSetupUrl,
+							pactBrokerUsername: 'foo',
+							pactBrokerPassword: 'baaoeur'
+						});
+						return expect(verifier.verify().catch( function(err) {
+							if (!_.isEmpty(err)) {
+								return Promise.reject(new Error("failed"));
+							}
+						})).to.eventually.be.rejectedWith(Error, "failed");
 					});
 				});
 			});
