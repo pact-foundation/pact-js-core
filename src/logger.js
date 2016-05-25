@@ -1,8 +1,11 @@
-var bunyan = require('bunyan');
-var pkg = require('../package.json');
-var PrettyStream = require('bunyan-prettystream');
-var prettyStdOut = new PrettyStream();
+var bunyan = require('bunyan'),
+	pkg = require('../package.json'),
+	_ = require('underscore'),
+	PrettyStream = require('bunyan-prettystream'),
+	prettyStdOut = new PrettyStream();
+
 prettyStdOut.pipe(process.stdout);
+
 
 var config = {
 	name: 'pact-node@' + pkg.version,

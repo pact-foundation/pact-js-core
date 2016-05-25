@@ -8,7 +8,8 @@ var checkTypes = require('check-types'),
 	cp = require('child_process'),
 	q = require('q'),
 	eventEmitter = require('events').EventEmitter,
-	util = require('util');
+	util = require('util'),
+	url = require('url');
 var isWindows = process.platform === 'win32';
 
 var arch = "";
@@ -36,10 +37,17 @@ Verifier.prototype.verify = function () {
 	var deferred = q.defer();
 	this.emit('start', this);
 
+	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
+	// Remove environment variable if there
+	// This is a hack to prevent some weird Travelling Ruby behaviour with Gems
+	// https://github.com/pact-foundation/pact-mock-service-npm/issues/16
+	delete envVars['RUBYGEMS_GEMDEPS'];
+
 	var file,
 		opts = {
 			cwd: path.resolve(packagePath, '..', 'bin'),
-			detached: !isWindows
+			detached: !isWindows,
+			env: envVars
 		},
 		mapping = {
 			'providerBaseUrl': '--provider-base-url',
@@ -48,11 +56,10 @@ Verifier.prototype.verify = function () {
 			'providerStatesSetupUrl': '--provider-states-setup-url',
 			'pactBrokerUsername': '--broker-username',
 			'pactBrokerPassword': '--broker-password'
-		},
-		exitCode = 0;
+		};
 
 	var args = _.compact(_.map(mapping, (function (value, key) {
-		return this.options[key] ? value + ' ' + this.options[key] : null;
+		return this.options[key] ? value + ' ' + (checkTypes.array(this.options[key]) ? this.options[key].join(',') : this.options[key]) : null;
 	}).bind(this)));
 
 	var cmd = [packagePath.trim().split(path.sep).pop() + (isWindows ? '.bat' : '')].concat(args).join(' ');
@@ -67,32 +74,26 @@ Verifier.prototype.verify = function () {
 		args = ['-c', cmd];
 	}
 
-	this.instance = cp.exec(cmd, opts, function (err, stdOut, stdErr) {
-		if (err) {
-			logger.error(err);
-		}
-		if (stdErr) {
-			logger.error(stdErr);
-		}
-		if (stdOut) {
-			logger.debug(stdOut);
-		}
-		if (exitCode == 0) {
-			logger.info('Pact Verification failed.');
-			deferred.resolve();
-		} else {
-			logger.info('Pact Verification succeeded.');
-			deferred.reject();
-		}
-	});
+	this.instance = cp.spawn(file, args, opts);
 
-	this.instance.on('error', console.error);
-	this.instance.on('exit', function (code, signal) {
-		exitCode = code;
+	this.instance.stdout.setEncoding('utf8');
+	this.instance.stdout.on('data', logger.debug.bind(logger));
+	this.instance.stderr.setEncoding('utf8');
+	this.instance.stderr.on('data', logger.debug.bind(logger));
+	this.instance.on('error', logger.error.bind(logger));
+
+	this.instance.once('close', function (code) {
+		code == 0 ? deferred.resolve() : deferred.reject();
 	});
 
 	logger.info('Created Pact Verifier process with PID: ' + this.instance.pid);
-	return deferred.promise;
+	return deferred.promise.then(function (result) {
+		logger.info('Pact Verification succeeded.');
+		return result;
+	}, function (err) {
+		logger.info('Pact Verification failed.');
+		return err;
+	});
 };
 
 // Creates a new instance of the pact server with the specified option
@@ -103,14 +104,13 @@ module.exports = function (options) {
 	options.providerStatesUrl = options.providerStatesUrl || '';
 	options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
 
-	var url = require('url')
-	_.each(options.pactUrls, function(uri) {
-	  // only check local files
+	_.each(options.pactUrls, function (uri) {
+		// only check local files
 		var proto = url.parse(uri).protocol;
 		if (proto == 'file://' || proto === null) {
 			try {
 				fs.statSync(path.normalize(uri))
-			} catch(e) {
+			} catch (e) {
 				throw new Error('Pact file: "' + uri + '" doesn\'t exist');
 			}
 		}
@@ -135,7 +135,7 @@ module.exports = function (options) {
 		checkTypes.assert.string(options.pactBrokerPassword);
 	}
 
-	if ( (options.providerStatesUrl && !options.providerStatesSetupUrl) || (options.providerStatesSetupUrl && !options.providerStatesUrl)) {
+	if ((options.providerStatesUrl && !options.providerStatesSetupUrl) || (options.providerStatesSetupUrl && !options.providerStatesUrl)) {
 		throw new Error('Must provide both or none of --provider-states-url and --provider-states-setup-url.');
 	}
 

@@ -27,14 +27,14 @@ describe("Verifier Spec", function () {
 		context("when given --provider-states-url and not --provider-states-setup-url", function () {
 			it("should fail with an error", function () {
 				expect(function () {
-					verifierFactory({"providerStatesUrl":"http://foo/provider-states"});
+					verifierFactory({"providerStatesUrl": "http://foo/provider-states"});
 				}).to.throw(Error);
 			});
 		});
 		context("when given --provider-states-setup-url and not --provider-states-url", function () {
 			it("should fail with an error", function () {
 				expect(function () {
-					verifierFactory({"providerStatesSetupUrl":"http://foo/provider-states/setup"});
+					verifierFactory({"providerStatesSetupUrl": "http://foo/provider-states/setup"});
 				}).to.throw(Error);
 			});
 		});
@@ -43,7 +43,7 @@ describe("Verifier Spec", function () {
 				expect(function () {
 					verifierFactory({
 						providerBaseUrl: "http://localhost",
-						pactUrls: [ "./test.json" ]
+						pactUrls: ["test.json"]
 					});
 				}).to.throw(Error);
 			});
@@ -53,7 +53,7 @@ describe("Verifier Spec", function () {
 				expect(function () {
 					verifierFactory({
 						providerBaseUrl: "http://localhost",
-						pactUrls: [ "http://idontexist" ]
+						pactUrls: ["http://idontexist"]
 					});
 				}).to.not.throw(Error);
 			});
@@ -72,7 +72,7 @@ describe("Verifier Spec", function () {
 			it("should return a Verifier object", function () {
 				var verifier = verifierFactory({
 					providerBaseUrl: "http://localhost",
-					pactUrls: [ "http://idontexist" ]
+					pactUrls: ["http://idontexist"]
 				});
 				expect(verifier).to.be.a('object');
 				expect(verifier).to.respondTo('verify');
@@ -81,14 +81,14 @@ describe("Verifier Spec", function () {
 	});
 
 	describe("verify", function () {
-		context("when given a successful scenario", function() {
+		context("when given a successful scenario", function () {
 			context("with no provider States", function () {
 				it("should return a successful promise with exit-code 0", function () {
 					var verifier = verifierFactory({
 						providerBaseUrl: "http://localhost",
-						pactUrls: [ "http://idontexist" ]
+						pactUrls: ["http://idontexist"]
 					});
-					return expect(verifier.verify()).to.eventually.be.rejected;
+					return expect(verifier.verify()).to.eventually.be.resolved;
 				});
 			});
 		});

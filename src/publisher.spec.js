@@ -6,7 +6,7 @@ var publisherFactory = require('./publisher'),
 	path = require('path'),
 	chai = require("chai"),
 	broker = require('../test/integration/brokerMock.js')
-	chaiAsPromised = require("chai-as-promised");
+chaiAsPromised = require("chai-as-promised");
 
 chai.use(chaiAsPromised);
 
@@ -15,18 +15,18 @@ describe("Publish Spec", function () {
 		pactBrokerBaseUrl = 'http://localhost:' + PORT,
 		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
 
-	before(function(done) {
-    broker.listen(PORT, function () {
+	before(function (done) {
+		broker.listen(PORT, function () {
 			console.log('Broker (Mock) running on port: ' + PORT);
-      done();
-    });
-  });
+			done();
+		});
+	});
 
 	afterEach(function (done) {
 		done();
 	});
 
- 	describe("Publisher", function() {
+	describe("Publisher", function () {
 		context("when not given pactUrls", function () {
 			it("should fail with an error", function () {
 				expect(function () {
@@ -42,7 +42,7 @@ describe("Publish Spec", function () {
 			it("should fail with an error", function () {
 				expect(function () {
 					publisherFactory({
-						pactUrls: [ "http://localhost" ],
+						pactUrls: ["http://localhost"],
 						consumerVersion: "1.0.0"
 					});
 				}).to.throw(Error);
@@ -54,7 +54,7 @@ describe("Publish Spec", function () {
 				expect(function () {
 					publisherFactory({
 						pactBroker: "http://localhost",
-						pactUrls: [ path.dirname(process.mainModule.filename) ]
+						pactUrls: [path.dirname(process.mainModule.filename)]
 					});
 				}).to.throw(Error);
 			});
@@ -65,7 +65,7 @@ describe("Publish Spec", function () {
 				expect(function () {
 					publisherFactory({
 						pactBroker: "http://localhost",
-						pactUrls: [ "./test.json" ]
+						pactUrls: ["./test.json"]
 					});
 				}).to.throw(Error);
 			});
@@ -87,7 +87,7 @@ describe("Publish Spec", function () {
 			it("should return a Publisher object", function () {
 				var publisher = publisherFactory({
 					pactBroker: "http://localhost",
-					pactUrls: [ "http://idontexist" ],
+					pactUrls: ["http://idontexist"],
 					consumerVersion: "1.0.0"
 				});
 				expect(publisher).to.be.a('object');

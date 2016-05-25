@@ -3,41 +3,42 @@
 var logger = require('./logger'),
 	_ = require('underscore'),
 	serverFactory = require('./server'),
-	// TODO: uncomment when fixed
-	/*verifierFactory = require('./verifier'),
-	 publisherFactory = require('./publisher'),*/
+	verifierFactory = require('./verifier'),
+	publisherFactory = require('./publisher'),
 	q = require('q');
 
 var servers = [];
 
 function stringify(obj) {
-	var arr = [];
-	for (var k in obj) {
-		if (obj[k] !== undefined) {
-			arr.push(k + '=' + obj[k]);
-		}
-	}
-	return arr.join(', ');
+	return _.chain(obj)
+		.pairs()
+		.map(function(v){
+			return v.join(' = ');
+		})
+		.value()
+		.join(',\n');
 }
 
 // Creates server with specified options
 function createServer(options) {
-	if (options && options.port && _.some(servers, function (s) { return s.options.port == options.port })) {
+	if (options && options.port && _.some(servers, function (s) {
+			return s.options.port == options.port
+		})) {
 		var msg = 'Port `' + options.port + '` is already in use by another process.';
 		logger.error(msg);
 		throw new Error(msg);
 	}
-
+	
 	var server = serverFactory(options);
 	servers.push(server);
-	logger.info('Creating Pact Server with options: ' + stringify(server.options));
-
+	logger.info('Creating Pact Server with options: \n' + stringify(server.options));
+	
 	// Listen to server delete events, to remove from server list
 	server.once('delete', function (server) {
-		logger.info('Deleting Pact Server with options: ' + stringify(server.options));
+		logger.info('Deleting Pact Server with options: \n' + stringify(server.options));
 		servers = _.without(servers, server);
 	});
-
+	
 	return server;
 }
 
@@ -56,7 +57,7 @@ function removeAllServers() {
 }
 
 // Run the Pact Verification process
-/*function verifyPacts(options) {
+function verifyPacts(options) {
 	logger.info('Verifying Pacts.');
 	return verifierFactory(options).verify();
 }
@@ -65,7 +66,8 @@ function removeAllServers() {
 function publishPacts(options) {
 	logger.info('Publishing Pacts to Broker');
 	return publisherFactory(options).publish();
-}*/
+}
+
 
 // Listen for Node exiting or someone killing the process
 // Must remove all the instances of Pact mock service
@@ -73,11 +75,10 @@ process.once('exit', removeAllServers);
 process.once('SIGINT', process.exit);
 
 module.exports = {
+	logLevel: logger.level,
 	createServer: createServer,
 	listServers: listServers,
-	removeAllServers: removeAllServers
-	// TODO: remove comments when tests fixed
-	/*,
-	 verifyPacts: verifyPacts,
-	 publishPacts: publishPacts*/
+	removeAllServers: removeAllServers,
+	verifyPacts: verifyPacts,
+	publishPacts: publishPacts
 };
