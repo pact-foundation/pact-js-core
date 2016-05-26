@@ -1,6 +1,7 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
 
-var serverFactory = require('./verifier.js'),
+var verifierFactory = require('./verifier'),
+	logger = require('./logger'),
 	expect = require('chai').expect,
 	fs = require('fs'),
 	path = require('path'),
@@ -10,11 +11,14 @@ var serverFactory = require('./verifier.js'),
 chai.use(chaiAsPromised);
 
 describe("Verifier Spec", function () {
+
+	before(function () {
+		logger.level('debug');
+	});
+
 	afterEach(function (done) {
 		done();
 	});
-
-	var verifierFactory = require('./verifier');
 
 	describe("Verifier", function () {
 		context("when not given --pact-urls or --provider-base-url", function () {

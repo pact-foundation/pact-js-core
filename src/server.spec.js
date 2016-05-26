@@ -1,12 +1,17 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
 
-var serverFactory = require('./server.js'),
+var serverFactory = require('./server'),
+	logger = require('./logger'),
 	expect = require('chai').expect,
 	fs = require('fs'),
 	path = require('path');
 
 describe("Server Spec", function () {
 	var server;
+
+	before(function () {
+		logger.level('debug');
+	});
 
 	afterEach(function (done) {
 		if (server) {

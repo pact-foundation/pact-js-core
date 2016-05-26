@@ -2,11 +2,12 @@
 
 var publisherFactory = require('./publisher'),
 	expect = require('chai').expect,
+	logger = require('./logger'),
 	fs = require('fs'),
 	path = require('path'),
 	chai = require("chai"),
-	broker = require('../test/integration/brokerMock.js')
-chaiAsPromised = require("chai-as-promised");
+	broker = require('../test/integration/brokerMock.js'),
+	chaiAsPromised = require("chai-as-promised");
 
 chai.use(chaiAsPromised);
 
@@ -16,6 +17,7 @@ describe("Publish Spec", function () {
 		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
 
 	before(function (done) {
+		logger.level('debug');
 		broker.listen(PORT, function () {
 			console.log('Broker (Mock) running on port: ' + PORT);
 			done();

@@ -35,10 +35,6 @@ util.inherits(Verifier, eventEmitter);
 Verifier.prototype.verify = function () {
 	logger.info("Verifier verify()");
 	var deferred = q.defer();
-	var output = ''; // Store output here in case of error
-	var outputHandler = function(data) {
-		output = output + data;
-	};
 	this.emit('start', this);
 
 	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
@@ -81,22 +77,22 @@ Verifier.prototype.verify = function () {
 	this.instance = cp.spawn(file, args, opts);
 
 	this.instance.stdout.setEncoding('utf8');
-	this.instance.stdout.on('data', outputHandler);
+	this.instance.stdout.on('data', logger.debug.bind(logger));
 	this.instance.stderr.setEncoding('utf8');
-	this.instance.stderr.on('data', outputHandler);
+	this.instance.stderr.on('data', logger.debug.bind(logger));
 	this.instance.on('error', logger.error.bind(logger));
 
 	this.instance.once('close', function (code) {
-		code == 0 ? deferred.resolve() : deferred.reject(output);
+		code == 0 ? deferred.resolve() : deferred.reject();
 	});
 
 	logger.info('Created Pact Verifier process with PID: ' + this.instance.pid);
-	return deferred.promise.then(function (result) {
+	return deferred.promise.then(function () {
 		logger.info('Pact Verification succeeded.');
-		return Promise.resolve(result);
-	}, function (err) {
-		logger.info('Pact Verification failed.');
-		return Promise.reject(err);
+	}, function () {
+		var msg = 'Pact Verification failed.';
+		logger.error(msg);
+		return q.reject(msg);
 	});
 };
 

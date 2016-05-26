@@ -1,6 +1,7 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
 
 var publisherFactory = require('./../src/publisher'),
+	logger = require('./../src/logger'),
 	expect = require('chai').expect,
 	fs = require('fs'),
 	path = require('path'),
@@ -17,6 +18,7 @@ describe("Publish Spec", function () {
 		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
 
 	before(function (done) {
+		logger.level('debug');
 		server = broker.listen(PORT, function () {
 			console.log('Pact Broker Mock listening on port: ' + PORT);
 			done();

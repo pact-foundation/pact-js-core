@@ -2,6 +2,7 @@
 
 var expect = require('chai').expect,
 	pact = require('./pact.js'),
+	logger = require('./logger.js'),
 	path = require('path');
 	chai = require("chai"),
 	chaiAsPromised = require("chai-as-promised"),
@@ -10,6 +11,10 @@ var expect = require('chai').expect,
 chai.use(chaiAsPromised);
 
 describe("Pact Spec", function () {
+	before(function(){
+		logger.level('debug');
+	});
+	
 	afterEach(function (done) {
 		pact.removeAllServers().then(function () {
 			done();

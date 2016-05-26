@@ -1,6 +1,7 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
 
 var verifierFactory = require('./../src/verifier.js'),
+	logger = require('./../src/logger'),
 	expect = require('chai').expect,
 	fs = require('fs'),
 	path = require('path'),
@@ -21,6 +22,7 @@ describe("Verifier Integration Spec", function () {
 		pactBrokerBaseUrl = 'http://localhost:' + PORT;
 
 	before(function (done) {
+		logger.level('debug');
 		server = provider.listen(PORT, function () {
 			console.log('Pact Broker Mock listening on port: ' + PORT);
 			done();
