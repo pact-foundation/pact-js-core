@@ -29,6 +29,21 @@ function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSe
 	this.options.pactBrokerPassword = pactBrokerPassword;
 }
 
+// Converts a path to unixy stuff
+function sanitisePath(str) {
+	var isExtendedLengthPath = /^\\\\\?\\/.test(str);
+	var hasNonAscii = /[^\x00-\x80]+/.test(str);
+
+	if (isExtendedLengthPath || hasNonAscii) {
+		return str;
+	}
+
+	// var str = 'c:\\test\\pact.json';
+	str = str.replace(/\\/g, '/');
+	str = str.replace(/[a-zA-Z]+:/, '');
+	return str
+}
+
 Verifier.prototype.verify = function () {
 	logger.info("Verifier verify()");
 	var deferred = q.defer();
@@ -100,10 +115,9 @@ module.exports = function (options) {
 	options.providerStatesUrl = options.providerStatesUrl || '';
 	options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
 
-	_.map(options.pactUrls, function (uri) {
+	options.pactUrls = _.map(options.pactUrls, function (uri) {
 		// only check local files
-		var proto = url.parse(uri).protocol;
-		if (!/https?:/.test(proto)) { // If it's not a URL, check if file is available
+		if (!/https?:/.test(url.parse(uri).protocol)) { // If it's not a URL, check if file is available
 			try {
 				fs.statSync(path.normalize(uri)).isFile();
 
