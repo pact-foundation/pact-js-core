@@ -7,8 +7,6 @@ var checkTypes = require('check-types'),
 	fs = require('fs'),
 	cp = require('child_process'),
 	q = require('q'),
-	eventEmitter = require('events').EventEmitter,
-	util = require('util'),
 	url = require('url');
 var isWindows = process.platform === 'win32';
 
@@ -30,12 +28,24 @@ function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSe
 	this.options.pactBrokerPassword = pactBrokerPassword;
 }
 
-util.inherits(Verifier, eventEmitter);
+// Converts a path to unixy stuff
+function sanitisePath(str) {
+	var isExtendedLengthPath = /^\\\\\?\\/.test(str);
+	var hasNonAscii = /[^\x00-\x80]+/.test(str);
+
+	if (isExtendedLengthPath || hasNonAscii) {
+		return str;
+	}
+
+	// var str = 'c:\\test\\pact.json';
+	str = str.replace(/\\/g, '/');
+	str = str.replace(/[a-zA-Z]+:/, '');
+	return str
+}
 
 Verifier.prototype.verify = function () {
 	logger.info("Verifier verify()");
 	var deferred = q.defer();
-	this.emit('start', this);
 
 	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
 	// Remove environment variable if there
@@ -103,16 +113,27 @@ module.exports = function (options) {
 	options.pactUrls = options.pactUrls || [];
 	options.providerStatesUrl = options.providerStatesUrl || '';
 	options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
+	var unsanitisedUrls = options.pactUrls;
+	options.pactUrls = [];
 
-	_.each(options.pactUrls, function (uri) {
+	_.each(unsanitisedUrls, function (uri) {
 		// only check local files
 		var proto = url.parse(uri).protocol;
-		if (proto == 'file://' || proto === null) {
+		if (proto != 'http:' && proto != 'https:') {
 			try {
 				fs.statSync(path.normalize(uri))
+
+				// Unixify the paths. Pact in multiple places uses URI and matching and
+				// hasn't really taken Windows into account. This is much easier, albeit
+				// might be a problem on non root-drives
+				// options.pactUrls.push(uri);
+				options.pactUrls.push(sanitisePath(uri));
 			} catch (e) {
 				throw new Error('Pact file: "' + uri + '" doesn\'t exist');
 			}
+		} else {
+			// HTTP paths are OK
+			options.pactUrls.push(uri);
 		}
 	});
 
