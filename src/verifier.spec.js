@@ -8,7 +8,6 @@ var verifierFactory = require('./verifier'),
 	chai = require("chai"),
 	rewire = require("rewire"),
 	verifier = rewire("./verifier.js");
-	sanitisePath = verifier.__get__("sanitisePath");
 	chaiAsPromised = require("chai-as-promised");
 
 chai.use(chaiAsPromised);
@@ -97,38 +96,6 @@ describe("Verifier Spec", function () {
 					});
 					return expect(verifier.verify()).to.eventually.be.resolved;
 				});
-			});
-		});
-	});
-
-	describe("sanitise", function () {
-		context("when given windows path", function () {
-			context("and the path is not an extended Windows path", function () {
-				it("should convert to an absolute linux path", function () {
-					expect(sanitisePath("c:\\test\\pact.json")).to.eq("/test/pact.json");
-				});
-				it('should convert backwards-slash paths to forward slash paths', function () {
-					expect(sanitisePath('c:/aaaa\\bbbb')).to.eq('/aaaa/bbbb');
-					expect(sanitisePath('c:\\aaaa\\bbbb')).to.eq('/aaaa/bbbb');
-				});
-			});
-			context("and the path is an extended Winows path", function () {
-				it('should not convert extended-length paths', function () {
-					var path = '\\\\?\\c:\\aaaa\\bbbb';
-					expect(sanitisePath(path)).to.eq(path);
-				});
-			});
-			context("and the path contains unicode", function () {
-				it('should not convert paths with Unicode', function () {
-					var path = 'c:\\aaaa\\bbbb\\★';
-					expect(sanitisePath(path)).to.eq(path);
-				});
-			})
-		});
-		context("when given a linux path", function () {
-			it("should not modify the path", function () {
-				var path = '/usr/local/foo.json';
-				expect(sanitisePath(path)).to.eq(path);
 			});
 		});
 	});
