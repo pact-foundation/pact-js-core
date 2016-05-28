@@ -1,6 +1,6 @@
 {
   "name": "@pact-foundation/pact-node",
-  "version": "4.0.3",
+  "version": "4.1.0",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "./src/pact.js",
   "os": [
@@ -48,7 +48,8 @@
     "request": "^2.69.0",
     "superagent": "^1.8.3",
     "superagent-bluebird-promise": "^3.0.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "unixify": "^0.2.1"
   },
   "optionalDependencies": {
     "@pact-foundation/pact-mock-service-darwin": "0.8.7",

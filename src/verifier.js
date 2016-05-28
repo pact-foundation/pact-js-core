@@ -7,6 +7,7 @@ var checkTypes = require('check-types'),
 	fs = require('fs'),
 	cp = require('child_process'),
 	q = require('q'),
+	unixify = require('unixify'),
 	url = require('url');
 var isWindows = process.platform === 'win32';
 
@@ -26,21 +27,6 @@ function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSe
 	this.options.providerStatesSetupUrl = providerStatesSetupUrl;
 	this.options.pactBrokerUsername = pactBrokerUsername;
 	this.options.pactBrokerPassword = pactBrokerPassword;
-}
-
-// Converts a path to unixy stuff
-function sanitisePath(str) {
-	var isExtendedLengthPath = /^\\\\\?\\/.test(str);
-	var hasNonAscii = /[^\x00-\x80]+/.test(str);
-
-	if (isExtendedLengthPath || hasNonAscii) {
-		return str;
-	}
-
-	// var str = 'c:\\test\\pact.json';
-	str = str.replace(/\\/g, '/');
-	str = str.replace(/[a-zA-Z]+:/, '');
-	return str
 }
 
 Verifier.prototype.verify = function () {
@@ -113,28 +99,25 @@ module.exports = function (options) {
 	options.pactUrls = options.pactUrls || [];
 	options.providerStatesUrl = options.providerStatesUrl || '';
 	options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
-	var unsanitisedUrls = options.pactUrls;
-	options.pactUrls = [];
 
-	_.each(unsanitisedUrls, function (uri) {
+	_.map(options.pactUrls, function (uri) {
 		// only check local files
 		var proto = url.parse(uri).protocol;
-		if (proto != 'http:' && proto != 'https:') {
+		if (!/https?:/.test(proto)) { // If it's not a URL, check if file is available
 			try {
-				fs.statSync(path.normalize(uri))
+				fs.statSync(path.normalize(uri)).isFile();
 
 				// Unixify the paths. Pact in multiple places uses URI and matching and
 				// hasn't really taken Windows into account. This is much easier, albeit
 				// might be a problem on non root-drives
 				// options.pactUrls.push(uri);
-				options.pactUrls.push(sanitisePath(uri));
+				return unixify(uri);
 			} catch (e) {
 				throw new Error('Pact file: "' + uri + '" doesn\'t exist');
 			}
-		} else {
-			// HTTP paths are OK
-			options.pactUrls.push(uri);
 		}
+			// HTTP paths are OK
+		return uri;
 	});
 
 	checkTypes.assert.nonEmptyString(options.providerBaseUrl, 'Must provide the --provider-base-url argument');
