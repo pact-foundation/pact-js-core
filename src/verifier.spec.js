@@ -7,7 +7,7 @@ var verifierFactory = require('./verifier'),
 	path = require('path'),
 	chai = require("chai"),
 	rewire = require("rewire"),
-	verifier = rewire("./verifier.js");
+	verifier = rewire("./verifier.js"),
 	chaiAsPromised = require("chai-as-promised");
 
 chai.use(chaiAsPromised);

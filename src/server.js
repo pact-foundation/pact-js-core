@@ -266,7 +266,7 @@ module.exports = function (options) {
 	}
 
 	// dir check
-	if(!fs.statSync(path.normalize(options.dir)).isDirectory()) {
+	if (!fs.statSync(path.normalize(options.dir)).isDirectory()) {
 		// If directory doesn't exist, create it
 	}
 

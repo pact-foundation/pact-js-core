@@ -139,7 +139,7 @@ describe("Verifier Integration Spec", function () {
 							pactBrokerUsername: 'foo',
 							pactBrokerPassword: 'baaoeur'
 						});
-						return expect(verifier.verify().catch( function(err) {
+						return expect(verifier.verify().catch(function(err) {
 							if (!_.isEmpty(err)) {
 								return Promise.reject(new Error("failed"));
 							}

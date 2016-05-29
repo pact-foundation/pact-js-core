@@ -3,7 +3,7 @@
 var expect = require('chai').expect,
 	pact = require('./pact.js'),
 	logger = require('./logger.js'),
-	path = require('path');
+	path = require('path'),
 	chai = require("chai"),
 	chaiAsPromised = require("chai-as-promised"),
 	provider = require('../test/integration/provider.js');
@@ -11,7 +11,7 @@ var expect = require('chai').expect,
 chai.use(chaiAsPromised);
 
 describe("Pact Spec", function () {
-	before(function(){
+	before(function() {
 		logger.level('debug');
 	});
 

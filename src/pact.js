@@ -12,7 +12,7 @@ var servers = [];
 function stringify(obj) {
 	return _.chain(obj)
 		.pairs()
-		.map(function(v){
+		.map(function(v) {
 			return v.join(' = ');
 		})
 		.value()
