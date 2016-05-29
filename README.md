@@ -20,7 +20,7 @@ Simply require the library and call the create function.
 
 ```js
 var pact = require('@pact-foundation/pact-node');
-var server = pact.create({port: 9999});
+var server = pact.createServer({port: 9999});
 server.start().then(function() {
 	// Do your testing/development here
 });
