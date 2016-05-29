@@ -14,7 +14,7 @@ describe("Pact Spec", function () {
 	before(function(){
 		logger.level('debug');
 	});
-	
+
 	afterEach(function (done) {
 		pact.removeAllServers().then(function () {
 			done();
