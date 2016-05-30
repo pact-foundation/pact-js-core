@@ -46,8 +46,7 @@ server.get('/contract/:name', function (req, res) {
 		if (err) {
 			console.log(err);
 			res.status(err.status).end();
-		}
-		else {
+		} else {
 			console.log('Sent:', fileName);
 		}
 	});

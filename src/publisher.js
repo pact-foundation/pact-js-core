@@ -49,12 +49,12 @@ Publisher.prototype.publish = function () {
 			provider = data.provider.name,
 			consumer = data.consumer.name;
 
-		var putUrl = this.options.pactBroker + '/pacts/provider/' + provider + '/consumer/' + consumer + '/version/' + this.options.consumerVersion;
-		var	req = request
-			.put(putUrl)
-			.send(data)
-			.set('Content-Type', 'application/json')
-			.set('Accept', 'application/json');
+			var putUrl = this.options.pactBroker + '/pacts/provider/' + provider + '/consumer/' + consumer + '/version/' + this.options.consumerVersion;
+			var req = request
+				.put(putUrl)
+				.send(data)
+				.set('Content-Type', 'application/json')
+				.set('Accept', 'application/json');
 
 			// Authentication
 			if (this.options.pactBrokerUsername && this.options.pactBrokerPassword) {
@@ -86,12 +86,12 @@ module.exports = function (options) {
 	// Stat all paths in pactUrls to make sure they exist
 	var url = require('url')
 	_.each(options.pactUrls, function(uri) {
-	  // only check local files
+		// only check local files
 		var proto = url.parse(uri).protocol;
 		if (proto == 'file://' || proto === null) {
 			try {
 				fs.statSync(path.normalize(uri))
-			} catch(e) {
+			} catch (e) {
 				throw new Error('Pact file or directory: "' + uri + '" doesn\'t exist');
 			}
 		}
@@ -109,7 +109,7 @@ module.exports = function (options) {
 		checkTypes.assert.string(options.pactBrokerPassword);
 	}
 
-	if ( (options.pactBrokerUsername && !options.pactBrokerPassword) || (options.pactBrokerPassword && !options.pactBrokerUsername)) {
+	if ((options.pactBrokerUsername && !options.pactBrokerPassword) || (options.pactBrokerPassword && !options.pactBrokerUsername)) {
 		throw new Error('Must provide both or none of --provider-states-url and --provider-states-setup-url.');
 	}
 
