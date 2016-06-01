@@ -10,7 +10,7 @@ describe("Server Spec", function () {
 	var server;
 
 	before(function () {
-		logger.level('debug');
+		logger.level('disable');
 	});
 
 	afterEach(function (done) {

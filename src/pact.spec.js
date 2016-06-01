@@ -12,7 +12,7 @@ chai.use(chaiAsPromised);
 
 describe("Pact Spec", function () {
 	before(function() {
-		logger.level('debug');
+		logger.level('disable');
 	});
 
 	afterEach(function (done) {

@@ -22,7 +22,6 @@ describe("Verifier Integration Spec", function () {
 		pactBrokerBaseUrl = 'http://localhost:' + PORT;
 
 	before(function (done) {
-		logger.level('debug');
 		server = provider.listen(PORT, function () {
 			console.log('Pact Broker Mock listening on port: ' + PORT);
 			done();

@@ -17,7 +17,7 @@ describe("Publish Spec", function () {
 		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
 
 	before(function (done) {
-		logger.level('debug');
+		logger.level('disable');
 		broker.listen(PORT, function () {
 			console.log('Broker (Mock) running on port: ' + PORT);
 			done();

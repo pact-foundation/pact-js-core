@@ -15,7 +15,7 @@ chai.use(chaiAsPromised);
 describe("Verifier Spec", function () {
 
 	before(function () {
-		logger.level('debug');
+		logger.level('disable');
 	});
 
 	afterEach(function (done) {
