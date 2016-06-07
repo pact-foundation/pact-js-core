@@ -9,15 +9,9 @@ var checkTypes = require('check-types'),
 	eventEmitter = require('events').EventEmitter,
 	http = require('request'),
 	q = require('q'),
-	util = require('util');
+	util = require('util'),
+	pactPath = require('@pact-foundation/pact-mock-service');
 var isWindows = process.platform === 'win32';
-
-var arch = "";
-if (process.platform === 'linux') {
-	arch = '-' + process.arch;
-}
-var packageName = '@pact-foundation/pact-mock-service-' + process.platform + arch;
-var packagePath = require.resolve(packageName);
 
 var CHECKTIME = 500;
 
@@ -77,7 +71,7 @@ Server.prototype.start = function () {
 	delete envVars['RUBYGEMS_GEMDEPS'];
 	var file,
 		opts = {
-			cwd: path.resolve(packagePath, '..', 'bin'),
+			cwd: pactPath.cwd,
 			detached: !isWindows,
 			env: envVars
 		},
@@ -97,7 +91,7 @@ Server.prototype.start = function () {
 		return this.options[key] ? value + ' ' + this.options[key] : null;
 	}).bind(this)));
 
-	var cmd = [packagePath.trim().split(path.sep).pop() + (isWindows ? '.bat' : '')].concat(args).join(' ');
+	var cmd = [pactPath.file].concat(args).join(' ');
 
 	if (isWindows) {
 		file = 'cmd.exe';
