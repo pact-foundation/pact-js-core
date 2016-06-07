@@ -1,7 +1,7 @@
 {
   "name": "pact-node",
-  "version": "1.3.7",
-  "description": "A wrapper for the Ruby version of Pact to work within Node",
+  "version": "1.3.8",
+  "description": "A wrapper for the Ruby version of Pact to work within Node - DEPRECATED: please uninstall and install @pact-foundation/pact-node",
   "main": "./src/pact.js",
   "os": [
     "darwin",

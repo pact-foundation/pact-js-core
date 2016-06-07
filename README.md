@@ -1,5 +1,7 @@
 <img src="https://github.com/pact-foundation/pact-logo/blob/master/media/logo-black.png" width="200">
 
+### THIS PROJECT IS NOW DEPRECATED, PLEASE UNINSTALL WITH `npm uninstall pact-node` AND INSTALL THE LATEST WITH `npm install @pact-foundation/pact-node --save-dev`
+
 # Pact Node
 
 A wrapper for Ruby Pact for it to work with node.
@@ -8,7 +10,7 @@ A wrapper for Ruby Pact for it to work with node.
 
 ### Node
 
-`npm install pact-node --save`
+`npm install pact-node --save-dev`
 
 ### Grunt
 
