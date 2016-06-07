@@ -11,13 +11,47 @@ var expect = require('chai').expect,
 chai.use(chaiAsPromised);
 
 describe("Pact Spec", function () {
-	before(function() {
+	before(function () {
 		logger.level('debug');
 	});
 
 	afterEach(function (done) {
 		pact.removeAllServers().then(function () {
 			done();
+		});
+	});
+	
+	describe("Set Log Level", function () {
+		context("when setting a log level", function () {
+			it("should be able to set log level 'trace'", function () {
+				pact.logLevel('trace');
+				expect(pact.logLevel()).to.be.equal(10);
+			});
+
+			it("should be able to set log level 'debug'", function () {
+				pact.logLevel('debug');
+				expect(pact.logLevel()).to.be.equal(20);
+			});
+
+			it("should be able to set log level 'info'", function () {
+				pact.logLevel('info');
+				expect(pact.logLevel()).to.be.equal(30);
+			});
+
+			it("should be able to set log level 'warn'", function () {
+				pact.logLevel('warn');
+				expect(pact.logLevel()).to.be.equal(40);
+			});
+
+			it("should be able to set log level 'error'", function () {
+				pact.logLevel('error');
+				expect(pact.logLevel()).to.be.equal(50);
+			});
+
+			it("should be able to set log level 'fatal'", function () {
+				pact.logLevel('fatal');
+				expect(pact.logLevel()).to.be.equal(60);
+			});
 		});
 	});
 
@@ -228,25 +262,25 @@ describe("Pact Spec", function () {
 
 	// TODO: uncomment once signature is back
 	/*describe("Verify Pacts", function () {
-		context("With provider states", function () {
-			it("should start the pact-provider-verifier service and verify pacts", function () {
-				var opts = {
-					providerBaseUrl: "http://localhost",
-					pactUrls: [ path.dirname(process.mainModule.filename) ]
-				};
-				return expect(pact.verifyPacts(opts)).to.eventually.be.resolved;
-			});
-		});
-	});
+	 context("With provider states", function () {
+	 it("should start the pact-provider-verifier service and verify pacts", function () {
+	 var opts = {
+	 providerBaseUrl: "http://localhost",
+	 pactUrls: [ path.dirname(process.mainModule.filename) ]
+	 };
+	 return expect(pact.verifyPacts(opts)).to.eventually.be.resolved;
+	 });
+	 });
+	 });
 
-	describe("Publish Pacts", function () {
-		it("should start running the Pact publishig process", function () {
-			var opts = {
-				pactBroker: "http://localhost",
-				pactUrls: [ path.dirname(process.mainModule.filename) ],
-				consumerVersion: "1.0.0"
-			};
-			return expect(pact.publishPacts(opts)).to.eventually.be.resolved;
-		});
-	});*/
+	 describe("Publish Pacts", function () {
+	 it("should start running the Pact publishig process", function () {
+	 var opts = {
+	 pactBroker: "http://localhost",
+	 pactUrls: [ path.dirname(process.mainModule.filename) ],
+	 consumerVersion: "1.0.0"
+	 };
+	 return expect(pact.publishPacts(opts)).to.eventually.be.resolved;
+	 });
+	 });*/
 });

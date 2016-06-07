@@ -74,7 +74,7 @@ process.once('exit', removeAllServers);
 process.once('SIGINT', process.exit);
 
 module.exports = {
-	logLevel: logger.level,
+	logLevel: logger.level.bind(logger),
 	createServer: createServer,
 	listServers: listServers,
 	removeAllServers: removeAllServers,

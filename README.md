@@ -28,6 +28,13 @@ server.start().then(function() {
 
 ## Documentation
 
+### Set Log Level
+
+```js
+var pact = require('@pact-foundation/pact-node');
+pact.logLevel('debug');
+```
+
 ### Create Pact Mock Server
 
 ```js
