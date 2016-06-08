@@ -29,21 +29,6 @@ function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSe
 	this.options.pactBrokerPassword = pactBrokerPassword;
 }
 
-// Converts a path to unixy stuff
-function sanitisePath(str) {
-	var isExtendedLengthPath = /^\\\\\?\\/.test(str);
-	var hasNonAscii = /[^\x00-\x80]+/.test(str);
-
-	if (isExtendedLengthPath || hasNonAscii) {
-		return str;
-	}
-
-	// var str = 'c:\\test\\pact.json';
-	str = str.replace(/\\/g, '/');
-	str = str.replace(/[a-zA-Z]+:/, '');
-	return str
-}
-
 Verifier.prototype.verify = function () {
 	logger.info("Verifier verify()");
 	var deferred = q.defer();
