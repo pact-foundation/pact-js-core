@@ -32,3 +32,5 @@ node_modules
 .settings
 .idea
 *.iml
+
+.tmp

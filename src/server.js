@@ -10,7 +10,8 @@ var checkTypes = require('check-types'),
 	http = require('request'),
 	q = require('q'),
 	util = require('util'),
-	pactPath = require('@pact-foundation/pact-mock-service');
+	pactPath = require('@pact-foundation/pact-mock-service'),
+	mkdirp = require('mkdirp');
 var isWindows = process.platform === 'win32';
 
 var CHECKTIME = 500;
@@ -260,13 +261,23 @@ module.exports = function (options) {
 	}
 
 	// dir check
-	if (!fs.statSync(path.normalize(options.dir)).isDirectory()) {
-		// If directory doesn't exist, create it
+	if (options.dir) {
+		try {
+			fs.statSync(path.normalize(options.dir)).isDirectory();
+		} catch (e) {
+			mkdirp.sync(path.normalize(options.dir));
+		}
 	}
 
 	// log check
 	if (options.log) {
-		checkTypes.assert(fs.statSync(path.dirname(path.normalize(options.log))).isDirectory(), "Error on log, not a valid path");
+		var fileObj = path.parse(path.normalize(options.log));
+		try {
+			fs.statSync(fileObj.dir).isDirectory();
+		} catch (e) {
+			// If log path doesn't exist, create it
+			mkdirp.sync(fileObj.dir);
+		}
 	}
 
 	// host check

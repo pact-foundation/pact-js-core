@@ -56,6 +56,25 @@ describe("Pact Spec", function () {
 	});
 
 	describe("Create serverFactory", function () {
+
+		var fs = require('fs'),
+			path = require('path'),
+			dirPath;
+
+		beforeEach(function () {
+			dirPath = path.resolve(__dirname, '../.tmp/' + Math.floor(Math.random() * 1000));
+		});
+
+		afterEach(function (done) {
+			try {
+				if (fs.statSync(dirPath).isDirectory()) {
+					fs.rmdirSync(dirPath);
+				}
+			} catch (e) {
+			}
+			done();
+		});
+
 		context("when no options are set", function () {
 			it("should use defaults and return serverFactory", function () {
 				var server = pact.createServer();
@@ -69,15 +88,6 @@ describe("Pact Spec", function () {
 		});
 
 		context("when user specifies valid options", function () {
-			var fs = require('fs'),
-				path = require('path'),
-				dirPath = path.resolve(__dirname, '../.tmp' + Math.floor(Math.random() * 1000));
-			beforeEach(function (done) {
-				fs.mkdir(dirPath, done);
-			});
-			afterEach(function (done) {
-				fs.rmdir(dirPath, done);
-			});
 
 			it("should return serverFactory using specified options", function () {
 				var options = {
@@ -150,10 +160,9 @@ describe("Pact Spec", function () {
 		});
 
 		context("when user specifies invalid pact directory", function () {
-			it("should return an error on invalid path", function () {
-				expect(function () {
-					pact.createServer({dir: 'M:/nms'});
-				}).to.throw(Error);
+			it("should create the directory for us", function () {
+				pact.createServer({dir: dirPath});
+				expect(fs.statSync(dirPath).isDirectory()).to.be.true;
 			});
 		});
 
@@ -175,9 +184,8 @@ describe("Pact Spec", function () {
 
 		context("when user specifies invalid log", function () {
 			it("should return an error on invalid path", function () {
-				expect(function () {
-					pact.createServer({log: 'abc/123'});
-				}).to.throw(Error);
+				pact.createServer({log: path.resolve(dirPath, 'log.txt')});
+				expect(fs.statSync(dirPath).isDirectory()).to.be.true;
 			});
 		});
 
@@ -260,27 +268,26 @@ describe("Pact Spec", function () {
 		});
 	});
 
-	// TODO: uncomment once signature is back
-	/*describe("Verify Pacts", function () {
-	 context("With provider states", function () {
-	 it("should start the pact-provider-verifier service and verify pacts", function () {
-	 var opts = {
-	 providerBaseUrl: "http://localhost",
-	 pactUrls: [ path.dirname(process.mainModule.filename) ]
-	 };
-	 return expect(pact.verifyPacts(opts)).to.eventually.be.resolved;
-	 });
-	 });
-	 });
+	describe("Verify Pacts", function () {
+		context("With provider states", function () {
+			it("should start the pact-provider-verifier service and verify pacts", function () {
+				var opts = {
+					providerBaseUrl: "http://localhost",
+					pactUrls: [path.dirname(process.mainModule.filename)]
+				};
+				return expect(pact.verifyPacts(opts)).to.eventually.be.resolved;
+			});
+		});
+	});
 
-	 describe("Publish Pacts", function () {
-	 it("should start running the Pact publishig process", function () {
-	 var opts = {
-	 pactBroker: "http://localhost",
-	 pactUrls: [ path.dirname(process.mainModule.filename) ],
-	 consumerVersion: "1.0.0"
-	 };
-	 return expect(pact.publishPacts(opts)).to.eventually.be.resolved;
-	 });
-	 });*/
+	describe("Publish Pacts", function () {
+		it("should start running the Pact publishig process", function () {
+			var opts = {
+				pactBroker: "http://localhost",
+				pactUrls: [path.dirname(process.mainModule.filename)],
+				consumerVersion: "1.0.0"
+			};
+			return expect(pact.publishPacts(opts)).to.eventually.be.resolved;
+		});
+	});
 });

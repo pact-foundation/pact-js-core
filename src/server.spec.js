@@ -35,14 +35,20 @@ describe("Server Spec", function () {
 
 		context("when valid options are set", function () {
 
-			var dirPath = path.resolve(__dirname, '../.tmp' + Math.floor(Math.random() * 1000));
+			var dirPath;
 
-			beforeEach(function (done) {
-				fs.mkdir(dirPath, done);
+			beforeEach(function () {
+				dirPath = path.resolve(__dirname, '../.tmp/' + Math.floor(Math.random() * 1000));
 			});
 
 			afterEach(function (done) {
-				fs.rmdir(dirPath, done);
+				try {
+					if (fs.statSync(dirPath).isDirectory()) {
+						fs.rmdirSync(dirPath);
+					}
+				} catch (e) {
+				}
+				done();
 			});
 
 			it("should start correctly with ssl", function (done) {
@@ -102,9 +108,10 @@ describe("Server Spec", function () {
 			});
 
 			it("should start correctly with log", function (done) {
-				server = serverFactory({log: 'log.txt'});
+				var logPath = path.resolve(dirPath, 'log.txt');
+				server = serverFactory({log: logPath});
 				server.start().then(function () {
-					expect(server.options.log).to.equal('log.txt');
+					expect(server.options.log).to.equal(logPath);
 					done();
 				});
 			});
