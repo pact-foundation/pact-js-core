@@ -138,11 +138,13 @@ describe("Verifier Integration Spec", function () {
 							pactBrokerUsername: 'foo',
 							pactBrokerPassword: 'baaoeur'
 						});
-						return expect(verifier.verify().catch(function(err) {
-							if (!_.isEmpty(err)) {
-								return Promise.reject(new Error("failed"));
-							}
-						})).to.eventually.be.rejectedWith(Error, "failed");
+						return verifier.verify()
+						.then(function() {
+							throw new Error("Expected an error but got none");
+						})
+						.catch(function(err) {
+							expect(err.message).to.contain("Unauthorized")
+						})
 					});
 				});
 			});

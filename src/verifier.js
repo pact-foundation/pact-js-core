@@ -29,25 +29,14 @@ function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSe
 	this.options.pactBrokerPassword = pactBrokerPassword;
 }
 
-// Converts a path to unixy stuff
-function sanitisePath(str) {
-	var isExtendedLengthPath = /^\\\\\?\\/.test(str);
-	var hasNonAscii = /[^\x00-\x80]+/.test(str);
-
-	if (isExtendedLengthPath || hasNonAscii) {
-		return str;
-	}
-
-	// var str = 'c:\\test\\pact.json';
-	str = str.replace(/\\/g, '/');
-	str = str.replace(/[a-zA-Z]+:/, '');
-	return str
-}
-
 Verifier.prototype.verify = function () {
 	logger.info("Verifier verify()");
 	var deferred = q.defer();
-
+	var stdout = ''; // Store output here in case of error
+	var outputHandler = function(data) {
+		logger.info(data)
+		stdout = stdout + data;
+	};
 	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
 	// Remove environment variable if there
 	// This is a hack to prevent some weird Travelling Ruby behaviour with Gems
@@ -88,22 +77,20 @@ Verifier.prototype.verify = function () {
 	this.instance = cp.spawn(file, args, opts);
 
 	this.instance.stdout.setEncoding('utf8');
-	this.instance.stdout.on('data', logger.debug.bind(logger));
+	this.instance.stdout.on('data', outputHandler);
 	this.instance.stderr.setEncoding('utf8');
-	this.instance.stderr.on('data', logger.debug.bind(logger));
+	this.instance.stderr.on('data', outputHandler);
 	this.instance.on('error', logger.error.bind(logger));
 
 	this.instance.once('close', function (code) {
-		code == 0 ? deferred.resolve() : deferred.reject();
+		code == 0 ? deferred.resolve(stdout) : deferred.reject(new Error(stdout));
 	});
 
 	logger.info('Created Pact Verifier process with PID: ' + this.instance.pid);
 	return deferred.promise.then(function () {
 		logger.info('Pact Verification succeeded.');
-	}, function () {
-		var msg = 'Pact Verification failed.';
-		logger.error(msg);
-		return q.reject(msg);
+	}, function (err) {
+		return q.reject(err);
 	});
 };
 
