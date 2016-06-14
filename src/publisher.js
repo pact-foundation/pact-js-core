@@ -46,43 +46,43 @@ Publisher.prototype.publish = function () {
 
 	// Return a merge of all promises...
 	return q.all(_.map(uris, function (uri) {
-		// try {
-		var data = JSON.parse(fs.readFileSync(uri, 'utf8')),
-			provider = data.provider.name,
-			consumer = data.consumer.name,
-			deferred = q.defer();
+		try {
+			var data = JSON.parse(fs.readFileSync(uri, 'utf8')),
+				provider = data.provider.name,
+				consumer = data.consumer.name,
+				deferred = q.defer();
 
-		var config = {
-			uri: urlJoin(options.pactBroker, 'pacts/provider', provider, 'consumer', consumer, 'version', options.consumerVersion),
-			method: 'PUT',
-			headers: {
-				'Content-Type': 'application/json',
-				'Accept': 'application/json'
-			},
-			body: data,
-			json: true
-		};
+			var config = {
+				uri: urlJoin(options.pactBroker, 'pacts/provider', provider, 'consumer', consumer, 'version', options.consumerVersion),
+				method: 'PUT',
+				headers: {
+					'Content-Type': 'application/json',
+					'Accept': 'application/json'
+				},
+				body: data,
+				json: true
+			};
 
-		// Authentication
-		if (options.pactBrokerUsername && options.pactBrokerPassword) {
-			config.auth = {
-				user: options.pactBrokerUsername,
-				pass: options.pactBrokerPassword
+			// Authentication
+			if (options.pactBrokerUsername && options.pactBrokerPassword) {
+				config.auth = {
+					user: options.pactBrokerUsername,
+					pass: options.pactBrokerPassword
+				}
 			}
+
+			http(config, function (error, response) {
+				if (!error && response.statusCode == 200) {
+					deferred.resolve();
+				} else {
+					deferred.reject();
+				}
+			});
+
+			return deferred.promise;
+		} catch (e) {
+			return q.reject("Invalid Pact file: " + uri);
 		}
-
-		http(config, function (error, response) {
-			if (!error && response.statusCode == 200) {
-				deferred.resolve();
-			} else {
-				deferred.reject();
-			}
-		});
-
-		return deferred.promise;
-		/*} catch (e) {
-		 return q.reject("Invalid Pact file: " + uri);
-		 }*/
 	}))
 };
 

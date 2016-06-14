@@ -34,7 +34,7 @@ describe("Publish Spec", function () {
 				it("should successfully publish all Pacts", function () {
 					var publisher = publisherFactory({
 						pactBroker: pactBrokerBaseUrl,
-						pactUrls: [path.resolve(__dirname, '../test/integration/publish/publish-success.json')],
+						pactUrls: [path.resolve(__dirname, 'integration/publish/publish-success.json')],
 						consumerVersion: "1.0.0"
 					});
 
@@ -47,7 +47,7 @@ describe("Publish Spec", function () {
 				it("should report an unsuccessful push", function () {
 					var publisher = publisherFactory({
 						pactBroker: pactBrokerBaseUrl,
-						pactUrls: [path.resolve(__dirname, '../test/integration/publish/publish-fail.json')],
+						pactUrls: [path.resolve(__dirname, 'integration/publish/publish-fail.json')],
 						consumerVersion: "1.0.0"
 					});
 
@@ -63,7 +63,7 @@ describe("Publish Spec", function () {
 				it("should return a sucessful promise", function () {
 					var publisher = publisherFactory({
 						pactBroker: authenticatedPactBrokerBaseUrl,
-						pactUrls: [path.resolve(__dirname, '../test/integration/publish/publish-success.json')],
+						pactUrls: [path.resolve(__dirname, 'integration/publish/publish-success.json')],
 						consumerVersion: "1.0.0",
 						pactBrokerUsername: 'foo',
 						pactBrokerPassword: 'bar'
@@ -79,7 +79,7 @@ describe("Publish Spec", function () {
 				it("should return a rejected promise", function () {
 					var publisher = publisherFactory({
 						pactBroker: authenticatedPactBrokerBaseUrl,
-						pactUrls: [path.resolve(__dirname, '../test/integration/publish/publish-success.json')],
+						pactUrls: [path.resolve(__dirname, 'integration/publish/publish-success.json')],
 						consumerVersion: "1.0.0",
 						pactBrokerUsername: 'not',
 						pactBrokerPassword: 'right'
@@ -98,7 +98,7 @@ describe("Publish Spec", function () {
 			it("should asynchronously send all Pacts to the Broker", function () {
 				var publisher = publisherFactory({
 					pactBroker: pactBrokerBaseUrl,
-					pactUrls: [path.resolve(__dirname, '../test/integration/publish/pactDirTests')],
+					pactUrls: [path.resolve(__dirname, 'integration/publish/pactDirTests')],
 					consumerVersion: "1.0.0"
 				});
 
@@ -115,7 +115,7 @@ describe("Publish Spec", function () {
 			it("should asynchronously send only the Pact files to the broker", function () {
 				var publisher = publisherFactory({
 					pactBroker: pactBrokerBaseUrl,
-					pactUrls: [path.resolve(__dirname, '../test/integration/publish/pactDirTestsWithOtherStuff')],
+					pactUrls: [path.resolve(__dirname, 'integration/publish/pactDirTestsWithOtherStuff')],
 					consumerVersion: "1.0.0"
 				});
 
