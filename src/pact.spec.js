@@ -281,7 +281,7 @@ describe("Pact Spec", function () {
 	});
 
 	describe("Publish Pacts", function () {
-		it("should start running the Pact publishig process", function () {
+		it("should start running the Pact publishing process", function () {
 			var opts = {
 				pactBroker: "http://localhost",
 				pactUrls: [path.dirname(process.mainModule.filename)],
