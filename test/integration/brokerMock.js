@@ -32,6 +32,11 @@ var auth = function (req, res, next) {
 	}
 };
 
+server.get('/somepact', function(req, res) {
+	console.log('pact get!!')
+	res.json({'consumer': {'name': 'anotherclient'}, 'provider': {'name': 'they'}});
+});
+
 // Pretend to be a Pact Broker (https://github.com/bethesque/pact_broker) for integration tests
 server.put('/pacts/provider/:provider/consumer/:consumer/version/:version', pactFunction);
 
