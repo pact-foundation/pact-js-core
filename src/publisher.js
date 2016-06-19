@@ -27,12 +27,11 @@ Publisher.prototype.publish = function () {
 	// publish template $pactHost/pacts/provider/$provider/consumer/$client/$version
 	var uris = _.chain(options.pactUrls)
 		.map(function (uri) {
-			uri = path.normalize(uri);
-			if (fs.statSync(uri).isDirectory()) {
-				logger.debug('we are a dir: ' + uri);
+			var localFileOrDir = path.normalize(uri);
+			if (!(/^http/.test(uri)) && fs.statSync(localFileOrDir) && fs.statSync(localFileOrDir).isDirectory()) {
+				uri = localFileOrDir;
 				return _.map(fs.readdirSync(uri, ''), function (file) {
-					// Ends with .json
-					if (/.json$/.test(file)) {
+					if (/\.json$/.test(file)) {
 						return path.join(uri, file);
 					}
 				});
@@ -46,42 +45,83 @@ Publisher.prototype.publish = function () {
 
 	// Return a merge of all promises...
 	return q.all(_.map(uris, function (uri) {
+		// Authentication
+		var auth = null;
+
+		if (options.pactBrokerUsername && options.pactBrokerPassword) {
+			auth = {
+				user: options.pactBrokerUsername,
+				pass: options.pactBrokerPassword
+			}
+		}
+
 		try {
-			var data = JSON.parse(fs.readFileSync(uri, 'utf8')),
-				provider = data.provider.name,
-				consumer = data.consumer.name,
-				deferred = q.defer();
+			var deferred = q.defer();
 
-			var config = {
-				uri: urlJoin(options.pactBroker, 'pacts/provider', provider, 'consumer', consumer, 'version', options.consumerVersion),
-				method: 'PUT',
-				headers: {
-					'Content-Type': 'application/json',
-					'Accept': 'application/json'
-				},
-				body: data,
-				json: true
-			};
+			// Promise to update provider/consumer
+			var getPactCollaborators;
 
-			// Authentication
-			if (options.pactBrokerUsername && options.pactBrokerPassword) {
-				config.auth = {
-					user: options.pactBrokerUsername,
-					pass: options.pactBrokerPassword
-				}
+			// Parse the Pact file to extract consumer/provider names
+			if (/\.json$/.test(uri)) {
+				var readFile = q.nfbind(fs.readFile);
+				getPactCollaborators = readFile(uri, 'utf8')
+					.then(function(data) {
+						return JSON.parse(data)
+					}, function(err) {
+						return q.reject(err);
+					})
+			} else {
+				var request = q.denodeify(http);
+				var config = {
+					uri: uri,
+					method: 'GET',
+					headers: {
+						'Accept': 'application/json'
+					},
+					json: true,
+					auth: auth
+				};
+				getPactCollaborators = request(config)
+					.then(function(data) {
+						var body = data[0].body;
+						if (data[0].statusCode != 200) {
+							return q.reject(new Error('Cannot GET ' + uri + '. Nested exception: ' + body))
+						}
+						return body;
+					}, function(err) {
+						return q.reject(err);
+					})
 			}
 
-			http(config, function (error, response) {
-				if (!error && response.statusCode == 200) {
-					deferred.resolve();
-				} else {
-					deferred.reject();
-				}
-			});
+			return getPactCollaborators
+				.then(function(data) {
+					var config = {
+						uri: urlJoin(options.pactBroker, 'pacts/provider', data.provider, 'consumer', data.consumer, 'version', options.consumerVersion),
+						method: 'PUT',
+						headers: {
+							'Content-Type': 'application/json',
+							'Accept': 'application/json'
+						},
+						body: data,
+						json: true,
+						auth: auth
+					};
 
-			return deferred.promise;
+					http(config, function (error, response) {
+						if (!error && response.statusCode == 200) {
+							deferred.resolve();
+						} else {
+							deferred.reject();
+						}
+					});
+
+					return deferred.promise;
+				}, function(err) {
+					return q.reject(err);
+				})
+
 		} catch (e) {
-			return q.reject("Invalid Pact file: " + uri);
+			return q.reject("Invalid Pact file: " + uri + ". Nested exception: " + e.message);
 		}
 	}))
 };

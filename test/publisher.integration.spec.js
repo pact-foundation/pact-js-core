@@ -128,4 +128,35 @@ describe("Publish Spec", function () {
 			});
 		});
 	});
+	context("when publishing Pacts from an http-based URL", function () {
+		context("and the pact files are valid", function () {
+			it("should asynchronously send the Pact files to the broker", function () {
+				var publisher = publisherFactory({
+					pactBroker: pactBrokerBaseUrl,
+					pactUrls: [pactBrokerBaseUrl + '/somepact'],
+					consumerVersion: "1.0.0"
+				});
+
+				return expect(publisher.publish()).to.eventually.be.fulfilled;
+			});
+		});
+
+		context("and the pact files are invalid", function () {
+			it("should return a rejected promise", function () {
+				var publisher = publisherFactory({
+					pactBroker: pactBrokerBaseUrl,
+					pactUrls: [pactBrokerBaseUrl + '/somepacturlthatdoesntexist'],
+					consumerVersion: "1.0.0"
+				});
+
+				return publisher.publish()
+					.then(function() {
+						throw new Error("Expected an error but got none");
+					})
+					.catch(function(err) {
+						expect(err.message).to.contain("Nested exception: Cannot GET /somepacturlthatdoesntexist")
+					})
+			});
+		});
+	});
 });
