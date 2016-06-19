@@ -28,10 +28,10 @@ Publisher.prototype.publish = function () {
 	var uris = _.chain(options.pactUrls)
 		.map(function (uri) {
 			var localFileOrDir = path.normalize(uri);
-			if (!(/^http/.test(uri)) && fs.statSync(localFileOrDir).isDirectory()) {
+			if (!(/^http/.test(uri)) && fs.statSync(localFileOrDir) && fs.statSync(localFileOrDir).isDirectory()) {
 				uri = localFileOrDir;
 				return _.map(fs.readdirSync(uri, ''), function (file) {
-					if (/.json$/.test(file)) {
+					if (/\.json$/.test(file)) {
 						return path.join(uri, file);
 					}
 				});
@@ -62,7 +62,7 @@ Publisher.prototype.publish = function () {
 			var getPactCollaborators;
 
 			// Parse the Pact file to extract consumer/provider names
-			if (/.json$/.test(uri)) {
+			if (/\.json$/.test(uri)) {
 				var readFile = q.nfbind(fs.readFile);
 				getPactCollaborators = readFile(uri, 'utf8')
 					.then(function(data) {
