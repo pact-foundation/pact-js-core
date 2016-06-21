@@ -6,6 +6,9 @@ var publisherFactory = require('./publisher'),
 	fs = require('fs'),
 	path = require('path'),
 	chai = require("chai"),
+	rewire = require("rewire"),
+	publisher = rewire("./publisher.js"),
+	constructPutUrl = publisher.__get__('constructPutUrl'),
 	broker = require('../test/integration/brokerMock.js'),
 	chaiAsPromised = require("chai-as-promised");
 
@@ -90,6 +93,43 @@ describe("Publish Spec", function () {
 				});
 				expect(publisher).to.be.a('object');
 				expect(publisher).to.respondTo('publish');
+			});
+		});
+	});
+
+	context("constructPutUrl", function () {
+		context("when given a valid config object and pact JSON", function () {
+			it("should return a PUT url", function () {
+				var options = { 'pactBroker': 'http://foo' };
+				var data = { 'consumer': { 'name': 'consumerName' }, 'provider': { 'name': 'providerName' } };
+				expect(constructPutUrl(options, data)).to.eq('http://foo/pacts/provider/providerName/consumer/consumerName/version/');
+			});
+		});
+		context("when given an invalid config object", function () {
+			it("should return a PUT url", function () {
+				var options = { 'someotherurl': 'http://foo' };
+				var data = { 'consumer': { 'name': 'consumerName' }, 'provider': { 'name': 'providerName' } };
+				expect(function() {
+					constructPutUrl(options, data);
+				}).to.throw(Error, "Cannot construct Pact publish URL: 'pactBroker' not specified");
+			});
+		});
+		context("when given an invalid pact file (no consumer/provider keys)", function () {
+			it("should return a PUT url", function () {
+				var options = { 'pactBroker': 'http://foo' };
+				var data = { };
+				expect(function() {
+					constructPutUrl(options, data);
+				}).to.throw(Error, "Invalid Pact file given. Unable to parse consumer and provider name");
+			});
+		});
+		context("when given an invalid pact file (no name keys)", function () {
+			it("should return a PUT url", function () {
+				var options = { 'pactBroker': 'http://foo' };
+				var data = { 'consumer': {}, 'provider': {} };
+				expect(function() {
+					constructPutUrl(options, data);
+				}).to.throw(Error, "Invalid Pact file given. Unable to parse consumer and provider name");
 			});
 		});
 	});

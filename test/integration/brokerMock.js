@@ -32,8 +32,11 @@ var auth = function (req, res, next) {
 	}
 };
 
+server.get('/somebrokenpact', function(req, res) {
+	res.json({});
+});
+
 server.get('/somepact', function(req, res) {
-	console.log('pact get!!')
 	res.json({'consumer': {'name': 'anotherclient'}, 'provider': {'name': 'they'}});
 });
 
