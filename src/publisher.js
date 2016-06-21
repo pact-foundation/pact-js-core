@@ -96,7 +96,7 @@ Publisher.prototype.publish = function () {
 			return getPactCollaborators
 				.then(function(data) {
 					var config = {
-						uri: urlJoin(options.pactBroker, 'pacts/provider', data.provider, 'consumer', data.consumer, 'version', options.consumerVersion),
+						uri: urlJoin(options.pactBroker, 'pacts/provider', data.provider.name, 'consumer', data.consumer.name, 'version', options.consumerVersion),
 						method: 'PUT',
 						headers: {
 							'Content-Type': 'application/json',
