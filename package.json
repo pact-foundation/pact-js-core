@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@pact-foundation/pact-mock-service": "0.9.0",
-    "@pact-foundation/pact-provider-verifier": "0.0.12",
+    "@pact-foundation/pact-provider-verifier": "0.1.0",
     "bunyan": "^1.8.0",
     "bunyan-prettystream": "^0.1.3",
     "check-types": "~6.0.0",
@@ -50,12 +50,6 @@
     "unixify": "^0.2.1",
     "url-join": "^1.1.0"
   },
-  "optionalDependencies": {
-    "@pact-foundation/pact-provider-verifier-darwin": "0.0.12",
-    "@pact-foundation/pact-provider-verifier-linux-ia32": "0.0.12",
-    "@pact-foundation/pact-provider-verifier-linux-x64": "0.0.12",
-    "@pact-foundation/pact-provider-verifier-win32": "0.0.12"
-  },  
   "bin": {
     "pact": "./bin/pact-node"
   },
