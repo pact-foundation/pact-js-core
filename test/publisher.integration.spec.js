@@ -141,7 +141,7 @@ describe("Publish Spec", function () {
 			});
 		});
 
-		context("and the pact files are invalid", function () {
+		context("and the pact files do not exist (404)", function () {
 			it("should return a rejected promise", function () {
 				var publisher = publisherFactory({
 					pactBroker: pactBrokerBaseUrl,
@@ -155,6 +155,23 @@ describe("Publish Spec", function () {
 					})
 					.catch(function(err) {
 						expect(err.message).to.contain("Nested exception: Cannot GET /somepacturlthatdoesntexist")
+					})
+			});
+		});
+		context("and the pact files are invalid (no consumer/provider)", function () {
+			it("should return a rejected promise", function () {
+				var publisher = publisherFactory({
+					pactBroker: pactBrokerBaseUrl,
+					pactUrls: [pactBrokerBaseUrl + '/somebrokenpact'],
+					consumerVersion: "1.0.0"
+				});
+
+				return publisher.publish()
+					.then(function() {
+						throw new Error("Expected an error but got none");
+					})
+					.catch(function(err) {
+						expect(err.message).to.contain("Invalid Pact file given. Unable to parse consumer and provider name");
 					})
 			});
 		});

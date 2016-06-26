@@ -19,6 +19,25 @@ function Publisher(pactBroker, pactUrls, consumerVersion, pactBrokerUsername, pa
 	this.options.consumerVersion = consumerVersion;
 }
 
+// Given Pact Options and a Pact File, construct a Pact URL used to
+// PUT/POST to the Pact Broker.
+var constructPutUrl = function(options, data) {
+	if (!_.has(options, 'pactBroker')) {
+		throw new Error("Cannot construct Pact publish URL: 'pactBroker' not specified");
+	}
+
+	if (!_.isObject(options)
+		|| !_.has(data, 'consumer')
+		|| !_.has(data, 'provider')
+		|| !_.has(data.consumer, 'name')
+		|| !_.has(data.provider, 'name')) {
+		throw new Error("Invalid Pact file given. " +
+			"Unable to parse consumer and provider name");
+	}
+
+	return urlJoin(options.pactBroker, 'pacts/provider', data.provider.name, 'consumer', data.consumer.name, 'version', options.consumerVersion)
+};
+
 Publisher.prototype.publish = function () {
 	var options = this.options;
 	logger.info('Publishing pacts to broker at: ' + options.pactBroker);
@@ -95,8 +114,10 @@ Publisher.prototype.publish = function () {
 
 			return getPactCollaborators
 				.then(function(data) {
+					var url = constructPutUrl(options, data);
+
 					var config = {
-						uri: urlJoin(options.pactBroker, 'pacts/provider', data.provider.name, 'consumer', data.consumer.name, 'version', options.consumerVersion),
+						uri: url,
 						method: 'PUT',
 						headers: {
 							'Content-Type': 'application/json',
@@ -111,7 +132,11 @@ Publisher.prototype.publish = function () {
 						if (!error && response.statusCode == 200) {
 							deferred.resolve();
 						} else {
-							deferred.reject();
+							if (error != null) {
+								deferred.reject(error);
+							} else {
+								deferred.reject(new Error('Unable to publish Pact to Broker: ' + response.statusCode));
+							}
 						}
 					});
 
