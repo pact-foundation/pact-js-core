@@ -101,23 +101,30 @@ describe("Publish Spec", function () {
 	context("constructPutUrl", function () {
 		context("when given a valid config object and pact JSON", function () {
 			it("should return a PUT url", function () {
-				var options = { 'pactBroker': 'http://foo' };
+				var options = { 'pactBroker': 'http://foo', 'consumerVersion': '1' };
 				var data = { 'consumer': { 'name': 'consumerName' }, 'provider': { 'name': 'providerName' } };
-				expect(constructPutUrl(options, data)).to.eq('http://foo/pacts/provider/providerName/consumer/consumerName/version/');
+				expect(constructPutUrl(options, data)).to.eq('http://foo/pacts/provider/providerName/consumer/consumerName/version/1');
 			});
 		});
 		context("when given an invalid config object", function () {
-			it("should return a PUT url", function () {
+			it("should throw Error when pactBroker is not specified", function () {
 				var options = { 'someotherurl': 'http://foo' };
 				var data = { 'consumer': { 'name': 'consumerName' }, 'provider': { 'name': 'providerName' } };
 				expect(function() {
 					constructPutUrl(options, data);
 				}).to.throw(Error, "Cannot construct Pact publish URL: 'pactBroker' not specified");
 			});
+			it("should throw Error when consumerVersion is not specified", function () {
+				var options = { 'pactBroker': 'http://foo' };
+				var data = { 'consumer': { 'name': 'consumerName' }, 'provider': { 'name': 'providerName' } };
+				expect(function() {
+					constructPutUrl(options, data);
+				}).to.throw(Error, "Cannot construct Pact publish URL: 'consumerVersion' not specified");
+			});
 		});
 		context("when given an invalid pact file (no consumer/provider keys)", function () {
 			it("should return a PUT url", function () {
-				var options = { 'pactBroker': 'http://foo' };
+				var options = { 'pactBroker': 'http://foo', 'consumerVersion': '1' };
 				var data = { };
 				expect(function() {
 					constructPutUrl(options, data);
@@ -126,7 +133,7 @@ describe("Publish Spec", function () {
 		});
 		context("when given an invalid pact file (no name keys)", function () {
 			it("should return a PUT url", function () {
-				var options = { 'pactBroker': 'http://foo' };
+				var options = { 'pactBroker': 'http://foo', 'consumerVersion': '1' };
 				var data = { 'consumer': {}, 'provider': {} };
 				expect(function() {
 					constructPutUrl(options, data);
@@ -144,17 +151,24 @@ describe("Publish Spec", function () {
 			});
 		});
 		context("when given an invalid config object", function () {
-			it("should return a PUT url", function () {
+			it("should throw Error when pactBroker is not specified", function () {
 				var options = { 'someotherurl': 'http://foo', consumerVersion: '1.0' };
 				var data = { 'consumer': { 'name': 'consumerName' } };
 				expect(function() {
 					constructTagUrl(options, data);
-				}).to.throw(Error, "Cannot construct Pact publish URL: 'pactBroker' not specified");
+				}).to.throw(Error, "Cannot construct Pact Tag URL: 'pactBroker' not specified");
+			});
+			it("should throw Error when consumerVersion is not specified", function () {
+				var options = { 'pactBroker': 'http://foo' };
+				var data = { 'consumer': { 'name': 'consumerName' }, 'provider': { 'name': 'providerName' } };
+				expect(function() {
+					constructTagUrl(options, data);
+				}).to.throw(Error, "Cannot construct Pact Tag URL: 'consumerVersion' not specified");
 			});
 		});
 		context("when given an invalid pact file (no consumer key)", function () {
 			it("should return a PUT url", function () {
-				var options = { 'pactBroker': 'http://foo' };
+				var options = { 'pactBroker': 'http://foo', consumerVersion: '1.0' };
 				var data = { };
 				expect(function() {
 					constructTagUrl(options, data);
@@ -163,7 +177,7 @@ describe("Publish Spec", function () {
 		});
 		context("when given an invalid pact file (no name keys)", function () {
 			it("should return a PUT url", function () {
-				var options = { 'pactBroker': 'http://foo' };
+				var options = { 'pactBroker': 'http://foo', consumerVersion: '1.0' };
 				var data = { 'consumer': {} };
 				expect(function() {
 					constructTagUrl(options, data);

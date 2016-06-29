@@ -81,7 +81,7 @@ var opts = {
 	pactBroker: <String>,            // URL to fetch the provider states for the given provider API. Optional.
 	pactBrokerUsername: <String>,    // Username for Pact Broker basic authentication. Optional
 	pactBrokerPassword: <String>     // Password for Pact Broker basic authentication. Optional,
-  tags: <Array>,                   // An array of Strings to tag the Pacts being published. Optional
+	tags: <Array>,                   // An array of Strings to tag the Pacts being published. Optional
 };
 
 pact.publishPacts(opts)).then(function () {

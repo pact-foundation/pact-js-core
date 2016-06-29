@@ -27,6 +27,10 @@ var constructPutUrl = function(options, data) {
 		throw new Error("Cannot construct Pact publish URL: 'pactBroker' not specified");
 	}
 
+	if (!_.has(options, 'consumerVersion')) {
+		throw new Error("Cannot construct Pact publish URL: 'consumerVersion' not specified");
+	}
+
 	if (!_.isObject(options)
 		|| !_.has(data, 'consumer')
 		|| !_.has(data, 'provider')
@@ -41,7 +45,11 @@ var constructPutUrl = function(options, data) {
 
 var constructTagUrl = function(options, tag, data) {
 	if (!_.has(options, 'pactBroker')) {
-		throw new Error("Cannot construct Pact publish URL: 'pactBroker' not specified");
+		throw new Error("Cannot construct Pact Tag URL: 'pactBroker' not specified");
+	}
+
+	if (!_.has(options, 'consumerVersion')) {
+		throw new Error("Cannot construct Pact Tag URL: 'consumerVersion' not specified");
 	}
 
 	if (!_.isObject(options)
