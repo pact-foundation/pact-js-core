@@ -129,7 +129,7 @@ Publisher.prototype.publish = function () {
 					};
 
 					http(config, function (error, response) {
-						if (!error && response.statusCode == 200) {
+						if (!error && (response.statusCode >= 200 && response.statusCode < 300)) {
 							deferred.resolve();
 						} else {
 							if (error != null) {
