@@ -42,6 +42,19 @@ describe("Publish Spec", function () {
 					expect(publisher).to.respondTo('publish');
 					return expect(publisher.publish()).to.eventually.be.fulfilled;
 				});
+
+				it("should successfully tag all Pacts with 'test' and 'latest'", function () {
+					var publisher = publisherFactory({
+						pactBroker: pactBrokerBaseUrl,
+						pactUrls: [path.resolve(__dirname, 'integration/publish/publish-success.json')],
+						consumerVersion: "1.0.0",
+						tags: ['test', 'latest']
+					});
+
+					expect(publisher).to.be.a('object');
+					expect(publisher).to.respondTo('publish');
+					return expect(publisher.publish()).to.eventually.be.fulfilled;
+				});
 			});
 			context("and the Pact file is invalid", function () {
 				it("should report an unsuccessful push", function () {
@@ -109,6 +122,22 @@ describe("Publish Spec", function () {
 						expect(res.length).to.eq(2);
 					})).to.eventually.be.fulfilled;
 			});
+
+			it("should successfully tag all Pacts sent with 'test' and 'latest'", function () {
+				var publisher = publisherFactory({
+					pactBroker: pactBrokerBaseUrl,
+					pactUrls: [path.resolve(__dirname, 'integration/publish/pactDirTests')],
+					consumerVersion: "1.0.0",
+					tags: ['test', 'latest']
+				});
+
+				expect(publisher).to.be.a('object');
+				expect(publisher).to.respondTo('publish');
+				return expect(publisher.publish()
+					.then(function (res) {
+						expect(res.length).to.eq(2);
+					})).to.eventually.be.fulfilled;
+			});
 		});
 
 		context("and the directory contains Pact and non-Pact files", function () {
@@ -135,6 +164,17 @@ describe("Publish Spec", function () {
 					pactBroker: pactBrokerBaseUrl,
 					pactUrls: [pactBrokerBaseUrl + '/somepact'],
 					consumerVersion: "1.0.0"
+				});
+
+				return expect(publisher.publish()).to.eventually.be.fulfilled;
+			});
+
+			it("should successfully tag all Pacts sent with 'test' and 'latest'", function () {
+				var publisher = publisherFactory({
+					pactBroker: pactBrokerBaseUrl,
+					pactUrls: [pactBrokerBaseUrl + '/somepact'],
+					consumerVersion: "1.0.0",
+					tags: ['test', 'latest']
 				});
 
 				return expect(publisher.publish()).to.eventually.be.fulfilled;

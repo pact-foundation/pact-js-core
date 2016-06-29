@@ -10,13 +10,14 @@ var checkTypes = require('check-types'),
 	http = require('request'),
 	urlJoin = require('url-join');
 
-function Publisher(pactBroker, pactUrls, consumerVersion, pactBrokerUsername, pactBrokerPassword) {
+function Publisher(pactBroker, pactUrls, consumerVersion, pactBrokerUsername, pactBrokerPassword, tags) {
 	this.options = {};
 	this.options.pactBroker = pactBroker;
 	this.options.pactUrls = pactUrls;
 	this.options.pactBrokerUsername = pactBrokerUsername;
 	this.options.pactBrokerPassword = pactBrokerPassword;
 	this.options.consumerVersion = consumerVersion;
+	this.options.tags = tags;
 }
 
 // Given Pact Options and a Pact File, construct a Pact URL used to
@@ -37,6 +38,21 @@ var constructPutUrl = function(options, data) {
 
 	return urlJoin(options.pactBroker, 'pacts/provider', data.provider.name, 'consumer', data.consumer.name, 'version', options.consumerVersion)
 };
+
+var constructTagUrl = function(options, tag, data) {
+	if (!_.has(options, 'pactBroker')) {
+		throw new Error("Cannot construct Pact publish URL: 'pactBroker' not specified");
+	}
+
+	if (!_.isObject(options)
+		|| !_.has(data, 'consumer')
+		|| !_.has(data.consumer, 'name')) {
+		throw new Error("Invalid Pact file given. " +
+			"Unable to parse consumer name");
+	}
+
+	return urlJoin(options.pactBroker, 'pacticipants', data.consumer.name, 'version', options.consumerVersion, 'tags', tag)
+}
 
 Publisher.prototype.publish = function () {
 	var options = this.options;
@@ -114,6 +130,7 @@ Publisher.prototype.publish = function () {
 
 			return getPactCollaborators
 				.then(function(data) {
+					var publishDeferred = q.defer();
 					var url = constructPutUrl(options, data);
 
 					var config = {
@@ -130,21 +147,59 @@ Publisher.prototype.publish = function () {
 
 					http(config, function (error, response) {
 						if (!error && (response.statusCode >= 200 && response.statusCode < 300)) {
-							deferred.resolve();
+							publishDeferred.resolve(data);
 						} else {
 							if (error != null) {
-								deferred.reject(error);
+								publishDeferred.reject(error);
 							} else {
-								deferred.reject(new Error('Unable to publish Pact to Broker: ' + response.statusCode));
+								publishDeferred.reject(new Error('Unable to publish Pact to Broker: ' + response.statusCode));
 							}
 						}
 					});
 
-					return deferred.promise;
+					return publishDeferred.promise;
 				}, function(err) {
 					return q.reject(err);
 				})
+				.then(function(data) {
+					if (!options.tags.length) {
+						deferred.resolve();
+						return deferred.promise;
+					}
 
+					return q.all(_.map(options.tags, function(tag) {
+						var tagDeferred = q.defer();
+						var tagUrl = constructTagUrl(options, tag, data)
+
+						var config = {
+							uri: tagUrl,
+							method: 'PUT',
+							headers: { 'Content-Type': 'application/json' },
+							json: true,
+							auth: auth
+						};
+
+						http(config, function (error, response) {
+							if (!error && response.statusCode >= 200 && response.statusCode < 300) {
+								tagDeferred.resolve();
+							} else {
+								if (error != null) {
+									tagDeferred.reject(error);
+								} else {
+									tagDeferred.reject(new Error('Could not tag Pact with tag "' + tag + '": ' + response.statusCode));
+								}
+							}
+						});
+
+						return tagDeferred.promise;
+					}))
+				}, function(err) {
+					return q.reject(err);
+				})
+				.then(function() {
+					deferred.resolve();
+					return deferred.promise;
+				})
 		} catch (e) {
 			return q.reject("Invalid Pact file: " + uri + ". Nested exception: " + e.message);
 		}
@@ -156,6 +211,7 @@ module.exports = function (options) {
 	options = options || {};
 	options.pactBroker = options.pactBroker || '';
 	options.pactUrls = options.pactUrls || [];
+	options.tags = options.tags || [];
 
 	if (options.pactUrls) {
 		checkTypes.assert.array.of.string(options.pactUrls);
@@ -195,5 +251,5 @@ module.exports = function (options) {
 		checkTypes.assert.string(options.pactBroker);
 	}
 
-	return new Publisher(options.pactBroker, options.pactUrls, options.consumerVersion, options.pactBrokerUsername, options.pactBrokerPassword);
+	return new Publisher(options.pactBroker, options.pactUrls, options.consumerVersion, options.pactBrokerUsername, options.pactBrokerPassword, options.tags);
 };

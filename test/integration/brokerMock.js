@@ -22,6 +22,13 @@ var pactFunction = function (req, res) {
 	res.json(req.body);
 };
 
+var tagPactFunction = function (req, res) {
+	if (_.isEmpty(req.params.consumer) || _.isEmpty(req.params.version) || _.isEmpty(req.params.tag)) {
+		return res.sendStatus(400);
+	}
+	res.sendStatus(201);
+};
+
 // Let's add Auth for good measure
 var auth = function (req, res, next) {
 	var user = basicAuth(req);
@@ -46,5 +53,9 @@ server.put('/pacts/provider/:provider/consumer/:consumer/version/:version', pact
 
 // Authenticated calls...
 server.put('/auth/pacts/provider/:provider/consumer/:consumer/version/:version', auth, pactFunction);
+
+// Tagging
+server.put('/pacticipants/:consumer/version/:version/tags/:tag', tagPactFunction);
+server.put('/auth/pacticipants/:consumer/version/:version/tags/:tag', tagPactFunction);
 
 module.exports = server;

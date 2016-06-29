@@ -9,6 +9,7 @@ var publisherFactory = require('./publisher'),
 	rewire = require("rewire"),
 	publisher = rewire("./publisher.js"),
 	constructPutUrl = publisher.__get__('constructPutUrl'),
+	constructTagUrl = publisher.__get__('constructTagUrl'),
 	broker = require('../test/integration/brokerMock.js'),
 	chaiAsPromised = require("chai-as-promised");
 
@@ -130,6 +131,43 @@ describe("Publish Spec", function () {
 				expect(function() {
 					constructPutUrl(options, data);
 				}).to.throw(Error, "Invalid Pact file given. Unable to parse consumer and provider name");
+			});
+		});
+	});
+
+	context("constructTagUrl", function () {
+		context("when given a valid config object and pact JSON", function () {
+			it("should return a PUT url", function () {
+				var options = { 'pactBroker': 'http://foo', consumerVersion: '1.0' };
+				var data = { 'consumer': { 'name': 'consumerName' } };
+				expect(constructTagUrl(options, 'test', data)).to.eq('http://foo/pacticipants/consumerName/version/1.0/tags/test');
+			});
+		});
+		context("when given an invalid config object", function () {
+			it("should return a PUT url", function () {
+				var options = { 'someotherurl': 'http://foo', consumerVersion: '1.0' };
+				var data = { 'consumer': { 'name': 'consumerName' } };
+				expect(function() {
+					constructTagUrl(options, data);
+				}).to.throw(Error, "Cannot construct Pact publish URL: 'pactBroker' not specified");
+			});
+		});
+		context("when given an invalid pact file (no consumer key)", function () {
+			it("should return a PUT url", function () {
+				var options = { 'pactBroker': 'http://foo' };
+				var data = { };
+				expect(function() {
+					constructTagUrl(options, data);
+				}).to.throw(Error, "Invalid Pact file given. Unable to parse consumer name");
+			});
+		});
+		context("when given an invalid pact file (no name keys)", function () {
+			it("should return a PUT url", function () {
+				var options = { 'pactBroker': 'http://foo' };
+				var data = { 'consumer': {} };
+				expect(function() {
+					constructTagUrl(options, data);
+				}).to.throw(Error, "Invalid Pact file given. Unable to parse consumer name");
 			});
 		});
 	});
