@@ -18,8 +18,7 @@ var pactFunction = function (req, res) {
 	) {
 		return res.sendStatus(400);
 	}
-	res.sendStatus(201);
-	res.json(req.body);
+	res.status(201).json(req.body);
 };
 
 var tagPactFunction = function (req, res) {

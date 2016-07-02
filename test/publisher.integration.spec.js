@@ -194,7 +194,7 @@ describe("Publish Spec", function () {
 						throw new Error("Expected an error but got none");
 					})
 					.catch(function(results) {
-						expect(results[0].message).to.contain("Nested exception: Cannot GET /somepacturlthatdoesntexist")
+						expect(results[0].message).to.contain("Cannot GET /somepacturlthatdoesntexist")
 					})
 			});
 		});

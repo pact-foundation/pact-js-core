@@ -60,12 +60,8 @@ Publisher.prototype.publish = function () {
 							'Accept': 'application/json'
 						},
 						body: data
-					}).then(function (response) {
-						if (response.statusCode >= 200 && response.statusCode < 300) {
-							return data;
-						} else {
-							return q.reject(new Error('Unable to publish Pact to Broker: ' + response.statusCode));
-						}
+					}).fail(function (err) {
+						return q.reject(new Error('Unable to publish Pact to Broker. ' + err.message));
 					});
 				});
 
@@ -83,12 +79,8 @@ Publisher.prototype.publish = function () {
 								'Accept': 'application/json',
 								'Content-Type': 'application/json'
 							}
-						}).then(function (response) {
-							if (response.statusCode >= 200 && response.statusCode < 300) {
-								return response.body;
-							} else {
-								return q.reject(new Error('Could not tag Pact with tag "' + tag + '": ' + response.statusCode));
-							}
+						}).fail(function () {
+							return q.reject(new Error('Could not tag Pact with tag "' + tag + '"'));
 						});
 					})).then(function (results) {
 						_.each(results, function (result) {
@@ -135,6 +127,11 @@ function callPact(options, config) {
 
 	return request(config).then(function (data) {
 		return data[0]; // return response only
+	}).then(function (response) {
+		if (response.statusCode < 200 || response.statusCode >= 300) {
+			return q.reject(new Error('Failed http call to pact broker. \nCode: ' + response.statusCode + '\nBody: ' + response.body));
+		}
+		return response.body;
 	});
 }
 
@@ -151,11 +148,8 @@ function getPactFile(options, uri) {
 	} else {
 		return callPact(options, {
 			uri: uri
-		}).then(function (response) {
-			if (response.statusCode != 200) {
-				return q.reject(new Error('Cannot GET ' + uri + '. Nested exception: ' + response.body))
-			}
-			return response.body;
+		}).fail(function (err) {
+			return q.reject(new Error('Cannot GET ' + uri + '. Nested exception: ' + err.message))
 		});
 	}
 }
