@@ -7,63 +7,21 @@ var checkTypes = require('check-types'),
 	fs = require('fs'),
 	url = require('url'),
 	q = require('q'),
-	http = require('request'),
+	request = q.denodeify(require('request')),
 	urlJoin = require('url-join');
 
 function Publisher(pactBroker, pactUrls, consumerVersion, pactBrokerUsername, pactBrokerPassword, tags) {
-	this.options = {};
-	this.options.pactBroker = pactBroker;
-	this.options.pactUrls = pactUrls;
-	this.options.pactBrokerUsername = pactBrokerUsername;
-	this.options.pactBrokerPassword = pactBrokerPassword;
-	this.options.consumerVersion = consumerVersion;
-	this.options.tags = tags;
-}
-
-// Given Pact Options and a Pact File, construct a Pact URL used to
-// PUT/POST to the Pact Broker.
-var constructPutUrl = function(options, data) {
-	if (!_.has(options, 'pactBroker')) {
-		throw new Error("Cannot construct Pact publish URL: 'pactBroker' not specified");
-	}
-
-	if (!_.has(options, 'consumerVersion')) {
-		throw new Error("Cannot construct Pact publish URL: 'consumerVersion' not specified");
-	}
-
-	if (!_.isObject(options)
-		|| !_.has(data, 'consumer')
-		|| !_.has(data, 'provider')
-		|| !_.has(data.consumer, 'name')
-		|| !_.has(data.provider, 'name')) {
-		throw new Error("Invalid Pact file given. " +
-			"Unable to parse consumer and provider name");
-	}
-
-	return urlJoin(options.pactBroker, 'pacts/provider', data.provider.name, 'consumer', data.consumer.name, 'version', options.consumerVersion)
-};
-
-var constructTagUrl = function(options, tag, data) {
-	if (!_.has(options, 'pactBroker')) {
-		throw new Error("Cannot construct Pact Tag URL: 'pactBroker' not specified");
-	}
-
-	if (!_.has(options, 'consumerVersion')) {
-		throw new Error("Cannot construct Pact Tag URL: 'consumerVersion' not specified");
-	}
-
-	if (!_.isObject(options)
-		|| !_.has(data, 'consumer')
-		|| !_.has(data.consumer, 'name')) {
-		throw new Error("Invalid Pact file given. " +
-			"Unable to parse consumer name");
-	}
-
-	return urlJoin(options.pactBroker, 'pacticipants', data.consumer.name, 'version', options.consumerVersion, 'tags', tag)
+	this._options = {};
+	this._options.pactBroker = pactBroker;
+	this._options.pactUrls = pactUrls;
+	this._options.pactBrokerUsername = pactBrokerUsername;
+	this._options.pactBrokerPassword = pactBrokerPassword;
+	this._options.consumerVersion = consumerVersion;
+	this._options.tags = tags;
 }
 
 Publisher.prototype.publish = function () {
-	var options = this.options;
+	var options = this._options;
 	logger.info('Publishing pacts to broker at: ' + options.pactBroker);
 
 	// Stat all paths in pactUrls to make sure they exist
@@ -87,132 +45,162 @@ Publisher.prototype.publish = function () {
 		.value();
 
 	// Return a merge of all promises...
-	return q.all(_.map(uris, function (uri) {
-		// Authentication
-		var auth = null;
-
-		if (options.pactBrokerUsername && options.pactBrokerPassword) {
-			auth = {
-				user: options.pactBrokerUsername,
-				pass: options.pactBrokerPassword
-			}
-		}
-
-		try {
-			var deferred = q.defer();
-
-			// Promise to update provider/consumer
-			var getPactCollaborators;
-
-			// Parse the Pact file to extract consumer/provider names
-			if (/\.json$/.test(uri)) {
-				var readFile = q.nfbind(fs.readFile);
-				getPactCollaborators = readFile(uri, 'utf8')
-					.then(function(data) {
-						return JSON.parse(data)
-					}, function(err) {
-						return q.reject(err);
-					})
-			} else {
-				var request = q.denodeify(http);
-				var config = {
-					uri: uri,
-					method: 'GET',
-					headers: {
-						'Accept': 'application/json'
-					},
-					json: true,
-					auth: auth
-				};
-				getPactCollaborators = request(config)
-					.then(function(data) {
-						var body = data[0].body;
-						if (data[0].statusCode != 200) {
-							return q.reject(new Error('Cannot GET ' + uri + '. Nested exception: ' + body))
-						}
-						return body;
-					}, function(err) {
-						return q.reject(err);
-					})
-			}
-
-			return getPactCollaborators
-				.then(function(data) {
-					var publishDeferred = q.defer();
-					var url = constructPutUrl(options, data);
-
-					var config = {
-						uri: url,
+	return q.allSettled(
+		_.chain(uris)
+			.map(function (uri) {
+				return getPactFile(options, uri);
+			})
+			.map(function (file) {
+				return file.then(function (data) {
+					return callPact(options, {
+						uri: constructPutUrl(options, data),
 						method: 'PUT',
 						headers: {
 							'Content-Type': 'application/json',
 							'Accept': 'application/json'
 						},
-						body: data,
-						json: true,
-						auth: auth
-					};
-
-					http(config, function (error, response) {
-						if (!error && (response.statusCode >= 200 && response.statusCode < 300)) {
-							publishDeferred.resolve(data);
+						body: data
+					}).then(function (response) {
+						if (response.statusCode >= 200 && response.statusCode < 300) {
+							return data;
 						} else {
-							if (error != null) {
-								publishDeferred.reject(error);
-							} else {
-								publishDeferred.reject(new Error('Unable to publish Pact to Broker: ' + response.statusCode));
-							}
+							return q.reject(new Error('Unable to publish Pact to Broker: ' + response.statusCode));
 						}
 					});
+				});
 
-					return publishDeferred.promise;
-				}, function(err) {
-					return q.reject(err);
-				})
-				.then(function(data) {
+			})
+			.map(function (publish) {
+				return publish.then(function (data) {
 					if (!options.tags.length) {
-						deferred.resolve();
-						return deferred.promise;
+						return data;
 					}
-
-					return q.all(_.map(options.tags, function(tag) {
-						var tagDeferred = q.defer();
-						var tagUrl = constructTagUrl(options, tag, data)
-
-						var config = {
-							uri: tagUrl,
+					return q.allSettled(_.map(options.tags, function (tag) {
+						return callPact(options, {
+							uri: constructTagUrl(options, tag, data),
 							method: 'PUT',
-							headers: { 'Content-Type': 'application/json' },
-							json: true,
-							auth: auth
-						};
-
-						http(config, function (error, response) {
-							if (!error && response.statusCode >= 200 && response.statusCode < 300) {
-								tagDeferred.resolve();
+							headers: {
+								'Accept': 'application/json',
+								'Content-Type': 'application/json'
+							}
+						}).then(function (response) {
+							if (response.statusCode >= 200 && response.statusCode < 300) {
+								return response.body;
 							} else {
-								if (error != null) {
-									tagDeferred.reject(error);
-								} else {
-									tagDeferred.reject(new Error('Could not tag Pact with tag "' + tag + '": ' + response.statusCode));
-								}
+								return q.reject(new Error('Could not tag Pact with tag "' + tag + '": ' + response.statusCode));
 							}
 						});
-
-						return tagDeferred.promise;
-					}))
-				}, function(err) {
-					return q.reject(err);
-				})
-				.then(function() {
-					deferred.resolve();
-					return deferred.promise;
-				})
-		} catch (e) {
-			return q.reject("Invalid Pact file: " + uri + ". Nested exception: " + e.message);
-		}
-	}))
+					})).then(function (results) {
+						_.each(results, function (result) {
+							if (result.state !== "fulfilled") {
+								logger.warn(result.reason);
+							}
+						});
+						return data;
+					});
+				});
+			})
+			.value()
+	).then(function (results) {
+		var reject = false;
+		results = _.map(results, function (result) {
+			if (result.state === "fulfilled") {
+				return result.value;
+			} else {
+				reject = true;
+				return result.reason;
+			}
+		});
+		return reject ? q.reject(results) : results;
+	});
 };
+
+function callPact(options, config) {
+	config = _.extend({
+		uri: options.pactBroker ? options.pactBroker : 'http://localhost',
+		method: 'GET',
+		headers: {
+			'Accept': 'application/json'
+		},
+		json: true
+	}, config);
+
+	// Authentication
+	if (options.pactBrokerUsername && options.pactBrokerPassword) {
+		config.auth = {
+			user: options.pactBrokerUsername,
+			pass: options.pactBrokerPassword
+		}
+	}
+
+	return request(config).then(function (data) {
+		return data[0]; // return response only
+	});
+}
+
+function getPactFile(options, uri) {
+	// Parse the Pact file to extract consumer/provider names
+	if (/\.json$/.test(uri)) {
+		var readFile = q.denodeify(fs.readFile);
+		return readFile(uri, 'utf8')
+			.then(function (data) {
+				return JSON.parse(data);
+			}, function (err) {
+				return q.reject("Invalid Pact file: " + uri + ". Nested exception: " + err.message);
+			})
+	} else {
+		return callPact(options, {
+			uri: uri
+		}).then(function (response) {
+			if (response.statusCode != 200) {
+				return q.reject(new Error('Cannot GET ' + uri + '. Nested exception: ' + response.body))
+			}
+			return response.body;
+		});
+	}
+}
+
+// Given Pact Options and a Pact File, construct a Pact URL used to
+// PUT/POST to the Pact Broker.
+function constructPutUrl(options, data) {
+	if (!_.has(options, 'pactBroker')) {
+		throw new Error("Cannot construct Pact publish URL: 'pactBroker' not specified");
+	}
+
+	if (!_.has(options, 'consumerVersion')) {
+		throw new Error("Cannot construct Pact publish URL: 'consumerVersion' not specified");
+	}
+
+	if (!_.isObject(options)
+		|| !_.has(data, 'consumer')
+		|| !_.has(data, 'provider')
+		|| !_.has(data.consumer, 'name')
+		|| !_.has(data.provider, 'name')) {
+		throw new Error("Invalid Pact file given. " +
+			"Unable to parse consumer and provider name");
+	}
+
+	return urlJoin(options.pactBroker, 'pacts/provider', data.provider.name, 'consumer', data.consumer.name, 'version', options.consumerVersion)
+}
+
+function constructTagUrl(options, tag, data) {
+	if (!_.has(options, 'pactBroker')) {
+		throw new Error("Cannot construct Pact Tag URL: 'pactBroker' not specified");
+	}
+
+	if (!_.has(options, 'consumerVersion')) {
+		throw new Error("Cannot construct Pact Tag URL: 'consumerVersion' not specified");
+	}
+
+	if (!_.isObject(options)
+		|| !_.has(data, 'consumer')
+		|| !_.has(data.consumer, 'name')) {
+		throw new Error("Invalid Pact file given. " +
+			"Unable to parse consumer name");
+	}
+
+	return urlJoin(options.pactBroker, 'pacticipants', data.consumer.name, 'version', options.consumerVersion, 'tags', tag)
+}
 
 // Creates a new instance of the pact server with the specified option
 module.exports = function (options) {

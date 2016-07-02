@@ -193,8 +193,8 @@ describe("Publish Spec", function () {
 					.then(function() {
 						throw new Error("Expected an error but got none");
 					})
-					.catch(function(err) {
-						expect(err.message).to.contain("Nested exception: Cannot GET /somepacturlthatdoesntexist")
+					.catch(function(results) {
+						expect(results[0].message).to.contain("Nested exception: Cannot GET /somepacturlthatdoesntexist")
 					})
 			});
 		});
@@ -210,8 +210,8 @@ describe("Publish Spec", function () {
 					.then(function() {
 						throw new Error("Expected an error but got none");
 					})
-					.catch(function(err) {
-						expect(err.message).to.contain("Invalid Pact file given. Unable to parse consumer and provider name");
+					.catch(function(results) {
+						expect(results[0].message).to.contain("Invalid Pact file given. Unable to parse consumer and provider name");
 					})
 			});
 		});
