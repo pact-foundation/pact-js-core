@@ -20,7 +20,7 @@ describe("Pact Spec", function () {
 			done();
 		});
 	});
-	
+
 	describe("Set Log Level", function () {
 		context("when setting a log level", function () {
 			it("should be able to set log level 'trace'", function () {
@@ -60,7 +60,7 @@ describe("Pact Spec", function () {
 		var fs = require('fs'),
 			path = require('path'),
 			dirPath;
-
+		
 		beforeEach(function () {
 			dirPath = path.resolve(__dirname, '../.tmp/' + Math.floor(Math.random() * 1000));
 		});

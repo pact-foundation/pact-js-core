@@ -33,5 +33,5 @@
 	"requireSpacesInFunction": {
 		"beforeOpeningCurlyBrace": true
 	},
-	"validateIndentation": { "value": "\t", "allExcept": ["comments"] }
+	"validateIndentation": { "value": "\t", "allExcept": ["comments", "emptyLines"] }
 }
