@@ -8,11 +8,11 @@ init:
 # Test against these versions of Node
 environment:
   matrix:
-  - nodejs_version: "4.0"
-  - nodejs_version: "5.0"
-
+  - nodejs_version: "4"
+  - nodejs_version: "6"
 
 platform:
+  - x86
   - x64
 
 install:

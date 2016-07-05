@@ -18,7 +18,14 @@ var pactFunction = function (req, res) {
 	) {
 		return res.sendStatus(400);
 	}
-	res.json(req.body);
+	res.status(201).json(req.body);
+};
+
+var tagPactFunction = function (req, res) {
+	if (_.isEmpty(req.params.consumer) || _.isEmpty(req.params.version) || _.isEmpty(req.params.tag)) {
+		return res.sendStatus(400);
+	}
+	res.sendStatus(201);
 };
 
 // Let's add Auth for good measure
@@ -32,10 +39,22 @@ var auth = function (req, res, next) {
 	}
 };
 
+server.get('/somebrokenpact', function(req, res) {
+	res.json({});
+});
+
+server.get('/somepact', function(req, res) {
+	res.json({'consumer': {'name': 'anotherclient'}, 'provider': {'name': 'they'}});
+});
+
 // Pretend to be a Pact Broker (https://github.com/bethesque/pact_broker) for integration tests
 server.put('/pacts/provider/:provider/consumer/:consumer/version/:version', pactFunction);
 
 // Authenticated calls...
 server.put('/auth/pacts/provider/:provider/consumer/:consumer/version/:version', auth, pactFunction);
+
+// Tagging
+server.put('/pacticipants/:consumer/version/:version/tags/:tag', tagPactFunction);
+server.put('/auth/pacticipants/:consumer/version/:version/tags/:tag', tagPactFunction);
 
 module.exports = server;
