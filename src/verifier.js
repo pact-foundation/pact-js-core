@@ -8,15 +8,9 @@ var checkTypes = require('check-types'),
 	cp = require('child_process'),
 	q = require('q'),
 	unixify = require('unixify'),
-	url = require('url');
+	url = require('url'),
+	verifierPath = require('@pact-foundation/pact-provider-verifier');
 var isWindows = process.platform === 'win32';
-
-var arch = "";
-if (process.platform === 'linux') {
-	arch = '-' + process.arch;
-}
-var packageName = '@pact-foundation/pact-provider-verifier-' + process.platform + arch;
-var packagePath = require.resolve(packageName);
 
 // Constructor
 function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword) {
@@ -32,11 +26,13 @@ function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSe
 Verifier.prototype.verify = function () {
 	logger.info("Verifier verify()");
 	var deferred = q.defer();
+
 	var stdout = ''; // Store output here in case of error
-	var outputHandler = function(data) {
-		logger.info(data)
-		stdout = stdout + data;
-	};
+	function outputHandler(data) {
+		logger.info(data);
+		stdout += data;
+	}
+
 	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
 	// Remove environment variable if there
 	// This is a hack to prevent some weird Travelling Ruby behaviour with Gems
@@ -45,7 +41,7 @@ Verifier.prototype.verify = function () {
 
 	var file,
 		opts = {
-			cwd: path.resolve(packagePath, '..', 'bin'),
+			cwd: verifierPath.cwd,
 			detached: !isWindows,
 			env: envVars
 		},
@@ -62,14 +58,14 @@ Verifier.prototype.verify = function () {
 		return this.options[key] ? value + ' ' + (checkTypes.array(this.options[key]) ? this.options[key].join(',') : this.options[key]) : null;
 	}).bind(this)));
 
-	var cmd = [packagePath.trim().split(path.sep).pop() + (isWindows ? '.bat' : '')].concat(args).join(' ');
+	var cmd = [verifierPath.file].concat(args).join(' ');
 
 	if (isWindows) {
 		file = 'cmd.exe';
 		args = ['/s', '/c', cmd];
 		opts.windowsVerbatimArguments = true;
 	} else {
-		cmd = "./" + cmd;
+		cmd = './' + cmd;
 		file = '/bin/sh';
 		args = ['-c', cmd];
 	}
@@ -102,24 +98,27 @@ module.exports = function (options) {
 	options.providerStatesUrl = options.providerStatesUrl || '';
 	options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
 
-	options.pactUrls = _.map(options.pactUrls, function (uri) {
-		// only check local files
-		if (!/https?:/.test(url.parse(uri).protocol)) { // If it's not a URL, check if file is available
-			try {
-				fs.statSync(path.normalize(uri)).isFile();
+	options.pactUrls = _.chain(options.pactUrls)
+		.map(function (uri) {
+			// only check local files
+			if (!/https?:/.test(url.parse(uri).protocol)) { // If it's not a URL, check if file is available
+				try {
+					fs.statSync(path.normalize(uri)).isFile();
 
-				// Unixify the paths. Pact in multiple places uses URI and matching and
-				// hasn't really taken Windows into account. This is much easier, albeit
-				// might be a problem on non root-drives
-				// options.pactUrls.push(uri);
-				return unixify(uri);
-			} catch (e) {
-				throw new Error('Pact file: "' + uri + '" doesn\'t exist');
+					// Unixify the paths. Pact in multiple places uses URI and matching and
+					// hasn't really taken Windows into account. This is much easier, albeit
+					// might be a problem on non root-drives
+					// options.pactUrls.push(uri);
+					return unixify(uri);
+				} catch (e) {
+					throw new Error('Pact file: "' + uri + '" doesn\'t exist');
+				}
 			}
-		}
 			// HTTP paths are OK
-		return uri;
-	});
+			return uri;
+		})
+		.compact()
+		.value();
 
 	checkTypes.assert.nonEmptyString(options.providerBaseUrl, 'Must provide the --provider-base-url argument');
 	checkTypes.assert.not.emptyArray(options.pactUrls, 'Must provide the --pact-urls argument');
@@ -131,7 +130,7 @@ module.exports = function (options) {
 	if (options.providerStatesUrl) {
 		checkTypes.assert.string(options.providerStatesUrl);
 	}
-
+	
 	if (options.pactBrokerUsername) {
 		checkTypes.assert.string(options.pactBrokerUsername);
 	}
