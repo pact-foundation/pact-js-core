@@ -147,7 +147,7 @@ describe("Publish Spec", function () {
 			it("should return a PUT url", function () {
 				var options = { 'pactBroker': 'http://foo', consumerVersion: '1.0' };
 				var data = { 'consumer': { 'name': 'consumerName' } };
-				expect(constructTagUrl(options, 'test', data)).to.eq('http://foo/pacticipants/consumerName/version/1.0/tags/test');
+				expect(constructTagUrl(options, 'test', data)).to.eq('http://foo/pacticipants/consumerName/versions/1.0/tags/test');
 			});
 		});
 		context("when given an invalid config object", function () {
