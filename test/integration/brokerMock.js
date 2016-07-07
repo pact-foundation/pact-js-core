@@ -54,7 +54,7 @@ server.put('/pacts/provider/:provider/consumer/:consumer/version/:version', pact
 server.put('/auth/pacts/provider/:provider/consumer/:consumer/version/:version', auth, pactFunction);
 
 // Tagging
-server.put('/pacticipants/:consumer/version/:version/tags/:tag', tagPactFunction);
-server.put('/auth/pacticipants/:consumer/version/:version/tags/:tag', tagPactFunction);
+server.put('/pacticipants/:consumer/versions/:version/tags/:tag', tagPactFunction);
+server.put('/auth/pacticipants/:consumer/versions/:version/tags/:tag', tagPactFunction);
 
 module.exports = server;
