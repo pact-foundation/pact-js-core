@@ -11,8 +11,8 @@ var checkTypes = require('check-types'),
 	q = require('q'),
 	util = require('util'),
 	pactPath = require('@pact-foundation/pact-mock-service'),
-	mkdirp = require('mkdirp');
-var isWindows = process.platform === 'win32';
+	mkdirp = require('mkdirp'),
+	isWindows = process.platform === 'win32';
 
 var CHECKTIME = 500;
 
@@ -35,34 +35,9 @@ util.inherits(Server, eventEmitter);
 
 // Let the mocking begin!
 Server.prototype.start = function () {
-	var deferred = q.defer();
-	// Wait for pact-mock-service to be initialized and ready
-	var amount = 0;
-
-	function check() {
-		amount++;
-
-		function retry() {
-			if (amount >= 10) {
-				deferred.reject(new Error("Pact startup failed; tried calling service 10 times with no result."));
-			}
-			setTimeout(check.bind(this), CHECKTIME);
-		}
-
-		if (this.options.port) {
-			call(this.options).then((function () {
-				this.$running = true;
-				this.emit('start', this);
-				deferred.resolve(this);
-			}).bind(this), retry.bind(this));
-		} else {
-			retry.call(this);
-		}
-	}
-
 	if (this.instance && this.instance.connected) {
 		logger.warn('You already have a process running with PID: ' + this.instance.pid);
-		check.call(this);
+		// check.call(this);
 		return;
 	}
 	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
@@ -137,8 +112,13 @@ Server.prototype.start = function () {
 	}).bind(this));
 
 	// check service is available
-	check.call(this);
-	return deferred.promise.timeout(10000, "Couldn't start Pact with PID: " + this.instance.pid);
+	return waitForServerUp.call(this)
+		.timeout(10000, "Couldn't start Pact with PID: " + this.instance.pid)
+		.then((function (s) {
+			this.$running = true;
+			this.emit('start', this);
+			return s;
+		}).bind(this));
 };
 
 // Stop the server instance, no more mocking
@@ -191,6 +171,34 @@ Server.prototype.delete = function () {
 		return this;
 	}).bind(this));
 };
+
+// Wait for pact-mock-service to be initialized and ready
+function waitForServerUp(options) {
+	var amount = 0, deferred = q.defer();
+	;
+
+	function check() {
+		amount++;
+
+		function retry() {
+			if (amount >= 10) {
+				deferred.reject(new Error("Pact startup failed; tried calling service 10 times with no result."));
+			}
+			setTimeout(check.bind(this), CHECKTIME);
+		}
+
+		if (this.options.port) {
+			call(this.options).then((function () {
+				deferred.resolve(this);
+			}).bind(this), retry.bind(this));
+		} else {
+			retry.call(this);
+		}
+	}
+
+	return deferred.promise;
+}
+
 
 function call(options) {
 	var deferred = q.defer();

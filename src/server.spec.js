@@ -1,6 +1,6 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
-
-var serverFactory = require('./server'),
+var rewire = require("rewire"),
+	serverFactory = rewire('./server'),
 	logger = require('./logger'),
 	expect = require('chai').expect,
 	fs = require('fs'),
