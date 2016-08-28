@@ -59,6 +59,7 @@ Publisher.prototype.publish = function () {
 							'Content-Type': 'application/json',
 							'Accept': 'application/json'
 						},
+						json: true,
 						body: data
 					}).fail(function (err) {
 						return q.reject(new Error('Unable to publish Pact to Broker. ' + err.message));
@@ -76,7 +77,6 @@ Publisher.prototype.publish = function () {
 							uri: constructTagUrl(options, tag, data),
 							method: 'PUT',
 							headers: {
-								'Accept': 'application/json',
 								'Content-Type': 'application/json'
 							}
 						}).fail(function () {
@@ -113,8 +113,7 @@ function callPact(options, config) {
 		method: 'GET',
 		headers: {
 			'Accept': 'application/json'
-		},
-		json: true
+		}
 	}, config);
 	
 	// Authentication
@@ -147,7 +146,8 @@ function getPactFile(options, uri) {
 			})
 	} else {
 		return callPact(options, {
-			uri: uri
+			uri: uri,
+			json: true
 		}).fail(function (err) {
 			return q.reject(new Error('Cannot GET ' + uri + '. Nested exception: ' + err.message))
 		});
@@ -193,7 +193,7 @@ function constructTagUrl(options, tag, data) {
 			"Unable to parse consumer name");
 	}
 	
-	return urlJoin(options.pactBroker, 'pacticipants', data.consumer.name, 'version', options.consumerVersion, 'tags', tag)
+	return urlJoin(options.pactBroker, 'pacticipants', data.consumer.name, 'versions', options.consumerVersion, 'tags', tag)
 }
 
 // Creates a new instance of the pact server with the specified option
