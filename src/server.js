@@ -37,7 +37,6 @@ util.inherits(Server, eventEmitter);
 Server.prototype.start = function () {
 	if (this.instance && this.instance.connected) {
 		logger.warn('You already have a process running with PID: ' + this.instance.pid);
-		// check.call(this);
 		return;
 	}
 	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
@@ -112,40 +111,17 @@ Server.prototype.start = function () {
 	}).bind(this));
 
 	// check service is available
-	return waitForServerUp.call(this)
+	return waitForServerUp(this.options)
 		.timeout(10000, "Couldn't start Pact with PID: " + this.instance.pid)
-		.then((function (s) {
+		.then((function () {
 			this.$running = true;
 			this.emit('start', this);
-			return s;
+			return this;
 		}).bind(this));
 };
 
 // Stop the server instance, no more mocking
 Server.prototype.stop = function () {
-	var deferred = q.defer();
-	var amount = 0;
-
-	function done() {
-		this.$running = false;
-		this.emit('stop', this);
-		deferred.resolve(this);
-	}
-
-	function check() {
-		amount++;
-		if (this.options.port) {
-			call(this.options).then((function () {
-				if (amount >= 10) {
-					deferred.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
-				}
-				setTimeout(check.bind(this), CHECKTIME);
-			}).bind(this), done.bind(this));
-		} else {
-			done.call(this);
-		}
-	}
-
 	var pid = -1;
 	if (this.instance) {
 		pid = this.instance.pid;
@@ -160,8 +136,13 @@ Server.prototype.stop = function () {
 		this.instance = undefined;
 	}
 
-	check.call(this);
-	return deferred.promise.timeout(10000, "Couldn't stop Pact with PID: " + pid);
+	return waitForServerDown(this.options)
+		.timeout(10000, "Couldn't stop Pact with PID: " + pid)
+		.then((function () {
+			this.$running = false;
+			this.emit('stop', this);
+			return this;
+		}).bind(this));
 };
 
 // Deletes this server instance and emit an event
@@ -175,30 +156,52 @@ Server.prototype.delete = function () {
 // Wait for pact-mock-service to be initialized and ready
 function waitForServerUp(options) {
 	var amount = 0, deferred = q.defer();
-	;
+
+	function retry() {
+		if (amount >= 10) {
+			deferred.reject(new Error("Pact startup failed; tried calling service 10 times with no result."));
+		}
+		setTimeout(check.bind(this), CHECKTIME);
+	}
 
 	function check() {
 		amount++;
-
-		function retry() {
-			if (amount >= 10) {
-				deferred.reject(new Error("Pact startup failed; tried calling service 10 times with no result."));
-			}
-			setTimeout(check.bind(this), CHECKTIME);
-		}
-
-		if (this.options.port) {
-			call(this.options).then((function () {
-				deferred.resolve(this);
-			}).bind(this), retry.bind(this));
+		if (options.port) {
+			call(options).then(function () {
+				deferred.resolve();
+			}, retry);
 		} else {
-			retry.call(this);
+			retry();
 		}
 	}
 
+	check(); // Check first time, start polling
 	return deferred.promise;
 }
 
+function waitForServerDown(options) {
+	var amount = 0, deferred = q.defer();
+
+	function check() {
+		amount++;
+		if (options.port) {
+			call(options).then(function () {
+				if (amount >= 10) {
+					deferred.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
+					return;
+				}
+				setTimeout(check, CHECKTIME);
+			}, function () {
+				deferred.resolve();
+			});
+		} else {
+			deferred.resolve();
+		}
+	}
+
+	check(); // Check first time, start polling
+	return deferred.promise;
+}
 
 function call(options) {
 	var deferred = q.defer();
@@ -217,8 +220,8 @@ function call(options) {
 		config.agentOptions.requestCert = false;
 		config.agentOptions.agent = false;
 	}
-	http(config, function (error, response) {
-		if (!error && response.statusCode == 200) {
+	http(config, function (err, res) {
+		if (!err && res.statusCode == 200) {
 			deferred.resolve();
 		} else {
 			deferred.reject();
