@@ -13,11 +13,11 @@ var verifierFactory = require('./verifier'),
 chai.use(chaiAsPromised);
 
 describe("Verifier Spec", function () {
-
+	
 	before(function () {
 		logger.level('debug');
 	});
-
+	
 	describe("Verifier", function () {
 		context("when not given --pact-urls or --provider-base-url", function () {
 			it("should fail with an error", function () {
@@ -81,7 +81,7 @@ describe("Verifier Spec", function () {
 			});
 		});
 	});
-
+	
 	describe("verify", function () {
 		context("when given a successful scenario", function () {
 			context("with no provider States", function () {

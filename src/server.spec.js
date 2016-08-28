@@ -10,11 +10,11 @@ var rewire = require("rewire"),
 
 describe("Server Spec", function () {
 	var server;
-
+	
 	before(function () {
 		logger.level('debug');
 	});
-
+	
 	afterEach(function (done) {
 		if (server) {
 			server.delete().then(function () {
@@ -24,7 +24,7 @@ describe("Server Spec", function () {
 			done();
 		}
 	});
-
+	
 	describe("Start server", function () {
 		context("when no options are set", function () {
 			it("should start correctly with defaults", function (done) {
@@ -34,15 +34,15 @@ describe("Server Spec", function () {
 				});
 			});
 		});
-
+		
 		context("when valid options are set", function () {
-
+			
 			var dirPath;
-
+			
 			beforeEach(function () {
 				dirPath = path.resolve(__dirname, '../.tmp/' + Math.floor(Math.random() * 1000));
 			});
-
+			
 			afterEach(function (done) {
 				try {
 					if (fs.statSync(dirPath).isDirectory()) {
@@ -52,11 +52,11 @@ describe("Server Spec", function () {
 				}
 				done();
 			});
-
+			
 			it("should start correctly when instance is delayed", function (done) {
 				server = serverFactory();
 				var waitForServerUp = serverFactory.__get__('waitForServerUp');
-
+				
 				q.allSettled([
 					waitForServerUp(server.options),
 					q.delay(5000).then(function () {
@@ -69,7 +69,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with ssl", function (done) {
 				server = serverFactory({ssl: true});
 				server.start().then(function () {
@@ -77,7 +77,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with cors", function (done) {
 				server = serverFactory({cors: true});
 				server.start().then(function () {
@@ -85,7 +85,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with port", function (done) {
 				server = serverFactory({port: 9500});
 				server.start().then(function () {
@@ -93,7 +93,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with host", function (done) {
 				server = serverFactory({host: 'localhost'});
 				server.start().then(function () {
@@ -101,7 +101,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with spec version 1", function (done) {
 				server = serverFactory({spec: 1});
 				server.start().then(function () {
@@ -109,7 +109,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with spec version 2", function (done) {
 				server = serverFactory({spec: 2});
 				server.start().then(function () {
@@ -117,7 +117,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with dir", function (done) {
 				server = serverFactory({dir: dirPath});
 				server.start().then(function () {
@@ -125,7 +125,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with log", function (done) {
 				var logPath = path.resolve(dirPath, 'log.txt');
 				server = serverFactory({log: logPath});
@@ -134,7 +134,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with consumer name", function (done) {
 				server = serverFactory({consumer: 'cName'});
 				server.start().then(function () {
@@ -142,7 +142,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should start correctly with provider name", function (done) {
 				server = serverFactory({provider: 'pName'});
 				server.start().then(function () {
@@ -151,7 +151,7 @@ describe("Server Spec", function () {
 				});
 			});
 		});
-
+		
 		it("should dispatch event when starting", function (done) {
 			server = serverFactory();
 			server.once('start', function () {
@@ -159,7 +159,7 @@ describe("Server Spec", function () {
 			});
 			server.start();
 		});
-
+		
 		it("should change running state to true", function (done) {
 			server = serverFactory();
 			server.start().then(function () {
@@ -168,7 +168,7 @@ describe("Server Spec", function () {
 			});
 		});
 	});
-
+	
 	describe("Stop server", function () {
 		context("when already started", function () {
 			it("should stop running", function (done) {
@@ -179,7 +179,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should dispatch event when stopping", function (done) {
 				server = serverFactory();
 				server.once('stop', function () {
@@ -189,7 +189,7 @@ describe("Server Spec", function () {
 					server.stop();
 				});
 			});
-
+			
 			it("should change running state to false", function (done) {
 				server = serverFactory();
 				server.start().then(function () {
@@ -201,7 +201,7 @@ describe("Server Spec", function () {
 			});
 		});
 	});
-
+	
 	describe("Delete server", function () {
 		context("when already running", function () {
 			it("should stop & delete server", function (done) {
@@ -212,7 +212,7 @@ describe("Server Spec", function () {
 					done();
 				});
 			});
-
+			
 			it("should dispatch event when deleting", function (done) {
 				server = serverFactory();
 				server.once('delete', function () {
@@ -222,7 +222,7 @@ describe("Server Spec", function () {
 					server.delete();
 				});
 			});
-
+			
 			it("should change running state to false", function (done) {
 				server = serverFactory();
 				server.start().then(function () {
@@ -234,5 +234,5 @@ describe("Server Spec", function () {
 			});
 		});
 	});
-
+	
 });

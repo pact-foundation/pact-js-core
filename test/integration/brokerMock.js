@@ -12,9 +12,9 @@ server.use(bodyParser.urlencoded({extended: true}));
 var pactFunction = function (req, res) {
 	if (
 		// 1. Is there a body?
-		_.isEmpty(req.body) ||
-		// 2. Is there a consumer, provider and version in the request?
-		_.isEmpty(req.params.consumer) || _.isEmpty(req.params.provider) || _.isEmpty(req.params.version)
+	_.isEmpty(req.body) ||
+	// 2. Is there a consumer, provider and version in the request?
+	_.isEmpty(req.params.consumer) || _.isEmpty(req.params.provider) || _.isEmpty(req.params.version)
 	) {
 		return res.sendStatus(400);
 	}
@@ -39,11 +39,11 @@ var auth = function (req, res, next) {
 	}
 };
 
-server.get('/somebrokenpact', function(req, res) {
+server.get('/somebrokenpact', function (req, res) {
 	res.json({});
 });
 
-server.get('/somepact', function(req, res) {
+server.get('/somepact', function (req, res) {
 	res.json({'consumer': {'name': 'anotherclient'}, 'provider': {'name': 'they'}});
 });
 

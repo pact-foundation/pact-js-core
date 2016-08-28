@@ -39,6 +39,7 @@ Server.prototype.start = function () {
 		logger.warn('You already have a process running with PID: ' + this.instance.pid);
 		return;
 	}
+	
 	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
 	// Remove environment variable if there
 	// This is a hack to prevent some weird Travelling Ruby behaviour with Gems
@@ -61,13 +62,13 @@ Server.prototype.start = function () {
 			'consumer': '--consumer',
 			'provider': '--provider'
 		};
-
+	
 	var args = _.compact(_.map(mapping, (function (value, key) {
 		return this.options[key] ? value + ' ' + this.options[key] : null;
 	}).bind(this)));
-
+	
 	var cmd = [pactPath.file].concat(args).join(' ');
-
+	
 	if (isWindows) {
 		file = 'cmd.exe';
 		args = ['/s', '/c', cmd];
@@ -77,15 +78,15 @@ Server.prototype.start = function () {
 		file = '/bin/sh';
 		args = ['-c', cmd];
 	}
-
+	
 	this.instance = cp.spawn(file, args, opts);
-
+	
 	this.instance.stdout.setEncoding('utf8');
 	this.instance.stdout.on('data', logger.debug.bind(logger));
 	this.instance.stderr.setEncoding('utf8');
 	this.instance.stderr.on('data', logger.debug.bind(logger));
 	this.instance.on('error', logger.error.bind(logger));
-
+	
 	// if port isn't specified, listen for it when pact runs
 	function catchPort(data) {
 		var match = data.match(/port=([0-9]+)/);
@@ -95,21 +96,21 @@ Server.prototype.start = function () {
 			this.instance.stderr.removeListener('data', catchPort.bind(this));
 		}
 	}
-
+	
 	if (!this.options.port) {
 		this.instance.stdout.on('data', catchPort.bind(this));
 		this.instance.stderr.on('data', catchPort.bind(this));
 	}
-
+	
 	logger.info('Creating Pact with PID: ' + this.instance.pid);
-
+	
 	this.instance.once('close', (function (code) {
 		if (code !== 0) {
 			logger.warn('Pact exited with code ' + code + '.');
 		}
 		this.stop();
 	}).bind(this));
-
+	
 	// check service is available
 	return waitForServerUp(this.options)
 		.timeout(10000, "Couldn't start Pact with PID: " + this.instance.pid)
@@ -135,7 +136,7 @@ Server.prototype.stop = function () {
 		}
 		this.instance = undefined;
 	}
-
+	
 	return waitForServerDown(this.options)
 		.timeout(10000, "Couldn't stop Pact with PID: " + pid)
 		.then((function () {
@@ -156,14 +157,14 @@ Server.prototype.delete = function () {
 // Wait for pact-mock-service to be initialized and ready
 function waitForServerUp(options) {
 	var amount = 0, deferred = q.defer();
-
+	
 	function retry() {
 		if (amount >= 10) {
 			deferred.reject(new Error("Pact startup failed; tried calling service 10 times with no result."));
 		}
 		setTimeout(check.bind(this), CHECKTIME);
 	}
-
+	
 	function check() {
 		amount++;
 		if (options.port) {
@@ -174,14 +175,14 @@ function waitForServerUp(options) {
 			retry();
 		}
 	}
-
+	
 	check(); // Check first time, start polling
 	return deferred.promise;
 }
 
 function waitForServerDown(options) {
 	var amount = 0, deferred = q.defer();
-
+	
 	function check() {
 		amount++;
 		if (options.port) {
@@ -198,7 +199,7 @@ function waitForServerDown(options) {
 			deferred.resolve();
 		}
 	}
-
+	
 	check(); // Check first time, start polling
 	return deferred.promise;
 }
@@ -213,6 +214,7 @@ function call(options) {
 			'Content-Type': 'application/json'
 		}
 	};
+	
 	if (options.ssl) {
 		process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 		config.agentOptions = {};
@@ -220,6 +222,7 @@ function call(options) {
 		config.agentOptions.requestCert = false;
 		config.agentOptions.agent = false;
 	}
+	
 	http(config, function (err, res) {
 		if (!err && res.statusCode == 200) {
 			deferred.resolve();
@@ -227,14 +230,14 @@ function call(options) {
 			deferred.reject();
 		}
 	});
-
+	
 	return deferred.promise;
 }
 
 // Creates a new instance of the pact server with the specified option
 module.exports = function (options) {
 	options = options || {};
-
+	
 	// defaults
 	//options.port = options.port;
 	options.ssl = options.ssl || false;
@@ -245,32 +248,32 @@ module.exports = function (options) {
 	options.host = options.host || 'localhost';
 	// options.consumer = options.consumer || 'consumer name';
 	// options.provider = options.provider || 'provider name';
-
+	
 	// port checking
 	if (options.port) {
 		checkTypes.assert.number(options.port);
 		checkTypes.assert.integer(options.port);
 		checkTypes.assert.positive(options.port);
 		checkTypes.assert.inRange(options.port, 0, 65535);
-
+		
 		if (checkTypes.not.inRange(options.port, 1024, 49151)) {
 			logger.warn("Like a Boss, you used a port outside of the recommended range (1024 to 49151); I too like to live dangerously.");
 		}
 	}
-
+	
 	// ssl check
 	checkTypes.assert.boolean(options.ssl);
-
+	
 	// cors check'
 	checkTypes.assert.boolean(options.cors);
-
+	
 	// spec checking
 	if (options.spec) {
 		checkTypes.assert.number(options.spec);
 		checkTypes.assert.integer(options.spec);
 		checkTypes.assert.positive(options.spec);
 	}
-
+	
 	// dir check
 	if (options.dir) {
 		try {
@@ -279,7 +282,7 @@ module.exports = function (options) {
 			mkdirp.sync(path.normalize(options.dir));
 		}
 	}
-
+	
 	// log check
 	if (options.log) {
 		var fileObj = path.parse(path.normalize(options.log));
@@ -290,21 +293,21 @@ module.exports = function (options) {
 			mkdirp.sync(fileObj.dir);
 		}
 	}
-
+	
 	// host check
 	if (options.host) {
 		checkTypes.assert.string(options.host);
 	}
-
+	
 	// consumer name check
 	if (options.consumer) {
 		checkTypes.assert.string(options.consumer);
 	}
-
+	
 	// provider name check
 	if (options.provider) {
 		checkTypes.assert.string(options.provider);
 	}
-
+	
 	return new Server(options.port, options.host, options.dir, options.ssl, options.cors, options.log, options.spec, options.consumer, options.provider);
 };

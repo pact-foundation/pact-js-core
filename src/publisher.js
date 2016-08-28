@@ -23,7 +23,7 @@ function Publisher(pactBroker, pactUrls, consumerVersion, pactBrokerUsername, pa
 Publisher.prototype.publish = function () {
 	var options = this._options;
 	logger.info('Publishing pacts to broker at: ' + options.pactBroker);
-
+	
 	// Stat all paths in pactUrls to make sure they exist
 	// publish template $pactHost/pacts/provider/$provider/consumer/$client/$version
 	var uris = _.chain(options.pactUrls)
@@ -43,7 +43,7 @@ Publisher.prototype.publish = function () {
 		.flatten(true)
 		.compact()
 		.value();
-
+	
 	// Return a merge of all promises...
 	return q.allSettled(
 		_.chain(uris)
@@ -64,7 +64,7 @@ Publisher.prototype.publish = function () {
 						return q.reject(new Error('Unable to publish Pact to Broker. ' + err.message));
 					});
 				});
-
+				
 			})
 			.map(function (publish) {
 				return publish.then(function (data) {
@@ -116,7 +116,7 @@ function callPact(options, config) {
 		},
 		json: true
 	}, config);
-
+	
 	// Authentication
 	if (options.pactBrokerUsername && options.pactBrokerPassword) {
 		config.auth = {
@@ -124,7 +124,7 @@ function callPact(options, config) {
 			pass: options.pactBrokerPassword
 		}
 	}
-
+	
 	return request(config).then(function (data) {
 		return data[0]; // return response only
 	}).then(function (response) {
@@ -160,11 +160,11 @@ function constructPutUrl(options, data) {
 	if (!_.has(options, 'pactBroker')) {
 		throw new Error("Cannot construct Pact publish URL: 'pactBroker' not specified");
 	}
-
+	
 	if (!_.has(options, 'consumerVersion')) {
 		throw new Error("Cannot construct Pact publish URL: 'consumerVersion' not specified");
 	}
-
+	
 	if (!_.isObject(options)
 		|| !_.has(data, 'consumer')
 		|| !_.has(data, 'provider')
@@ -173,7 +173,7 @@ function constructPutUrl(options, data) {
 		throw new Error("Invalid Pact file given. " +
 			"Unable to parse consumer and provider name");
 	}
-
+	
 	return urlJoin(options.pactBroker, 'pacts/provider', data.provider.name, 'consumer', data.consumer.name, 'version', options.consumerVersion)
 }
 
@@ -181,18 +181,18 @@ function constructTagUrl(options, tag, data) {
 	if (!_.has(options, 'pactBroker')) {
 		throw new Error("Cannot construct Pact Tag URL: 'pactBroker' not specified");
 	}
-
+	
 	if (!_.has(options, 'consumerVersion')) {
 		throw new Error("Cannot construct Pact Tag URL: 'consumerVersion' not specified");
 	}
-
+	
 	if (!_.isObject(options)
 		|| !_.has(data, 'consumer')
 		|| !_.has(data.consumer, 'name')) {
 		throw new Error("Invalid Pact file given. " +
 			"Unable to parse consumer name");
 	}
-
+	
 	return urlJoin(options.pactBroker, 'pacticipants', data.consumer.name, 'version', options.consumerVersion, 'tags', tag)
 }
 
@@ -202,11 +202,11 @@ module.exports = function (options) {
 	options.pactBroker = options.pactBroker || '';
 	options.pactUrls = options.pactUrls || [];
 	options.tags = options.tags || [];
-
+	
 	if (options.pactUrls) {
 		checkTypes.assert.array.of.string(options.pactUrls);
 	}
-
+	
 	// Stat all paths in pactUrls to make sure they exist
 	var url = require('url');
 	_.each(options.pactUrls, function (uri) {
@@ -220,26 +220,26 @@ module.exports = function (options) {
 			}
 		}
 	});
-
+	
 	checkTypes.assert.nonEmptyString(options.pactBroker, 'Must provide the pactBroker argument');
 	checkTypes.assert.nonEmptyString(options.consumerVersion, 'Must provide the consumerVersion argument');
 	checkTypes.assert.not.emptyArray(options.pactUrls, 'Must provide the pactUrls argument');
-
+	
 	if (options.pactBrokerUsername) {
 		checkTypes.assert.string(options.pactBrokerUsername);
 	}
-
+	
 	if (options.pactBrokerPassword) {
 		checkTypes.assert.string(options.pactBrokerPassword);
 	}
-
+	
 	if ((options.pactBrokerUsername && !options.pactBrokerPassword) || (options.pactBrokerPassword && !options.pactBrokerUsername)) {
 		throw new Error('Must provide both or none of --provider-states-url and --provider-states-setup-url.');
 	}
-
+	
 	if (options.pactBroker) {
 		checkTypes.assert.string(options.pactBroker);
 	}
-
+	
 	return new Publisher(options.pactBroker, options.pactUrls, options.consumerVersion, options.pactBrokerUsername, options.pactBrokerPassword, options.tags);
 };

@@ -6,7 +6,7 @@ var program = require('commander');
 var pkg = require('./../package.json');
 
 function parseBoolean(b) {
-	switch(b) {
+	switch (b) {
 		case 'true':
 			return true;
 		case 'false':

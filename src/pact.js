@@ -28,17 +28,17 @@ function createServer(options) {
 		logger.error(msg);
 		throw new Error(msg);
 	}
-
+	
 	var server = serverFactory(options);
 	servers.push(server);
 	logger.info('Creating Pact Server with options: \n' + stringify(server.options));
-
+	
 	// Listen to server delete events, to remove from server list
 	server.once('delete', function (server) {
 		logger.info('Deleting Pact Server with options: \n' + stringify(server.options));
 		servers = _.without(servers, server);
 	});
-
+	
 	return server;
 }
 

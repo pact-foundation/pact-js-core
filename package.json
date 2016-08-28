@@ -1,6 +1,6 @@
 {
   "name": "@pact-foundation/pact-node",
-  "version": "4.5.0",
+  "version": "4.5.2",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "./src/pact.js",
   "os": [
@@ -61,7 +61,7 @@
     "cors": "^2.7.1",
     "cross-env": "^1.0.7",
     "express": "^4.13.4",
-    "jscs": "^2.1.0",
+    "jscs": "2.1.0",
     "mocha": "^2.2.5",
     "nodemon": "^1.4.1",
     "rewire": "^2.5.2",

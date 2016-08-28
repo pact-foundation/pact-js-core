@@ -1,5 +1,3 @@
-/* global describe:true, before:true, after:true, it:true, global:true, process:true */
-
 var verifierFactory = require('./../src/verifier.js'),
 	logger = require('./../src/logger'),
 	expect = require('chai').expect,
@@ -13,25 +11,25 @@ var verifierFactory = require('./../src/verifier.js'),
 chai.use(chaiAsPromised);
 
 describe("Verifier Integration Spec", function () {
-
+	
 	var server,
 		PORT = Math.floor(Math.random() * 999) + 9000,
 		providerBaseUrl = 'http://localhost:' + PORT,
 		providerStatesUrl = providerBaseUrl + '/provider-states',
 		providerStatesSetupUrl = providerBaseUrl + '/provider-state/',
 		pactBrokerBaseUrl = 'http://localhost:' + PORT;
-
+	
 	before(function (done) {
 		server = provider.listen(PORT, function () {
 			console.log('Pact Broker Mock listening on port: ' + PORT);
 			done();
 		});
 	});
-
+	
 	after(function () {
 		server.close();
 	});
-
+	
 	context("when given a successful contract", function () {
 		context("without provider states", function () {
 			it("should return a successful promise", function () {
@@ -42,7 +40,7 @@ describe("Verifier Integration Spec", function () {
 				return expect(verifier.verify()).to.eventually.be.fulfilled;
 			});
 		});
-
+		
 		context("with Provider States", function () {
 			it("should return a successful promise", function () {
 				var verifier = verifierFactory({
@@ -55,7 +53,7 @@ describe("Verifier Integration Spec", function () {
 			});
 		});
 	});
-
+	
 	context("when given a failing contract", function () {
 		it("should return a rejected promise", function () {
 			var verifier = verifierFactory({
@@ -65,7 +63,7 @@ describe("Verifier Integration Spec", function () {
 			return expect(verifier.verify()).to.eventually.be.rejected;
 		});
 	});
-
+	
 	context("when given multiple successful API calls in a contract", function () {
 		it("should return a successful promise", function () {
 			var verifier = verifierFactory({
@@ -77,7 +75,7 @@ describe("Verifier Integration Spec", function () {
 			return expect(verifier.verify()).to.eventually.be.fulfilled;
 		});
 	});
-
+	
 	context("when given multiple contracts", function () {
 		context("from a local file", function () {
 			it("should return a successful promise", function () {
@@ -90,7 +88,7 @@ describe("Verifier Integration Spec", function () {
 				return expect(verifier.verify()).to.eventually.be.fulfilled;
 			});
 		});
-
+		
 		context("from a Pact Broker", function () {
 			context("without authentication", function () {
 				it("should return a successful promise", function () {
@@ -139,12 +137,12 @@ describe("Verifier Integration Spec", function () {
 							pactBrokerPassword: 'baaoeur'
 						});
 						return verifier.verify()
-						.then(function() {
-							throw new Error("Expected an error but got none");
-						})
-						.catch(function(err) {
-							expect(err.message).to.contain("Unauthorized")
-						})
+							.then(function () {
+								throw new Error("Expected an error but got none");
+							})
+							.catch(function (err) {
+								expect(err.message).to.contain("Unauthorized")
+							})
 					});
 				});
 			});

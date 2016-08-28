@@ -12,9 +12,9 @@ var isWindows = process.platform === 'win32';
 describe("Pact CLI Spec", function () {
 	var cliPath = path.resolve(__dirname, 'pact-node');
 	var procs;
-
+	
 	function spawn(args) {
-		args = args || { port: 1234, host: 'localhost'};
+		args = args || {port: 1234, host: 'localhost'};
 		var deferred = q.defer();
 		var amount = 0;
 		var opts = {
@@ -24,7 +24,7 @@ describe("Pact CLI Spec", function () {
 		};
 		procs.push(cp.spawn(cliPath, args, opts));
 		check();
-
+		
 		function check() {
 			amount++;
 			call(args).then(function () {
@@ -34,7 +34,7 @@ describe("Pact CLI Spec", function () {
 				setTimeout(check, 1000);
 			}, deferred.resolve);
 		}
-
+		
 		function call(options) {
 			var deferred = q.defer();
 			var config = {
@@ -59,17 +59,17 @@ describe("Pact CLI Spec", function () {
 					deferred.reject();
 				}
 			});
-
+			
 			return deferred.promise;
 		}
-
+		
 		return deferred.promise.timeout(10000, 'Process took too long');
 	}
-
+	
 	beforeEach(function () {
 		procs = [];
 	});
-
+	
 	afterEach(function () {
 		for (var i = 0, len = procs.length; i < len; i++) {
 			if (isWindows) {
@@ -79,15 +79,15 @@ describe("Pact CLI Spec", function () {
 			}
 		}
 	});
-
+	
 	describe("run pact-node command", function () {
 		context("when no options are set", function () {
 			/*it("should use defaults and start running", function (done) {
-				spawn();
-				done();
-			});*/
+			 spawn();
+			 done();
+			 });*/
 		});
-
+		
 		/*context("when user specifies valid options", function () {
 		 var dirPath;
 		 beforeEach(function (done) {
@@ -97,7 +97,7 @@ describe("Pact CLI Spec", function () {
 		 afterEach(function (done) {
 		 fs.rmdir(dirPath, done);
 		 });
-
+		 
 		 it("should return serverFactory using specified options", function () {
 		 var options = {
 		 port: 9500,
@@ -110,78 +110,78 @@ describe("Pact CLI Spec", function () {
 		 consumer: 'consumerName',
 		 provider: 'providerName'
 		 };
-
+		 
 		 });
 		 });
-
+		 
 		 context("when user specifies invalid port", function () {
 		 it("should return an error on negative port number", function () {
-
+		 
 		 });
-
+		 
 		 it("should return an error on non-integer", function () {
 		 });
-
+		 
 		 it("should return an error on non-number", function () {
 		 });
-
+		 
 		 it("should return an error on outside port range", function () {
 		 });
-
+		 
 		 });
-
+		 
 		 context("when user specifies port that's currently in use", function () {
 		 it("should return a port conflict error", function () {
 		 });
 		 });
-
+		 
 		 context("when user specifies invalid host", function () {
 		 it("should return an error on non-string", function () {
 		 });
-
+		 
 		 });
-
+		 
 		 context("when user specifies invalid directory", function () {
 		 it("should return an error on invalid path", function () {
 		 });
-
+		 
 		 });
-
+		 
 		 context("when user specifies invalid ssl", function () {
 		 it("should return an error on non-boolean", function () {
 		 });
-
+		 
 		 });
-
+		 
 		 context("when user specifies invalid cors", function () {
 		 it("should return an error on non-boolean", function () {
 		 });
-
+		 
 		 });
-
+		 
 		 context("when user specifies invalid log", function () {
 		 it("should return an error on invalid path", function () {
 		 });
-
+		 
 		 });
-
+		 
 		 context("when user specifies invalid spec", function () {
 		 it("should return an error on non-number", function () {
 		 });
-
+		 
 		 it("should return an error on negative number", function () {
 		 });
-
+		 
 		 it("should return an error on non-integer", function () {
 		 });
-
+		 
 		 });
-
+		 
 		 context("when user specifies invalid consumer name", function () {
 		 it("should return an error on non-string", function () {
 		 });
 		 });
-
+		 
 		 context("when user specifies invalid provider name", function () {
 		 it("should return an error on non-string", function () {
 		 });

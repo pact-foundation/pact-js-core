@@ -40,7 +40,7 @@ server.get('/contract/:name', function (req, res) {
 			'x-sent': true
 		}
 	};
-
+	
 	var fileName = req.params.name;
 	res.sendFile(fileName, options, function (err) {
 		if (err) {
