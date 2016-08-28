@@ -9,8 +9,8 @@ var checkTypes = require('check-types'),
 	q = require('q'),
 	unixify = require('unixify'),
 	url = require('url'),
-	verifierPath = require('@pact-foundation/pact-provider-verifier');
-var isWindows = process.platform === 'win32';
+	verifierPath = require('@pact-foundation/pact-provider-verifier'),
+	isWindows = process.platform === 'win32';
 
 // Constructor
 function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword) {
@@ -27,10 +27,10 @@ Verifier.prototype.verify = function () {
 	logger.info("Verifier verify()");
 	var deferred = q.defer();
 
-	var stdout = ''; // Store output here in case of error
+	var output = ''; // Store output here in case of error
 	function outputHandler(data) {
 		logger.info(data);
-		stdout += data;
+		output += data;
 	}
 
 	var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
@@ -79,15 +79,15 @@ Verifier.prototype.verify = function () {
 	this.instance.on('error', logger.error.bind(logger));
 
 	this.instance.once('close', function (code) {
-		code == 0 ? deferred.resolve(stdout) : deferred.reject(new Error(stdout));
+		code == 0 ? deferred.resolve(output) : deferred.reject(new Error(output));
 	});
 
 	logger.info('Created Pact Verifier process with PID: ' + this.instance.pid);
-	return deferred.promise.then(function () {
-		logger.info('Pact Verification succeeded.');
-	}, function (err) {
-		return q.reject(err);
-	});
+	return deferred.promise.timeout(10000, "Couldn't start Pact Verifier process with PID: " + this.instance.pid)
+		.then(function (data) {
+			logger.info('Pact Verification succeeded.');
+			return data;
+		});
 };
 
 // Creates a new instance of the pact server with the specified option

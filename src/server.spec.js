@@ -1,10 +1,12 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
-
-var serverFactory = require('./server'),
+var rewire = require("rewire"),
+	serverFactory = rewire('./server'),
 	logger = require('./logger'),
 	expect = require('chai').expect,
 	fs = require('fs'),
-	path = require('path');
+	path = require('path'),
+	q = require('q'),
+	_ = require('underscore');
 
 describe("Server Spec", function () {
 	var server;
@@ -49,6 +51,23 @@ describe("Server Spec", function () {
 				} catch (e) {
 				}
 				done();
+			});
+
+			it("should start correctly when instance is delayed", function (done) {
+				server = serverFactory();
+				var waitForServerUp = serverFactory.__get__('waitForServerUp');
+
+				q.allSettled([
+					waitForServerUp(server.options),
+					q.delay(5000).then(function () {
+						server.start()
+					})
+				]).then(function (results) {
+					expect(_.reduce(results, function (m, r) {
+						return m && r.state === 'fulfilled'
+					})).to.be.true;
+					done();
+				});
 			});
 
 			it("should start correctly with ssl", function (done) {
