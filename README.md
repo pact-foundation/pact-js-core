@@ -62,7 +62,7 @@ var opts = {
 	providerBaseUrl: <String>,       // Running API provider host endpoint. Required.
 	pactUrls: <Array>,               // Array of local Pact file paths or Pact Broker URLs (http based). Required.
 	providerStatesUrl: <String>,     // URL to fetch the provider states for the given provider API. Optional.
-	providerStatesSetupUrl <String>, // URL to send PUT requests to setup a given provider state. Optional.
+	providerStatesSetupUrl: <String>, // URL to send PUT requests to setup a given provider state. Optional.
 	pactBrokerUsername: <String>,    // Username for Pact Broker basic authentication. Optional
 	pactBrokerPassword: <String>,    // Password for Pact Broker basic authentication. Optional
 };
