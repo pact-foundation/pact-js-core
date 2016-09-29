@@ -67,7 +67,7 @@ var opts = {
 	pactBrokerPassword: <String>,    // Password for Pact Broker basic authentication. Optional
 };
 
-pact.verifyPacts(opts)).then(function () {
+pact.verifyPacts(opts).then(function () {
 	// do something
 });
 ```
