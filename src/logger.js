@@ -9,7 +9,7 @@ module.exports = bunyan.createLogger({
 	name: 'pact-node@' + pkg.version,
 	streams: [
 		{
-			level: 'warn',
+			level: process.env.LOGLEVEL || 'warn',
 			type: 'raw',
 			stream: prettyStdOut
 		}

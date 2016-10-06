@@ -12,6 +12,7 @@ var checkTypes = require('check-types'),
 	util = require('util'),
 	pactPath = require('@pact-foundation/pact-mock-service'),
 	mkdirp = require('mkdirp'),
+	pactUtil = require('./pact-util'),
 	isWindows = process.platform === 'win32';
 
 var CHECKTIME = 500;
@@ -20,25 +21,28 @@ var PROCESS_TIMEOUT = 30000;
 
 // Constructor
 function Server(port, host, dir, ssl, cors, log, spec, consumer, provider) {
-	this.options = {};
-	this.options.port = port;
-	this.options.host = host;
-	this.options.dir = dir;
-	this.options.ssl = ssl;
-	this.options.cors = cors;
-	this.options.log = log;
-	this.options.spec = spec;
-	this.options.consumer = consumer;
-	this.options.provider = provider;
-	this.$running = false;
+	this._options = {};
+	this._options.port = port;
+	this._options.host = host;
+	this._options.dir = dir;
+	this._options.ssl = ssl;
+	this._options.cors = cors;
+	this._options.log = log;
+	this._options.spec = spec;
+	this._options.consumer = consumer;
+	this._options.provider = provider;
+	this._running = false;
+	this.START_EVENT = 'start';
+	this.STOP_EVENT = 'stop';
+	this.DELETE_EVENT = 'delete';
 }
 
 util.inherits(Server, eventEmitter);
 
 // Let the mocking begin!
 Server.prototype.start = function () {
-	if (this.instance && this.instance.connected) {
-		logger.warn('You already have a process running with PID: ' + this.instance.pid);
+	if (this._instance && this._instance.connected) {
+		logger.warn('You already have a process running with PID: ' + this._instance.pid);
 		return;
 	}
 
@@ -53,7 +57,7 @@ Server.prototype.start = function () {
 			detached: !isWindows,
 			env: envVars
 		},
-		mapping = {
+		args = pactUtil.createArguments(this._options, {
 			'port': '--port',
 			'host': '--host',
 			'log': '--log',
@@ -63,11 +67,7 @@ Server.prototype.start = function () {
 			'spec': '--pact_specification_version',
 			'consumer': '--consumer',
 			'provider': '--provider'
-		};
-
-	var args = _.compact(_.map(mapping, (function (value, key) {
-		return this.options[key] ? value + ' ' + this.options[key] : null;
-	}).bind(this)));
+		});
 
 	var cmd = [pactPath.file].concat(args).join(' ');
 
@@ -80,33 +80,33 @@ Server.prototype.start = function () {
 		file = '/bin/sh';
 		args = ['-c', cmd];
 	}
+	logger.debug('Starting binary with `' + _.flatten([file, args, _.map(opts, function (v, k) {return k + ':' + v;})]) + '`');
+	this._instance = cp.spawn(file, args, opts);
 
-	this.instance = cp.spawn(file, args, opts);
-
-	this.instance.stdout.setEncoding('utf8');
-	this.instance.stdout.on('data', logger.debug.bind(logger));
-	this.instance.stderr.setEncoding('utf8');
-	this.instance.stderr.on('data', logger.debug.bind(logger));
-	this.instance.on('error', logger.error.bind(logger));
+	this._instance.stdout.setEncoding('utf8');
+	this._instance.stdout.on('data', logger.debug.bind(logger));
+	this._instance.stderr.setEncoding('utf8');
+	this._instance.stderr.on('data', logger.debug.bind(logger));
+	this._instance.on('error', logger.error.bind(logger));
 
 	// if port isn't specified, listen for it when pact runs
 	function catchPort(data) {
 		var match = data.match(/port=([0-9]+)/);
 		if (match && match[1]) {
-			this.options.port = parseInt(match[1]);
-			this.instance.stdout.removeListener('data', catchPort.bind(this));
-			this.instance.stderr.removeListener('data', catchPort.bind(this));
+			this._options.port = parseInt(match[1]);
+			this._instance.stdout.removeListener('data', catchPort.bind(this));
+			this._instance.stderr.removeListener('data', catchPort.bind(this));
 		}
 	}
 
-	if (!this.options.port) {
-		this.instance.stdout.on('data', catchPort.bind(this));
-		this.instance.stderr.on('data', catchPort.bind(this));
+	if (!this._options.port) {
+		this._instance.stdout.on('data', catchPort.bind(this));
+		this._instance.stderr.on('data', catchPort.bind(this));
 	}
 
-	logger.info('Creating Pact with PID: ' + this.instance.pid);
+	logger.info('Creating Pact with PID: ' + this._instance.pid);
 
-	this.instance.once('close', (function (code) {
+	this._instance.once('close', (function (code) {
 		if (code !== 0) {
 			logger.warn('Pact exited with code ' + code + '.');
 		}
@@ -114,45 +114,42 @@ Server.prototype.start = function () {
 	}).bind(this));
 
 	// check service is available
-	return waitForServerUp(this.options)
-		.timeout(PROCESS_TIMEOUT, "Couldn't start Pact with PID: " + this.instance.pid)
-		.then((function () {
-			this.$running = true;
-			this.emit('start', this);
-			return this;
+	return waitForServerUp(this._options)
+		.timeout(PROCESS_TIMEOUT, "Couldn't start Pact with PID: " + this._instance.pid)
+		.tap((function () {
+			this._running = true;
+			this.emit(this.START_EVENT, this);
 		}).bind(this));
 };
 
 // Stop the server instance, no more mocking
 Server.prototype.stop = function () {
 	var pid = -1;
-	if (this.instance) {
-		pid = this.instance.pid;
+	if (this._instance) {
+		pid = this._instance.pid;
 		logger.info('Removing Pact with PID: ' + pid);
-		this.instance.removeAllListeners();
+		this._instance.removeAllListeners();
 		// Killing instance, since windows can't send signals, must kill process forcefully
 		if (isWindows) {
 			cp.execSync('taskkill /f /t /pid ' + pid);
 		} else {
 			process.kill(-pid, 'SIGINT');
 		}
-		this.instance = undefined;
+		this._instance = undefined;
 	}
 
-	return waitForServerDown(this.options)
+	return waitForServerDown(this._options)
 		.timeout(PROCESS_TIMEOUT, "Couldn't stop Pact with PID: " + pid)
-		.then((function () {
-			this.$running = false;
-			this.emit('stop', this);
-			return this;
+		.tap((function () {
+			this._running = false;
+			this.emit(this.STOP_EVENT, this);
 		}).bind(this));
 };
 
 // Deletes this server instance and emit an event
 Server.prototype.delete = function () {
-	return this.stop().then((function () {
-		this.emit('delete', this);
-		return this;
+	return this.stop().tap((function () {
+		this.emit(this.DELETE_EVENT, this);
 	}).bind(this));
 };
 

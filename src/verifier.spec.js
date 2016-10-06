@@ -1,9 +1,6 @@
-/* global describe:true, before:true, after:true, it:true, global:true, process:true */
-
 var verifierFactory = require('./verifier'),
 	logger = require('./logger'),
 	expect = require('chai').expect,
-	assert = require('chai').assert,
 	fs = require('fs'),
 	path = require('path'),
 	chai = require("chai"),
@@ -14,25 +11,7 @@ var verifierFactory = require('./verifier'),
 chai.use(chaiAsPromised);
 
 describe("Verifier Spec", function () {
-
-	before(function () {
-		logger.level('debug');
-	});
-
 	describe("Verifier", function () {
-		context("when provided any arguments", function () {
-			it("should wrap its arguments in quotes", function () {
-				var v = verifierFactory({
-					providerBaseUrl: "http://localhost",
-					pactUrls: ["http://idontexist"]
-				});
-				v.verify()
-				expect(v.options.args).to.include("\"--provider-base-url\"")
-				expect(v.options.args).to.include("\"http://localhost\"")
-				expect(v.options.args).to.include("\"--pact-urls\"")
-				expect(v.options.args).to.include("\"http://idontexist\"")
-			});
-		});
 		context("when not given --pact-urls or --provider-base-url", function () {
 			it("should fail with an error", function () {
 				expect(function () {

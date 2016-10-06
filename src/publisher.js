@@ -23,7 +23,7 @@ function Publisher(pactBroker, pactUrls, consumerVersion, pactBrokerUsername, pa
 Publisher.prototype.publish = function () {
 	var options = this._options;
 	logger.info('Publishing pacts to broker at: ' + options.pactBroker);
-	
+
 	// Stat all paths in pactUrls to make sure they exist
 	// publish template $pactHost/pacts/provider/$provider/consumer/$client/$version
 	var uris = _.chain(options.pactUrls)
@@ -43,15 +43,12 @@ Publisher.prototype.publish = function () {
 		.flatten(true)
 		.compact()
 		.value();
-	
+
 	// Return a merge of all promises...
 	return q.allSettled(
-		_.chain(uris)
-			.map(function (uri) {
-				return getPactFile(options, uri);
-			})
-			.map(function (file) {
-				return file.then(function (data) {
+		_.map(uris, function (uri) {
+			return getPactFile(options, uri)
+				.then(function (data) {
 					return callPact(options, {
 						uri: constructPutUrl(options, data),
 						method: 'PUT',
@@ -64,13 +61,10 @@ Publisher.prototype.publish = function () {
 					}).fail(function (err) {
 						return q.reject(new Error('Unable to publish Pact to Broker. ' + err.message));
 					});
-				});
-				
-			})
-			.map(function (publish) {
-				return publish.then(function (data) {
+				})
+				.tap(function (data) {
 					if (!options.tags.length) {
-						return data;
+						return;
 					}
 					return q.allSettled(_.map(options.tags, function (tag) {
 						return callPact(options, {
@@ -82,17 +76,15 @@ Publisher.prototype.publish = function () {
 						}).fail(function () {
 							return q.reject(new Error('Could not tag Pact with tag "' + tag + '"'));
 						});
-					})).then(function (results) {
+					})).tap(function (results) {
 						_.each(results, function (result) {
 							if (result.state !== "fulfilled") {
 								logger.warn(result.reason);
 							}
 						});
-						return data;
 					});
 				});
-			})
-			.value()
+		})
 	).then(function (results) {
 		var reject = false;
 		results = _.map(results, function (result) {
@@ -115,7 +107,7 @@ function callPact(options, config) {
 			'Accept': 'application/json'
 		}
 	}, config);
-	
+
 	// Authentication
 	if (options.pactBrokerUsername && options.pactBrokerPassword) {
 		config.auth = {
@@ -123,7 +115,7 @@ function callPact(options, config) {
 			pass: options.pactBrokerPassword
 		}
 	}
-	
+
 	return request(config).then(function (data) {
 		return data[0]; // return response only
 	}).then(function (response) {
@@ -137,13 +129,11 @@ function callPact(options, config) {
 function getPactFile(options, uri) {
 	// Parse the Pact file to extract consumer/provider names
 	if (/\.json$/.test(uri)) {
-		var readFile = q.denodeify(fs.readFile);
-		return readFile(uri, 'utf8')
-			.then(function (data) {
-				return JSON.parse(data);
-			}, function (err) {
-				return q.reject("Invalid Pact file: " + uri + ". Nested exception: " + err.message);
-			})
+		try {
+			return q(require(uri));
+		} catch (err) {
+			return q.reject("Invalid Pact file: " + uri + ". Nested exception: " + err);
+		}
 	} else {
 		return callPact(options, {
 			uri: uri,
@@ -160,11 +150,11 @@ function constructPutUrl(options, data) {
 	if (!_.has(options, 'pactBroker')) {
 		throw new Error("Cannot construct Pact publish URL: 'pactBroker' not specified");
 	}
-	
+
 	if (!_.has(options, 'consumerVersion')) {
 		throw new Error("Cannot construct Pact publish URL: 'consumerVersion' not specified");
 	}
-	
+
 	if (!_.isObject(options)
 		|| !_.has(data, 'consumer')
 		|| !_.has(data, 'provider')
@@ -173,7 +163,7 @@ function constructPutUrl(options, data) {
 		throw new Error("Invalid Pact file given. " +
 			"Unable to parse consumer and provider name");
 	}
-	
+
 	return urlJoin(options.pactBroker, 'pacts/provider', data.provider.name, 'consumer', data.consumer.name, 'version', options.consumerVersion)
 }
 
@@ -181,32 +171,32 @@ function constructTagUrl(options, tag, data) {
 	if (!_.has(options, 'pactBroker')) {
 		throw new Error("Cannot construct Pact Tag URL: 'pactBroker' not specified");
 	}
-	
+
 	if (!_.has(options, 'consumerVersion')) {
 		throw new Error("Cannot construct Pact Tag URL: 'consumerVersion' not specified");
 	}
-	
+
 	if (!_.isObject(options)
 		|| !_.has(data, 'consumer')
 		|| !_.has(data.consumer, 'name')) {
 		throw new Error("Invalid Pact file given. " +
 			"Unable to parse consumer name");
 	}
-	
+
 	return urlJoin(options.pactBroker, 'pacticipants', data.consumer.name, 'versions', options.consumerVersion, 'tags', tag)
 }
 
-// Creates a new instance of the pact server with the specified option
 module.exports = function (options) {
 	options = options || {};
+	// Setting defaults
 	options.pactBroker = options.pactBroker || '';
 	options.pactUrls = options.pactUrls || [];
 	options.tags = options.tags || [];
-	
+
 	if (options.pactUrls) {
 		checkTypes.assert.array.of.string(options.pactUrls);
 	}
-	
+
 	// Stat all paths in pactUrls to make sure they exist
 	var url = require('url');
 	_.each(options.pactUrls, function (uri) {
@@ -220,26 +210,26 @@ module.exports = function (options) {
 			}
 		}
 	});
-	
+
 	checkTypes.assert.nonEmptyString(options.pactBroker, 'Must provide the pactBroker argument');
 	checkTypes.assert.nonEmptyString(options.consumerVersion, 'Must provide the consumerVersion argument');
 	checkTypes.assert.not.emptyArray(options.pactUrls, 'Must provide the pactUrls argument');
-	
+
 	if (options.pactBrokerUsername) {
 		checkTypes.assert.string(options.pactBrokerUsername);
 	}
-	
+
 	if (options.pactBrokerPassword) {
 		checkTypes.assert.string(options.pactBrokerPassword);
 	}
-	
+
 	if ((options.pactBrokerUsername && !options.pactBrokerPassword) || (options.pactBrokerPassword && !options.pactBrokerUsername)) {
 		throw new Error('Must provide both or none of --provider-states-url and --provider-states-setup-url.');
 	}
-	
+
 	if (options.pactBroker) {
 		checkTypes.assert.string(options.pactBroker);
 	}
-	
+
 	return new Publisher(options.pactBroker, options.pactUrls, options.consumerVersion, options.pactBrokerUsername, options.pactBrokerPassword, options.tags);
 };

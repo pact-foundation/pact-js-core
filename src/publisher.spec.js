@@ -1,5 +1,3 @@
-/* global describe:true, before:true, after:true, it:true, global:true, process:true */
-
 var publisherFactory = require('./publisher'),
 	expect = require('chai').expect,
 	logger = require('./logger'),
@@ -19,15 +17,14 @@ describe("Publish Spec", function () {
 	var PORT = Math.floor(Math.random() * 999) + 9000,
 		pactBrokerBaseUrl = 'http://localhost:' + PORT,
 		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
-	
+
 	before(function (done) {
-		logger.level('debug');
 		broker.listen(PORT, function () {
 			console.log('Broker (Mock) running on port: ' + PORT);
 			done();
 		});
 	});
-	
+
 	describe("Publisher", function () {
 		context("when not given pactUrls", function () {
 			it("should fail with an error", function () {
@@ -39,7 +36,7 @@ describe("Publish Spec", function () {
 				}).to.throw(Error);
 			});
 		});
-		
+
 		context("when not given pactBroker", function () {
 			it("should fail with an error", function () {
 				expect(function () {
@@ -50,7 +47,7 @@ describe("Publish Spec", function () {
 				}).to.throw(Error);
 			});
 		});
-		
+
 		context("when not given consumerVersion", function () {
 			it("should fail with an error", function () {
 				expect(function () {
@@ -61,7 +58,7 @@ describe("Publish Spec", function () {
 				}).to.throw(Error);
 			});
 		});
-		
+
 		context("when given local Pact URLs that don't exist", function () {
 			it("should fail with an error", function () {
 				expect(function () {
@@ -72,7 +69,7 @@ describe("Publish Spec", function () {
 				}).to.throw(Error);
 			});
 		});
-		
+
 		context("when given local Pact URLs that do exist", function () {
 			it("should not fail", function () {
 				expect(function () {
@@ -84,7 +81,7 @@ describe("Publish Spec", function () {
 				}).to.not.throw(Error);
 			});
 		});
-		
+
 		context("when given the correct arguments", function () {
 			it("should return a Publisher object", function () {
 				var publisher = publisherFactory({
@@ -97,7 +94,7 @@ describe("Publish Spec", function () {
 			});
 		});
 	});
-	
+
 	context("constructPutUrl", function () {
 		context("when given a valid config object and pact JSON", function () {
 			it("should return a PUT url", function () {
@@ -141,7 +138,7 @@ describe("Publish Spec", function () {
 			});
 		});
 	});
-	
+
 	context("constructTagUrl", function () {
 		context("when given a valid config object and pact JSON", function () {
 			it("should return a PUT url", function () {

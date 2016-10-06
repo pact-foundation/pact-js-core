@@ -22,23 +22,23 @@ function stringify(obj) {
 // Creates server with specified options
 function createServer(options) {
 	if (options && options.port && _.some(servers, function (s) {
-			return s.options.port == options.port
+			return s._options.port == options.port
 		})) {
 		var msg = 'Port `' + options.port + '` is already in use by another process.';
 		logger.error(msg);
 		throw new Error(msg);
 	}
-	
+
 	var server = serverFactory(options);
 	servers.push(server);
-	logger.info('Creating Pact Server with options: \n' + stringify(server.options));
-	
+	logger.info('Creating Pact Server with options: \n' + stringify(server._options));
+
 	// Listen to server delete events, to remove from server list
 	server.once('delete', function (server) {
-		logger.info('Deleting Pact Server with options: \n' + stringify(server.options));
+		logger.info('Deleting Pact Server with options: \n' + stringify(server._options));
 		servers = _.without(servers, server);
 	});
-	
+
 	return server;
 }
 

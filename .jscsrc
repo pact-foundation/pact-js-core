@@ -18,7 +18,7 @@
 	"disallowSpacesInsideParentheses": true,
 	"disallowTrailingComma": true,
 	"requireCommaBeforeLineBreak": true,
-	"requireLineFeedAtFileEnd": true,
+	"requireLineFeedAtFileEnd": false,
 	"requireSpaceAfterBinaryOperators": ["?", ":", "+", "-", "/", "*", "%", "==", "===", "!=", "!==", ">", ">=", "<", "<=", "&&", "||"],
 	"requireSpaceBeforeBinaryOperators": ["?", ":", "+", "-", "/", "*", "%", "==", "===", "!=", "!==", ">", ">=", "<", "<=", "&&", "||"],
 	"requireSpaceAfterKeywords": ["if", "else", "for", "while", "do", "switch", "return", "try", "catch"],
@@ -32,6 +32,5 @@
 	"requireSpacesInForStatement": true,
 	"requireSpacesInFunction": {
 		"beforeOpeningCurlyBrace": true
-	},
-	"validateIndentation": { "value": "\t", "allExcept": ["comments", "emptyLines"] }
+	}
 }

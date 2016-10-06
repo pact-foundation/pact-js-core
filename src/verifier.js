@@ -1,5 +1,3 @@
-'use strict';
-
 var checkTypes = require('check-types'),
 	_ = require('underscore'),
 	logger = require('./logger'),
@@ -10,18 +8,18 @@ var checkTypes = require('check-types'),
 	unixify = require('unixify'),
 	url = require('url'),
 	verifierPath = require('@pact-foundation/pact-provider-verifier'),
+	pactUtil = require('./pact-util'),
 	isWindows = process.platform === 'win32';
 
 // Constructor
 function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword) {
-	this.options = {};
-	this.options.providerBaseUrl = providerBaseUrl;
-	this.options.pactUrls = pactUrls;
-	this.options.providerStatesUrl = providerStatesUrl;
-	this.options.providerStatesSetupUrl = providerStatesSetupUrl;
-	this.options.pactBrokerUsername = pactBrokerUsername;
-	this.options.pactBrokerPassword = pactBrokerPassword;
-	this.options.args = [];
+	this._options = {};
+	this._options.providerBaseUrl = providerBaseUrl;
+	this._options.pactUrls = pactUrls;
+	this._options.providerStatesUrl = providerStatesUrl;
+	this._options.providerStatesSetupUrl = providerStatesSetupUrl;
+	this._options.pactBrokerUsername = pactBrokerUsername;
+	this._options.pactBrokerPassword = pactBrokerPassword;
 }
 
 Verifier.prototype.verify = function () {
@@ -41,34 +39,21 @@ Verifier.prototype.verify = function () {
 	delete envVars['RUBYGEMS_GEMDEPS'];
 
 	var file,
-		args,
 		opts = {
 			cwd: verifierPath.cwd,
 			detached: !isWindows,
 			env: envVars
 		},
-		mapping = {
+		args = pactUtil.createArguments(this._options, {
 			'providerBaseUrl': '--provider-base-url',
 			'pactUrls': '--pact-urls',
 			'providerStatesUrl': '--provider-states-url',
 			'providerStatesSetupUrl': '--provider-states-setup-url',
 			'pactBrokerUsername': '--broker-username',
 			'pactBrokerPassword': '--broker-password'
-		};
+		});
 
-
-	this.options.args = _.compact(_.flatten(_.map(mapping, (function (value, key) {
-		if (this.options[key]) {
-			return [value, (checkTypes.array(this.options[key]) ? this.options[key].join(',') : this.options[key])]
-		}
-	}).bind(this))));
-
-	// Quote args
-	this.options.args = _.map(this.options.args, function(v) {
-		return '"' + v + '"';
-	});
-
-	var cmd = [verifierPath.file].concat(this.options.args).join(' ');
+	var cmd = [verifierPath.file].concat(args).join(' ');
 
 	if (isWindows) {
 		file = 'cmd.exe';
@@ -80,23 +65,22 @@ Verifier.prototype.verify = function () {
 		args = ['-c', cmd];
 	}
 
-	this.instance = cp.spawn(file, args, opts);
+	this._instance = cp.spawn(file, args, opts);
 
-	this.instance.stdout.setEncoding('utf8');
-	this.instance.stdout.on('data', outputHandler);
-	this.instance.stderr.setEncoding('utf8');
-	this.instance.stderr.on('data', outputHandler);
-	this.instance.on('error', logger.error.bind(logger));
+	this._instance.stdout.setEncoding('utf8');
+	this._instance.stdout.on('data', outputHandler);
+	this._instance.stderr.setEncoding('utf8');
+	this._instance.stderr.on('data', outputHandler);
+	this._instance.on('error', logger.error.bind(logger));
 
-	this.instance.once('close', function (code) {
+	this._instance.once('close', function (code) {
 		code == 0 ? deferred.resolve(output) : deferred.reject(new Error(output));
 	});
 
-	logger.info('Created Pact Verifier process with PID: ' + this.instance.pid);
-	return deferred.promise.timeout(10000, "Couldn't start Pact Verifier process with PID: " + this.instance.pid)
-		.then(function (data) {
+	logger.info('Created Pact Verifier process with PID: ' + this._instance.pid);
+	return deferred.promise.timeout(10000, "Couldn't start Pact Verifier process with PID: " + this._instance.pid)
+		.tap(function (data) {
 			logger.info('Pact Verification succeeded.');
-			return data;
 		});
 };
 
