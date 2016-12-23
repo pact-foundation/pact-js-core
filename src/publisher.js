@@ -22,6 +22,8 @@ function Publisher(pactBroker, pactUrls, consumerVersion, pactBrokerUsername, pa
 
 Publisher.prototype.publish = function () {
 	var options = this._options;
+	var errorMsg;
+	
 	logger.info('Publishing pacts to broker at: ' + options.pactBroker);
 
 	// Stat all paths in pactUrls to make sure they exist
@@ -59,7 +61,9 @@ Publisher.prototype.publish = function () {
 						json: true,
 						body: data
 					}).fail(function (err) {
-						return q.reject(new Error('Unable to publish Pact to Broker. ' + err.message));
+						errorMsg = 'Unable to publish Pact to Broker. ' + err.message;
+						logger.warn(errorMsg);
+						return q.reject(new Error(errorMsg));
 					});
 				})
 				.tap(function (data) {
@@ -74,7 +78,9 @@ Publisher.prototype.publish = function () {
 								'Content-Type': 'application/json'
 							}
 						}).fail(function () {
-							return q.reject(new Error('Could not tag Pact with tag "' + tag + '"'));
+							errorMsg = 'Could not tag Pact with tag "' + tag + '"';
+							logger.warn(errorMsg);
+							return q.reject(new Error(errorMsg));
 						});
 					})).tap(function (results) {
 						_.each(results, function (result) {
