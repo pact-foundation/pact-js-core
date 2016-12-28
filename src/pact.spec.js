@@ -16,6 +16,15 @@ describe("Pact Spec", function () {
 	});
 
 	describe("Set Log Level", function () {
+		var originalLogLevel;
+		// Reset lot level after the tests
+		before(function () {
+			originalLogLevel = pact.logLevel();
+		});
+		after(function () {
+			pact.logLevel(originalLogLevel);
+		});
+
 		context("when setting a log level", function () {
 			it("should be able to set log level 'trace'", function () {
 				pact.logLevel('trace');

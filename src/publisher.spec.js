@@ -119,22 +119,22 @@ describe("Publish Spec", function () {
 				}).to.throw(Error, "Cannot construct Pact publish URL: 'consumerVersion' not specified");
 			});
 		});
-		context("when given an invalid pact file (no consumer/provider keys)", function () {
+		context("when given an invalid Pact contract (no consumer/provider keys)", function () {
 			it("should return a PUT url", function () {
 				var options = {'pactBroker': 'http://foo', 'consumerVersion': '1'};
 				var data = {};
 				expect(function () {
 					constructPutUrl(options, data);
-				}).to.throw(Error, "Invalid Pact file given. Unable to parse consumer and provider name");
+				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer and provider name");
 			});
 		});
-		context("when given an invalid pact file (no name keys)", function () {
+		context("when given an invalid Pact contract (no name keys)", function () {
 			it("should return a PUT url", function () {
 				var options = {'pactBroker': 'http://foo', 'consumerVersion': '1'};
 				var data = {'consumer': {}, 'provider': {}};
 				expect(function () {
 					constructPutUrl(options, data);
-				}).to.throw(Error, "Invalid Pact file given. Unable to parse consumer and provider name");
+				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer and provider name");
 			});
 		});
 	});
@@ -163,22 +163,22 @@ describe("Publish Spec", function () {
 				}).to.throw(Error, "Cannot construct Pact Tag URL: 'consumerVersion' not specified");
 			});
 		});
-		context("when given an invalid pact file (no consumer key)", function () {
+		context("when given an invalid Pact contract (no consumer key)", function () {
 			it("should return a PUT url", function () {
 				var options = {'pactBroker': 'http://foo', consumerVersion: '1.0'};
 				var data = {};
 				expect(function () {
 					constructTagUrl(options, data);
-				}).to.throw(Error, "Invalid Pact file given. Unable to parse consumer name");
+				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer name");
 			});
 		});
-		context("when given an invalid pact file (no name keys)", function () {
+		context("when given an invalid Pact contract (no name keys)", function () {
 			it("should return a PUT url", function () {
 				var options = {'pactBroker': 'http://foo', consumerVersion: '1.0'};
 				var data = {'consumer': {}};
 				expect(function () {
 					constructTagUrl(options, data);
-				}).to.throw(Error, "Invalid Pact file given. Unable to parse consumer name");
+				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer name");
 			});
 		});
 	});

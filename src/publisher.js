@@ -44,11 +44,29 @@ Publisher.prototype.publish = function () {
 		.compact()
 		.value();
 
-	// Return a merge of all promises...
-	return q.allSettled(
-		_.map(uris, function (uri) {
-			return getPactFile(options, uri)
-				.then(function (data) {
+	// Return a promise that does everything one after another
+	return q(uris)
+		.then(function (uris) { // Get the pact contract either from local file or broker
+			return q.allSettled(
+				_.map(uris, function (uri) {
+					return getPactFile(options, uri)
+				}))
+				.then(function (data) { // Make sure all files have been retrieved
+					var rejects = [];
+					data = _.map(data, function (result) {
+						if (result.state === "fulfilled") {
+							return result.value;
+						}
+						rejects.push(result.reason);
+					});
+					return rejects.length ?
+						q.reject(new Error('Could not retrieve all Pact contracts:\n  - ' + rejects.join('\n  - ')))
+						: data;
+				});
+		})
+		.tap(function (files) { // Publish the contracts to broker
+			return q.allSettled(
+				_.map(files, function (data) {
 					return callPact(options, {
 						uri: constructPutUrl(options, data),
 						method: 'PUT',
@@ -58,45 +76,57 @@ Publisher.prototype.publish = function () {
 						},
 						json: true,
 						body: data
-					}).fail(function (err) {
-						return q.reject(new Error('Unable to publish Pact to Broker. ' + err.message));
 					});
 				})
-				.tap(function (data) {
-					if (!options.tags.length) {
-						return;
+			).then(function (results) { // Make sure publishing promises came back fulfilled, or else error out
+				var rejects = [];
+				_.each(results, function (result) {
+					if (result.state !== "fulfilled") {
+						rejects.push(result.reason);
 					}
-					return q.allSettled(_.map(options.tags, function (tag) {
-						return callPact(options, {
-							uri: constructTagUrl(options, tag, data),
-							method: 'PUT',
-							headers: {
-								'Content-Type': 'application/json'
-							}
-						}).fail(function () {
-							return q.reject(new Error('Could not tag Pact with tag "' + tag + '"'));
-						});
-					})).tap(function (results) {
-						_.each(results, function (result) {
-							if (result.state !== "fulfilled") {
-								logger.warn(result.reason);
-							}
-						});
-					});
 				});
+				if (rejects.length) {
+					return q.reject(new Error('Could not publish pacts to broker at "' + options.pactBroker + '":\n  - ' + rejects.join('\n  - ')));
+				}
+			});
 		})
-	).then(function (results) {
-		var reject = false;
-		results = _.map(results, function (result) {
-			if (result.state === "fulfilled") {
-				return result.value;
-			} else {
-				reject = true;
-				return result.reason;
+		.tap(function (files) {  // If publishing works, try to tag those contracts
+			if (!options.tags || !options.tags.length) {
+				return;
 			}
-		});
-		return reject ? q.reject(results) : results;
-	});
+			return q.allSettled(
+				_.chain(files)
+					.map(function (data) {
+						return _.map(options.tags, function (tag) {
+							return callPact(options, {
+								uri: constructTagUrl(options, tag, data),
+								method: 'PUT',
+								headers: {
+									'Content-Type': 'application/json'
+								}
+							}).fail(function (err) {
+								return q.reject('Error with tag "' + tag + '": ' + err);
+							});
+						})
+					})
+					.flatten(true)
+					.value()
+			).then(function (results) {
+				var rejects = [];
+				_.each(results, function (result) {
+					if (result.state !== "fulfilled") {
+						rejects.push(result.reason);
+					}
+				});
+				if (rejects.length) {
+					return q.reject(new Error('Could not tag Pact contract:\n  - ' + rejects.join('\n  - ')));
+				}
+			});
+		})
+		.catch(function (err) {
+			logger.error(err);
+			return q.reject(err);
+		})
 };
 
 function callPact(options, config) {
@@ -120,7 +150,7 @@ function callPact(options, config) {
 		return data[0]; // return response only
 	}).then(function (response) {
 		if (response.statusCode < 200 || response.statusCode >= 300) {
-			return q.reject(new Error('Failed http call to pact broker. \nCode: ' + response.statusCode + '\nBody: ' + response.body));
+			return q.reject('Failed http call to pact broker.\nURI: ' + config.uri + '\nCode: ' + response.statusCode + '\nBody: ' + response.body);
 		}
 		return response.body;
 	});
@@ -132,19 +162,19 @@ function getPactFile(options, uri) {
 		try {
 			return q(require(uri));
 		} catch (err) {
-			return q.reject("Invalid Pact file: " + uri + ". Nested exception: " + err);
+			return q.reject('Invalid Pact contract "' + uri + '":\n' + err);
 		}
 	} else {
 		return callPact(options, {
 			uri: uri,
 			json: true
 		}).fail(function (err) {
-			return q.reject(new Error('Cannot GET ' + uri + '. Nested exception: ' + err.message))
+			return q.reject('Failed to get Pact contract from broker:\n' + err);
 		});
 	}
 }
 
-// Given Pact Options and a Pact File, construct a Pact URL used to
+// Given Pact Options and a Pact contract, construct a Pact URL used to
 // PUT/POST to the Pact Broker.
 function constructPutUrl(options, data) {
 	if (!_.has(options, 'pactBroker')) {
@@ -160,7 +190,7 @@ function constructPutUrl(options, data) {
 		|| !_.has(data, 'provider')
 		|| !_.has(data.consumer, 'name')
 		|| !_.has(data.provider, 'name')) {
-		throw new Error("Invalid Pact file given. " +
+		throw new Error("Invalid Pact contract given. " +
 			"Unable to parse consumer and provider name");
 	}
 
@@ -179,7 +209,7 @@ function constructTagUrl(options, tag, data) {
 	if (!_.isObject(options)
 		|| !_.has(data, 'consumer')
 		|| !_.has(data.consumer, 'name')) {
-		throw new Error("Invalid Pact file given. " +
+		throw new Error("Invalid Pact contract given. " +
 			"Unable to parse consumer name");
 	}
 
@@ -206,7 +236,7 @@ module.exports = function (options) {
 			try {
 				fs.statSync(path.normalize(uri))
 			} catch (e) {
-				throw new Error('Pact file or directory: "' + uri + '" doesn\'t exist');
+				throw new Error('Pact contract or directory: "' + uri + '" doesn\'t exist');
 			}
 		}
 	});
