@@ -80,8 +80,9 @@ var opts = {
 	pactUrls: <Array>,               // Array of local Pact files or directories containing them. Required.
 	pactBroker: <String>,            // URL to fetch the provider states for the given provider API. Optional.
 	pactBrokerUsername: <String>,    // Username for Pact Broker basic authentication. Optional
-	pactBrokerPassword: <String>     // Password for Pact Broker basic authentication. Optional,
+	pactBrokerPassword: <String>,    // Password for Pact Broker basic authentication. Optional,
 	tags: <Array>,                   // An array of Strings to tag the Pacts being published. Optional
+	consumerVersion: <String>        // A string containing a semver-style version e.g. 1.0.0. Required.
 };
 
 pact.publishPacts(opts)).then(function () {
