@@ -20,12 +20,14 @@ var RETRY_AMOUNT = 60;
 var PROCESS_TIMEOUT = 30000;
 
 // Constructor
-function Server(port, host, dir, ssl, cors, log, spec, consumer, provider) {
+function Server(port, host, dir, ssl, sslcert, sslkey, cors, log, spec, consumer, provider) {
 	this._options = {};
 	this._options.port = port;
 	this._options.host = host;
 	this._options.dir = dir;
 	this._options.ssl = ssl;
+	this._options.sslcert = sslcert;
+	this._options.sslkey = sslkey;	
 	this._options.cors = cors;
 	this._options.log = log;
 	this._options.spec = spec;
@@ -240,13 +242,11 @@ module.exports = function (options) {
 	// defaults
 	//options.port = options.port;
 	options.ssl = options.ssl || false;
+	options.sslcert = options.sslcert || false;
+	options.sslkey = options.sslkey || false;
 	options.cors = options.cors || false;
-	// options.spec = options.spec || 1;
 	options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
-	// options.log = options.log || process.cwd();
 	options.host = options.host || 'localhost';
-	// options.consumer = options.consumer || 'consumer name';
-	// options.provider = options.provider || 'provider name';
 
 	// port checking
 	if (options.port) {
@@ -263,6 +263,22 @@ module.exports = function (options) {
 	// ssl check
 	checkTypes.assert.boolean(options.ssl);
 
+	// check certs/keys exist for SSL
+	if (options.sslcert) {
+		try {
+			fs.statSync(path.normalize(options.sslcert)).isFile();
+		} catch (e) {
+			throw new Error('Custom ssl certificate not found at path: ' + options.sslcert);
+		}
+	}
+	if (options.sslkey) {
+		try {
+			fs.statSync(path.normalize(options.sslkey)).isFile();
+		} catch (e) {
+			throw new Error('Custom ssl key not found at path: ' + options.sslkey);
+		}
+	}
+	
 	// cors check'
 	checkTypes.assert.boolean(options.cors);
 
@@ -308,5 +324,5 @@ module.exports = function (options) {
 		checkTypes.assert.string(options.provider);
 	}
 
-	return new Server(options.port, options.host, options.dir, options.ssl, options.cors, options.log, options.spec, options.consumer, options.provider);
+	return new Server(options.port, options.host, options.dir, options.ssl, options.sslcert, options.sslkey, options.cors, options.log, options.spec, options.consumer, options.provider);
 };

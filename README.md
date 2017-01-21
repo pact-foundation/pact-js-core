@@ -44,6 +44,8 @@ var server = pact.createServer({
 	host: <String>,     // Host on which to bind the server on, defaults to 'localhost'
 	log: <String>,      // File to log output on relative to current working directory, defaults to none
 	ssl: <Boolean>,     // Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'
+	sslcert: <String>,  // Use a custom self-signed SSL cert to run the server over HTTPS.
+	sslkey: <String>,   // Use a custom key and self-signed SSL cert to run the server over HTTPS.
 	cors: <Boolean>,    // Allow CORS OPTION requests to be accepted, defaults to 'false'
 	dir: <String>,      // Directory to write the pact contracts relative to the current working directory, defaults to none
 	spec: <Number>,     // The pact specification version to use when writing pact contracts, defaults to '1'
