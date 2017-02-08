@@ -31,6 +31,10 @@ server.get('/somestate', function (req, res) {
 	res.json({greeting: stateData});
 });
 
+server.post('/', function (req, res) {
+	res.json({greeting: "Hello " + req.body.name});
+});
+
 server.get('/contract/:name', function (req, res) {
 	var options = {
 		root: __dirname,
@@ -40,7 +44,7 @@ server.get('/contract/:name', function (req, res) {
 			'x-sent': true
 		}
 	};
-	
+
 	var fileName = req.params.name;
 	res.sendFile(fileName, options, function (err) {
 		if (err) {
