@@ -27,7 +27,7 @@ function Server(port, host, dir, ssl, sslcert, sslkey, cors, log, spec, consumer
 	this._options.dir = dir;
 	this._options.ssl = ssl;
 	this._options.sslcert = sslcert;
-	this._options.sslkey = sslkey;	
+	this._options.sslkey = sslkey;
 	this._options.cors = cors;
 	this._options.log = log;
 	this._options.spec = spec;
@@ -64,6 +64,8 @@ Server.prototype.start = function () {
 			'host': '--host',
 			'log': '--log',
 			'ssl': '--ssl',
+			'sslcert': '--sslcert',
+			'sslkey': '--sslkey',
 			'cors': '--cors',
 			'dir': '--pact_dir',
 			'spec': '--pact_specification_version',
@@ -82,7 +84,7 @@ Server.prototype.start = function () {
 		file = '/bin/sh';
 		args = ['-c', cmd];
 	}
-	logger.debug('Starting binary with `' + _.flatten([file, args, _.map(opts, function (v, k) {return k + ':' + v;})]) + '`');
+	logger.debug('Starting binary with `' + _.flatten([file, args, JSON.stringify(opts)]) + '`');
 	this._instance = cp.spawn(file, args, opts);
 
 	this._instance.stdout.setEncoding('utf8');
@@ -242,8 +244,6 @@ module.exports = function (options) {
 	// defaults
 	//options.port = options.port;
 	options.ssl = options.ssl || false;
-	options.sslcert = options.sslcert || false;
-	options.sslkey = options.sslkey || false;
 	options.cors = options.cors || false;
 	options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
 	options.host = options.host || 'localhost';
@@ -263,6 +263,11 @@ module.exports = function (options) {
 	// ssl check
 	checkTypes.assert.boolean(options.ssl);
 
+	// Throw error if one ssl option is set, but not the other
+	if ((options.sslcert && !options.sslkey) || (!options.sslcert && options.sslkey)) {
+		throw new Error('Custom ssl certificate and key must be specified together.');
+	}
+
 	// check certs/keys exist for SSL
 	if (options.sslcert) {
 		try {
@@ -271,6 +276,7 @@ module.exports = function (options) {
 			throw new Error('Custom ssl certificate not found at path: ' + options.sslcert);
 		}
 	}
+
 	if (options.sslkey) {
 		try {
 			fs.statSync(path.normalize(options.sslkey)).isFile();
@@ -278,7 +284,12 @@ module.exports = function (options) {
 			throw new Error('Custom ssl key not found at path: ' + options.sslkey);
 		}
 	}
-	
+
+	// If both sslcert and sslkey option has been specified, let's assume the user wants to enable ssl
+	if (options.sslcert && options.sslkey) {
+		options.ssl = true;
+	}
+
 	// cors check'
 	checkTypes.assert.boolean(options.cors);
 

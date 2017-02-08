@@ -34,8 +34,17 @@ describe("Server Spec", function () {
 			it("should fail if custom ssl certs do not exist", function () {
 				expect(function () { serverFactory({ssl: true, sslcert: 'does/not/exist', sslkey: path.resolve(__dirname, '../test/ssl/server.key')})}).to.throw(Error);
 			});
+
 			it("should fail if custom ssl keys do not exist", function () {
 				expect(function () { serverFactory({ssl: true, sslcert: path.resolve(__dirname, '../test/ssl/server.crt'), sslkey: 'does/not/exist'})}).to.throw(Error);
+			});
+
+			it("should fail if custom ssl cert is set, but ssl key isn't", function () {
+				expect(function () { serverFactory({ssl: true, sslcert: path.resolve(__dirname, '../test/ssl/server.crt')})}).to.throw(Error);
+			});
+
+			it("should fail if custom ssl key is set, but ssl cert isn't", function () {
+				expect(function () { serverFactory({ssl: true,  sslkey: path.resolve(__dirname, '../test/ssl/server.key')})}).to.throw(Error);
 			});
 		});
 
@@ -82,8 +91,16 @@ describe("Server Spec", function () {
 				});
 			});
 
-			it("should start correctly with custom ssl", function (done) {
+			it("should start correctly with custom ssl cert/key", function (done) {
 				server = serverFactory({ssl: true, sslcert: path.resolve(__dirname, '../test/ssl/server.crt'), sslkey: path.resolve(__dirname, '../test/ssl/server.key')});
+				server.start().then(function () {
+					expect(server._options.ssl).to.equal(true);
+					done();
+				});
+			});
+
+			it("should start correctly with custom ssl cert/key but without specifying ssl flag", function (done) {
+				server = serverFactory({sslcert: path.resolve(__dirname, '../test/ssl/server.crt'), sslkey: path.resolve(__dirname, '../test/ssl/server.key')});
 				server.start().then(function () {
 					expect(server._options.ssl).to.equal(true);
 					done();
