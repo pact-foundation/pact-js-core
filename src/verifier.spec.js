@@ -43,6 +43,17 @@ describe("Verifier Spec", function () {
 				}).to.throw(Error);
 			});
 		});
+		context("when given an invalid timeout", function () {
+			it("should fail with an error", function () {
+				expect(function () {
+					verifierFactory({
+						providerBaseUrl: "http://localhost",
+						pactUrls: ["http://idontexist"],
+						timeout: -10
+					});
+				}).to.throw(Error);
+			});
+		});		
 		context("when given remote Pact URLs that don't exist", function () {
 			it("should pass through to the Pact Verifier regardless", function () {
 				expect(function () {
