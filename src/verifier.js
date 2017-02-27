@@ -12,7 +12,7 @@ var checkTypes = require('check-types'),
 	isWindows = process.platform === 'win32';
 
 // Constructor
-function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword) {
+function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword, timeout) {
 	this._options = {};
 	this._options.providerBaseUrl = providerBaseUrl;
 	this._options.pactUrls = pactUrls;
@@ -20,6 +20,7 @@ function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSe
 	this._options.providerStatesSetupUrl = providerStatesSetupUrl;
 	this._options.pactBrokerUsername = pactBrokerUsername;
 	this._options.pactBrokerPassword = pactBrokerPassword;
+	this._options.timeout = timeout;
 }
 
 Verifier.prototype.verify = function () {
@@ -78,7 +79,7 @@ Verifier.prototype.verify = function () {
 	});
 
 	logger.info('Created Pact Verifier process with PID: ' + this._instance.pid);
-	return deferred.promise.timeout(10000, "Couldn't start Pact Verifier process with PID: " + this._instance.pid)
+	return deferred.promise.timeout(this._options.timeout, "Timeout waiting for verification process to complete (PID: " + this._instance.pid + ")")
 		.tap(function (data) {
 			logger.info('Pact Verification succeeded.');
 		});
@@ -91,6 +92,7 @@ module.exports = function (options) {
 	options.pactUrls = options.pactUrls || [];
 	options.providerStatesUrl = options.providerStatesUrl || '';
 	options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
+	options.timeout = options.timeout || 30000;
 
 	options.pactUrls = _.chain(options.pactUrls)
 		.map(function (uri) {
@@ -145,5 +147,7 @@ module.exports = function (options) {
 		checkTypes.assert.string(options.providerBaseUrl);
 	}
 
-	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl, options.pactBrokerUsername, options.pactBrokerPassword);
+	checkTypes.assert.positive(options.timeout);
+
+	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl, options.pactBrokerUsername, options.pactBrokerPassword, options.timeout);
 };
