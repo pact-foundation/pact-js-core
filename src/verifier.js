@@ -92,6 +92,7 @@ module.exports = function (options) {
 	options.pactUrls = options.pactUrls || [];
 	options.providerStatesUrl = options.providerStatesUrl || '';
 	options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
+	options.timeout = options.timeout || 30000;
 
 	options.pactUrls = _.chain(options.pactUrls)
 		.map(function (uri) {
@@ -146,11 +147,7 @@ module.exports = function (options) {
 		checkTypes.assert.string(options.providerBaseUrl);
 	}
 
-	if (options.timeout) {
-		checkTypes.assert.positive(options.timeout);
-	} else {
-		options.timeout = 30000;
-	}
+	checkTypes.assert.positive(options.timeout);
 
 	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl, options.pactBrokerUsername, options.pactBrokerPassword, options.timeout);
 };
