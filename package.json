@@ -1,6 +1,6 @@
 {
   "name": "@pact-foundation/pact-node",
-  "version": "4.8.0",
+  "version": "4.8.1",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "./src/pact.js",
   "os": [
@@ -37,8 +37,8 @@
     "url": "https://github.com/pact-foundation/pact-node/issues"
   },
   "dependencies": {
-    "@pact-foundation/pact-mock-service": "0.10.1",
-    "@pact-foundation/pact-provider-verifier": "0.1.1",
+    "@pact-foundation/pact-mock-service": "0.10.x",
+    "@pact-foundation/pact-provider-verifier": "0.1.x",
     "bunyan": "^1.8.5",
     "bunyan-prettystream": "^0.1.3",
     "check-types": "~7.1.5",
