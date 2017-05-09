@@ -12,7 +12,7 @@ var pactURLPattern = "/pacts/provider/%s/latest",
 	pactURLPatternWithTag = "/pacts/provider/%s/latest/%s";
 
 // Constructor
-function Broker(brokerUrl, provider, tags, username, password) {
+function Broker(provider, brokerUrl, tags, username, password) {
 	this._options = {};
 	this._options.brokerUrl = brokerUrl;
 	this._options.provider = provider;
@@ -24,13 +24,25 @@ function Broker(brokerUrl, provider, tags, username, password) {
 // Find all consumers
 Broker.prototype.findConsumers = function () {
 	logger.debug("Finding consumers")
-	return traverson
-		.from('https://test.pact.dius.com.au/pacts/provider/bobby/latest/sit4')
+	var linkName = if (this._options.tags.length > 0) 'pb:latest-provider-pacts-with-tag' ? 'pb:latest-provider-pacts';
+	var pactUrls = {};
+
+	//
+	// var promises = tags.map(function () { /* create promise */ }
+	// Promise.all(promises).then(function (values) { /* collate all pacts and remove dupes */})
+
+	traverson
+		.from(this._options.brokerUrl)
+		// .from(this._options.brokerUrl + '/pacts/provider/' + this._options.provider + '/latest/' + tag)
+		.withTemplateParameters({provider: this._options.provider, tag: tag})
 		.withRequestOptions(this.getRequestOptions())
 		.jsonHal()
-		.follow('pacts')
-		.get()
-		.result;
+		.follow(linkName)
+		.getResource()
+		.result
+		.then(function (response) {
+			return response._links.pacts
+		});
 };
 
 Broker.prototype.getRequestOptions = function () {
