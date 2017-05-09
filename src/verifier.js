@@ -121,7 +121,7 @@ module.exports = function (options) {
 		.value();
 
 	checkTypes.assert.nonEmptyString(options.providerBaseUrl, 'Must provide the --provider-base-url argument');
-	checkTypes.assert.not.emptyArray(options.pactUrls, 'Must provide the --pact-urls argument');
+	checkTypes.assert.not.emptyArray(options.pactUrls, 'Must provide the --pact-urls argument if no broker provider');
 
 	if (options.providerStatesSetupUrl) {
 		checkTypes.assert.string(options.providerStatesSetupUrl);
