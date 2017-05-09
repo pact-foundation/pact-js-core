@@ -12,7 +12,7 @@ var checkTypes = require('check-types'),
 	isWindows = process.platform === 'win32';
 
 // Constructor
-function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword, timeout) {
+function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword, publishVerificationResult, providerVersion, timeout) {
 	this._options = {};
 	this._options.providerBaseUrl = providerBaseUrl;
 	this._options.pactUrls = pactUrls;
@@ -20,6 +20,8 @@ function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSe
 	this._options.providerStatesSetupUrl = providerStatesSetupUrl;
 	this._options.pactBrokerUsername = pactBrokerUsername;
 	this._options.pactBrokerPassword = pactBrokerPassword;
+	this._options.publishVerificationResult = publishVerificationResult;
+	this._options.providerVersion = providerVersion;
 	this._options.timeout = timeout;
 }
 
@@ -51,7 +53,9 @@ Verifier.prototype.verify = function () {
 			'providerStatesUrl': '--provider-states-url',
 			'providerStatesSetupUrl': '--provider-states-setup-url',
 			'pactBrokerUsername': '--broker-username',
-			'pactBrokerPassword': '--broker-password'
+			'pactBrokerPassword': '--broker-password',
+			'publishVerificationResult': '--publish-verification-results',
+			'providerVersion': '--provider-app-version'
 		});
 
 	var cmd = [verifierPath.file].concat(args).join(' ');
@@ -147,7 +151,19 @@ module.exports = function (options) {
 		checkTypes.assert.string(options.providerBaseUrl);
 	}
 
+	if (options.publishVerificationResult) {
+		checkTypes.assert.boolean(options.publishVerificationResult);
+	}
+
+	if (options.publishVerificationResult && !options.providerVersion) {
+		throw new Error('Must provide both or none of --publish-verification-results and --provider-app-version.');
+	}
+
+	if (options.providerVersion) {
+		checkTypes.assert.string(options.providerVersion);
+	}
+
 	checkTypes.assert.positive(options.timeout);
 
-	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl, options.pactBrokerUsername, options.pactBrokerPassword, options.timeout);
+	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl, options.pactBrokerUsername, options.pactBrokerPassword, options.publishVerificationResult, options.providerVersion, options.timeout);
 };

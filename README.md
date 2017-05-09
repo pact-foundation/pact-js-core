@@ -67,6 +67,8 @@ var opts = {
 	providerStatesSetupUrl: <String>, // URL to send PUT requests to setup a given provider state. Optional.
 	pactBrokerUsername: <String>,    // Username for Pact Broker basic authentication. Optional
 	pactBrokerPassword: <String>,    // Password for Pact Broker basic authentication. Optional
+	publishVerificationResult: <Boolean> // Publish verification result to Broker. Optional
+	providerVersion: <Boolean>       // Provider version, required to publish verification result to Broker. Optional otherwise.
 	timeout: <Number>                // The duration in ms we should wait to confirm verification process was successful. Defaults to 30000, Optional.
 };
 

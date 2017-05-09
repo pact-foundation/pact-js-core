@@ -13,7 +13,7 @@ chai.use(chaiAsPromised);
 describe("Verifier Integration Spec", function () {
 
 	var server,
-		PORT = Math.floor(Math.random() * 999) + 9000,
+		PORT = 9123,
 		providerBaseUrl = 'http://localhost:' + PORT,
 		providerStatesUrl = providerBaseUrl + '/provider-states',
 		providerStatesSetupUrl = providerBaseUrl + '/provider-state/',
@@ -53,7 +53,7 @@ describe("Verifier Integration Spec", function () {
 			});
 		});
 
-    context("with POST data", function () {
+		context("with POST data", function () {
 			it("should return a successful promise", function () {
 				var verifier = verifierFactory({
 					providerBaseUrl: providerBaseUrl,
@@ -63,7 +63,7 @@ describe("Verifier Integration Spec", function () {
 			});
 		});
 
-    context("with POST data and regex validation", function () {
+		context("with POST data and regex validation", function () {
 			it("should return a successful promise", function () {
 				var verifier = verifierFactory({
 					providerBaseUrl: providerBaseUrl,
@@ -167,5 +167,34 @@ describe("Verifier Integration Spec", function () {
 				});
 			});
 		});
+	});
+
+	context("when publishing verification results to a Pact Broker", function () {
+		context("and there is a valid verification HAL link in the Pact file", function () {
+			it("should return a successful promise", function () {
+				var verifier = verifierFactory({
+					providerBaseUrl: providerBaseUrl,
+					pactUrls: [path.resolve(__dirname, "integration/publish-verification-example-success.json")],
+					providerStatesUrl: providerStatesUrl,
+					providerStatesSetupUrl: providerStatesSetupUrl,
+					publishVerificationResult: true,
+					providerVersion: "1.0.0"
+				});
+				return expect(verifier.verify()).to.eventually.be.fulfilled;
+			});
+		})
+		context("and there is an invalid verification HAL link in the Pact file", function () {
+			it("should fail with an error", function () {
+				var verifier = verifierFactory({
+					providerBaseUrl: providerBaseUrl,
+					pactUrls: [path.resolve(__dirname, "integration/publish-verification-example-fail.json")],
+					providerStatesUrl: providerStatesUrl,
+					providerStatesSetupUrl: providerStatesSetupUrl,
+					publishVerificationResult: true,
+					providerVersion: "1.0.0"
+				});
+				return expect(verifier.verify()).to.eventually.be.fulfilled;
+			});
+		})
 	});
 });

@@ -1,0 +1,83 @@
+{
+	"consumer": {
+		"name": "me"
+	},
+	"provider": {
+		"name": "they"
+	},
+	"interactions": [
+		{
+			"description": "Greeting",
+			"request": {
+				"method": "GET",
+				"path": "/"
+			},
+			"response": {
+				"status": 200,
+				"headers": {},
+				"body": {
+					"greeting": "Hello"
+				}
+			}
+		}
+	],
+	"metadata": {
+		"pactSpecificationVersion": "2.0.0"
+	},
+	"createdAt": "2017-05-08T22:56:48+00:00",
+	"_links": {
+		"self": {
+			"title": "Pact",
+			"name": "Pact between me (v1.0.0) and they",
+			"href": "http://localhost:9123/pacts/provider/they/consumer/me/version/1.0.0"
+		},
+		"pb:consumer": {
+			"title": "Consumer",
+			"name": "me",
+			"href": "http://localhost:9123/pacticipants/me"
+		},
+		"pb:provider": {
+			"title": "Provider",
+			"name": "they",
+			"href": "http://localhost:9123/pacticipants/they"
+		},
+		"pb:latest-pact-version": {
+			"title": "Pact",
+			"name": "Latest version of this pact",
+			"href": "http://localhost:9123/pacts/provider/they/consumer/me/latest"
+		},
+		"pb:previous-distinct": {
+			"title": "Pact",
+			"name": "Previous distinct version of this pact",
+			"href": "http://localhost:9123/pacts/provider/they/consumer/me/version/1.0.0/previous-distinct"
+		},
+		"pb:diff-previous-distinct": {
+			"title": "Diff",
+			"name": "Diff with previous distinct version of this pact",
+			"href": "http://localhost:9123/pacts/provider/they/consumer/me/version/1.0.0/diff/previous-distinct"
+		},
+		"pb:pact-webhooks": {
+			"title": "Webhooks for the pact between me and they",
+			"href": "http://localhost:9123/webhooks/provider/they/consumer/me"
+		},
+		"pb:tag-prod-version": {
+			"title": "Tag this version as 'production'",
+			"href": "http://localhost:9123/pacticipants/me/versions/1.0.0/tags/prod"
+		},
+		"pb:tag-version": {
+			"title": "Tag version",
+			"href": "http://localhost:9123/pacticipants/me/versions/1.0.0/tags/{tag}"
+		},
+		"pb:publish-verification-results": {
+			"title": "Publish verification results",
+			"href": "http://localhost:9123/pacts/provider/they/consumer/me/pact-version/404notfound/verification-results"
+		},
+		"curies": [
+			{
+				"name": "pb",
+				"href": "http://localhost:9123/doc/{rel}",
+				"templated": true
+			}
+		]
+	}
+}

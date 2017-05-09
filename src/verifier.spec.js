@@ -22,14 +22,14 @@ describe("Verifier Spec", function () {
 		context("when given --provider-states-url and not --provider-states-setup-url", function () {
 			it("should fail with an error", function () {
 				expect(function () {
-					verifierFactory({"providerStatesUrl": "http://foo/provider-states"});
+					verifierFactory({ "providerStatesUrl": "http://foo/provider-states" });
 				}).to.throw(Error);
 			});
 		});
 		context("when given --provider-states-setup-url and not --provider-states-url", function () {
 			it("should fail with an error", function () {
 				expect(function () {
-					verifierFactory({"providerStatesSetupUrl": "http://foo/provider-states/setup"});
+					verifierFactory({ "providerStatesSetupUrl": "http://foo/provider-states/setup" });
 				}).to.throw(Error);
 			});
 		});
@@ -53,7 +53,8 @@ describe("Verifier Spec", function () {
 					});
 				}).to.throw(Error);
 			});
-		});		
+		});
+
 		context("when given remote Pact URLs that don't exist", function () {
 			it("should pass through to the Pact Verifier regardless", function () {
 				expect(function () {
@@ -74,6 +75,38 @@ describe("Verifier Spec", function () {
 				}).to.not.throw(Error);
 			});
 		});
+
+		context("when requested to publish verification results to a Pact Broker", function () {
+			context("and specifies a provider version", function () {
+				it("should pass through to the Pact Verifier", function () {
+					expect(function () {
+						verifierFactory({
+							providerBaseUrl: "http://localhost",
+							pactUrls: ["http://idontexist"],
+							publishVerificationResult: true,
+							providerVersion: "1.0.0"
+						});
+					}).to.not.throw(Error);
+				});
+			});
+		});
+
+		context("when requested to publish verification results to a Pact Broker", function () {
+			context("and does not specify provider version", function () {
+				it("should fail with an error", function () {
+					expect(function () {
+						verifierFactory({
+							providerBaseUrl: "http://localhost",
+							pactUrls: ["http://idontexist"],
+							publishVerificationResult: true
+						});
+					}).to.throw(Error);
+				});
+			});
+		});
+
+
+
 		context("when given the correct arguments", function () {
 			it("should return a Verifier object", function () {
 				var verifier = verifierFactory({

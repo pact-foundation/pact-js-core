@@ -6,33 +6,33 @@ var cors = require('cors'),
 var server = express();
 server.use(cors());
 server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({extended: true}));
+server.use(bodyParser.urlencoded({ extended: true }));
 
 var stateData = "";
 
 server.get('/', function (req, res) {
-	res.json({greeting: 'Hello'});
+	res.json({ greeting: 'Hello' });
 });
 
 server.get('/fail', function (req, res) {
-	res.json({greeting: 'Oh noes!'});
+	res.json({ greeting: 'Oh noes!' });
 });
 
 server.get('/provider-states', function (req, res) {
-	res.json({me: ["There is a greeting"], anotherclient: ["There is a greeting"]});
+	res.json({ me: ["There is a greeting"], anotherclient: ["There is a greeting"] });
 });
 
 server.post('/provider-state', function (req, res) {
 	stateData = "State data!";
-	res.json({greeting: stateData});
+	res.json({ greeting: stateData });
 });
 
 server.get('/somestate', function (req, res) {
-	res.json({greeting: stateData});
+	res.json({ greeting: stateData });
 });
 
 server.post('/', function (req, res) {
-	res.json({greeting: "Hello " + req.body.name});
+	res.json({ greeting: "Hello " + req.body.name });
 });
 
 server.get('/contract/:name', function (req, res) {
@@ -67,6 +67,11 @@ var auth = function (req, res, next) {
 		return res.sendStatus(401);
 	}
 };
+
+// Verification result
+server.post('/pacts/provider/:provider/consumer/:consumer/pact-version/:version/verification-results', function (req, res) {
+	res.json({});
+});
 
 server.get('/pacts/provider/they/consumer/me/latest', auth, function (req, res) {
 	var obj = JSON.parse('{"consumer":{"name":"me"},"provider":{"name":"they"},"interactions":[{"description":"Provider state success","provider_state":"There is a greeting","request":{"method":"GET","path":"/somestate"},"response":{"status":200,"headers":{},"body":{"greeting":"State data!"}}}],"metadata":{"pactSpecificationVersion":"2.0.0"},"updatedAt":"2016-05-15T00:09:33+00:00","createdAt":"2016-05-15T00:09:06+00:00","_links":{"self":{"title":"Pact","name":"Pact between me (v1.0.0) and they","href":"http://pact.onegeek.com.au/pacts/provider/they/consumer/me/version/1.0.0"},"pb:consumer":{"title":"Consumer","name":"me","href":"http://pact.onegeek.com.au/pacticipants/me"},"pb:provider":{"title":"Provider","name":"they","href":"http://pact.onegeek.com.au/pacticipants/they"},"pb:latest-pact-version":{"title":"Pact","name":"Latest version of this pact","href":"http://pact.onegeek.com.au/pacts/provider/they/consumer/me/latest"},"pb:previous-distinct":{"title":"Pact","name":"Previous distinct version of this pact","href":"http://pact.onegeek.com.au/pacts/provider/they/consumer/me/version/1.0.0/previous-distinct"},"pb:diff-previous-distinct":{"title":"Diff","name":"Diff with previous distinct version of this pact","href":"http://pact.onegeek.com.au/pacts/provider/they/consumer/me/version/1.0.0/diff/previous-distinct"},"pb:pact-webhooks":{"title":"Webhooks for the pact between me and they","href":"http://pact.onegeek.com.au/webhooks/provider/they/consumer/me"},"pb:tag-prod-version":{"title":"Tag this version as \'production\'","href":"http://pact.onegeek.com.au/pacticipants/me/versions/1.0.0/tags/prod"},"pb:tag-version":{"title":"Tag version","href":"http://pact.onegeek.com.au/pacticipants/me/versions/1.0.0/tags/{tag}"},"curies":[{"name":"pb","href":"http://pact.onegeek.com.au/doc/{rel}","templated":true}]}}');
