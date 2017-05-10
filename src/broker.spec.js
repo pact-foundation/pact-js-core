@@ -7,7 +7,6 @@ var brokerFactory = require('./broker'),
 chai.use(chaiAsPromised);
 
 describe("Broker Spec", function () {
-
 	var PORT = 9124,
 		pactBrokerBaseUrl = 'http://localhost:' + PORT,
 		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
@@ -18,7 +17,6 @@ describe("Broker Spec", function () {
 			done();
 		});
 	});
-
 
 	describe("Broker", function () {
 		context("when not given a Pact Broker URL", function () {
