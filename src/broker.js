@@ -19,7 +19,7 @@ function Broker(provider, brokerUrl, tags, username, password) {
 	this._options.tags = tags;
 	this._options.username = username;
 	this._options.password = password;
-}
+};
 
 // Find Pacts returns the raw response from the HAL resource
 Broker.prototype.findPacts = function (tag) {
@@ -33,7 +33,7 @@ Broker.prototype.findPacts = function (tag) {
 		.follow(linkName)
 		.getResource()
 		.result
-}
+};
 
 // Find all consumers collates all of the pacts for a given provider (with optional tags)
 // and removes duplicates (e.g. where multiple tags on the same pact)
@@ -68,9 +68,7 @@ Broker.prototype.getRequestOptions = function () {
 		}
 	}
 	return {}
-}
-
-
+};
 
 // Creates a new instance of the Pact Broker HAL client with the specified option
 module.exports = function (options) {
