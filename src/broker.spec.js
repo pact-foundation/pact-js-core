@@ -1,12 +1,25 @@
 var brokerFactory = require('./broker'),
 	expect = require('chai').expect,
 	chai = require("chai"),
-	// brokerMock = require('../test/integration/brokerMock.js'),
+	brokerMock = require('../test/integration/brokerMock.js'),
 	chaiAsPromised = require("chai-as-promised");
 
 chai.use(chaiAsPromised);
 
 describe("Broker Spec", function () {
+
+	var PORT = 9124,
+		pactBrokerBaseUrl = 'http://localhost:' + PORT,
+		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
+
+	before(function (done) {
+		brokerMock.listen(PORT, function () {
+			console.log('Broker (Mock) running on port: ' + PORT);
+			done();
+		});
+	});
+
+
 	describe("Broker", function () {
 		context("when not given a Pact Broker URL", function () {
 			it("should fail with an error", function () {
@@ -68,44 +81,33 @@ describe("Broker Spec", function () {
 	});
 
 	describe("Find Consumers", function () {
-		context.only("when given the provider name and tags", function (done) {
+		context("when given the provider name and tags", function (done) {
 			it("should find pacts from all known consumers of the provider given any of the tags", function (done) {
 				var broker = brokerFactory({
-					brokerUrl: "https://test.pact.dius.com.au",
-					provider: "bobby",
+					brokerUrl: pactBrokerBaseUrl,
+					provider: "they",
+					username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
+					password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1",
+					tags: ['prod']
+				});
+				var promise = broker.findConsumers()
+
+				expect(promise).to.eventually.have.lengthOf(2).notify(done)
+			});
+		});
+
+		context("when given the provider name without tags", function () {
+			it("should find pacts from all known consumers of the provider", function (done) {
+				var broker = brokerFactory({
+					brokerUrl: pactBrokerBaseUrl,
+					provider: "they",
 					username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
 					password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
 				});
-				broker.findConsumers().then(function (pacts) {
-					console.log(pacts)
-					done()
-				})
-				expect(broker.findConsumers()).to.eventually.be.rejectedWith(Error).then(done);
-				// var traverson = require('traverson-promise'),
-				// 	JsonHalAdapter = require('traverson-hal');
+				var promise = broker.findConsumers()
 
-				// // register the traverson-hal plug-in for media type 'application/hal+json'
-				// traverson.registerMediaType(JsonHalAdapter.mediaType, JsonHalAdapter);
-				// traverson
-				// 	.from('http://haltalk.herokuapp.com/')
-				// 	.jsonHal()
-				// 	.withTemplateParameters({name: 'traverson'})
-				// 	.follow('ht:me', 'ht:posts')
-				// 	.getResource(function(error, document) {
-				// 	if (error) {
-				// 		console.error('No luck :-)')
-				// 	} else {
-				// 		console.log(JSON.stringify(document))
-				// 	}
-				// 	done()
-				// });
+				expect(promise).to.eventually.have.lengthOf(2).notify(done)
 			});
 		});
-
-		context("when given ", function () {
-			it("should find pacts from all known consumers of the provider", function () {
-			});
-		});
-
 	});
 });
