@@ -12,7 +12,7 @@ var checkTypes = require('check-types'),
 	isWindows = process.platform === 'win32';
 
 // Constructor
-function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword, publishVerificationResult, providerVersion, pactBrokerUrl, tags, provider, timeout, retrievePactsPromise) {
+function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword, publishVerificationResult, providerVersion, pactBrokerUrl, tags, provider, timeout) {
 	this._options = {};
 	this._options.providerBaseUrl = providerBaseUrl;
 	this._options.pactUrls = pactUrls;
@@ -26,15 +26,29 @@ function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSe
 	this._options.tags = tags;
 	this._options.provider = provider;
 	this._options.timeout = timeout;
-	this._options.retrievePactsPromise = retrievePactsPromise;
+
 }
 
 Verifier.prototype.verify = function () {
 	logger.info("Verifier verify()");
-	var self = this;
+	var retrievePactsPromise;
 
-	return self._options.retrievePactsPromise.then(function (data) {
-		self._options.pactUrls = data;
+	if (this._options.pactUrls.length > 0) {
+		retrievePactsPromise = Promise.resolve(this._options.pactUrls);
+	} else {
+		// If no pactUrls provided, we must fetch them from the broker!
+		var broker = require('./broker')({
+			brokerUrl: this._options.pactBrokerUrl,
+			provider: this._options.provider,
+			username: this._options.pactBrokerUsername,
+			password: this._options.pactBrokerPassword,
+			tags: this._options.tags
+		});
+		retrievePactsPromise = broker.findConsumers()
+	}
+
+	return retrievePactsPromise.then(function (data) {
+		this._options.pactUrls = data;
 
 		var deferred = q.defer();
 		var output = ''; // Store output here in case of error
@@ -55,7 +69,7 @@ Verifier.prototype.verify = function () {
 				detached: !isWindows,
 				env: envVars
 			},
-			args = pactUtil.createArguments(self._options, {
+			args = pactUtil.createArguments(this._options, {
 				'providerBaseUrl': '--provider-base-url',
 				'pactUrls': '--pact-urls',
 				'providerStatesUrl': '--provider-states-url',
@@ -78,24 +92,24 @@ Verifier.prototype.verify = function () {
 			args = ['-c', cmd];
 		}
 
-		self._instance = cp.spawn(file, args, opts);
+		this._instance = cp.spawn(file, args, opts);
 
-		self._instance.stdout.setEncoding('utf8');
-		self._instance.stdout.on('data', outputHandler);
-		self._instance.stderr.setEncoding('utf8');
-		self._instance.stderr.on('data', outputHandler);
-		self._instance.on('error', logger.error.bind(logger));
+		this._instance.stdout.setEncoding('utf8');
+		this._instance.stdout.on('data', outputHandler);
+		this._instance.stderr.setEncoding('utf8');
+		this._instance.stderr.on('data', outputHandler);
+		this._instance.on('error', logger.error.bind(logger));
 
-		self._instance.once('close', function (code) {
+		this._instance.once('close', function (code) {
 			code == 0 ? deferred.resolve(output) : deferred.reject(new Error(output));
 		});
 
-		logger.info('Created Pact Verifier process with PID: ' + self._instance.pid);
-		return deferred.promise.timeout(self._options.timeout, "Timeout waiting for verification process to complete (PID: " + self._instance.pid + ")")
+		logger.info('Created Pact Verifier process with PID: ' + this._instance.pid);
+		return deferred.promise.timeout(this._options.timeout, "Timeout waiting for verification process to complete (PID: " + this._instance.pid + ")")
 			.tap(function (data) {
 				logger.info('Pact Verification succeeded.');
 			});
-	});
+	}.bind(this));
 };
 
 // Creates a new instance of the pact server with the specified option
@@ -109,7 +123,6 @@ module.exports = function (options) {
 	options.providerStatesUrl = options.providerStatesUrl || '';
 	options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
 	options.timeout = options.timeout || 30000;
-	var retrievePactsPromise;
 
 	options.pactUrls = _.chain(options.pactUrls)
 		.map(function (uri) {
@@ -165,18 +178,8 @@ module.exports = function (options) {
 
 	if (options.pactUrls && !checkTypes.emptyArray(options.pactUrls)) {
 		checkTypes.assert.array.of.string(options.pactUrls);
-		retrievePactsPromise = Promise.resolve(options.pactUrls);
-	} else {
-		// If no pactUrls provided, we must fetch them from the broker!
-		var broker = require('./broker')({
-			brokerUrl: options.pactBrokerUrl,
-			provider: options.provider,
-			username: options.pactBrokerUsername,
-			password: options.pactBrokerPassword,
-			tags: options.tags
-		});
-		retrievePactsPromise = broker.findConsumers()
 	}
+
 	if (options.tags) {
 		checkTypes.assert.array.of.string(options.tags);
 	}
@@ -199,5 +202,5 @@ module.exports = function (options) {
 
 	checkTypes.assert.positive(options.timeout);
 
-	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl, options.pactBrokerUsername, options.pactBrokerPassword, options.publishVerificationResult, options.providerVersion, options.pactBrokerUrl, options.tags, options.provider, options.timeout, retrievePactsPromise);
+	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl, options.pactBrokerUsername, options.pactBrokerPassword, options.publishVerificationResult, options.providerVersion, options.pactBrokerUrl, options.tags, options.provider, options.timeout);
 };
