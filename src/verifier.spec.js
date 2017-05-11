@@ -12,6 +12,40 @@ chai.use(chaiAsPromised);
 
 describe("Verifier Spec", function () {
 	describe("Verifier", function () {
+		context("when automatically finding pacts from a broker", function () {
+			context("when not given --pact-urls and only --provider", function () {
+				it("should fail with an error", function () {
+					expect(function () {
+						verifierFactory({
+							providerBaseUrl: "http://localhost",
+							provider: "someprovider"
+						});
+					}).to.throw(Error);
+				});
+			});
+			context("when not given --pact-urls and only --pact-broker-url", function () {
+				it("should fail with an error", function () {
+					expect(function () {
+						verifierFactory({
+							providerBaseUrl: "http://localhost",
+							pactBrokerUrl: "http://foo.com"
+						});
+					}).to.throw(Error);
+				});
+			});
+			context("when given valid arguments", function () {
+				it("should return a Verifier object", function () {
+					var verifier = verifierFactory({
+						providerBaseUrl: "http://localhost",
+						pactBrokerUrl: "http://foo.com",
+						provider: "someprovider"
+					});
+
+					expect(verifier).to.be.a('object');
+					expect(verifier).to.respondTo('verify');
+				});
+			});
+		})
 		context("when not given --pact-urls or --provider-base-url", function () {
 			it("should fail with an error", function () {
 				expect(function () {
@@ -104,8 +138,6 @@ describe("Verifier Spec", function () {
 				});
 			});
 		});
-
-
 
 		context("when given the correct arguments", function () {
 			it("should return a Verifier object", function () {
