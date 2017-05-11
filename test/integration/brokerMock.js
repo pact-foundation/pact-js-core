@@ -65,15 +65,27 @@ server.get('/', function (req, res) {
 	res.json(obj);
 })
 
-// Get pacts by Provider and TAG
+// Get pacts by Provider 'notfound'
+server.get('/pacts/provider/notfound/latest', function (req, res) {
+	res.status(404).end();
+});
+
+// Get pacts by Provider 'nolinks'
+server.get('/pacts/provider/nolinks/latest', function (req, res) {
+	// var obj = JSON.parse('{ "_links": { "self": { "href": "' + BROKER_HOST + '/pacts/provider/nolinks/latest/sit4", "title": "Latest pact versions for the provider nolinks with tag \'sit4\'" }}}');
+	var obj = JSON.parse('{ "_links": { "self": { "href": "' + BROKER_HOST + '/pacts/provider/nolinks/latest/sit4", "title": "Latest pact versions for the provider nolinks with tag \'sit4\'" }, "provider": { "href": "' + BROKER_HOST + '/pacticipants/nolinks", "title": "bobby" }, "pacts": [] } }');
+	res.json(obj);
+});
+
+// Get pacts by Provider (all)
 server.get('/pacts/provider/:provider/latest', function (req, res) {
 	var obj = JSON.parse('{ "_links": { "self": { "href": "' + BROKER_HOST + '/pacts/provider/bobby/latest/sit4", "title": "Latest pact versions for the provider bobby with tag \'sit4\'" }, "provider": { "href": "' + BROKER_HOST + '/pacticipants/bobby", "title": "bobby" }, "pacts": [ { "href": "' + BROKER_HOST + '/pacts/provider/bobby/consumer/billy/version/1.0.0", "title": "Pact between billy (v1.0.0) and bobby", "name": "billy" }, { "href": "' + BROKER_HOST + '/pacts/provider/bobby/consumer/someotherguy/version/1.0.0", "title": "Pact between someotherguy (v1.0.0) and bobby", "name": "someotherguy" } ] } }');
 	res.json(obj);
 });
 
-// Get pacts by Provider
+// Get pacts by Provider and Tag
 server.get('/pacts/provider/:provider/latest/:tag', function (req, res) {
-	var obj = JSON.parse('{ "_links": { "self": { "href": "https://test.pact.dius.com.au/pacts/provider/bobby/latest", "title": "Latest pact versions for the provider bobby" }, "provider": { "href": "https://test.pact.dius.com.au/pacticipants/bobby", "title": "bobby" }, "pacts": [ { "href": "https://test.pact.dius.com.au/pacts/provider/bobby/consumer/billy/version/1.0.0", "title": "Pact between billy (v1.0.0) and bobby", "name": "billy" }, { "href": "https://test.pact.dius.com.au/pacts/provider/bobby/consumer/someotherguy/version/1.0.0", "title": "Pact between someotherguy (v1.0.0) and bobby", "name": "someotherguy" } ] } }');
+	var obj = JSON.parse('{ "_links": { "self": { "href": "https://test.pact.dius.com.au/pacts/provider/notfound/latest", "title": "Latest pact versions for the provider bobby" }, "provider": { "href": "https://test.pact.dius.com.au/pacticipants/bobby", "title": "bobby" }, "pacts": [ { "href": "https://test.pact.dius.com.au/pacts/provider/bobby/consumer/billy/version/1.0.0", "title": "Pact between billy (v1.0.0) and bobby", "name": "billy" }, { "href": "https://test.pact.dius.com.au/pacts/provider/bobby/consumer/someotherguy/version/1.0.0", "title": "Pact between someotherguy (v1.0.0) and bobby", "name": "someotherguy" } ] } }');
 	res.json(obj);
 })
 

@@ -165,9 +165,7 @@ module.exports = function (options) {
 
 	if (options.pactUrls && !checkTypes.emptyArray(options.pactUrls)) {
 		checkTypes.assert.array.of.string(options.pactUrls);
-		retrievePactsPromise = new Promise(function (resolve) {
-			resolve(options.pactUrls);
-		});
+		retrievePactsPromise = Promise.resolve(options.pactUrls);
 	} else {
 		// If no pactUrls provided, we must fetch them from the broker!
 		var broker = require('./broker')({
@@ -177,11 +175,7 @@ module.exports = function (options) {
 			password: options.pactBrokerPassword,
 			tags: options.tags
 		});
-		retrievePactsPromise = broker
-			.findConsumers()
-			.then(function (pactUrls) {
-				return pactUrls
-			});
+		retrievePactsPromise = broker.findConsumers()
 	}
 	if (options.tags) {
 		checkTypes.assert.array.of.string(options.tags);

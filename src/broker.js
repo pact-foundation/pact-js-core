@@ -19,16 +19,18 @@ function Broker(provider, brokerUrl, tags, username, password) {
 	this._options.tags = tags;
 	this._options.username = username;
 	this._options.password = password;
+	this._requestOptions = (this._options.username && this._options.password) ? { 'auth': { 'user': this._options.username, 'password': this._options.password } } : {};
 };
 
 // Find Pacts returns the raw response from the HAL resource
 Broker.prototype.findPacts = function (tag) {
-	logger.debug("finding pacts: ", tag)
-	var linkName = (tag) ? 'pb:latest-provider-pacts-with-tag' : 'pb:latest-provider-pacts';
+	logger.debug("finding pacts for Provider:", this._options.provider, ", Tag:", tag)
+
+	var linkName = tag ? 'pb:latest-provider-pacts-with-tag' : 'pb:latest-provider-pacts';
 	return traverson
 		.from(this._options.brokerUrl)
 		.withTemplateParameters({ provider: this._options.provider, tag: tag })
-		.withRequestOptions(this.getRequestOptions())
+		.withRequestOptions(this._requestOptions)
 		.jsonHal()
 		.follow(linkName)
 		.getResource()
@@ -38,8 +40,7 @@ Broker.prototype.findPacts = function (tag) {
 // Find all consumers collates all of the pacts for a given provider (with optional tags)
 // and removes duplicates (e.g. where multiple tags on the same pact)
 Broker.prototype.findConsumers = function () {
-	logger.debug("Finding consumers")
-
+	logger.debug("Finding consumers");
 	var promises = (this._options.tags.length > 0) ? this._options.tags.map(this.findPacts, this) : [this.findPacts()];
 
 	return Promise
@@ -47,27 +48,19 @@ Broker.prototype.findConsumers = function () {
 		.then(function (values) {
 			var pactUrls = {};
 			values.forEach(function (response) {
-				response._links.pacts.forEach(function (pact) {
-					pactUrls[pact.title] = pact.href;
-				})
+				if (response && response._links && response._links.pacts) {
+					response._links.pacts.forEach(function (pact) {
+						pactUrls[pact.title] = pact.href;
+					});
+				}
 			});
 			return Object.keys(pactUrls).reduce(function (pacts, key) {
-				pacts.push(pactUrls[key])
-				return pacts
-			}, [])
-		})
-};
-
-Broker.prototype.getRequestOptions = function () {
-	if (this._options.username && this._options.password) {
-		return {
-			'auth': {
-				'user': this._options.username,
-				'password': this._options.password
-			}
-		}
-	}
-	return {}
+				pacts.push(pactUrls[key]);
+				return pacts;
+			}, []);
+		}).catch(function (e) {
+			throw new Error("Unable to find pacts for given provider: '" + this._options.provider + "' and tags: '" + this._options.tags + "'");
+		}.bind(this));
 };
 
 // Creates a new instance of the Pact Broker HAL client with the specified option
