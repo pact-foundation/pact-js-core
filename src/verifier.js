@@ -177,7 +177,6 @@ module.exports = function (options) {
 	}
 	
 	if (options.pactUrls) {
-		checkTypes.assert.nonEmptyArray(options.pactUrls)
 		checkTypes.assert.array.of.string(options.pactUrls);
 	}
 	
