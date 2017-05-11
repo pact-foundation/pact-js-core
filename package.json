@@ -37,7 +37,7 @@
 		"url": "https://github.com/pact-foundation/pact-node/issues"
 	},
 	"dependencies": {
-		"@pact-foundation/pact-mock-service": "~1.2.0",
+		"@pact-foundation/pact-mock-service": "2.0.1",
 		"@pact-foundation/pact-provider-verifier": "~1.1.1",
 		"bunyan": "^1.8.10",
 		"bunyan-prettystream": "^0.1.3",
