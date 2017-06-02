@@ -135,7 +135,7 @@ describe("Verifier Integration Spec", function () {
 						return expect(verifier.verify()).to.eventually.be.fulfilled;
 					});
 				});
-				context("and an invalid user/password", function () {
+				context.only("and an invalid user/password", function () {
 					it("should return a rejected promise", function () {
 						var verifier = verifierFactory({
 							providerBaseUrl: providerBaseUrl,
@@ -156,13 +156,7 @@ describe("Verifier Integration Spec", function () {
 							pactBrokerUsername: 'foo',
 							pactBrokerPassword: 'baaoeur'
 						});
-						return verifier.verify()
-							.then(function () {
-								throw new Error("Expected an error but got none");
-							})
-							.catch(function (err) {
-								expect(err.message).to.contain("Unauthorized")
-							})
+						return expect(verifier.verify()).to.eventually.be.rejected
 					});
 				});
 			});
