@@ -135,7 +135,7 @@ describe("Verifier Integration Spec", function () {
 						return expect(verifier.verify()).to.eventually.be.fulfilled;
 					});
 				});
-				context.only("and an invalid user/password", function () {
+				context("and an invalid user/password", function () {
 					it("should return a rejected promise", function () {
 						var verifier = verifierFactory({
 							providerBaseUrl: providerBaseUrl,
