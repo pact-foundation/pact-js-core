@@ -156,13 +156,7 @@ describe("Verifier Integration Spec", function () {
 							pactBrokerUsername: 'foo',
 							pactBrokerPassword: 'baaoeur'
 						});
-						return verifier.verify()
-							.then(function () {
-								throw new Error("Expected an error but got none");
-							})
-							.catch(function (err) {
-								expect(err.message).to.contain("Unauthorized")
-							})
+						return expect(verifier.verify()).to.eventually.be.rejected
 					});
 				});
 			});
