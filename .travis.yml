@@ -30,5 +30,4 @@ deploy:
     tags: true
     node: '6'
 after_failure:
-- cat .npmrc
 - find . -iname '*.log' -print0 | xargs -0 cat
