@@ -1,4 +1,3 @@
-'use strict';
 var checkTypes = require('check-types'), _ = require('underscore'), logger = require('./logger'), path = require('path'), fs = require('fs'), url = require('url'), q = require('q'), request = q.denodeify(require('request')), urlJoin = require('url-join');
 function Publisher(pactBroker, pactUrls, consumerVersion, pactBrokerUsername, pactBrokerPassword, tags) {
     this._options = {};

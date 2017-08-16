@@ -1,203 +1,209 @@
-var checkTypes = require('check-types'),
-	_ = require('underscore'),
-	logger = require('./logger'),
-	path = require('path'),
-	fs = require('fs'),
-	cp = require('child_process'),
-	q = require('q'),
-	unixify = require('unixify'),
-	url = require('url'),
-	verifierPath = require('@pact-foundation/pact-provider-verifier'),
-	pactUtil = require('./pact-util'),
-	isWindows = process.platform === 'win32';
+// tslint:disable:no-string-literal
 
-// Constructor
-function Verifier(providerBaseUrl, pactUrls, providerStatesUrl, providerStatesSetupUrl, pactBrokerUsername, pactBrokerPassword, publishVerificationResult, providerVersion, pactBrokerUrl, tags, provider, timeout) {
-	this._options = {};
-	this._options.providerBaseUrl = providerBaseUrl;
-	this._options.pactUrls = pactUrls;
-	this._options.providerStatesUrl = providerStatesUrl;
-	this._options.providerStatesSetupUrl = providerStatesSetupUrl;
-	this._options.pactBrokerUsername = pactBrokerUsername;
-	this._options.pactBrokerPassword = pactBrokerPassword;
-	this._options.publishVerificationResult = publishVerificationResult;
-	this._options.providerVersion = providerVersion;
-	this._options.pactBrokerUrl = pactBrokerUrl;
-	this._options.tags = tags;
-	this._options.provider = provider;
-	this._options.timeout = timeout;
+import checkTypes = require("check-types");
+import _ = require("underscore");
+import path = require("path");
+import fs = require("fs");
+import cp = require("child_process");
+import q = require("q");
+import unixify = require("unixify");
+import url = require("url");
+import verifierPath = require("@pact-foundation/pact-provider-verifier");
+import Broker from "./broker";
+import logger from "./logger";
+import pactUtil from "./pact-util";
+import {ChildProcess, SpawnOptions} from "child_process";
 
-}
+const isWindows = process.platform === "win32";
 
-Verifier.prototype.verify = function () {
-	logger.info("Verifier verify()");
-	var retrievePactsPromise;
+export class Verifier {
+	public static create(options: VerifierOptions = {providerBaseUrl: ""}): Verifier {
+		options.pactBrokerUrl = options.pactBrokerUrl || "";
+		options.tags = options.tags || [];
+		options.provider = options.provider || "";
+		options.pactUrls = options.pactUrls || [];
+		options.providerStatesUrl = options.providerStatesUrl || "";
+		options.providerStatesSetupUrl = options.providerStatesSetupUrl || "";
+		options.timeout = options.timeout || 30000;
 
-	if (this._options.pactUrls.length > 0) {
-		retrievePactsPromise = Promise.resolve(this._options.pactUrls);
-	} else {
-		// If no pactUrls provided, we must fetch them from the broker!
-		var broker = require('./broker')({
-			brokerUrl: this._options.pactBrokerUrl,
-			provider: this._options.provider,
-			username: this._options.pactBrokerUsername,
-			password: this._options.pactBrokerPassword,
-			tags: this._options.tags
-		});
-		retrievePactsPromise = broker.findConsumers()
-	}
+		options.pactUrls = _.chain(options.pactUrls)
+			.map((uri) => {
+				// only check local files
+				if (!/https?:/.test(url.parse(uri).protocol)) { // If it"s not a URL, check if file is available
+					try {
+						fs.statSync(path.normalize(uri)).isFile();
 
-	return retrievePactsPromise.then(function (data) {
-		this._options.pactUrls = data;
+						// Unixify the paths. Pact in multiple places uses URI and matching and
+						// hasn"t really taken Windows into account. This is much easier, albeit
+						// might be a problem on non root-drives
+						// options.pactUrls.push(uri);
+						return unixify(uri);
+					} catch (e) {
+						throw new Error(`Pact file: ${uri} doesn"t exist`);
+					}
+				}
+				// HTTP paths are OK
+				return uri;
+			})
+			.compact()
+			.value();
 
-		var deferred = q.defer();
-		var output = ''; // Store output here in case of error
-		function outputHandler(data) {
-			logger.info(data);
-			output += data;
+		checkTypes.assert.nonEmptyString(options.providerBaseUrl, "Must provide the --provider-base-url argument");
+
+		if (checkTypes.emptyArray(options.pactUrls) && !options.pactBrokerUrl) {
+			throw new Error("Must provide the --pact-urls argument if no --broker-url provided");
 		}
 
-		var envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
-		// Remove environment variable if there
-		// This is a hack to prevent some weird Travelling Ruby behaviour with Gems
-		// https://github.com/pact-foundation/pact-mock-service-npm/issues/16
-		delete envVars['RUBYGEMS_GEMDEPS'];
+		if ((!options.pactBrokerUrl || !options.provider) && checkTypes.emptyArray(options.pactUrls)) {
+			throw new Error("Must provide both --provider and --broker-url or if --pact-urls not provided.");
+		}
 
-		var file,
-			opts = {
+		if (options.providerStatesSetupUrl) {
+			checkTypes.assert.string(options.providerStatesSetupUrl);
+		}
+
+		if (options.providerStatesUrl) {
+			logger.warn("--provider-states-url is deprecated and no longer required.");
+			checkTypes.assert.string(options.providerStatesUrl);
+		}
+
+		if (options.pactBrokerUsername) {
+			checkTypes.assert.string(options.pactBrokerUsername);
+		}
+
+		if (options.pactBrokerPassword) {
+			checkTypes.assert.string(options.pactBrokerPassword);
+		}
+
+		if (options.pactUrls) {
+			checkTypes.assert.array.of.string(options.pactUrls);
+		}
+
+		if (options.tags) {
+			checkTypes.assert.array.of.string(options.tags);
+		}
+
+		if (options.providerBaseUrl) {
+			checkTypes.assert.string(options.providerBaseUrl);
+		}
+
+		if (options.publishVerificationResult) {
+			checkTypes.assert.boolean(options.publishVerificationResult);
+		}
+
+		if (options.publishVerificationResult && !options.providerVersion) {
+			throw new Error("Must provide both or none of --publish-verification-results and --provider-app-version.");
+		}
+
+		if (options.providerVersion) {
+			checkTypes.assert.string(options.providerVersion);
+		}
+
+		checkTypes.assert.positive(options.timeout);
+
+		return new Verifier(options);
+	}
+
+	private __options: VerifierOptions;
+	private __instance: ChildProcess;
+
+	constructor(options: VerifierOptions) {
+		this.__options = options;
+	}
+
+	public verify() {
+		logger.info("Verifier verify()");
+		let retrievePactsPromise;
+
+		if (this.__options.pactUrls.length > 0) {
+			retrievePactsPromise = q(this.__options.pactUrls);
+		} else {
+			// If no pactUrls provided, we must fetch them from the broker!
+			retrievePactsPromise = new Broker({
+				brokerUrl: this.__options.pactBrokerUrl,
+				provider: this.__options.provider,
+				username: this.__options.pactBrokerUsername,
+				password: this.__options.pactBrokerPassword,
+				tags: this.__options.tags
+			}).findConsumers();
+		}
+
+		return retrievePactsPromise.then(function(data) {
+			this.__options.pactUrls = data;
+
+			const deferred = q.defer();
+			let output = ""; // Store output here in case of error
+			function outputHandler(log) {
+				logger.info(log);
+				output += log;
+			}
+
+			const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
+			// Remove environment variable if there
+			// This is a hack to prevent some weird Travelling Ruby behaviour with Gems
+			// https://github.com/pact-foundation/pact-mock-service-npm/issues/16
+			delete envVars["RUBYGEMS_GEMDEPS"];
+
+			let file: string;
+			let opts: SpawnOptions = {
 				cwd: verifierPath.cwd,
 				detached: !isWindows,
 				env: envVars
-			},
-			args = pactUtil.createArguments(this._options, {
-				'providerBaseUrl': '--provider-base-url',
-				'pactUrls': '--pact-urls',
-				'providerStatesUrl': '--provider-states-url',
-				'providerStatesSetupUrl': '--provider-states-setup-url',
-				'pactBrokerUsername': '--broker-username',
-				'pactBrokerPassword': '--broker-password',
-				'publishVerificationResult': '--publish-verification-results',
-				'providerVersion': '--provider-app-version'
+			};
+			let args: string[] = pactUtil.createArguments(this.__options, {
+				"providerBaseUrl": "--provider-base-url",
+				"pactUrls": "--pact-urls",
+				"providerStatesUrl": "--provider-states-url",
+				"providerStatesSetupUrl": "--provider-states-setup-url",
+				"pactBrokerUsername": "--broker-username",
+				"pactBrokerPassword": "--broker-password",
+				"publishVerificationResult": "--publish-verification-results",
+				"providerVersion": "--provider-app-version"
 			});
 
-		var cmd = [verifierPath.file].concat(args).join(' ');
+			let cmd = [verifierPath.file].concat(args).join(" ");
 
-		if (isWindows) {
-			file = 'cmd.exe';
-			args = ['/s', '/c', cmd];
-			opts.windowsVerbatimArguments = true;
-		} else {
-			cmd = './' + cmd;
-			file = '/bin/sh';
-			args = ['-c', cmd];
-		}
+			if (isWindows) {
+				file = "cmd.exe";
+				args = ["/s", "/c", cmd];
+				(opts as any).windowsVerbatimArguments = true;
+			} else {
+				cmd = "./" + cmd;
+				file = "/bin/sh";
+				args = ["-c", cmd];
+			}
 
-		this._instance = cp.spawn(file, args, opts);
+			this.__instance = cp.spawn(file, args, opts);
 
-		this._instance.stdout.setEncoding('utf8');
-		this._instance.stdout.on('data', outputHandler);
-		this._instance.stderr.setEncoding('utf8');
-		this._instance.stderr.on('data', outputHandler);
-		this._instance.on('error', logger.error.bind(logger));
+			this.__instance.stdout.setEncoding("utf8");
+			this.__instance.stdout.on("data", outputHandler);
+			this.__instance.stderr.setEncoding("utf8");
+			this.__instance.stderr.on("data", outputHandler);
+			this.__instance.on("error", logger.error.bind(logger));
 
-		this._instance.once('close', function (code) {
-			code == 0 ? deferred.resolve(output) : deferred.reject(new Error(output));
-		});
+			this.__instance.once("close", (code) => code === 0 ? deferred.resolve(output) : deferred.reject(new Error(output)));
 
-		logger.info('Created Pact Verifier process with PID: ' + this._instance.pid);
-		return deferred.promise.timeout(this._options.timeout, "Timeout waiting for verification process to complete (PID: " + this._instance.pid + ")")
-			.tap(function (data) {
-				logger.info('Pact Verification succeeded.');
-			});
-	}.bind(this));
-};
+			logger.info("Created Pact Verifier process with PID: " + this.__instance.pid);
+			return deferred.promise.timeout(this.__options.timeout, `Timeout waiting for verification process to complete (PID: ${this.__instance.pid})`)
+				.tap(() => logger.info("Pact Verification succeeded."));
+		}.bind(this));
+	}
+}
 
 // Creates a new instance of the pact server with the specified option
-module.exports = function (options) {
-	options = options || {};
-	options.providerBaseUrl = options.providerBaseUrl || '';
-	options.pactBrokerUrl = options.pactBrokerUrl || '';
-	options.tags = options.tags || [];
-	options.provider = options.provider || '';
-	options.pactUrls = options.pactUrls || [];
-	options.providerStatesUrl = options.providerStatesUrl || '';
-	options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
-	options.timeout = options.timeout || 30000;
+export default Verifier.create;
 
-	options.pactUrls = _.chain(options.pactUrls)
-		.map(function (uri) {
-			// only check local files
-			if (!/https?:/.test(url.parse(uri).protocol)) { // If it's not a URL, check if file is available
-				try {
-					fs.statSync(path.normalize(uri)).isFile();
-
-					// Unixify the paths. Pact in multiple places uses URI and matching and
-					// hasn't really taken Windows into account. This is much easier, albeit
-					// might be a problem on non root-drives
-					// options.pactUrls.push(uri);
-					return unixify(uri);
-				} catch (e) {
-					throw new Error('Pact file: "' + uri + '" doesn\'t exist');
-				}
-			}
-			// HTTP paths are OK
-			return uri;
-		})
-		.compact()
-		.value();
-
-	checkTypes.assert.nonEmptyString(options.providerBaseUrl, 'Must provide the --provider-base-url argument');
-
-	if (checkTypes.emptyArray(options.pactUrls) && !options.pactBrokerUrl) {
-		throw new Error('Must provide the --pact-urls argument if no --broker-url provided');
-	}
-
-	if ((!options.pactBrokerUrl || !options.provider) && checkTypes.emptyArray(options.pactUrls)) {
-		throw new Error('Must provide both --provider and --broker-url or if --pact-urls not provided.');
-	}
-
-	if (options.providerStatesSetupUrl) {
-		checkTypes.assert.string(options.providerStatesSetupUrl);
-	}
-
-	if (options.providerStatesUrl) {
-		logger.warn("--provider-states-url is deprecated and no longer required.")
-		checkTypes.assert.string(options.providerStatesUrl);
-	}
-
-	if (options.pactBrokerUsername) {
-		checkTypes.assert.string(options.pactBrokerUsername);
-	}
-
-	if (options.pactBrokerPassword) {
-		checkTypes.assert.string(options.pactBrokerPassword);
-	}
-
-	if (options.pactUrls) {
-		checkTypes.assert.array.of.string(options.pactUrls);
-	}
-
-	if (options.tags) {
-		checkTypes.assert.array.of.string(options.tags);
-	}
-
-	if (options.providerBaseUrl) {
-		checkTypes.assert.string(options.providerBaseUrl);
-	}
-
-	if (options.publishVerificationResult) {
-		checkTypes.assert.boolean(options.publishVerificationResult);
-	}
-
-	if (options.publishVerificationResult && !options.providerVersion) {
-		throw new Error('Must provide both or none of --publish-verification-results and --provider-app-version.');
-	}
-
-	if (options.providerVersion) {
-		checkTypes.assert.string(options.providerVersion);
-	}
-
-	checkTypes.assert.positive(options.timeout);
-
-	return new Verifier(options.providerBaseUrl, options.pactUrls, options.providerStatesUrl, options.providerStatesSetupUrl, options.pactBrokerUsername, options.pactBrokerPassword, options.publishVerificationResult, options.providerVersion, options.pactBrokerUrl, options.tags, options.provider, options.timeout);
-};
+export interface VerifierOptions {
+	providerBaseUrl: string;
+	pactUrls?: string[];
+	providerStatesUrl?: string;
+	providerStatesSetupUrl?: string;
+	pactBrokerUsername?: string;
+	pactBrokerPassword?: string;
+	publishVerificationResult?: boolean;
+	providerVersion?: string;
+	pactBrokerUrl?: string;
+	tags?: string[];
+	provider?: string;
+	timeout?: number;
+}

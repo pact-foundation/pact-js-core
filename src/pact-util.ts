@@ -1,18 +1,18 @@
-var _ = require('underscore'),
-	checkTypes = require('check-types');
+import _ = require("underscore");
+import checkTypes = require("check-types");
 
-function PactUtil() {}
+export class PactUtil {
+	public createArguments(args, mappings) {
+		return _.chain(args)
+			.map((value, key) => {
+				if (value && mappings[key]) {
+					return [mappings[key], `'${checkTypes.array(value) ? value.join(",") : value}'`];
+				}
+			})
+			.flatten()
+			.compact()
+			.value();
+	}
+}
 
-PactUtil.prototype.createArguments = function (args, mappings) {
-	return _.chain(args)
-		.map(function (value, key) {
-			if (value && mappings[key]) {
-				return [mappings[key], '"' + (checkTypes.array(value) ? value.join(',') : value) + '"']
-			}
-		})
-		.flatten()
-		.compact()
-		.value();
-};
-
-module.exports = new PactUtil();
+export default new PactUtil();

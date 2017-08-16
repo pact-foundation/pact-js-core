@@ -1,46 +1,42 @@
-var brokerFactory = require('./broker'),
-	expect = require('chai').expect,
-	chai = require("chai"),
-	logger = require('./logger'),
-	brokerMock = require('../test/integration/brokerMock.js'),
-	chaiAsPromised = require("chai-as-promised");
-
+import chai = require("chai");
+import chaiAsPromised = require("chai-as-promised");
+import logger from "./logger";
+import brokerMock from "../test/integration/brokerMock.js";
+import brokerFactory from "./broker";
+const expect = require("chai").expect;
 chai.use(chaiAsPromised);
 
-describe("Broker Spec", function () {
-	var PORT = 9124,
-		pactBrokerBaseUrl = 'http://localhost:' + PORT,
-		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
+describe("Broker Spec", () => {
+	const PORT = 9124;
+	const pactBrokerBaseUrl = "http://localhost:" + PORT;
 
-	before(function (done) {
-		brokerMock.listen(PORT, function () {
-			logger.debug('Broker (Mock) running on port: ' + PORT);
+	before((done) =>brokerMock.listen(PORT, () => {
+			logger.debug("Broker (Mock) running on port: " + PORT);
 			done();
-		});
-	});
+		}));
 
-	describe("Broker", function () {
-		context("when not given a Pact Broker URL", function () {
-			it("should fail with an error", function () {
-				expect(function () {
+	describe("Broker", () => {
+		context("when not given a Pact Broker URL", () => {
+			it("should fail with an error", () => {
+				expect(() => {
 					brokerFactory({
 						provider: "foobar"
 					});
 				}).to.throw(Error);
 			});
 		});
-		context("when not given a Provider name", function () {
-			it("should fail with an error", function () {
-				expect(function () {
+		context("when not given a Provider name", () => {
+			it("should fail with an error", () => {
+				expect(() => {
 					brokerFactory({
 						brokerUrl: "http://test.pact.dius.com.au"
 					});
 				}).to.throw(Error);
 			});
 		});
-		context("when given a valid Pact Broker URL", function () {
-			it("should return a Broker object", function () {
-				expect(function () {
+		context("when given a valid Pact Broker URL", () => {
+			it("should return a Broker object", () => {
+				expect(() => {
 					brokerFactory({
 						brokerUrl: "http://test.pact.dius.com.au",
 						provider: "foobar"
@@ -50,65 +46,62 @@ describe("Broker Spec", function () {
 		});
 	});
 
-	describe("Find Consumers", function () {
-		context("when provider 'notfound' does not exist", function () {
-			context("and given the provider name 'notfound'", function () {
-				it("should fail with an Error", function (done) {
-					var broker = brokerFactory({
+	describe("Find Consumers", () => {
+		context("when provider 'notfound' does not exist", () => {
+			context("and given the provider name 'notfound'", () => {
+				it("should fail with an Error", (done) => {
+					const broker = brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
 						provider: "notfound",
 						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
 						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
 					});
-					var promise = broker.findConsumers();
+					const promise = broker.findConsumers();
 
-					expect(promise).to.be.rejectedWith(Error).notify(done);
+					expect(promise).to.be.rejectedWith(Error).then(done);
 				});
 			});
 		});
-		context("when no pacts exist for provider 'nolinks'", function () {
-			context("and given the provider name", function () {
-				it("should return an empty array of pact links", function (done) {
-					var broker = brokerFactory({
+		context("when no pacts exist for provider 'nolinks'", () => {
+			context("and given the provider name", () => {
+				it("should return an empty array of pact links", (done) => {
+					const broker = brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
 						provider: "nolinks",
 						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
 						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
 					});
-					var promise = broker.findConsumers();
-
-					expect(promise).to.eventually.eql([]).notify(done);
+					const promise = broker.findConsumers();
+					expect(promise).to.eventually.eql([]).then(done);
 				});
 			});
 		});
 
-		context("When pacts exist for provder 'they'", function (done) {
-			context("and given the provider name and tags", function (done) {
-				it("should find pacts from all known consumers of the provider given any of the tags", function (done) {
-					var broker = brokerFactory({
+		context("When pacts exist for provder 'they'", () => {
+			context("and given the provider name and tags", () => {
+				it("should find pacts from all known consumers of the provider given any of the tags", (done) => {
+					const broker = brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
 						provider: "they",
 						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
 						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1",
-						tags: ['prod']
+						tags: ["prod"]
 					});
-					var promise = broker.findConsumers();
-
-					expect(promise).to.eventually.have.lengthOf(2).notify(done);
+					const promise = broker.findConsumers();
+					expect(promise).to.eventually.have.lengthOf(2).then(done);
 				});
 			});
 
-			context("and given the provider name without tags", function () {
-				it("should find pacts from all known consumers of the provider", function (done) {
-					var broker = brokerFactory({
+			context("and given the provider name without tags", () => {
+				it("should find pacts from all known consumers of the provider", (done) => {
+					const broker = brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
 						provider: "they",
 						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
 						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
 					});
-					var promise = broker.findConsumers();
-
-					expect(promise).to.eventually.have.lengthOf(2).notify(done);
+					const promise = broker.findConsumers();
+					expect(promise).to.eventually.have.lengthOf(2).then(done);
 				});
 			});
 		});

@@ -1,93 +1,100 @@
-'use strict';
+import checkTypes = require("check-types");
+import traverson = require("traverson-promise");
+import JsonHalAdapter = require("traverson-hal");
+import logger from "./logger";
 
-var checkTypes = require('check-types'),
-	logger = require('./logger'),
-	traverson = require('traverson-promise'),
-	JsonHalAdapter = require('traverson-hal');
-
-// register the traverson-hal plug-in for media type 'application/hal+json'
+// register the traverson-hal plug-in for media type "application/hal+json"
 traverson.registerMediaType(JsonHalAdapter.mediaType, JsonHalAdapter);
 
-var pactURLPattern = "/pacts/provider/%s/latest",
-	pactURLPatternWithTag = "/pacts/provider/%s/latest/%s";
+const pactURLPattern = "/pacts/provider/%s/latest";
+const pactURLPatternWithTag = "/pacts/provider/%s/latest/%s";
 
-// Constructor
-function Broker(provider, brokerUrl, tags, username, password) {
-	this._options = {};
-	this._options.brokerUrl = brokerUrl;
-	this._options.provider = provider;
-	this._options.tags = tags;
-	this._options.username = username;
-	this._options.password = password;
-	this._requestOptions = (this._options.username && this._options.password) ? { 'auth': { 'user': this._options.username, 'password': this._options.password } } : {};
-};
+export class Broker {
+	public static create(options: BrokerOptions = {}) {
+		// defaults
+		options.brokerUrl = options.brokerUrl || "";
+		options.provider = options.provider || "";
+		options.username = options.username || "";
+		options.password = options.password || "";
+		options.tags = options.tags || [];
 
-// Find Pacts returns the raw response from the HAL resource
-Broker.prototype.findPacts = function (tag) {
-	logger.debug("finding pacts for Provider:", this._options.provider, ", Tag:", tag)
+		checkTypes.assert.nonEmptyString(options.brokerUrl);
+		checkTypes.assert.nonEmptyString(options.provider);
 
-	var linkName = tag ? 'pb:latest-provider-pacts-with-tag' : 'pb:latest-provider-pacts';
-	return traverson
-		.from(this._options.brokerUrl)
-		.withTemplateParameters({ provider: this._options.provider, tag: tag })
-		.withRequestOptions(this._requestOptions)
-		.jsonHal()
-		.follow(linkName)
-		.getResource()
-		.result
-};
+		if (options.tags) {
+			checkTypes.assert.array.of.string(options.tags);
+		}
 
-// Find all consumers collates all of the pacts for a given provider (with optional tags)
-// and removes duplicates (e.g. where multiple tags on the same pact)
-Broker.prototype.findConsumers = function () {
-	logger.debug("Finding consumers");
-	var promises = (this._options.tags.length > 0) ? this._options.tags.map(this.findPacts, this) : [this.findPacts()];
+		if (options.username) {
+			checkTypes.assert.string(options.username);
+		}
 
-	return Promise
-		.all(promises)
-		.then(function (values) {
-			var pactUrls = {};
-			values.forEach(function (response) {
-				if (response && response._links && response._links.pacts) {
-					response._links.pacts.forEach(function (pact) {
-						pactUrls[pact.title] = pact.href;
-					});
-				}
+		if (options.password) {
+			checkTypes.assert.string(options.password);
+		}
+
+		return new Broker(options);
+	}
+
+	private __options:BrokerOptions;
+	private __requestOptions;
+
+	constructor(options:BrokerOptions = {}) {
+		this.__requestOptions = this.__options.username && this.__options.password ? {
+			"auth": {
+				"user": this.__options.username,
+				"password": this.__options.password
+			}
+		} : {};
+	}
+
+	// Find Pacts returns the raw response from the HAL resource
+	public findPacts(tag?: string) {
+		logger.debug("finding pacts for Provider:", this.__options.provider, ", Tag:", tag);
+
+		const linkName = tag ? "pb:latest-provider-pacts-with-tag" : "pb:latest-provider-pacts";
+		return traverson
+			.from(this.__options.brokerUrl)
+			.withTemplateParameters({provider: this.__options.provider, tag: tag})
+			.withRequestOptions(this.__requestOptions)
+			.jsonHal()
+			.follow(linkName)
+			.getResource()
+			.result;
+	}
+
+	// Find all consumers collates all of the pacts for a given provider (with optional tags)
+	// and removes duplicates (e.g. where multiple tags on the same pact)
+	public findConsumers() {
+		logger.debug("Finding consumers");
+		const promises = (this.__options.tags.length > 0) ? this.__options.tags.map(this.findPacts, this) : [this.findPacts()];
+
+		return q.all(promises)
+			.then((values) => {
+				const pactUrls = {};
+				values.forEach((response) => {
+					if (response && response._links && response._links.pacts) {
+						response._links.pacts.forEach((pact) => pactUrls[pact.title] = pact.href);
+					}
+				});
+				return Object.keys(pactUrls).reduce((pacts, key) => {
+					pacts.push(pactUrls[key]);
+					return pacts;
+				}, []);
+			})
+			.catch(() => {
+				throw new Error(`Unable to find pacts for given provider '${this.__options.provider}' and tags '${this.__options.tags}'`);
 			});
-			return Object.keys(pactUrls).reduce(function (pacts, key) {
-				pacts.push(pactUrls[key]);
-				return pacts;
-			}, []);
-		}).catch(function (e) {
-			throw new Error("Unable to find pacts for given provider: '" + this._options.provider + "' and tags: '" + this._options.tags + "'");
-		}.bind(this));
-};
+	}
+}
 
 // Creates a new instance of the Pact Broker HAL client with the specified option
-module.exports = function (options) {
-	options = options || {};
+export default Broker.create;
 
-	// defaults
-	options.brokerUrl = options.brokerUrl || '';
-	options.provider = options.provider || '';
-	options.username = options.username || '';
-	options.password = options.password || '';
-	options.tags = options.tags || [];
-
-	checkTypes.assert.nonEmptyString(options.brokerUrl);
-	checkTypes.assert.nonEmptyString(options.provider);
-
-	if (options.tags) {
-		checkTypes.assert.array.of.string(options.tags);
-	}
-
-	if (options.username) {
-		checkTypes.assert.string(options.username);
-	}
-
-	if (options.password) {
-		checkTypes.assert.string(options.password);
-	}
-
-	return new Broker(options.provider, options.brokerUrl, options.tags, options.username, options.password);
-};
+export interface BrokerOptions {
+	brokerUrl?: string;
+	provider?: string;
+	username?: string;
+	password?: string;
+	tags?: string[];
+}

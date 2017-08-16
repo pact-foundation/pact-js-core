@@ -1,62 +1,72 @@
-var rewire = require("rewire"),
-	serverFactory = rewire('./server'),
-	logger = require('./logger'),
-	expect = require('chai').expect,
-	fs = require('fs'),
-	path = require('path'),
-	q = require('q'),
-	_ = require('underscore');
+import rewire = require("rewire");
+import serverFactory = rewire
 
-describe("Server Spec", function () {
-	var server;
+("./server");
+import chai = require("chai");
+import fs = require("fs");
+import path = require("path");
+import q = require("q");
+import _ = require("underscore");
 
-	afterEach(function (done) {
+const expect = chai.expect;
+
+describe("Server Spec", () => {
+	let server;
+
+	afterEach((done) => {
 		if (server) {
-			server.delete().then(function () {
-				done();
-			});
+			server.delete().then(() => done());
 		} else {
 			done();
 		}
 	});
 
-	describe("Start server", function () {
-		context("when no options are set", function () {
-			it("should start correctly with defaults", function (done) {
+	describe("Start server", () => {
+		context("when no options are set", () => {
+			it("should start correctly with defaults", (done) => {
 				server = serverFactory();
-				server.start().then(function () {
-					done();
-				});
+				server.start().then(() => done());
 			});
 		});
 
-		context("when invalid options are set", function () {
-			it("should fail if custom ssl certs do not exist", function () {
-				expect(function () { serverFactory({ssl: true, sslcert: 'does/not/exist', sslkey: path.resolve(__dirname, '../test/ssl/server.key')})}).to.throw(Error);
+		context("when invalid options are set", () => {
+			it("should fail if custom ssl certs do not exist", () => {
+				expect(() => serverFactory({
+					ssl: true,
+					sslcert: "does/not/exist",
+					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
+				})).to.throw(Error);
 			});
 
-			it("should fail if custom ssl keys do not exist", function () {
-				expect(function () { serverFactory({ssl: true, sslcert: path.resolve(__dirname, '../test/ssl/server.crt'), sslkey: 'does/not/exist'})}).to.throw(Error);
+			it("should fail if custom ssl keys do not exist", () => {
+				expect(() => serverFactory({
+					ssl: true,
+					sslcert: path.resolve(__dirname, "../test/ssl/server.crt"),
+					sslkey: "does/not/exist"
+				})).to.throw(Error);
 			});
 
-			it("should fail if custom ssl cert is set, but ssl key isn't", function () {
-				expect(function () { serverFactory({ssl: true, sslcert: path.resolve(__dirname, '../test/ssl/server.crt')})}).to.throw(Error);
+			it("should fail if custom ssl cert is set, but ssl key isn't", () => {
+				expect(() => serverFactory({
+					ssl: true,
+					sslcert: path.resolve(__dirname, "../test/ssl/server.crt")
+				})).to.throw(Error);
 			});
 
-			it("should fail if custom ssl key is set, but ssl cert isn't", function () {
-				expect(function () { serverFactory({ssl: true,  sslkey: path.resolve(__dirname, '../test/ssl/server.key')})}).to.throw(Error);
+			it("should fail if custom ssl key is set, but ssl cert isn't", () => {
+				expect(() => serverFactory({
+					ssl: true,
+					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
+				})).to.throw(Error);
 			});
 		});
 
-		context("when valid options are set", function () {
+		context("when valid options are set", () => {
+			let dirPath;
 
-			var dirPath;
+			beforeEach(() => dirPath = path.resolve(__dirname, "../.tmp/" + Math.floor(Math.random() * 1000)));
 
-			beforeEach(function () {
-				dirPath = path.resolve(__dirname, '../.tmp/' + Math.floor(Math.random() * 1000));
-			});
-
-			afterEach(function (done) {
+			afterEach((done) => {
 				try {
 					if (fs.statSync(dirPath).isDirectory()) {
 						fs.rmdirSync(dirPath);
@@ -66,202 +76,190 @@ describe("Server Spec", function () {
 				done();
 			});
 
-			it("should start correctly when instance is delayed", function (done) {
+			it("should start correctly when instance is delayed", (done) => {
 				server = serverFactory();
-				var waitForServerUp = serverFactory.__get__('waitForServerUp');
+				const waitForServerUp = serverFactory.__get__("waitForServerUp");
 
 				q.allSettled([
 					waitForServerUp(server._options),
-					q.delay(5000).then(function () {
-						server.start()
-					})
-				]).then(function (results) {
-					expect(_.reduce(results, function (m, r) {
-						return m && r.state === 'fulfilled'
-					})).to.be.true;
+					q.delay(5000).then(() => server.start())
+				]).then((results) => {
+					expect(_.reduce(results, (m, r) => m && r.state === "fulfilled")).to.be.true;
 					done();
 				});
 			});
 
-			it("should start correctly with ssl", function (done) {
+			it("should start correctly with ssl", (done) => {
 				server = serverFactory({ssl: true});
-				server.start().then(function () {
+				server.start().then(() => {
 					expect(server._options.ssl).to.equal(true);
 					done();
 				});
 			});
 
-			it("should start correctly with custom ssl cert/key", function (done) {
-				server = serverFactory({ssl: true, sslcert: path.resolve(__dirname, '../test/ssl/server.crt'), sslkey: path.resolve(__dirname, '../test/ssl/server.key')});
-				server.start().then(function () {
+			it("should start correctly with custom ssl cert/key", (done) => {
+				server = serverFactory({
+					ssl: true,
+					sslcert: path.resolve(__dirname, "../test/ssl/server.crt"),
+					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
+				});
+				server.start().then(() => {
 					expect(server._options.ssl).to.equal(true);
 					done();
 				});
 			});
 
-			it("should start correctly with custom ssl cert/key but without specifying ssl flag", function (done) {
-				server = serverFactory({sslcert: path.resolve(__dirname, '../test/ssl/server.crt'), sslkey: path.resolve(__dirname, '../test/ssl/server.key')});
-				server.start().then(function () {
+			it("should start correctly with custom ssl cert/key but without specifying ssl flag", (done) => {
+				server = serverFactory({
+					sslcert: path.resolve(__dirname, "../test/ssl/server.crt"),
+					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
+				});
+				server.start().then(() => {
 					expect(server._options.ssl).to.equal(true);
 					done();
 				});
 			});
 
-			it("should start correctly with cors", function (done) {
+			it("should start correctly with cors", (done) => {
 				server = serverFactory({cors: true});
-				server.start().then(function () {
+				server.start().then(() => {
 					expect(server._options.cors).to.equal(true);
 					done();
 				});
 			});
 
-			it("should start correctly with port", function (done) {
+			it("should start correctly with port", (done) => {
 				server = serverFactory({port: 9500});
-				server.start().then(function () {
+				server.start().then(() => {
 					expect(server._options.port).to.equal(9500);
 					done();
 				});
 			});
 
-			it("should start correctly with host", function (done) {
-				server = serverFactory({host: 'localhost'});
-				server.start().then(function () {
-					expect(server._options.host).to.equal('localhost');
+			it("should start correctly with host", (done) => {
+				server = serverFactory({host: "localhost"});
+				server.start().then(() => {
+					expect(server._options.host).to.equal("localhost");
 					done();
 				});
 			});
 
-			it("should start correctly with spec version 1", function (done) {
+			it("should start correctly with spec version 1", (done) => {
 				server = serverFactory({spec: 1});
-				server.start().then(function () {
+				server.start().then(() => {
 					expect(server._options.spec).to.equal(1);
 					done();
 				});
 			});
 
-			it("should start correctly with spec version 2", function (done) {
+			it("should start correctly with spec version 2", (done) => {
 				server = serverFactory({spec: 2});
-				server.start().then(function () {
+				server.start().then(() => {
 					expect(server._options.spec).to.equal(2);
 					done();
 				});
 			});
 
-			it("should start correctly with dir", function (done) {
+			it("should start correctly with dir", (done) => {
 				server = serverFactory({dir: dirPath});
-				server.start().then(function () {
+				server.start().then(() => {
 					expect(server._options.dir).to.equal(dirPath);
 					done();
 				});
 			});
 
-			it("should start correctly with log", function (done) {
-				var logPath = path.resolve(dirPath, 'log.txt');
+			it("should start correctly with log", (done) => {
+				const logPath = path.resolve(dirPath, "log.txt");
 				server = serverFactory({log: logPath});
-				server.start().then(function () {
+				server.start().then(() => {
 					expect(server._options.log).to.equal(logPath);
 					done();
 				});
 			});
 
-			it("should start correctly with consumer name", function (done) {
-				server = serverFactory({consumer: 'cName'});
-				server.start().then(function () {
-					expect(server._options.consumer).to.equal('cName');
+			it("should start correctly with consumer name", (done) => {
+				server = serverFactory({consumer: "cName"});
+				server.start().then(() => {
+					expect(server._options.consumer).to.equal("cName");
 					done();
 				});
 			});
 
-			it("should start correctly with provider name", function (done) {
-				server = serverFactory({provider: 'pName'});
-				server.start().then(function () {
-					expect(server._options.provider).to.equal('pName');
+			it("should start correctly with provider name", (done) => {
+				server = serverFactory({provider: "pName"});
+				server.start().then(() => {
+					expect(server._options.provider).to.equal("pName");
 					done();
 				});
 			});
 		});
 
-		it("should dispatch event when starting", function (done) {
+		it("should dispatch event when starting", (done) => {
 			server = serverFactory();
-			server.once('start', function () {
-				done();
-			});
+			server.once("start", () => done());
 			server.start();
 		});
 
-		it("should change running state to true", function (done) {
+		it("should change running state to true", (done) => {
 			server = serverFactory();
-			server.start().then(function () {
+			server.start().then(() => {
 				expect(server._running).to.be.true;
 				done();
 			});
 		});
 	});
 
-	describe("Stop server", function () {
-		context("when already started", function () {
-			it("should stop running", function (done) {
+	describe("Stop server", () => {
+		context("when already started", () => {
+			it("should stop running", (done) => {
 				server = serverFactory();
-				server.start().then(function () {
-					return server.stop();
-				}).then(function () {
-					done();
-				});
+				server.start()
+					.then(() => server.stop())
+					.then(() => done());
 			});
 
-			it("should dispatch event when stopping", function (done) {
+			it("should dispatch event when stopping", (done) => {
 				server = serverFactory();
-				server.once('stop', function () {
-					done();
-				});
-				server.start().then(function () {
-					server.stop();
-				});
+				server.once("stop", () => done());
+				server.start().then(() => server.stop());
 			});
 
-			it("should change running state to false", function (done) {
+			it("should change running state to false", (done) => {
 				server = serverFactory();
-				server.start().then(function () {
-					return server.stop();
-				}).then(function () {
-					expect(server._running).to.be.false;
-					done();
-				});
+				server.start()
+					.then(() => server.stop())
+					.then(() => {
+						expect(server._running).to.be.false;
+						done();
+					});
 			});
 		});
 	});
 
-	describe("Delete server", function () {
-		context("when already running", function () {
-			it("should stop & delete server", function (done) {
+	describe("Delete server", () => {
+		context("when already running", () => {
+			it("should stop & delete server", (done) => {
 				server = serverFactory();
-				server.start().then(function () {
-					return server.delete();
-				}).then(function () {
-					done();
-				});
+				server.start()
+					.then(() => server.delete())
+					.then(() => done());
 			});
 
-			it("should dispatch event when deleting", function (done) {
+			it("should dispatch event when deleting", (done) => {
 				server = serverFactory();
-				server.once('delete', function () {
-					done();
-				});
-				server.start().then(function () {
-					server.delete();
-				});
+				server.once("delete", () => done());
+				server.start().then(() => server.delete());
 			});
 
-			it("should change running state to false", function (done) {
+			it("should change running state to false", (done) => {
 				server = serverFactory();
-				server.start().then(function () {
-					return server.delete();
-				}).then(function () {
-					expect(server._running).to.be.false;
-					done();
-				});
+				server.start()
+					.then(() => server.delete())
+					.then(() => {
+						expect(server._running).to.be.false;
+						done();
+					});
 			});
 		});
 	});
-
 });
