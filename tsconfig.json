@@ -1,0 +1,27 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es5",
+		"noImplicitAny": false,
+		"removeComments": true,
+		"noLib": false,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"sourceMap": true,
+		"listFiles": true,
+		"isolatedModules": false,
+		"moduleResolution": "node",
+		"suppressImplicitAnyIndexErrors": true,
+		"declaration": true
+	},
+	"include": [
+		"src/**/*.ts",
+		"test/**/*.ts"
+	],
+	"exclude": [
+		"node_modules",
+		"**/*.spec.ts",
+		"**/*.d.ts"
+	],
+	"compileOnSave": false
+}

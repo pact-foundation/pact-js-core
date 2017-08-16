@@ -34,3 +34,18 @@ node_modules
 *.iml
 
 .tmp
+
+# npm
+package-lock.json
+
+# package
+package.zip
+
+# Ignore compiled files
+*.d.ts
+*.js
+*.js.map
+
+# ts-node cache
+ts-node-*
+

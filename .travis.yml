@@ -19,6 +19,11 @@ addons:
     - g++-4.8
 matrix:
   fast_finish: true
+script:
+  - npm test
+after_success:
+  - npm prune --production
+  - zip -ry package.zip * >/dev/null
 deploy:
 - provider: npm
   skip_cleanup: true
