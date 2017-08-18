@@ -41,7 +41,7 @@ pact.logLevel('debug');
 var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer({
 	port: <Number>,     // Port number that the server runs on, defaults to 1234
-	host: <String>,     // Host on which to bind the server on, defaults to 'localhost'
+	host: <String>,     // Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine.
 	log: <String>,      // File to log output on relative to current working directory, defaults to none
 	ssl: <Boolean>,     // Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'
 	sslcert: <String>,  // Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults to none
