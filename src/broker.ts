@@ -1,6 +1,7 @@
 import checkTypes = require("check-types");
 import traverson = require("traverson-promise");
 import JsonHalAdapter = require("traverson-hal");
+import q = require("q");
 import logger from "./logger";
 
 // register the traverson-hal plug-in for media type "application/hal+json"
@@ -40,6 +41,7 @@ export class Broker {
 	private __requestOptions;
 
 	constructor(options:BrokerOptions = {}) {
+		this.__options = options;
 		this.__requestOptions = this.__options.username && this.__options.password ? {
 			"auth": {
 				"user": this.__options.username,

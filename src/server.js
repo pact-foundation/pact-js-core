@@ -30,7 +30,7 @@ var Server = (function (_super) {
     __extends(Server, _super);
     function Server(options) {
         var _this = _super.call(this) || this;
-        _this.__options = options;
+        _this.options = options;
         _this.__running = false;
         return _this;
     }
@@ -131,7 +131,7 @@ var Server = (function (_super) {
             detached: !isWindows,
             env: envVars
         };
-        var args = pact_util_1.default.createArguments(this.__options, {
+        var args = pact_util_1.default.createArguments(this.options, {
             "port": "--port",
             "host": "--host",
             "log": "--log",
@@ -165,12 +165,12 @@ var Server = (function (_super) {
         function catchPort(data) {
             var match = data.match(/port=([0-9]+)/);
             if (match && match[1]) {
-                this.__options.port = parseInt(match[1], 10);
+                this.options.port = parseInt(match[1], 10);
                 this.__instance.stdout.removeListener("data", catchPort.bind(this));
                 this.__instance.stderr.removeListener("data", catchPort.bind(this));
             }
         }
-        if (!this.__options.port) {
+        if (!this.options.port) {
             this.__instance.stdout.on("data", catchPort.bind(this));
             this.__instance.stderr.on("data", catchPort.bind(this));
         }
@@ -181,7 +181,7 @@ var Server = (function (_super) {
             }
             return _this.stop();
         });
-        return this.__waitForServerUp(this.__options)
+        return this.__waitForServerUp(this.options)
             .timeout(PROCESS_TIMEOUT, "Couldn't start Pact with PID: " + this.__instance.pid)
             .tap(function () {
             _this.__running = true;
@@ -203,7 +203,7 @@ var Server = (function (_super) {
             }
             this.__instance = undefined;
         }
-        return this.__waitForServerDown(this.__options)
+        return this.__waitForServerDown(this.options)
             .timeout(PROCESS_TIMEOUT, "Couldn't stop Pact with PID '" + pid + "'")
             .tap(function () {
             _this.__running = false;

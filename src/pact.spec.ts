@@ -1,74 +1,63 @@
-var expect = require('chai').expect,
-	pact = require('./pact.js'),
-	logger = require('./logger.js'),
-	path = require('path'),
-	chai = require("chai"),
-	chaiAsPromised = require("chai-as-promised"),
-	provider = require('../test/integration/provider.js');
+import chai = require("chai");
+import path = require("path");
+import chaiAsPromised = require("chai-as-promised");
+import provider from "../test/integration/provider";
+import fs = require("fs");
+import pact from "./pact";
+
+const expect = chai.expect;
 
 chai.use(chaiAsPromised);
 
-describe("Pact Spec", function () {
-	afterEach(function (done) {
-		pact.removeAllServers().then(function () {
-			done();
-		});
-	});
+describe("Pact Spec", () => {
+	afterEach((done) => pact.removeAllServers().then(() => done()));
 
-	describe("Set Log Level", function () {
-		var originalLogLevel;
+	describe("Set Log Level", () => {
+		let originalLogLevel;
 		// Reset lot level after the tests
-		before(function () {
-			originalLogLevel = pact.logLevel();
-		});
-		after(function () {
-			pact.logLevel(originalLogLevel);
-		});
+		before(() => originalLogLevel = pact.logLevel());
+		after(() => pact.logLevel(originalLogLevel));
 
-		context("when setting a log level", function () {
-			it("should be able to set log level 'trace'", function () {
-				pact.logLevel('trace');
+		context("when setting a log level", () => {
+			it("should be able to set log level 'trace'", () => {
+				pact.logLevel("trace");
 				expect(pact.logLevel()).to.be.equal(10);
 			});
 
-			it("should be able to set log level 'debug'", function () {
-				pact.logLevel('debug');
+			it("should be able to set log level 'debug'", () => {
+				pact.logLevel("debug");
 				expect(pact.logLevel()).to.be.equal(20);
 			});
 
-			it("should be able to set log level 'info'", function () {
-				pact.logLevel('info');
+			it("should be able to set log level 'info'", () => {
+				pact.logLevel("info");
 				expect(pact.logLevel()).to.be.equal(30);
 			});
 
-			it("should be able to set log level 'warn'", function () {
-				pact.logLevel('warn');
+			it("should be able to set log level 'warn'", () => {
+				pact.logLevel("warn");
 				expect(pact.logLevel()).to.be.equal(40);
 			});
 
-			it("should be able to set log level 'error'", function () {
-				pact.logLevel('error');
+			it("should be able to set log level 'error'", () => {
+				pact.logLevel("error");
 				expect(pact.logLevel()).to.be.equal(50);
 			});
 
-			it("should be able to set log level 'fatal'", function () {
-				pact.logLevel('fatal');
+			it("should be able to set log level 'fatal'", () => {
+				pact.logLevel("fatal");
 				expect(pact.logLevel()).to.be.equal(60);
 			});
 		});
 	});
 
-	describe("Create serverFactory", function () {
+	describe("Create serverFactory", () => {
 
-		var fs = require('fs'),
-			path = require('path'),
-			dirPath;
+		let dirPath;
 
-		beforeEach(function () {
-			dirPath = path.resolve(__dirname, '../.tmp/' + Math.floor(Math.random() * 1000));
-		});
+		beforeEach(() => dirPath = path.resolve(__dirname, "../.tmp/" + Math.floor(Math.random() * 1000)));
 
-		afterEach(function (done) {
+		afterEach((done) => {
 			try {
 				if (fs.statSync(dirPath).isDirectory()) {
 					fs.rmdirSync(dirPath);
@@ -78,34 +67,34 @@ describe("Pact Spec", function () {
 			done();
 		});
 
-		context("when no options are set", function () {
-			it("should use defaults and return serverFactory", function () {
-				var server = pact.createServer();
-				expect(server).to.be.an('object');
-				expect(server._options).to.be.an('object');
-				expect(server._options).to.contain.all.keys(['port', 'cors', 'ssl', 'host', 'dir', 'log', 'spec', 'consumer', 'provider']);
-				expect(server.start).to.be.a('function');
-				expect(server.stop).to.be.a('function');
-				expect(server.delete).to.be.a('function');
+		context("when no options are set", () => {
+			it("should use defaults and return serverFactory", () => {
+				let server = pact.createServer();
+				expect(server).to.be.an("object");
+				expect(server._options).to.be.an("object");
+				expect(server._options).to.contain.all.keys(["port", "cors", "ssl", "host", "dir", "log", "spec", "consumer", "provider"]);
+				expect(server.start).to.be.a("function");
+				expect(server.stop).to.be.a("function");
+				expect(server.delete).to.be.a("function");
 			});
 		});
 
-		context("when user specifies valid options", function () {
-			it("should return serverFactory using specified options", function () {
-				var options = {
+		context("when user specifies valid options", () => {
+			it("should return serverFactory using specified options", () => {
+				let options = {
 					port: 9500,
-					host: 'localhost',
+					host: "localhost",
 					dir: dirPath,
 					ssl: true,
 					cors: true,
-					log: 'log.txt',
+					log: "log.txt",
 					spec: 1,
-					consumer: 'consumerName',
-					provider: 'providerName'
+					consumer: "consumerName",
+					provider: "providerName"
 				};
-				var server = pact.createServer(options);
-				expect(server).to.be.an('object');
-				expect(server._options).to.be.an('object');
+				let server = pact.createServer(options);
+				expect(server).to.be.an("object");
+				expect(server._options).to.be.an("object");
 				expect(server._options.port).to.equal(options.port);
 				expect(server._options.host).to.equal(options.host);
 				expect(server._options.dir).to.equal(options.dir);
@@ -118,125 +107,107 @@ describe("Pact Spec", function () {
 			});
 		});
 
-		context("when user specifies invalid port", function () {
-			it("should return an error on negative port number", function () {
-				expect(function () {
-					pact.createServer({port: -42})
-				}).to.throw(Error);
+		context("when user specifies invalid port", () => {
+			it("should return an error on negative port number", () => {
+				expect(() => pact.createServer({port: -42})).to.throw(Error);
 			});
 
-			it("should return an error on non-integer", function () {
-				expect(function () {
+			it("should return an error on non-integer", () => {
+				expect(() => {
 					pact.createServer({port: 42.42});
 				}).to.throw(Error);
 			});
 
-			it("should return an error on non-number", function () {
-				expect(function () {
-					pact.createServer({port: '99'});
-				}).to.throw(Error);
+			it("should return an error on non-number", () => {
+				expect(() => pact.createServer({port: "99"} as any)).to.throw(Error);
 			});
 
-			it("should return an error on outside port range", function () {
-				expect(function () {
+			it("should return an error on outside port range", () => {
+				expect(() => {
 					pact.createServer({port: 99999});
 				}).to.throw(Error);
 			});
 		});
 
-		context("when user specifies port that's currently in use", function () {
-			it("should return a port conflict error", function () {
+		context("when user specifies port that's currently in use", () => {
+			it("should return a port conflict error", () => {
 				pact.createServer({port: 5100});
-				expect(function () {
-					pact.createServer({port: 5100})
-				}).to.throw(Error);
+				expect(() => pact.createServer({port: 5100})).to.throw(Error);
 			});
 		});
 
-		context("when user specifies invalid host", function () {
-			it("should return an error on non-string", function () {
-				expect(function () {
-					pact.createServer({host: 12});
-				}).to.throw(Error);
+		context("when user specifies invalid host", () => {
+			it("should return an error on non-string", () => {
+				expect(() => pact.createServer({host: 12} as any)).to.throw(Error);
 			});
 		});
 
-		context("when user specifies invalid pact directory", function () {
-			it("should create the directory for us", function () {
+		context("when user specifies invalid pact directory", () => {
+			it("should create the directory for us", () => {
 				pact.createServer({dir: dirPath});
 				expect(fs.statSync(dirPath).isDirectory()).to.be.true;
 			});
 		});
 
-		context("when user specifies invalid ssl", function () {
-			it("should return an error on non-boolean", function () {
-				expect(function () {
-					pact.createServer({ssl: 1});
-				}).to.throw(Error);
+		context("when user specifies invalid ssl", () => {
+			it("should return an error on non-boolean", () => {
+				expect(() => pact.createServer({ssl: 1} as any)).to.throw(Error);
 			});
 		});
 
-		context("when user specifies invalid cors", function () {
-			it("should return an error on non-boolean", function () {
-				expect(function () {
-					pact.createServer({cors: 1});
-				}).to.throw(Error);
+		context("when user specifies invalid cors", () => {
+			it("should return an error on non-boolean", () => {
+				expect(() => pact.createServer({cors: 1} as any)).to.throw(Error);
 			});
 		});
 
-		context("when user specifies invalid log", function () {
-			it("should return an error on invalid path", function () {
-				pact.createServer({log: path.resolve(dirPath, 'log.txt')});
+		context("when user specifies invalid log", () => {
+			it("should return an error on invalid path", () => {
+				pact.createServer({log: path.resolve(dirPath, "log.txt")});
 				expect(fs.statSync(dirPath).isDirectory()).to.be.true;
 			});
 		});
 
-		context("when user specifies invalid spec", function () {
-			it("should return an error on non-number", function () {
-				expect(function () {
-					pact.createServer({spec: '1'});
-				}).to.throw(Error);
+		context("when user specifies invalid spec", () => {
+			it("should return an error on non-number", () => {
+				expect(() => pact.createServer({spec: "1"} as any)).to.throw(Error);
 			});
 
-			it("should return an error on negative number", function () {
-				expect(function () {
+			it("should return an error on negative number", () => {
+				expect(() => {
 					pact.createServer({spec: -12});
 				}).to.throw(Error);
 			});
 
-			it("should return an error on non-integer", function () {
-				expect(function () {
+			it("should return an error on non-integer", () => {
+				expect(() => {
 					pact.createServer({spec: 3.14});
 				}).to.throw(Error);
 			});
 		});
 
-		context("when user specifies invalid consumer name", function () {
-			it("should return an error on non-string", function () {
-				expect(function () {
-					pact.createServer({consumer: 1234});
-				}).to.throw(Error);
+		context("when user specifies invalid consumer name", () => {
+			it("should return an error on non-string", () => {
+				expect(() => pact.createServer({consumer: 1234} as any)).to.throw(Error);
 			});
 		});
 
-		context("when user specifies invalid provider name", function () {
-			it("should return an error on non-string", function () {
-				expect(function () {
-					pact.createServer({provider: 2341});
-				}).to.throw(Error);
+		context("when user specifies invalid provider name", () => {
+			it("should return an error on non-string", () => {
+				expect(() => pact.createServer({provider: 2341} as any)).to.throw(Error);
 			});
 		});
 	});
 
-	describe("List servers", function () {
-		context("when called and there are no servers", function () {
-			it("should return an empty list", function () {
+	describe("List servers", () => {
+		context("when called and there are no servers", () => {
+			it("should return an empty list", () => {
 				expect(pact.listServers()).to.be.empty;
 			});
 		});
 
-		context("when called and there are servers in list", function () {
-			it("should return a list of all servers", function () {
+		context("when called and there are servers in list", () => {
+			it("should return a list of all servers", () => {
 				pact.createServer({port: 1234});
 				pact.createServer({port: 1235});
 				pact.createServer({port: 1236});
@@ -244,25 +215,25 @@ describe("Pact Spec", function () {
 			});
 		});
 
-		context("when server is removed", function () {
-			it("should update the list", function (done) {
+		context("when server is removed", () => {
+			it("should update the list", (done) => {
 				pact.createServer({port: 1234});
 				pact.createServer({port: 1235});
-				pact.createServer({port: 1236}).delete().then(function () {
-					expect(pact.listServers()).to.have.length(2);
-					done();
-				});
+				pact.createServer({port: 1236}).delete().then(() => {
+						expect(pact.listServers()).to.have.length(2);
+						done();
+					});
 			});
 		});
 	});
 
-	describe("Remove all servers", function () {
-		context("when removeAll() is called and there are servers to remove", function () {
-			it("should remove all servers", function (done) {
+	describe("Remove all servers", () => {
+		context("when removeAll() is called and there are servers to remove", () => {
+			it("should remove all servers", (done) => {
 				pact.createServer({port: 1234});
 				pact.createServer({port: 1235});
 				pact.createServer({port: 1236});
-				pact.removeAllServers().then(function () {
+				pact.removeAllServers().then(() => {
 					expect(pact.listServers()).to.be.empty;
 					done();
 				});
@@ -270,26 +241,27 @@ describe("Pact Spec", function () {
 		});
 	});
 
-	describe("Verify Pacts", function () {
-		context("With provider states", function () {
-			it("should start the pact-provider-verifier service and verify pacts", function () {
-				var opts = {
+	describe("Verify Pacts", () => {
+		context("With provider states", () => {
+			it("should start the pact-provider-verifier service and verify pacts", () => {
+				let opts = {
 					providerBaseUrl: "http://localhost",
 					pactUrls: [path.dirname(process.mainModule.filename)]
 				};
-				return expect(pact.verifyPacts(opts)).to.eventually.be.resolved;
+				return expect(pact.verifyPacts(opts)).to.eventually.be.fulfilled;
 			});
 		});
 	});
 
-	describe("Publish Pacts", function () {
-		it("should start running the Pact publishing process", function () {
-			var opts = {
+	describe("Publish Pacts", () => {
+		it("should start running the Pact publishing process", () => {
+			let opts = {
 				pactBroker: "http://localhost",
 				pactUrls: [path.dirname(process.mainModule.filename)],
 				consumerVersion: "1.0.0"
 			};
-			return expect(pact.publishPacts(opts)).to.eventually.be.resolved;
+			return expect(pact.publishPacts(opts)).to.eventually.be.fulfilled;
 		});
 	});
-});
+})
+;

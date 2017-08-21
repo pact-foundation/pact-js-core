@@ -125,13 +125,13 @@ export class Server extends events.EventEmitter {
 		return new Server(options);
 	}
 
-	private __options: ServerOptions;
+	public readonly options:ServerOptions;
 	private __running: boolean;
 	private __instance: ChildProcess;
 
 	constructor(options: ServerOptions) {
 		super();
-		this.__options = options;
+		this.options = options;
 		this.__running = false;
 	}
 
@@ -153,7 +153,7 @@ export class Server extends events.EventEmitter {
 			detached: !isWindows,
 			env: envVars
 		};
-		let args: string[] = pactUtil.createArguments(this.__options, {
+		let args: string[] = pactUtil.createArguments(this.options, {
 			"port": "--port",
 			"host": "--host",
 			"log": "--log",
@@ -191,13 +191,13 @@ export class Server extends events.EventEmitter {
 		function catchPort(data) {
 			const match = data.match(/port=([0-9]+)/);
 			if (match && match[1]) {
-				this.__options.port = parseInt(match[1], 10);
+				this.options.port = parseInt(match[1], 10);
 				this.__instance.stdout.removeListener("data", catchPort.bind(this));
 				this.__instance.stderr.removeListener("data", catchPort.bind(this));
 			}
 		}
 
-		if (!this.__options.port) {
+		if (!this.options.port) {
 			this.__instance.stdout.on("data", catchPort.bind(this));
 			this.__instance.stderr.on("data", catchPort.bind(this));
 		}
@@ -212,7 +212,7 @@ export class Server extends events.EventEmitter {
 		});
 
 		// check service is available
-		return this.__waitForServerUp(this.__options)
+		return this.__waitForServerUp(this.options)
 			.timeout(PROCESS_TIMEOUT, `Couldn't start Pact with PID: ${this.__instance.pid}`)
 			.tap(() => {
 				this.__running = true;
@@ -236,7 +236,7 @@ export class Server extends events.EventEmitter {
 			this.__instance = undefined;
 		}
 
-		return this.__waitForServerDown(this.__options)
+		return this.__waitForServerDown(this.options)
 			.timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
 			.tap(() => {
 				this.__running = false;
@@ -336,7 +336,7 @@ export interface ServerOptions {
 	sslcert?: string;
 	sslkey?: string;
 	log?: string;
-	spec?: string;
+	spec?: number;
 	consumer?: string;
 	provider?: string;
 }

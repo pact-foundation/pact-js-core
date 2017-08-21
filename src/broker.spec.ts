@@ -3,6 +3,7 @@ import chaiAsPromised = require("chai-as-promised");
 import logger from "./logger";
 import brokerMock from "../test/integration/brokerMock.js";
 import brokerFactory from "./broker";
+
 const expect = require("chai").expect;
 chai.use(chaiAsPromised);
 
@@ -10,19 +11,17 @@ describe("Broker Spec", () => {
 	const PORT = 9124;
 	const pactBrokerBaseUrl = "http://localhost:" + PORT;
 
-	before((done) =>brokerMock.listen(PORT, () => {
-			logger.debug("Broker (Mock) running on port: " + PORT);
-			done();
-		}));
+	before((done) => brokerMock.listen(PORT, () => {
+		logger.debug("Broker (Mock) running on port: " + PORT);
+		done();
+	}));
 
 	describe("Broker", () => {
 		context("when not given a Pact Broker URL", () => {
 			it("should fail with an error", () => {
-				expect(() => {
-					brokerFactory({
-						provider: "foobar"
-					});
-				}).to.throw(Error);
+				expect(() => brokerFactory({
+					provider: "foobar"
+				})).to.throw(Error);
 			});
 		});
 		context("when not given a Provider name", () => {
@@ -36,12 +35,10 @@ describe("Broker Spec", () => {
 		});
 		context("when given a valid Pact Broker URL", () => {
 			it("should return a Broker object", () => {
-				expect(() => {
-					brokerFactory({
-						brokerUrl: "http://test.pact.dius.com.au",
-						provider: "foobar"
-					});
-				}).to.not.throw(Error);
+				expect(() => brokerFactory({
+					brokerUrl: "http://test.pact.dius.com.au",
+					provider: "foobar"
+				})).to.not.throw(Error);
 			});
 		});
 	});

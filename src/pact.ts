@@ -1,83 +1,76 @@
-'use strict';
+import _ = require("underscore");
+import q = require("q");
+import serverFactory, {ServerOptions} from "./server";
+import verifierFactory, {VerifierOptions} from "./verifier";
+import publisherFactory, {PublisherOptions} from "./publisher";
+import logger, {LogLevels} from "./logger";
 
-var logger = require('./logger'),
-	_ = require('underscore'),
-	serverFactory = require('./server'),
-	verifierFactory = require('./verifier'),
-	publisherFactory = require('./publisher'),
-	q = require('q');
+export class Pact {
+	private __servers = [];
 
-var servers = [];
-
-function stringify(obj) {
-	return _.chain(obj)
-		.pairs()
-		.map(function (v) {
-			return v.join(' = ');
-		})
-		.value()
-		.join(',\n');
-}
-
-// Creates server with specified options
-function createServer(options) {
-	if (options && options.port && _.some(servers, function (s) {
-			return s._options.port == options.port
-		})) {
-		var msg = 'Port `' + options.port + '` is already in use by another process.';
-		logger.error(msg);
-		throw new Error(msg);
+	constructor() {
+		// Listen for Node exiting or someone killing the process
+		// Must remove all the instances of Pact mock service
+		process.once("exit", () => this.removeAllServers());
+		process.once("SIGINT", process.exit);
 	}
 
-	var server = serverFactory(options);
-	servers.push(server);
-	logger.info('Creating Pact Server with options: \n' + stringify(server._options));
+	public logLevel(level?: LogLevels) {
+		return level ? logger.level(level) : logger.logLevelName as LogLevels;
+	}
 
-	// Listen to server delete events, to remove from server list
-	server.once('delete', function (server) {
-		logger.info('Deleting Pact Server with options: \n' + stringify(server._options));
-		servers = _.without(servers, server);
-	});
+	// Creates server with specified options
+	public createServer(options: ServerOptions = {}) {
+		if (options && options.port && _.some(this.__servers, (s) => s.options.port === options.port)) {
+			let msg = `Port '${options.port}' is already in use by another process.`;
+			logger.error(msg);
+			throw new Error(msg);
+		}
 
-	return server;
+		let server = serverFactory(options);
+		this.__servers.push(server);
+		logger.info(`Creating Pact Server with options: \n${this.__stringifyOptions(server.options)}`);
+
+		// Listen to server delete events, to remove from server list
+		server.once("delete", (s) => {
+			logger.info(`Deleting Pact Server with options: \n${this.__stringifyOptions(s.options)}`);
+			this.__servers = _.without(this.__servers, s);
+		});
+
+		return server;
+	}
+
+	// Return arrays of all servers
+	public listServers() {
+		return this.__servers;
+	}
+
+	// Remove all the servers that"s been created
+	// Return promise of all others
+	public removeAllServers() {
+		logger.info("Removing all Pact servers.");
+		return q.all(_.map(this.__servers, (server) => server.delete()));
+	}
+
+	// Run the Pact Verification process
+	public verifyPacts(options: VerifierOptions) {
+		logger.info("Verifying Pacts.");
+		return verifierFactory(options).verify();
+	}
+
+	// Publish Pacts to a Pact Broker
+	public publishPacts(options: PublisherOptions) {
+		logger.info("Publishing Pacts to Broker");
+		return publisherFactory(options).publish();
+	}
+
+	private __stringifyOptions(obj: ServerOptions) {
+		return _.chain(obj)
+			.pairs()
+			.map((v) => v.join(" = "))
+			.value()
+			.join(",\n");
+	}
 }
 
-// Return arrays of all servers
-function listServers() {
-	return servers;
-}
-
-// Remove all the servers that's been created
-// Return promise of all others
-function removeAllServers() {
-	logger.info('Removing all Pact servers.');
-	return q.all(_.map(servers, function (server) {
-		return server.delete();
-	}));
-}
-
-// Run the Pact Verification process
-function verifyPacts(options) {
-	logger.info('Verifying Pacts.');
-	return verifierFactory(options).verify();
-}
-
-// Publish Pacts to a Pact Broker
-function publishPacts(options) {
-	logger.info('Publishing Pacts to Broker');
-	return publisherFactory(options).publish();
-}
-
-// Listen for Node exiting or someone killing the process
-// Must remove all the instances of Pact mock service
-process.once('exit', removeAllServers);
-process.once('SIGINT', process.exit);
-
-module.exports = {
-	logLevel: logger.level.bind(logger),
-	createServer: createServer,
-	listServers: listServers,
-	removeAllServers: removeAllServers,
-	verifyPacts: verifyPacts,
-	publishPacts: publishPacts
-};
+export default new Pact();

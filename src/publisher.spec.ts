@@ -1,34 +1,28 @@
-var publisherFactory = require('./publisher'),
-	expect = require('chai').expect,
-	logger = require('./logger'),
-	fs = require('fs'),
-	path = require('path'),
-	chai = require("chai"),
-	rewire = require("rewire"),
-	publisher = rewire("./publisher.js"),
-	constructPutUrl = publisher.__get__('constructPutUrl'),
-	constructTagUrl = publisher.__get__('constructTagUrl'),
-	broker = require('../test/integration/brokerMock.js'),
-	chaiAsPromised = require("chai-as-promised");
+import path = require("path");
+import chai = require("chai");
+import chaiAsPromised = require("chai-as-promised");
+import publisherFactory from "./publisher";
+import brokerMock from "../test/integration/brokerMock";
 
+const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe("Publish Spec", function () {
-	var PORT = Math.floor(Math.random() * 999) + 9000,
-		pactBrokerBaseUrl = 'http://localhost:' + PORT,
-		authenticatedPactBrokerBaseUrl = 'http://localhost:' + PORT + '/auth';
+const constructPutUrl = publisherFactory as any["constructPutUrl"];
+const constructTagUrl = publisherFactory as any["constructTagUrl"];
 
-	before(function (done) {
-		broker.listen(PORT, function () {
-			console.log('Broker (Mock) running on port: ' + PORT);
-			done();
-		});
-	});
+describe("Publish Spec", () => {
 
-	describe("Publisher", function () {
-		context("when not given pactUrls", function () {
-			it("should fail with an error", function () {
-				expect(function () {
+	const PORT = Math.floor(Math.random() * 999) + 9000;
+
+	before((done) => brokerMock.listen(PORT, () => {
+		console.log("Broker (Mock) running on port: " + PORT);
+		done();
+	}));
+
+	describe("Publisher", () => {
+		context("when not given pactUrls", () => {
+			it("should fail with an error", () => {
+				expect(() => {
 					publisherFactory({
 						pactBroker: "http://localhost",
 						consumerVersion: "1.0.0"
@@ -37,9 +31,9 @@ describe("Publish Spec", function () {
 			});
 		});
 
-		context("when not given pactBroker", function () {
-			it("should fail with an error", function () {
-				expect(function () {
+		context("when not given pactBroker", () => {
+			it("should fail with an error", () => {
+				expect(() => {
 					publisherFactory({
 						pactUrls: ["http://localhost"],
 						consumerVersion: "1.0.0"
@@ -48,9 +42,9 @@ describe("Publish Spec", function () {
 			});
 		});
 
-		context("when not given consumerVersion", function () {
-			it("should fail with an error", function () {
-				expect(function () {
+		context("when not given consumerVersion", () => {
+			it("should fail with an error", () => {
+				expect(() => {
 					publisherFactory({
 						pactBroker: "http://localhost",
 						pactUrls: [path.dirname(process.mainModule.filename)]
@@ -59,9 +53,9 @@ describe("Publish Spec", function () {
 			});
 		});
 
-		context("when given local Pact URLs that don't exist", function () {
-			it("should fail with an error", function () {
-				expect(function () {
+		context("when given local Pact URLs that don't exist ", () => {
+			it("should fail with an error", () => {
+				expect(() => {
 					publisherFactory({
 						pactBroker: "http://localhost",
 						pactUrls: ["./test.json"]
@@ -70,9 +64,9 @@ describe("Publish Spec", function () {
 			});
 		});
 
-		context("when given local Pact URLs that do exist", function () {
-			it("should not fail", function () {
-				expect(function () {
+		context("when given local Pact URLs that do exist", () => {
+			it("should not fail", () => {
+				expect(() => {
 					publisherFactory({
 						pactBroker: "http://localhost",
 						pactUrls: [path.dirname(process.mainModule.filename)],
@@ -82,104 +76,102 @@ describe("Publish Spec", function () {
 			});
 		});
 
-		context("when given the correct arguments", function () {
-			it("should return a Publisher object", function () {
-				var publisher = publisherFactory({
+		context("when given the correct arguments", () => {
+			it("should return a Publisher object", () => {
+				const p = publisherFactory({
 					pactBroker: "http://localhost",
 					pactUrls: ["http://idontexist"],
 					consumerVersion: "1.0.0"
 				});
-				expect(publisher).to.be.a('object');
-				expect(publisher).to.respondTo('publish');
+				expect(p).to.be.a("object");
+				expect(p).to.respondTo("publish");
 			});
 		});
 	});
 
-	context("constructPutUrl", function () {
-		context("when given a valid config object and pact JSON", function () {
-			it("should return a PUT url", function () {
-				var options = {'pactBroker': 'http://foo', 'consumerVersion': '1'};
-				var data = {'consumer': {'name': 'consumerName'}, 'provider': {'name': 'providerName'}};
-				expect(constructPutUrl(options, data)).to.eq('http://foo/pacts/provider/providerName/consumer/consumerName/version/1');
+	context("constructPutUrl", () => {
+		context("when given a valid config object and pact JSON", () => {
+			it("should return a PUT url", () => {
+				let options = {"pactBroker": "http://foo", "consumerVersion": "1"};
+				let data = {"consumer": {"name": "consumerName"}, "provider": {"name": "providerName"}};
+				expect(constructPutUrl(options, data)).to.eq("http://foo/pacts/provider/providerName/consumer/consumerName/version/1");
 			});
 		});
-		context("when given an invalid config object", function () {
-			it("should throw Error when pactBroker is not specified", function () {
-				var options = {'someotherurl': 'http://foo'};
-				var data = {'consumer': {'name': 'consumerName'}, 'provider': {'name': 'providerName'}};
-				expect(function () {
-					constructPutUrl(options, data);
-				}).to.throw(Error, "Cannot construct Pact publish URL: 'pactBroker' not specified");
+
+		context("when given an invalid config object", () => {
+			it("should throw Error when pactBroker is not specified", () => {
+				let options = {"someotherurl": "http://foo"};
+				let data = {"consumer": {"name": "consumerName"}, "provider": {"name": "providerName"}};
+				expect(() => constructPutUrl(options, data)).to.throw(Error, "Cannot construct Pact publish URL: 'pactBroker' not specified");
 			});
-			it("should throw Error when consumerVersion is not specified", function () {
-				var options = {'pactBroker': 'http://foo'};
-				var data = {'consumer': {'name': 'consumerName'}, 'provider': {'name': 'providerName'}};
-				expect(function () {
-					constructPutUrl(options, data);
-				}).to.throw(Error, "Cannot construct Pact publish URL: 'consumerVersion' not specified");
+
+			it("should throw Error when consumerVersion is not specified", () => {
+				let options = {"pactBroker": "http://foo"};
+				let data = {"consumer": {"name": "consumerName"}, "provider": {"name": "providerName"}};
+				expect(() => constructPutUrl(options, data)).to.throw(Error, "Cannot construct Pact publish URL: 'consumerVersion' not specified");
 			});
 		});
-		context("when given an invalid Pact contract (no consumer/provider keys)", function () {
-			it("should return a PUT url", function () {
-				var options = {'pactBroker': 'http://foo', 'consumerVersion': '1'};
-				var data = {};
-				expect(function () {
+
+		context("when given an invalid Pact contract (no consumer/provider keys)", () => {
+			it("should return a PUT url", () => {
+				let options = {"pactBroker": "http://foo", "consumerVersion": "1"};
+				let data = {};
+				expect(() => {
 					constructPutUrl(options, data);
 				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer and provider name");
 			});
 		});
-		context("when given an invalid Pact contract (no name keys)", function () {
-			it("should return a PUT url", function () {
-				var options = {'pactBroker': 'http://foo', 'consumerVersion': '1'};
-				var data = {'consumer': {}, 'provider': {}};
-				expect(function () {
+
+		context("when given an invalid Pact contract (no name keys)", () => {
+			it("should return a PUT url", () => {
+				let options = {"pactBroker": "http://foo", "consumerVersion": "1"};
+				let data = {"consumer": {}, "provider": {}};
+				expect(() => {
 					constructPutUrl(options, data);
 				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer and provider name");
 			});
 		});
 	});
 
-	context("constructTagUrl", function () {
-		context("when given a valid config object and pact JSON", function () {
-			it("should return a PUT url", function () {
-				var options = {'pactBroker': 'http://foo', consumerVersion: '1.0'};
-				var data = {'consumer': {'name': 'consumerName'}};
-				expect(constructTagUrl(options, 'test', data)).to.eq('http://foo/pacticipants/consumerName/versions/1.0/tags/test');
+	context("constructTagUrl", () => {
+		context("when given a valid config object and pact JSON", () => {
+			it("should return a PUT url", () => {
+				let options = {"pactBroker": "http://foo", consumerVersion: "1.0"};
+				let data = {"consumer": {"name": "consumerName"}};
+				expect(constructTagUrl(options, "test", data)).to.eq("http://foo/pacticipants/consumerName/versions/1.0/tags/test");
 			});
 		});
-		context("when given an invalid config object", function () {
-			it("should throw Error when pactBroker is not specified", function () {
-				var options = {'someotherurl': 'http://foo', consumerVersion: '1.0'};
-				var data = {'consumer': {'name': 'consumerName'}};
-				expect(function () {
-					constructTagUrl(options, data);
-				}).to.throw(Error, "Cannot construct Pact Tag URL: 'pactBroker' not specified");
+		context("when given an invalid config object", () => {
+			it("should throw Error when pactBroker is not specified", () => {
+				let options = {"someotherurl": "http://foo", consumerVersion: "1.0"};
+				let data = {"consumer": {"name": "consumerName"}};
+				expect(() => constructTagUrl(options, data)).to.throw(Error, "Cannot construct Pact Tag URL: 'pactBroker' not specified");
 			});
-			it("should throw Error when consumerVersion is not specified", function () {
-				var options = {'pactBroker': 'http://foo'};
-				var data = {'consumer': {'name': 'consumerName'}, 'provider': {'name': 'providerName'}};
-				expect(function () {
-					constructTagUrl(options, data);
-				}).to.throw(Error, "Cannot construct Pact Tag URL: 'consumerVersion' not specified");
+
+			it("should throw Error when consumerVersion is not specified", () => {
+				let options = {"pactBroker": "http://foo"};
+				let data = {"consumer": {"name": "consumerName"}, "provider": {"name": "providerName"}};
+				expect(() => constructTagUrl(options, data)).to.throw(Error, "Cannot construct Pact Tag URL: 'consumerVersion' not specified");
 			});
 		});
-		context("when given an invalid Pact contract (no consumer key)", function () {
-			it("should return a PUT url", function () {
-				var options = {'pactBroker': 'http://foo', consumerVersion: '1.0'};
-				var data = {};
-				expect(function () {
+		context("when given an invalid Pact contract (no consumer key)", () => {
+			it("should return a PUT url", () => {
+				let options = {"pactBroker": "http://foo", consumerVersion: "1.0"};
+				let data = {};
+				expect(() => {
 					constructTagUrl(options, data);
 				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer name");
 			});
 		});
-		context("when given an invalid Pact contract (no name keys)", function () {
-			it("should return a PUT url", function () {
-				var options = {'pactBroker': 'http://foo', consumerVersion: '1.0'};
-				var data = {'consumer': {}};
-				expect(function () {
+		context("when given an invalid Pact contract (no name keys)", () => {
+			it("should return a PUT url", () => {
+				let options = {"pactBroker": "http://foo", consumerVersion: "1.0"};
+				let data = {"consumer": {}};
+				expect(() => {
 					constructTagUrl(options, data);
 				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer name");
 			});
 		});
 	});
-});
+})
+;

@@ -1,5 +1,6 @@
 import bunyan = require("bunyan");
 import PrettyStream = require("bunyan-prettystream");
+import {LogLevel} from "bunyan";
 
 const pkg = require("../package.json");
 const prettyStdOut = new PrettyStream();
@@ -14,7 +15,13 @@ export class Logger extends bunyan {
 			type: "TIMER"
 		}, `TIMER: ${action} completed in ${time} milliseconds`);
 	}
+
+	public get logLevelName():string {
+		return bunyan.nameFromLevel[this.level()];
+	}
 }
+
+export type LogLevels = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 
 export default new Logger({
 	name: `search-api@${pkg.version}`,

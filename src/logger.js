@@ -28,6 +28,13 @@ var Logger = (function (_super) {
             type: "TIMER"
         }, "TIMER: " + action + " completed in " + time + " milliseconds");
     };
+    Object.defineProperty(Logger.prototype, "logLevelName", {
+        get: function () {
+            return bunyan.nameFromLevel[this.level()];
+        },
+        enumerable: true,
+        configurable: true
+    });
     return Logger;
 }(bunyan));
 exports.Logger = Logger;
