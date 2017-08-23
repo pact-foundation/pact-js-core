@@ -83,6 +83,7 @@ var Verifier = (function () {
         return new Verifier(options);
     };
     Verifier.prototype.verify = function () {
+        var _this = this;
         logger_1.default.info("Verifier verify()");
         var retrievePactsPromise;
         if (this.__options.pactUrls.length > 0) {
@@ -98,7 +99,7 @@ var Verifier = (function () {
             }).findConsumers();
         }
         return retrievePactsPromise.then(function (data) {
-            this.__options.pactUrls = data;
+            _this.__options.pactUrls = data;
             var deferred = q.defer();
             var output = "";
             function outputHandler(log) {
@@ -113,7 +114,7 @@ var Verifier = (function () {
                 detached: !isWindows,
                 env: envVars
             };
-            var args = pact_util_1.default.createArguments(this.__options, {
+            var args = pact_util_1.default.createArguments(_this.__options, {
                 "providerBaseUrl": "--provider-base-url",
                 "pactUrls": "--pact-urls",
                 "providerStatesUrl": "--provider-states-url",
@@ -134,17 +135,17 @@ var Verifier = (function () {
                 file = "/bin/sh";
                 args = ["-c", cmd];
             }
-            this.__instance = cp.spawn(file, args, opts);
-            this.__instance.stdout.setEncoding("utf8");
-            this.__instance.stdout.on("data", outputHandler);
-            this.__instance.stderr.setEncoding("utf8");
-            this.__instance.stderr.on("data", outputHandler);
-            this.__instance.on("error", logger_1.default.error.bind(logger_1.default));
-            this.__instance.once("close", function (code) { return code === 0 ? deferred.resolve(output) : deferred.reject(new Error(output)); });
-            logger_1.default.info("Created Pact Verifier process with PID: " + this.__instance.pid);
-            return deferred.promise.timeout(this.__options.timeout, "Timeout waiting for verification process to complete (PID: " + this.__instance.pid + ")")
+            _this.__instance = cp.spawn(file, args, opts);
+            _this.__instance.stdout.setEncoding("utf8");
+            _this.__instance.stdout.on("data", outputHandler);
+            _this.__instance.stderr.setEncoding("utf8");
+            _this.__instance.stderr.on("data", outputHandler);
+            _this.__instance.on("error", logger_1.default.error.bind(logger_1.default));
+            _this.__instance.once("close", function (code) { return code === 0 ? deferred.resolve(output) : deferred.reject(new Error(output)); });
+            logger_1.default.info("Created Pact Verifier process with PID: " + _this.__instance.pid);
+            return deferred.promise.timeout(_this.__options.timeout, "Timeout waiting for verification process to complete (PID: " + _this.__instance.pid + ")")
                 .tap(function () { return logger_1.default.info("Pact Verification succeeded."); });
-        }.bind(this));
+        });
     };
     return Verifier;
 }());

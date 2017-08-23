@@ -1,12 +1,12 @@
 import _ = require("underscore");
 import q = require("q");
-import serverFactory, {ServerOptions} from "./server";
+import serverFactory, {Server, ServerOptions} from "./server";
 import verifierFactory, {VerifierOptions} from "./verifier";
 import publisherFactory, {PublisherOptions} from "./publisher";
 import logger, {LogLevels} from "./logger";
 
 export class Pact {
-	private __servers = [];
+	private __servers: Server[] = [];
 
 	constructor() {
 		// Listen for Node exiting or someone killing the process
@@ -15,12 +15,12 @@ export class Pact {
 		process.once("SIGINT", process.exit);
 	}
 
-	public logLevel(level?: LogLevels) {
-		return level ? logger.level(level) : logger.logLevelName as LogLevels;
+	public logLevel(level?: LogLevels): number | void {
+		return level ? logger.level(level) : logger.level();
 	}
 
 	// Creates server with specified options
-	public createServer(options: ServerOptions = {}) {
+	public createServer(options: ServerOptions = {}): Server {
 		if (options && options.port && _.some(this.__servers, (s) => s.options.port === options.port)) {
 			let msg = `Port '${options.port}' is already in use by another process.`;
 			logger.error(msg);
@@ -41,30 +41,30 @@ export class Pact {
 	}
 
 	// Return arrays of all servers
-	public listServers() {
+	public listServers(): Server[] {
 		return this.__servers;
 	}
 
 	// Remove all the servers that"s been created
 	// Return promise of all others
-	public removeAllServers() {
+	public removeAllServers(): q.Promise<Server[]> {
 		logger.info("Removing all Pact servers.");
-		return q.all(_.map(this.__servers, (server) => server.delete()));
+		return q.all<Server>(_.map(this.__servers, (server:Server) => server.delete()));
 	}
 
 	// Run the Pact Verification process
-	public verifyPacts(options: VerifierOptions) {
+	public verifyPacts(options: VerifierOptions): q.Promise<string> {
 		logger.info("Verifying Pacts.");
 		return verifierFactory(options).verify();
 	}
 
 	// Publish Pacts to a Pact Broker
-	public publishPacts(options: PublisherOptions) {
+	public publishPacts(options: PublisherOptions): q.Promise<any[]> {
 		logger.info("Publishing Pacts to Broker");
 		return publisherFactory(options).publish();
 	}
 
-	private __stringifyOptions(obj: ServerOptions) {
+	private __stringifyOptions(obj: ServerOptions): string {
 		return _.chain(obj)
 			.pairs()
 			.map((v) => v.join(" = "))

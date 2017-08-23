@@ -14,7 +14,7 @@ var Pact = (function () {
         process.once("SIGINT", process.exit);
     }
     Pact.prototype.logLevel = function (level) {
-        return level ? logger_1.default.level(level) : logger_1.default.logLevelName;
+        return level ? logger_1.default.level(level) : logger_1.default.level();
     };
     Pact.prototype.createServer = function (options) {
         var _this = this;

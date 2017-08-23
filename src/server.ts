@@ -136,7 +136,7 @@ export class Server extends events.EventEmitter {
 	}
 
 	// Let the mocking begin!
-	public start() {
+	public start(): q.Promise<Server> {
 		if (this.__instance && this.__instance.connected) {
 			logger.warn(`You already have a process running with PID: ${this.__instance.pid}`);
 			return;
@@ -188,14 +188,14 @@ export class Server extends events.EventEmitter {
 		this.__instance.on("error", logger.error.bind(logger));
 
 		// if port isn"t specified, listen for it when pact runs
-		function catchPort(data) {
+		const catchPort = (data) => {
 			const match = data.match(/port=([0-9]+)/);
 			if (match && match[1]) {
 				this.options.port = parseInt(match[1], 10);
 				this.__instance.stdout.removeListener("data", catchPort.bind(this));
 				this.__instance.stderr.removeListener("data", catchPort.bind(this));
 			}
-		}
+		};
 
 		if (!this.options.port) {
 			this.__instance.stdout.on("data", catchPort.bind(this));
@@ -214,14 +214,15 @@ export class Server extends events.EventEmitter {
 		// check service is available
 		return this.__waitForServerUp(this.options)
 			.timeout(PROCESS_TIMEOUT, `Couldn't start Pact with PID: ${this.__instance.pid}`)
-			.tap(() => {
+			.then(() => {
 				this.__running = true;
 				this.emit(Server.Events.START_EVENT, this);
+				return this;
 			});
 	}
 
 	// Stop the server instance, no more mocking
-	public stop() {
+	public stop(): q.Promise<Server> {
 		let pid = -1;
 		if (this.__instance) {
 			pid = this.__instance.pid;
@@ -238,49 +239,48 @@ export class Server extends events.EventEmitter {
 
 		return this.__waitForServerDown(this.options)
 			.timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
-			.tap(() => {
+			.then(() => {
 				this.__running = false;
 				this.emit(Server.Events.STOP_EVENT, this);
+				return this;
 			});
 	}
 
 	// Deletes this server instance and emit an event
-	public delete() {
+	public delete(): q.Promise<Server> {
 		return this.stop().tap(() => this.emit(Server.Events.DELETE_EVENT, this));
 	}
 
 	// Wait for pact-mock-service to be initialized and ready
-	private __waitForServerUp(options: ServerOptions) {
+	private __waitForServerUp(options: ServerOptions): q.Promise<any> {
 		let amount = 0;
 		const deferred = q.defer();
 
-		function retry() {
+		const retry = () => {
 			if (amount >= RETRY_AMOUNT) {
 				deferred.reject(new Error("Pact startup failed; tried calling service 10 times with no result."));
 			}
 			setTimeout(check.bind(this), CHECKTIME);
-		}
+		};
 
-		function check() {
+		const check = () => {
 			amount++;
 			if (options.port) {
-				this.__call(options).then(() => {
-					deferred.resolve();
-				}, retry);
+				this.__call(options).then(() => deferred.resolve(), retry.bind(this));
 			} else {
 				retry();
 			}
-		}
+		};
 
 		check(); // Check first time, start polling
 		return deferred.promise;
 	}
 
-	private __waitForServerDown(options: ServerOptions) {
+	private __waitForServerDown(options: ServerOptions): q.Promise<any> {
 		let amount = 0;
 		const deferred = q.defer();
 
-		function check() {
+		const check = () => {
 			amount++;
 			if (options.port) {
 				this.__call(options).then(() => {
@@ -293,13 +293,13 @@ export class Server extends events.EventEmitter {
 			} else {
 				deferred.resolve();
 			}
-		}
+		};
 
 		check(); // Check first time, start polling
 		return deferred.promise;
 	}
 
-	private __call(options: ServerOptions) {
+	private __call(options: ServerOptions): q.Promise<any> {
 		const deferred = q.defer();
 		const config: any = {
 			uri: `http${options.ssl ? "s" : ""}://${options.host}:${options.port}`,
@@ -318,7 +318,7 @@ export class Server extends events.EventEmitter {
 			config.agentOptions.agent = false;
 		}
 
-		http(config, (err, res) => (!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject(`returned HTTP status '${res.statusCode}'`));
+		http(config, (err, res) => (!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject(`HTTP Error: '${err.message}'`));
 
 		return deferred.promise;
 	}

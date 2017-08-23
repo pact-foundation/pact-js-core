@@ -111,7 +111,7 @@ export class Verifier {
 		this.__options = options;
 	}
 
-	public verify() {
+	public verify(): q.Promise<string> {
 		logger.info("Verifier verify()");
 		let retrievePactsPromise;
 
@@ -128,7 +128,7 @@ export class Verifier {
 			}).findConsumers();
 		}
 
-		return retrievePactsPromise.then(function(data) {
+		return retrievePactsPromise.then((data) => {
 			this.__options.pactUrls = data;
 
 			const deferred = q.defer();
@@ -186,7 +186,7 @@ export class Verifier {
 			logger.info("Created Pact Verifier process with PID: " + this.__instance.pid);
 			return deferred.promise.timeout(this.__options.timeout, `Timeout waiting for verification process to complete (PID: ${this.__instance.pid})`)
 				.tap(() => logger.info("Pact Verification succeeded."));
-		}.bind(this));
+		});
 	}
 }
 

@@ -155,7 +155,7 @@ export class Publisher {
 			});
 	}
 
-	private __callPact(options:PublisherOptions, config:request.OptionsWithUri): q.Promise<any> {
+	private __callPact(options: PublisherOptions, config: request.OptionsWithUri): q.Promise<any> {
 		config = _.extend({
 			uri: options.pactBroker ? options.pactBroker : "http://localhost",
 			method: "GET",
@@ -236,8 +236,7 @@ export class Publisher {
 		if (!_.isObject(options)
 			|| !_.has(data, "consumer")
 			|| !_.has(data.consumer, "name")) {
-			throw new Error("Invalid Pact contract given. " +
-				"Unable to parse consumer name");
+			throw new Error("Invalid Pact contract given. Unable to parse consumer name");
 		}
 
 		return urlJoin(options.pactBroker, "pacticipants", data.consumer.name, "versions", options.consumerVersion, "tags", tag);

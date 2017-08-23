@@ -1,3 +1,5 @@
+// tslint:disable:no-string-literal
+
 import path = require("path");
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
@@ -6,9 +8,6 @@ import brokerMock from "../test/integration/brokerMock";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
-
-const constructPutUrl = publisherFactory as any["constructPutUrl"];
-const constructTagUrl = publisherFactory as any["constructTagUrl"];
 
 describe("Publish Spec", () => {
 
@@ -83,16 +82,30 @@ describe("Publish Spec", () => {
 					pactUrls: ["http://idontexist"],
 					consumerVersion: "1.0.0"
 				});
-				expect(p).to.be.a("object");
-				expect(p).to.respondTo("publish");
+				expect(p).to.be.ok;
+				expect(p.publish).to.be.a("function");
 			});
 		});
 	});
 
 	context("constructPutUrl", () => {
+		let constructPutUrl: (options: any, data: any) => string;
+
+		beforeEach(() => {
+			const publisher = publisherFactory({
+				pactBroker: "http://localhost",
+				pactUrls: [path.dirname(process.mainModule.filename)],
+				consumerVersion: "1.0.0"
+			});
+			constructPutUrl = (publisher as any)["__constructPutUrl"].bind(publisher);
+		});
+
 		context("when given a valid config object and pact JSON", () => {
 			it("should return a PUT url", () => {
-				let options = {"pactBroker": "http://foo", "consumerVersion": "1"};
+				let options = {
+					"pactBroker": "http://foo",
+					"consumerVersion": "1"
+				};
 				let data = {"consumer": {"name": "consumerName"}, "provider": {"name": "providerName"}};
 				expect(constructPutUrl(options, data)).to.eq("http://foo/pacts/provider/providerName/consumer/consumerName/version/1");
 			});
@@ -134,6 +147,17 @@ describe("Publish Spec", () => {
 	});
 
 	context("constructTagUrl", () => {
+		let constructTagUrl: (options: any, tag: string, data: any) => string;
+
+		beforeEach(() => {
+			const publisher = publisherFactory({
+				pactBroker: "http://localhost",
+				pactUrls: [path.dirname(process.mainModule.filename)],
+				consumerVersion: "1.0.0"
+			});
+			constructTagUrl = (publisher as any)["__constructTagUrl"].bind(publisher);
+		});
+
 		context("when given a valid config object and pact JSON", () => {
 			it("should return a PUT url", () => {
 				let options = {"pactBroker": "http://foo", consumerVersion: "1.0"};
@@ -145,13 +169,13 @@ describe("Publish Spec", () => {
 			it("should throw Error when pactBroker is not specified", () => {
 				let options = {"someotherurl": "http://foo", consumerVersion: "1.0"};
 				let data = {"consumer": {"name": "consumerName"}};
-				expect(() => constructTagUrl(options, data)).to.throw(Error, "Cannot construct Pact Tag URL: 'pactBroker' not specified");
+				expect(() => constructTagUrl(options, "", data)).to.throw(Error, "Cannot construct Pact Tag URL: 'pactBroker' not specified");
 			});
 
 			it("should throw Error when consumerVersion is not specified", () => {
 				let options = {"pactBroker": "http://foo"};
 				let data = {"consumer": {"name": "consumerName"}, "provider": {"name": "providerName"}};
-				expect(() => constructTagUrl(options, data)).to.throw(Error, "Cannot construct Pact Tag URL: 'consumerVersion' not specified");
+				expect(() => constructTagUrl(options, "", data)).to.throw(Error, "Cannot construct Pact Tag URL: 'consumerVersion' not specified");
 			});
 		});
 		context("when given an invalid Pact contract (no consumer key)", () => {
@@ -159,7 +183,7 @@ describe("Publish Spec", () => {
 				let options = {"pactBroker": "http://foo", consumerVersion: "1.0"};
 				let data = {};
 				expect(() => {
-					constructTagUrl(options, data);
+					constructTagUrl(options, "", data);
 				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer name");
 			});
 		});
@@ -168,7 +192,7 @@ describe("Publish Spec", () => {
 				let options = {"pactBroker": "http://foo", consumerVersion: "1.0"};
 				let data = {"consumer": {}};
 				expect(() => {
-					constructTagUrl(options, data);
+					constructTagUrl(options, "", data);
 				}).to.throw(Error, "Invalid Pact contract given. Unable to parse consumer name");
 			});
 		});

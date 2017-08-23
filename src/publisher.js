@@ -195,8 +195,7 @@ var Publisher = (function () {
         if (!_.isObject(options)
             || !_.has(data, "consumer")
             || !_.has(data.consumer, "name")) {
-            throw new Error("Invalid Pact contract given. " +
-                "Unable to parse consumer name");
+            throw new Error("Invalid Pact contract given. Unable to parse consumer name");
         }
         return urlJoin(options.pactBroker, "pacticipants", data.consumer.name, "versions", options.consumerVersion, "tags", tag);
     };

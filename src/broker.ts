@@ -84,9 +84,7 @@ export class Broker {
 					return pacts;
 				}, []);
 			})
-			.catch(() => {
-				throw new Error(`Unable to find pacts for given provider '${this.__options.provider}' and tags '${this.__options.tags}'`);
-			});
+			.catch(() => q.reject(`Unable to find pacts for given provider '${this.__options.provider}' and tags '${this.__options.tags}'`));
 	}
 }
 

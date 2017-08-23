@@ -162,14 +162,14 @@ var Server = (function (_super) {
         this.__instance.stderr.setEncoding("utf8");
         this.__instance.stderr.on("data", logger_1.default.debug.bind(logger_1.default));
         this.__instance.on("error", logger_1.default.error.bind(logger_1.default));
-        function catchPort(data) {
+        var catchPort = function (data) {
             var match = data.match(/port=([0-9]+)/);
             if (match && match[1]) {
-                this.options.port = parseInt(match[1], 10);
-                this.__instance.stdout.removeListener("data", catchPort.bind(this));
-                this.__instance.stderr.removeListener("data", catchPort.bind(this));
+                _this.options.port = parseInt(match[1], 10);
+                _this.__instance.stdout.removeListener("data", catchPort.bind(_this));
+                _this.__instance.stderr.removeListener("data", catchPort.bind(_this));
             }
-        }
+        };
         if (!this.options.port) {
             this.__instance.stdout.on("data", catchPort.bind(this));
             this.__instance.stderr.on("data", catchPort.bind(this));
@@ -183,9 +183,10 @@ var Server = (function (_super) {
         });
         return this.__waitForServerUp(this.options)
             .timeout(PROCESS_TIMEOUT, "Couldn't start Pact with PID: " + this.__instance.pid)
-            .tap(function () {
+            .then(function () {
             _this.__running = true;
             _this.emit(Server.Events.START_EVENT, _this);
+            return _this;
         });
     };
     Server.prototype.stop = function () {
@@ -205,9 +206,10 @@ var Server = (function (_super) {
         }
         return this.__waitForServerDown(this.options)
             .timeout(PROCESS_TIMEOUT, "Couldn't stop Pact with PID '" + pid + "'")
-            .tap(function () {
+            .then(function () {
             _this.__running = false;
             _this.emit(Server.Events.STOP_EVENT, _this);
+            return _this;
         });
     };
     Server.prototype.delete = function () {
@@ -215,35 +217,35 @@ var Server = (function (_super) {
         return this.stop().tap(function () { return _this.emit(Server.Events.DELETE_EVENT, _this); });
     };
     Server.prototype.__waitForServerUp = function (options) {
+        var _this = this;
         var amount = 0;
         var deferred = q.defer();
-        function retry() {
+        var retry = function () {
             if (amount >= RETRY_AMOUNT) {
                 deferred.reject(new Error("Pact startup failed; tried calling service 10 times with no result."));
             }
-            setTimeout(check.bind(this), CHECKTIME);
-        }
-        function check() {
+            setTimeout(check.bind(_this), CHECKTIME);
+        };
+        var check = function () {
             amount++;
             if (options.port) {
-                this.__call(options).then(function () {
-                    deferred.resolve();
-                }, retry);
+                _this.__call(options).then(function () { return deferred.resolve(); }, retry.bind(_this));
             }
             else {
                 retry();
             }
-        }
+        };
         check();
         return deferred.promise;
     };
     Server.prototype.__waitForServerDown = function (options) {
+        var _this = this;
         var amount = 0;
         var deferred = q.defer();
-        function check() {
+        var check = function () {
             amount++;
             if (options.port) {
-                this.__call(options).then(function () {
+                _this.__call(options).then(function () {
                     if (amount >= RETRY_AMOUNT) {
                         deferred.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
                         return;
@@ -254,7 +256,7 @@ var Server = (function (_super) {
             else {
                 deferred.resolve();
             }
-        }
+        };
         check();
         return deferred.promise;
     };
@@ -275,7 +277,7 @@ var Server = (function (_super) {
             config.agentOptions.requestCert = false;
             config.agentOptions.agent = false;
         }
-        http(config, function (err, res) { return (!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject("returned HTTP status '" + res.statusCode + "'"); });
+        http(config, function (err, res) { return (!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject("HTTP Error: '" + err.message + "'"); });
         return deferred.promise;
     };
     return Server;
