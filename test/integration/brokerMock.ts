@@ -4,7 +4,7 @@ import express = require("express");
 import bodyParser = require("body-parser");
 import basicAuth = require("basic-auth");
 
-const server = express();
+const server: express.Express = express();
 server.use(cors());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({extended: true}));

@@ -3,7 +3,7 @@ import express = require("express");
 import bodyParser = require("body-parser");
 import basicAuth = require("basic-auth");
 
-const server = express();
+const server: express.Express = express();
 server.use(cors());
 server.use(bodyParser.json());
 server.use(bodyParser.urlencoded({
@@ -64,7 +64,7 @@ server.get("/contract/:name", (req, res) => {
 	res.sendFile(fileName, options, (err) => {
 		if (err) {
 			console.log(err);
-			res.status(err.status).end();
+			res.status(500).end();
 		} else {
 			console.log("Sent:", fileName);
 		}
