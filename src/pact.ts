@@ -48,6 +48,10 @@ export class Pact {
 	// Remove all the servers that"s been created
 	// Return promise of all others
 	public removeAllServers(): q.Promise<Server[]> {
+		if(this.__servers.length === 0) {
+			return q(this.__servers);
+		}
+
 		logger.info("Removing all Pact servers.");
 		return q.all<Server>(_.map(this.__servers, (server:Server) => server.delete()));
 	}

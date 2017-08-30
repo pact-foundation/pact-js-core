@@ -16,9 +16,9 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
 
 ## Usage
 
-Simply require the library and call the create function.
+Simply require the library and call the create function to start the mock service
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer({port: 9999});
 server.start().then(function() {
@@ -26,18 +26,26 @@ server.start().then(function() {
 });
 ```
 
+Or you can use the CLI
+
+```
+$# pact mock --port 9999
+```
+
+To see the list commands possible with the CLI, simply ask for help `$# pact --help`
+
 ## Documentation
 
 ### Set Log Level
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 pact.logLevel('debug');
 ```
 
 ### Create Pact Mock Server
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer({
 	port: <Number>,     // Port number that the server runs on, defaults to 1234
@@ -58,9 +66,10 @@ var server = pact.createServer({
 
 Read more about [Verify Pacts](https://github.com/realestate-com-au/pact/wiki/Verifying-pacts).
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
-var opts = {
+
+pact.verifyPacts({
 	providerBaseUrl: <String>,           // Running API provider host endpoint. Required.
 	pactBrokerUrl: <String>              // URL of the Pact Broker to retrieve pacts from. Required if not using pactUrls.
 	provider: <String>                   // Name of the Provider. Required.
@@ -72,16 +81,12 @@ var opts = {
 	publishVerificationResult: <Boolean> // Publish verification result to Broker. Optional
 	providerVersion: <Boolean>           // Provider version, required to publish verification result to Broker. Optional otherwise.
 	timeout: <Number>                    // The duration in ms we should wait to confirm verification process was successful. Defaults to 30000, Optional.
-};
-
-pact.verifyPacts(opts).then(function () {
-	// do something
 });
 ```
 
 ### Publish Pacts to a Broker
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 var opts = {
 	pactUrls: <Array>,               // Array of local Pact files or directories containing them. Required.
@@ -97,12 +102,11 @@ pact.publishPacts(opts)).then(function () {
 });
 ```
 
-
 ### List Mock Servers
 
 If you ever need to see which servers are currently created.
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 var servers = pact.listServers();
 console.log(JSON.stringify(servers));
@@ -112,7 +116,7 @@ console.log(JSON.stringify(servers));
 
 Remove all servers once you're done with them in one fell swoop.
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 pact.removeAllServers();
 ```
@@ -121,7 +125,7 @@ pact.removeAllServers();
 
 Start the current server.
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 pact.createServer().start().then(function(){
 	// Do something after it started
@@ -132,7 +136,7 @@ pact.createServer().start().then(function(){
 
 Stop the current server.
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 pact.createServer().stop().then(function(){
 	// Do something after it stopped
@@ -143,7 +147,7 @@ pact.createServer().stop().then(function(){
 
 Stop the current server and deletes it from the list.
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 pact.createServer().delete().then(function(){
 	// Do something after it was killed
@@ -152,7 +156,7 @@ pact.createServer().delete().then(function(){
 
 ### Check if a Mock server is running
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 pact.createServer().running;
 ```
@@ -161,7 +165,7 @@ pact.createServer().running;
 
 There's 3 different events available, 'start', 'stop' and 'delete'.  They can be listened to the same way as an [EventEmitter](https://nodejs.org/api/events.html).
 
-```js
+```
 var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer();
 server.on('start', function() { console.log('started'); });

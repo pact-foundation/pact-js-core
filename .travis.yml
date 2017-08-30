@@ -20,9 +20,8 @@ addons:
 matrix:
   fast_finish: true
 script:
-  - npm test
-after_success:
   - npm run build
+  - npm test
 deploy:
 - provider: npm
   skip_cleanup: true
