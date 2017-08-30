@@ -15,8 +15,8 @@
 		"declaration": true
 	},
 	"include": [
-		"src/**/*.ts",
-		"test/**/*.ts"
+		"**/*.ts",
+		"**/*.ts"
 	],
 	"exclude": [
 		"node_modules",
