@@ -14,7 +14,7 @@ describe("Publish Spec", () => {
 	const PORT = Math.floor(Math.random() * 999) + 9000;
 
 	before((done) => brokerMock.listen(PORT, () => {
-		console.log("Broker (Mock) running on port: " + PORT);
+		console.log(`Broker (Mock) running on port: ${PORT}`);
 		done();
 	}));
 

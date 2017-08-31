@@ -10,11 +10,11 @@ chai.use(chaiAsPromised);
 describe("Publish Spec", () => {
 	let server;
 	const PORT = Math.floor(Math.random() * 999) + 9000;
-	const pactBrokerBaseUrl = "http://localhost:" + PORT;
-	const authenticatedPactBrokerBaseUrl = "http://localhost:" + PORT + "/auth";
+	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
+	const authenticatedPactBrokerBaseUrl = `http://localhost:${PORT}/auth`;
 
 	before((done) => server = broker.listen(PORT, () => {
-		console.log("Pact Broker Mock listening on port: " + PORT);
+		console.log(`Pact Broker Mock listening on port: ${PORT}`);
 		done();
 	}));
 
@@ -149,7 +149,7 @@ describe("Publish Spec", () => {
 			it("should asynchronously send the Pact contracts to the broker", () => {
 				const publisher = publisherFactory({
 					pactBroker: pactBrokerBaseUrl,
-					pactUrls: [pactBrokerBaseUrl + "/somepact"],
+					pactUrls: [`${pactBrokerBaseUrl}/somepact`],
 					consumerVersion: "1.0.0"
 				});
 
@@ -159,7 +159,7 @@ describe("Publish Spec", () => {
 			it("should successfully tag all Pacts sent with `test` and `latest`", () => {
 				const publisher = publisherFactory({
 					pactBroker: pactBrokerBaseUrl,
-					pactUrls: [pactBrokerBaseUrl + "/somepact"],
+					pactUrls: [`${pactBrokerBaseUrl}/somepact`],
 					consumerVersion: "1.0.0",
 					tags: ["test", "latest"]
 				});
@@ -172,7 +172,7 @@ describe("Publish Spec", () => {
 			it("should return a rejected promise", () => {
 				const publisher = publisherFactory({
 					pactBroker: pactBrokerBaseUrl,
-					pactUrls: [pactBrokerBaseUrl + "/somepacturlthatdoesntexist"],
+					pactUrls: [`${pactBrokerBaseUrl}/somepacturlthatdoesntexist`],
 					consumerVersion: "1.0.0"
 				});
 
@@ -186,7 +186,7 @@ describe("Publish Spec", () => {
 			it("should return a rejected promise", () => {
 				const publisher = publisherFactory({
 					pactBroker: pactBrokerBaseUrl,
-					pactUrls: [pactBrokerBaseUrl + "/somebrokenpact"],
+					pactUrls: [`${pactBrokerBaseUrl}/somebrokenpact`],
 					consumerVersion: "1.0.0"
 				});
 

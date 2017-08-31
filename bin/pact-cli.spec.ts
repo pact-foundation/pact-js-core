@@ -1,14 +1,14 @@
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import childProcess = require("child_process");
-import fs = require("fs");
-import path = require("path");
 import q = require("q");
 import request = require("request");
+import path = require("path");
 import _ = require("underscore");
 import {ChildProcess} from "child_process";
 import {ServerOptions} from "../src/server";
 import decamelize = require("decamelize");
+import provider from "../test/integration/provider";
 
 const http = q.denodeify(request);
 const pkg = require("../package.json");
@@ -24,117 +24,60 @@ describe("Pact CLI Spec", () => {
 	});
 
 	it("should show the help options with the commands available", () => {
-		const out = CLI.runSync(["--help"]).then((cp) => cp.stdout);
+		const p = CLI.runSync(["--help"]).then((cp) => cp.stdout);
 		return q.all([
-			expect(out).to.eventually.contain("Usage: pact "),
-			expect(out).to.eventually.contain("mock"),
-			expect(out).to.eventually.contain("verify"),
+			expect(p).to.eventually.contain("USAGE"),
+			expect(p).to.eventually.contain("pact "),
+			expect(p).to.eventually.contain("mock"),
+			expect(p).to.eventually.contain("verify"),
 		]);
 	});
 
 	describe("Mock Command", () => {
 		it("should display help", () => {
-			return expect(CLI.runSync(["mock", "--help"]).then((cp) => cp.stdout)).to.eventually.contain("Usage: mock ");
+			const p = CLI.runSync(["mock", "--help"]).then((cp) => cp.stdout);
+			return q.all([
+				expect(p).to.eventually.contain("USAGE"),
+				expect(p).to.eventually.contain("pact mock"),
+			]);
 		});
 
-		/*context("when user specifies valid options", () => {
-			let dirPath;
+		it("should run mock service", () => {
+			const p = CLI.runMock({port: 9500}).then((cp) => cp.stdout);
+			return q.all([
+				expect(p).to.eventually.be.fulfilled,
+				expect(p).to.eventually.contain("Creating Pact with PID"),
+			]);
+		});
+	});
 
-			beforeEach(() => fs.mkdirSync(path.resolve(__dirname, `../.tmp${Math.floor(Math.random() * 1000)}`)));
-			afterEach(() => fs.rmdirSync(dirPath));
-
-			it("should return serverFactory using specified options", () => {
-				let options = {
-					port: 9500,
-					host: "localhost",
-					dir: dirPath,
-					ssl: true,
-					cors: true,
-					log: "log.txt",
-					spec: 1,
-					consumer: "consumerName",
-					provider: "providerName"
-				};
-
-			});
+	describe("Verify Command", () => {
+		it("should display help", () => {
+			const p = CLI.runSync(["verify", "--help"]).then((cp) => cp.stdout);
+			return q.all([
+				expect(p).to.eventually.contain("USAGE"),
+				expect(p).to.eventually.contain("pact verify")
+			]);
 		});
 
-		context("when user specifies invalid port", () => {
-			it("should return an error on negative port number", () => {
-
-			});
-
-			it("should return an error on non-integer", () => {
-			});
-
-			it("should return an error on non-number", () => {
-			});
-
-			it("should return an error on outside port range", () => {
-			});
-
+		it("should fail if missing 'provider-base-url' argument", () => {
+			return expect(CLI.runSync(["verify"]).then((cp) => cp.stderr)).to.eventually.contain("Must provide the providerBaseUrl argument");
 		});
 
-		context("when user specifies port that's currently in use", () => {
-			it("should return a port conflict error", () => {
-			});
-		});
+		context("with mock broker", () => {
+			let server;
+			const PORT = 9123;
+			const providerBaseUrl = `http://localhost:${PORT}`;
+			/*const providerStatesUrl = `${providerBaseUrl}/provider-states`;
+			 const providerStatesSetupUrl = `${providerBaseUrl}/provider-state/`;
+			 const pactBrokerBaseUrl = `http://localhost:${PORT}`;*/
 
-		context("when user specifies invalid host", () => {
-			it("should return an error on non-string", () => {
-			});
+			before((done) => server = provider.listen(PORT, () => done()));
+			after(() => server.close());
 
-		});
-
-		context("when user specifies invalid directory", () => {
-			it("should return an error on invalid path", () => {
-			});
-
-		});
-
-		context("when user specifies invalid ssl", () => {
-			it("should return an error on non-boolean", () => {
-			});
-
-		});
-
-		context("when user specifies invalid cors", () => {
-			it("should return an error on non-boolean", () => {
-			});
-
-		});
-
-		context("when user specifies invalid log", () => {
-			it("should return an error on invalid path", () => {
-			});
-
-		});
-
-		context("when user specifies invalid spec", () => {
-			it("should return an error on non-number", () => {
-			});
-
-			it("should return an error on negative number", () => {
-			});
-
-			it("should return an error on non-integer", () => {
-			});
-
-		});
-
-		context("when user specifies invalid consumer name", () => {
-			it("should return an error on non-string", () => {
-			});
-		});
-
-		context("when user specifies invalid provider name", () => {
-			it("should return an error on non-string", () => {
-			});
-		});*/
-
-		describe("Verify Command", () => {
-			it("should display help", () => {
-				return expect(CLI.runSync(["verify", "--help"]).then((cp) => cp.stdout)).to.eventually.contain("Usage: verify ");
+			it("should work pointing to fake broker", () => {
+				const p = CLI.runSync(["verify", "--provider-base-url", providerBaseUrl, "--pact-urls", path.resolve(__dirname, "integration/me-they-success.json")]).then((cp) => cp.stdout);
+				return expect(p).to.eventually.be.fulfilled;
 			});
 		});
 	});
@@ -144,13 +87,12 @@ class CLI {
 	public static runMock(options: ServerOptions = {}): q.Promise<CLI> {
 		const args = _.chain(options)
 			.pairs()
-			.map((arr) => `${decamelize(arr[0], "-")} ${arr[1]}`)
+			.map((arr) => [`--${decamelize(arr[0], "-")}`, `${arr[1]}`])
+			.flatten()
 			.value();
 
-		return this.run(args)
-			.tap(() => this.check(options))
-			.timeout(10000, "Process took too long")
-			.catch(() => null);
+		return this.run(["mock"].concat(args))
+			.tap(() => this.checkMockStarted(options));
 	}
 
 	public static run(args: string[] = []): q.Promise<CLI> {
@@ -159,18 +101,22 @@ class CLI {
 			detached: !isWindows,
 			windowsVerbatimArguments: isWindows
 		};
-		args.unshift(this.__cliPath);
+		args = [this.__cliPath].concat(args);
 		const proc = childProcess.spawn("node", args, opts);
 		this.__children.push(proc);
-		return q(new CLI(proc));
+		return q(new CLI(proc))
+			.tap((cli) => this.commandRunning(cli));
 	}
 
 	public static runSync(args: string[] = []): q.Promise<CLI> {
 		return this.run(args)
-			.then((cp) => {
-				const deferred = q.defer<CLI>();
-				cp.process.once("exit", () => deferred.resolve(cp));
-				return deferred.promise;
+			.tap((cp) => {
+				if ((cp.process as any).exitCode === null) {
+					// console.log("check when exiting");
+					const deferred = q.defer<CLI>();
+					cp.process.once("exit", () => deferred.resolve());
+					return deferred.promise;
+				}
 			});
 	}
 
@@ -185,25 +131,44 @@ class CLI {
 
 	public static stopAll() {
 		for (let child of this.__children) {
-			isWindows ? childProcess.execSync(`taskkill /f /t /pid ${child.pid}`) : process.kill(-child.pid, "SIGKILL");
+			isWindows ? childProcess.execSync(`taskkill /f /t /pid ${child.pid}`) : process.kill(-child.pid, "SIGINT");
 		}
 	}
 
 	private static readonly __children: ChildProcess[] = [];
 	private static readonly __cliPath: string = require.resolve("./pact-cli.js");
 
-	private static check(options: ServerOptions, amount: number = 0) {
+	private static commandRunning(c: CLI, amount: number = 0): q.Promise<any> {
 		amount++;
-		return this.call(options).catch(() => {
-			if (amount >= 10) {
-				return q.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
-			}
-			setTimeout(() => this.check(options, amount), 1000);
-		});
+		const isSet = () => c.stdout.length !== 0 ? q.resolve() : q.reject();
+		return isSet()
+			.catch(() => {
+				if (amount >= 10) {
+					return q.reject(new Error("stdout never set, command probably didn't run"));
+				}
+				return q.delay(1000).then(() => this.commandRunning(c, amount));
+			});
 	}
 
-	private static call(options: ServerOptions) {
-		let config: any = {
+	private static checkMockStarted(options: ServerOptions, amount: number = 0): q.Promise<any> {
+		amount++;
+		return this.call(options)
+			.catch(() => {
+				if (amount >= 10) {
+					return q.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
+				}
+				// Try again in 1 second
+				return q.delay(1000).then(() => this.checkMockStarted(options, amount));
+			});
+	}
+
+	private static call(options: ServerOptions): q.Promise<any> {
+		// console.log("Calling to see if pact service is up");
+		options.ssl = options.ssl || false;
+		options.cors = options.cors || false;
+		options.host = options.host || "localhost";
+		options.port = options.port || 1234;
+		const config: any = {
 			uri: `http${options.ssl ? "s" : ""}://${options.host}:${options.port}`,
 			method: "GET",
 			headers: {
@@ -225,6 +190,7 @@ class CLI {
 				if (response.statusCode !== 200) {
 					return q.reject();
 				}
+				// console.log("Pact service is up");
 				return response;
 			});
 	}
@@ -243,9 +209,18 @@ class CLI {
 
 	constructor(proc: ChildProcess) {
 		this.process = proc;
-		this.process.stdout.on("data", (d) => this.__stdout += d);
-		this.process.stderr.on("data", (d) => this.__stderr += d);
-		this.process.once("exit", () => {
+		this.process.stdout.setEncoding("utf8");
+		this.process.stdout.on("data", (d) => {
+			// console.log(d);
+			this.__stdout += d;
+		});
+		this.process.stderr.setEncoding("utf8");
+		this.process.stderr.on("data", (d) => {
+			// console.log(d);
+			this.__stderr += d;
+		});
+		this.process.once("exit", (code) => {
+			// console.log("EXITED " + code);
 			CLI.remove(this.process);
 			this.process.stdout.removeAllListeners();
 			this.process.stderr.removeAllListeners();

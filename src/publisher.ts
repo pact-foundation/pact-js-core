@@ -66,7 +66,7 @@ export class Publisher {
 	}
 
 	public publish(): q.Promise<any[]> {
-		logger.info("Publishing pacts to broker at: " + this.__options.pactBroker);
+		logger.info(`Publishing pacts to broker at: ${this.__options.pactBroker}`);
 
 		// Return a promise that does everything one after another
 		return q(_.chain(this.__options.pactUrls)
@@ -99,7 +99,7 @@ export class Publisher {
 						}
 						rejects.push(result.reason);
 					});
-					return rejects.length ? q.reject(new Error("Could not retrieve all Pact contracts:\n  - " + rejects.join("\n  - "))) : data;
+					return rejects.length ? q.reject(new Error(`Could not retrieve all Pact contracts:\n  - ${rejects.join("\n  - ")}`)) : data;
 				}))
 			// Publish the contracts to broker
 			.tap((files) => q.allSettled(

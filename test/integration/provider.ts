@@ -46,7 +46,7 @@ server.get("/somestate", (req, res) => {
 
 server.post("/", (req, res) => {
 	res.json({
-		greeting: "Hello " + req.body.name
+		greeting: `Hello ${req.body.name}`
 	});
 });
 

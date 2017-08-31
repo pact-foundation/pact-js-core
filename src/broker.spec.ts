@@ -9,10 +9,10 @@ chai.use(chaiAsPromised);
 
 describe("Broker Spec", () => {
 	const PORT = 9124;
-	const pactBrokerBaseUrl = "http://localhost:" + PORT;
+	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
 
 	before((done) => brokerMock.listen(PORT, () => {
-		logger.debug("Broker (Mock) running on port: " + PORT);
+		logger.debug(`Broker (Mock) running on port: ${PORT}`);
 		done();
 	}));
 

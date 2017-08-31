@@ -60,7 +60,7 @@ export class Server extends events.EventEmitter {
 			try {
 				fs.statSync(path.normalize(options.sslcert)).isFile();
 			} catch (e) {
-				throw new Error("Custom ssl certificate not found at path: " + options.sslcert);
+				throw new Error(`Custom ssl certificate not found at path: ${options.sslcert}`);
 			}
 		}
 
@@ -68,7 +68,7 @@ export class Server extends events.EventEmitter {
 			try {
 				fs.statSync(path.normalize(options.sslkey)).isFile();
 			} catch (e) {
-				throw new Error("Custom ssl key not found at path: " + options.sslkey);
+				throw new Error(`Custom ssl key not found at path: ${options.sslkey}`);
 			}
 		}
 
@@ -125,7 +125,7 @@ export class Server extends events.EventEmitter {
 		return new Server(options);
 	}
 
-	public readonly options:ServerOptions;
+	public readonly options: ServerOptions;
 	private __running: boolean;
 	private __instance: ChildProcess;
 
@@ -174,7 +174,7 @@ export class Server extends events.EventEmitter {
 			args = ["/s", "/c", cmd];
 			(opts as any).windowsVerbatimArguments = true;
 		} else {
-			cmd = "./" + cmd;
+			cmd = `./${cmd}`;
 			file = "/bin/sh";
 			args = ["-c", cmd];
 		}
@@ -194,6 +194,7 @@ export class Server extends events.EventEmitter {
 				this.options.port = parseInt(match[1], 10);
 				this.__instance.stdout.removeListener("data", catchPort.bind(this));
 				this.__instance.stderr.removeListener("data", catchPort.bind(this));
+				logger.info(`Pact running on port ${this.options.port}`);
 			}
 		};
 
@@ -202,11 +203,11 @@ export class Server extends events.EventEmitter {
 			this.__instance.stderr.on("data", catchPort.bind(this));
 		}
 
-		logger.info("Creating Pact with PID: " + this.__instance.pid);
+		logger.info(`Creating Pact with PID: ${this.__instance.pid}`);
 
 		this.__instance.once("close", (code) => {
 			if (code !== 0) {
-				logger.warn("Pact exited with code " + code + ".");
+				logger.warn(`Pact exited with code ${code}.`);
 			}
 			return this.stop();
 		});
@@ -226,14 +227,19 @@ export class Server extends events.EventEmitter {
 		let pid = -1;
 		if (this.__instance) {
 			pid = this.__instance.pid;
-			logger.info("Removing Pact with PID: " + pid);
+			logger.info(`Removing Pact with PID: ${pid}`);
 			this.__instance.removeAllListeners();
-			// Killing instance, since windows can"t send signals, must kill process forcefully
-			if (isWindows) {
-				cp.execSync("taskkill /f /t /pid " + pid);
-			} else {
-				process.kill(-pid, "SIGINT");
+			// Killing instance, since windows can't send signals, must kill process forcefully
+			try {
+				if (isWindows) {
+					cp.execSync(`taskkill /f /t /pid ${pid}`);
+				} else {
+					process.kill(-pid, "SIGINT");
+				}
+			} catch (e) {
+
 			}
+
 			this.__instance = undefined;
 		}
 

@@ -11,13 +11,13 @@ describe("Verifier Integration Spec", () => {
 
 	let server;
 	const PORT = 9123;
-	const providerBaseUrl = "http://localhost:" + PORT;
-	const providerStatesUrl = providerBaseUrl + "/provider-states";
-	const providerStatesSetupUrl = providerBaseUrl + "/provider-state/";
-	const pactBrokerBaseUrl = "http://localhost:" + PORT;
+	const providerBaseUrl = `http://localhost:${PORT}`;
+	const providerStatesUrl = `${providerBaseUrl}/provider-states`;
+	const providerStatesSetupUrl = `${providerBaseUrl}/provider-state/`;
+	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
 
 	before((done) => server = provider.listen(PORT, () => {
-		console.log("Pact Broker Mock listening on port: " + PORT);
+		console.log(`Pact Broker Mock listening on port: ${PORT}`);
 		done();
 	}));
 
@@ -107,7 +107,7 @@ describe("Verifier Integration Spec", () => {
 				it("should return a successful promise", () => {
 					const verifier = verifierFactory({
 						providerBaseUrl: providerBaseUrl,
-						pactUrls: [pactBrokerBaseUrl + "/noauth/pacts/provider/they/consumer/me/latest", pactBrokerBaseUrl + "/noauth/pacts/provider/they/consumer/anotherclient/latest"],
+						pactUrls: [`${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/me/latest`, `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/anotherclient/latest`],
 						providerStatesUrl: providerStatesUrl,
 						providerStatesSetupUrl: providerStatesSetupUrl
 					});
@@ -120,7 +120,7 @@ describe("Verifier Integration Spec", () => {
 					it("should return a successful promise", () => {
 						const verifier = verifierFactory({
 							providerBaseUrl: providerBaseUrl,
-							pactUrls: [pactBrokerBaseUrl + "/pacts/provider/they/consumer/me/latest", pactBrokerBaseUrl + "/pacts/provider/they/consumer/anotherclient/latest"],
+							pactUrls: [`${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`, `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`],
 							providerStatesUrl: providerStatesUrl,
 							providerStatesSetupUrl: providerStatesSetupUrl,
 							pactBrokerUsername: "foo",
@@ -134,7 +134,7 @@ describe("Verifier Integration Spec", () => {
 					it("should return a rejected promise", () => {
 						const verifier = verifierFactory({
 							providerBaseUrl: providerBaseUrl,
-							pactUrls: [pactBrokerBaseUrl + "/pacts/provider/they/consumer/me/latest", pactBrokerBaseUrl + "/pacts/provider/they/consumer/anotherclient/latest"],
+							pactUrls: [`${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`, `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`],
 							providerStatesUrl: providerStatesUrl,
 							providerStatesSetupUrl: providerStatesSetupUrl,
 							pactBrokerUsername: "foo",
@@ -146,7 +146,7 @@ describe("Verifier Integration Spec", () => {
 					it("should return the verifier error output in the returned promise", () => {
 						const verifier = verifierFactory({
 							providerBaseUrl: providerBaseUrl,
-							pactUrls: [pactBrokerBaseUrl + "/pacts/provider/they/consumer/me/latest", pactBrokerBaseUrl + "/pacts/provider/they/consumer/anotherclient/latest"],
+							pactUrls: [`${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`, `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`],
 							providerStatesUrl: providerStatesUrl,
 							providerStatesSetupUrl: providerStatesSetupUrl,
 							pactBrokerUsername: "foo",

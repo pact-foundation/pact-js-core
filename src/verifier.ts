@@ -17,11 +17,11 @@ import {ChildProcess, SpawnOptions} from "child_process";
 const isWindows = process.platform === "win32";
 
 export class Verifier {
-	public static create(options: VerifierOptions = {providerBaseUrl: ""}): Verifier {
+	public static create(options: VerifierOptions): Verifier {
 		options.pactBrokerUrl = options.pactBrokerUrl || "";
 		options.tags = options.tags || [];
-		options.provider = options.provider || "";
 		options.pactUrls = options.pactUrls || [];
+		options.provider = options.provider || "";
 		options.providerStatesUrl = options.providerStatesUrl || "";
 		options.providerStatesSetupUrl = options.providerStatesSetupUrl || "";
 		options.timeout = options.timeout || 30000;
@@ -48,14 +48,14 @@ export class Verifier {
 			.compact()
 			.value();
 
-		checkTypes.assert.nonEmptyString(options.providerBaseUrl, "Must provide the --provider-base-url argument");
+		checkTypes.assert.nonEmptyString(options.providerBaseUrl, "Must provide the providerBaseUrl argument");
 
 		if (checkTypes.emptyArray(options.pactUrls) && !options.pactBrokerUrl) {
-			throw new Error("Must provide the --pact-urls argument if no --broker-url provided");
+			throw new Error("Must provide the pactUrls argument if no brokerUrl provided");
 		}
 
-		if ((!options.pactBrokerUrl || !options.provider) && checkTypes.emptyArray(options.pactUrls)) {
-			throw new Error("Must provide both --provider and --broker-url or if --pact-urls not provided.");
+		if ((!options.pactBrokerUrl || _.isEmpty(options.provider)) && checkTypes.emptyArray(options.pactUrls)) {
+			throw new Error("Must provide both provider and brokerUrl or if pactUrls not provided.");
 		}
 
 		if (options.providerStatesSetupUrl) {
@@ -63,7 +63,7 @@ export class Verifier {
 		}
 
 		if (options.providerStatesUrl) {
-			logger.warn("--provider-states-url is deprecated and no longer required.");
+			logger.warn("providerStatesUrl is deprecated and no longer required.");
 			checkTypes.assert.string(options.providerStatesUrl);
 		}
 
@@ -92,7 +92,7 @@ export class Verifier {
 		}
 
 		if (options.publishVerificationResult && !options.providerVersion) {
-			throw new Error("Must provide both or none of --publish-verification-results and --provider-app-version.");
+			throw new Error("Must provide both or none of publishVerificationResults and providerVersion.");
 		}
 
 		if (options.providerVersion) {
@@ -168,7 +168,7 @@ export class Verifier {
 				args = ["/s", "/c", cmd];
 				(opts as any).windowsVerbatimArguments = true;
 			} else {
-				cmd = "./" + cmd;
+				cmd = `./${cmd}`;
 				file = "/bin/sh";
 				args = ["-c", cmd];
 			}
@@ -183,7 +183,7 @@ export class Verifier {
 
 			this.__instance.once("close", (code) => code === 0 ? deferred.resolve(output) : deferred.reject(new Error(output)));
 
-			logger.info("Created Pact Verifier process with PID: " + this.__instance.pid);
+			logger.info(`Created Pact Verifier process with PID: ${this.__instance.pid}`);
 			return deferred.promise.timeout(this.__options.timeout, `Timeout waiting for verification process to complete (PID: ${this.__instance.pid})`)
 				.tap(() => logger.info("Pact Verification succeeded."));
 		});
@@ -195,6 +195,7 @@ export default Verifier.create;
 
 export interface VerifierOptions {
 	providerBaseUrl: string;
+	provider?: string;
 	pactUrls?: string[];
 	providerStatesUrl?: string;
 	providerStatesSetupUrl?: string;
@@ -204,6 +205,5 @@ export interface VerifierOptions {
 	providerVersion?: string;
 	pactBrokerUrl?: string;
 	tags?: string[];
-	provider?: string;
 	timeout?: number;
 }
