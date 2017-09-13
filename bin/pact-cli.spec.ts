@@ -68,9 +68,6 @@ describe("Pact CLI Spec", () => {
 			let server;
 			const PORT = 9123;
 			const providerBaseUrl = `http://localhost:${PORT}`;
-			/*const providerStatesUrl = `${providerBaseUrl}/provider-states`;
-			 const providerStatesSetupUrl = `${providerBaseUrl}/provider-state/`;
-			 const pactBrokerBaseUrl = `http://localhost:${PORT}`;*/
 
 			before((done) => server = provider.listen(PORT, () => done()));
 			after(() => server.close());

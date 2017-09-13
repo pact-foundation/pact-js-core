@@ -23,7 +23,7 @@ export class Logger extends bunyan {
 export type LogLevels = "trace" | "debug" | "info" | "warn" | "error" | "fatal";
 
 export default new Logger({
-	name: `search-api@${pkg.version}`,
+	name: `pact-node@${pkg.version}`,
 	streams: [{
 		level: (process.env.LOGLEVEL || "info") as bunyan.LogLevel,
 		stream: prettyStdOut,

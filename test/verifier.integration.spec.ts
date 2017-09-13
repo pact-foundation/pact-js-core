@@ -12,7 +12,6 @@ describe("Verifier Integration Spec", () => {
 	let server;
 	const PORT = 9123;
 	const providerBaseUrl = `http://localhost:${PORT}`;
-	const providerStatesUrl = `${providerBaseUrl}/provider-states`;
 	const providerStatesSetupUrl = `${providerBaseUrl}/provider-state/`;
 	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
 
@@ -39,7 +38,6 @@ describe("Verifier Integration Spec", () => {
 				const verifier = verifierFactory({
 					providerBaseUrl: providerBaseUrl,
 					pactUrls: [path.resolve(__dirname, "integration/me-they-states.json")],
-					providerStatesUrl: providerStatesUrl,
 					providerStatesSetupUrl: providerStatesSetupUrl
 				});
 				return expect(verifier.verify()).to.eventually.be.fulfilled;
@@ -82,7 +80,6 @@ describe("Verifier Integration Spec", () => {
 			const verifier = verifierFactory({
 				providerBaseUrl: providerBaseUrl,
 				pactUrls: [path.resolve(__dirname, "integration/me-they-multi.json")],
-				providerStatesUrl: providerStatesUrl,
 				providerStatesSetupUrl: providerStatesSetupUrl
 			});
 			return expect(verifier.verify()).to.eventually.be.fulfilled;
@@ -95,7 +92,6 @@ describe("Verifier Integration Spec", () => {
 				const verifier = verifierFactory({
 					providerBaseUrl: providerBaseUrl,
 					pactUrls: [path.resolve(__dirname, "integration/me-they-success.json"), path.resolve(__dirname, "integration/me-they-multi.json")],
-					providerStatesUrl: providerStatesUrl,
 					providerStatesSetupUrl: providerStatesSetupUrl
 				});
 				return expect(verifier.verify()).to.eventually.be.fulfilled;
@@ -108,7 +104,6 @@ describe("Verifier Integration Spec", () => {
 					const verifier = verifierFactory({
 						providerBaseUrl: providerBaseUrl,
 						pactUrls: [`${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/me/latest`, `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/anotherclient/latest`],
-						providerStatesUrl: providerStatesUrl,
 						providerStatesSetupUrl: providerStatesSetupUrl
 					});
 					return expect(verifier.verify()).to.eventually.be.fulfilled;
@@ -121,7 +116,6 @@ describe("Verifier Integration Spec", () => {
 						const verifier = verifierFactory({
 							providerBaseUrl: providerBaseUrl,
 							pactUrls: [`${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`, `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`],
-							providerStatesUrl: providerStatesUrl,
 							providerStatesSetupUrl: providerStatesSetupUrl,
 							pactBrokerUsername: "foo",
 							pactBrokerPassword: "bar"
@@ -135,7 +129,6 @@ describe("Verifier Integration Spec", () => {
 						const verifier = verifierFactory({
 							providerBaseUrl: providerBaseUrl,
 							pactUrls: [`${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`, `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`],
-							providerStatesUrl: providerStatesUrl,
 							providerStatesSetupUrl: providerStatesSetupUrl,
 							pactBrokerUsername: "foo",
 							pactBrokerPassword: "baaoeur"
@@ -147,7 +140,6 @@ describe("Verifier Integration Spec", () => {
 						const verifier = verifierFactory({
 							providerBaseUrl: providerBaseUrl,
 							pactUrls: [`${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`, `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`],
-							providerStatesUrl: providerStatesUrl,
 							providerStatesSetupUrl: providerStatesSetupUrl,
 							pactBrokerUsername: "foo",
 							pactBrokerPassword: "baaoeur"
@@ -165,7 +157,6 @@ describe("Verifier Integration Spec", () => {
 				const verifier = verifierFactory({
 					providerBaseUrl: providerBaseUrl,
 					pactUrls: [path.resolve(__dirname, "integration/publish-verification-example-success.json")],
-					providerStatesUrl: providerStatesUrl,
 					providerStatesSetupUrl: providerStatesSetupUrl,
 					publishVerificationResult: true,
 					providerVersion: "1.0.0"
@@ -179,7 +170,6 @@ describe("Verifier Integration Spec", () => {
 				const verifier = verifierFactory({
 					providerBaseUrl: providerBaseUrl,
 					pactUrls: [path.resolve(__dirname, "integration/publish-verification-example-fail.json")],
-					providerStatesUrl: providerStatesUrl,
 					providerStatesSetupUrl: providerStatesSetupUrl,
 					publishVerificationResult: true,
 					providerVersion: "1.0.0"

@@ -11,12 +11,10 @@ const pactURLPattern = "/pacts/provider/%s/latest";
 const pactURLPatternWithTag = "/pacts/provider/%s/latest/%s";
 
 export class Broker {
-	public static create(options: BrokerOptions = {}) {
+	public static create(options: BrokerOptions) {
 		// defaults
-		options.brokerUrl = options.brokerUrl || "";
-		options.provider = options.provider || "";
-		options.username = options.username || "";
-		options.password = options.password || "";
+		options.username = options.username;
+		options.password = options.password;
 		options.tags = options.tags || [];
 
 		checkTypes.assert.nonEmptyString(options.brokerUrl);
@@ -40,7 +38,7 @@ export class Broker {
 	private __options:BrokerOptions;
 	private __requestOptions;
 
-	constructor(options:BrokerOptions = {}) {
+	constructor(options:BrokerOptions) {
 		this.__options = options;
 		this.__requestOptions = this.__options.username && this.__options.password ? {
 			"auth": {
@@ -92,8 +90,8 @@ export class Broker {
 export default Broker.create;
 
 export interface BrokerOptions {
-	brokerUrl?: string;
-	provider?: string;
+	brokerUrl: string;
+	provider: string;
 	username?: string;
 	password?: string;
 	tags?: string[];

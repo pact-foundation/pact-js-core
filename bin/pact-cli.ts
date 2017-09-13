@@ -32,7 +32,6 @@ cli
 	.option("-u, --pact-urls [URLs]", "Comma separated list of Pact files or URIs.", cli.LIST)
 	.option("-p, --provider [name]", "Name of the Provider to verify. Required if not using --pact-urls.")
 	.option("-bu, --pact-broker-url [URL]", "URL of the Pact Broker to retrieve pacts from. Required if not using --pact-urls.")
-	.option("-pu, --provider-states-url [URL]", "URL to fetch provider states from.")
 	.option("-ps, --provider-states-setup-url [URL]", "URL to set a provider state.")
 	.option("-username, --pact-broker-username [user]", "Pact Broker username.")
 	.option("-password, --pact-broker-password [password]", "Pact Broker password.")

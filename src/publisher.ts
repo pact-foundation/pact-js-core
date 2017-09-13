@@ -49,7 +49,7 @@ export class Publisher {
 		}
 
 		if ((options.pactBrokerUsername && !options.pactBrokerPassword) || (options.pactBrokerPassword && !options.pactBrokerUsername)) {
-			throw new Error("Must provide both or none of --provider-states-url and --provider-states-setup-url.");
+			throw new Error("Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.");
 		}
 
 		if (options.pactBroker) {

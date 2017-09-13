@@ -46,13 +46,7 @@ describe("Verifier Spec", () => {
 			});
 		});
 
-		context("when given --provider-states-url and not --provider-states-setup-url", () => {
-			it("should fail with an error", () => {
-				expect(() => verifierFactory({"providerStatesUrl": "http://foo/provider-states"})).to.throw(Error);
-			});
-		});
-
-		context("when given --provider-states-setup-url and not --provider-states-url", () => {
+		context("when given --provider-states-setup-url", () => {
 			it("should fail with an error", () => {
 				expect(() => verifierFactory({"providerStatesSetupUrl": "http://foo/provider-states/setup"})).to.throw(Error);
 			});

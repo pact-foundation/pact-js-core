@@ -22,7 +22,6 @@ export class Verifier {
 		options.tags = options.tags || [];
 		options.pactUrls = options.pactUrls || [];
 		options.provider = options.provider || "";
-		options.providerStatesUrl = options.providerStatesUrl || "";
 		options.providerStatesSetupUrl = options.providerStatesSetupUrl || "";
 		options.timeout = options.timeout || 30000;
 
@@ -60,11 +59,6 @@ export class Verifier {
 
 		if (options.providerStatesSetupUrl) {
 			checkTypes.assert.string(options.providerStatesSetupUrl);
-		}
-
-		if (options.providerStatesUrl) {
-			logger.warn("providerStatesUrl is deprecated and no longer required.");
-			checkTypes.assert.string(options.providerStatesUrl);
 		}
 
 		if (options.pactBrokerUsername) {
@@ -153,7 +147,6 @@ export class Verifier {
 			let args: string[] = pactUtil.createArguments(this.__options, {
 				"providerBaseUrl": "--provider-base-url",
 				"pactUrls": "--pact-urls",
-				"providerStatesUrl": "--provider-states-url",
 				"providerStatesSetupUrl": "--provider-states-setup-url",
 				"pactBrokerUsername": "--broker-username",
 				"pactBrokerPassword": "--broker-password",
@@ -197,7 +190,6 @@ export interface VerifierOptions {
 	providerBaseUrl: string;
 	provider?: string;
 	pactUrls?: string[];
-	providerStatesUrl?: string;
 	providerStatesSetupUrl?: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
