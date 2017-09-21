@@ -187,7 +187,7 @@ export class Server extends events.EventEmitter {
 		this.__instance.stderr.on("data", logger.debug.bind(logger));
 		this.__instance.on("error", logger.error.bind(logger));
 
-		// if port isn"t specified, listen for it when pact runs
+		// if port isn't specified, listen for it when pact runs
 		const catchPort = (data) => {
 			const match = data.match(/port=([0-9]+)/);
 			if (match && match[1]) {

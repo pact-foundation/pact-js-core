@@ -4,7 +4,7 @@ import logger from "./logger";
 import brokerMock from "../test/integration/brokerMock.js";
 import brokerFactory from "./broker";
 
-const expect = require("chai").expect;
+const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 describe("Broker Spec", () => {

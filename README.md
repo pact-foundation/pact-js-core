@@ -48,7 +48,7 @@ pact.logLevel('debug');
 ```
 var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer({
-	port: <Number>,     // Port number that the server runs on, defaults to 1234
+	port: <Number>,     // Port number that the server runs on, defaults to random available port
 	host: <String>,     // Host on which to bind the server on, defaults to 'localhost'
 	log: <String>,      // File to log output on relative to current working directory, defaults to none
 	ssl: <Boolean>,     // Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'
@@ -180,3 +180,8 @@ To develop this project, simply install the dependencies and run `npm run watch`
 ## Testing
 
 Running `npm test` will execute the tests that has the `*.spec.js` pattern.
+
+
+## Questions?
+
+Please search for potential answers or post question on our [official Pact StackOverflow](https://stackoverflow.com/questions/tagged/pact).
