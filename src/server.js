@@ -10,7 +10,7 @@ var checkTypes = require('check-types'),
 	http = require('request'),
 	q = require('q'),
 	util = require('util'),
-	pactPath = require('@pact-foundation/pact-mock-service'),
+	pactPath = require('@pact-foundation/pact-standalone'),
 	mkdirp = require('mkdirp'),
 	pactUtil = require('./pact-util'),
 	isWindows = process.platform === 'win32';
@@ -73,7 +73,7 @@ Server.prototype.start = function () {
 			'provider': '--provider'
 		});
 
-	var cmd = [pactPath.file].concat(args).join(' ');
+	var cmd = [pactPath.mockServicePath].concat(args).join(' ');
 
 	if (isWindows) {
 		file = 'cmd.exe';
