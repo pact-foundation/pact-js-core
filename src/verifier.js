@@ -7,7 +7,7 @@ var checkTypes = require('check-types'),
 	q = require('q'),
 	unixify = require('unixify'),
 	url = require('url'),
-	verifierPath = require('@pact-foundation/pact-provider-verifier'),
+	standalonePath = require('@pact-foundation/pact-standalone'),
 	pactUtil = require('./pact-util'),
 	isWindows = process.platform === 'win32';
 
@@ -65,7 +65,7 @@ Verifier.prototype.verify = function () {
 
 		var file,
 			opts = {
-				cwd: verifierPath.cwd,
+				cwd: standalonePath.cwd,
 				detached: !isWindows,
 				env: envVars
 			},
@@ -80,7 +80,7 @@ Verifier.prototype.verify = function () {
 				'providerVersion': '--provider-app-version'
 			});
 
-		var cmd = [verifierPath.file].concat(args).join(' ');
+		var cmd = [standalonePath.verifierPath].concat(args).join(' ');
 
 		if (isWindows) {
 			file = 'cmd.exe';
@@ -91,7 +91,6 @@ Verifier.prototype.verify = function () {
 			file = '/bin/sh';
 			args = ['-c', cmd];
 		}
-
 		this._instance = cp.spawn(file, args, opts);
 
 		this._instance.stdout.setEncoding('utf8');
