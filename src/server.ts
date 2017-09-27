@@ -167,7 +167,7 @@ export class Server extends events.EventEmitter {
 			"provider": "--provider"
 		});
 
-		let cmd: string = [pact.mockServicePath].concat(args).join(" ");
+		let cmd: string = [pact.mockServicePath].concat("service", ...args).join(" ");
 
 		if (isWindows) {
 			file = "cmd.exe";
