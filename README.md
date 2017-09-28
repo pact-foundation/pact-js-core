@@ -26,7 +26,17 @@ server.start().then(function() {
 });
 ```
 
-Or you can use the CLI
+Or if you're using Typescript instead of plain old Javascript
+
+```ts
+import pact from "@pact-foundation/pact-node";
+const server = pact.createServer({port: 9999});
+server.start().then(() => {
+	// Do your testing/development here
+});
+```
+
+Or you can also use the CLI
 
 ```
 $# pact mock --port 9999
