@@ -18,7 +18,7 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
 
 Simply require the library and call the create function to start the mock service
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer({port: 9999});
 server.start().then(function() {
@@ -38,18 +38,18 @@ To see the list commands possible with the CLI, simply ask for help `$# pact --h
 
 ### Set Log Level
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 pact.logLevel('debug');
 ```
 
 ### Create Pact Mock Server
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer({
 	port: <Number>,     // Port number that the server runs on, defaults to random available port
-	host: <String>,     // Host on which to bind the server on, defaults to 'localhost'
+	host: <String>,     // Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine.
 	log: <String>,      // File to log output on relative to current working directory, defaults to none
 	ssl: <Boolean>,     // Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'
 	sslcert: <String>,  // Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults to none
@@ -66,7 +66,7 @@ var server = pact.createServer({
 
 Read more about [Verify Pacts](https://github.com/realestate-com-au/pact/wiki/Verifying-pacts).
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 
 pact.verifyPacts({
@@ -86,7 +86,7 @@ pact.verifyPacts({
 
 ### Publish Pacts to a Broker
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 var opts = {
 	pactUrls: <Array>,               // Array of local Pact files or directories containing them. Required.
@@ -106,7 +106,7 @@ pact.publishPacts(opts)).then(function () {
 
 If you ever need to see which servers are currently created.
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 var servers = pact.listServers();
 console.log(JSON.stringify(servers));
@@ -116,7 +116,7 @@ console.log(JSON.stringify(servers));
 
 Remove all servers once you're done with them in one fell swoop.
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 pact.removeAllServers();
 ```
@@ -125,7 +125,7 @@ pact.removeAllServers();
 
 Start the current server.
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 pact.createServer().start().then(function(){
 	// Do something after it started
@@ -136,7 +136,7 @@ pact.createServer().start().then(function(){
 
 Stop the current server.
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 pact.createServer().stop().then(function(){
 	// Do something after it stopped
@@ -147,7 +147,7 @@ pact.createServer().stop().then(function(){
 
 Stop the current server and deletes it from the list.
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 pact.createServer().delete().then(function(){
 	// Do something after it was killed
@@ -156,7 +156,7 @@ pact.createServer().delete().then(function(){
 
 ### Check if a Mock server is running
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 pact.createServer().running;
 ```
@@ -165,7 +165,7 @@ pact.createServer().running;
 
 There's 3 different events available, 'start', 'stop' and 'delete'.  They can be listened to the same way as an [EventEmitter](https://nodejs.org/api/events.html).
 
-```
+```js
 var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer();
 server.on('start', function() { console.log('started'); });
