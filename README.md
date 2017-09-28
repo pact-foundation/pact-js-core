@@ -16,7 +16,7 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
 
 ## Usage
 
-Simply require the library and call the create function.
+Simply require the library and call the create function to start the mock service
 
 ```js
 var pact = require('@pact-foundation/pact-node');
@@ -25,6 +25,14 @@ server.start().then(function() {
 	// Do your testing/development here
 });
 ```
+
+Or you can use the CLI
+
+```
+$# pact mock --port 9999
+```
+
+To see the list commands possible with the CLI, simply ask for help `$# pact --help`
 
 ## Documentation
 
@@ -40,7 +48,7 @@ pact.logLevel('debug');
 ```js
 var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer({
-	port: <Number>,     // Port number that the server runs on, defaults to 1234
+	port: <Number>,     // Port number that the server runs on, defaults to random available port
 	host: <String>,     // Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine.
 	log: <String>,      // File to log output on relative to current working directory, defaults to none
 	ssl: <Boolean>,     // Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'
@@ -60,10 +68,11 @@ Read more about [Verify Pacts](https://github.com/realestate-com-au/pact/wiki/Ve
 
 ```js
 var pact = require('@pact-foundation/pact-node');
-var opts = {
+
+pact.verifyPacts({
 	providerBaseUrl: <String>,           // Running API provider host endpoint. Required.
 	pactBrokerUrl: <String>              // URL of the Pact Broker to retrieve pacts from. Required if not using pactUrls.
-	provider: <String>                   // Name of the Provider. Required.
+	provider: <String>                   // Name of the Provider. Required if not using pactUrls.
 	tags: <Array>                        // Array of tags, used to filter pacts from the Broker. Optional.
 	pactUrls: <Array>,                   // Array of local Pact file paths or HTTP-based URLs (e.g. from a broker). Required if not using a Broker.
 	providerStatesSetupUrl: <String>,    // URL to send PUT requests to setup a given provider state. Optional.
@@ -72,10 +81,6 @@ var opts = {
 	publishVerificationResult: <Boolean> // Publish verification result to Broker. Optional
 	providerVersion: <Boolean>           // Provider version, required to publish verification result to Broker. Optional otherwise.
 	timeout: <Number>                    // The duration in ms we should wait to confirm verification process was successful. Defaults to 30000, Optional.
-};
-
-pact.verifyPacts(opts).then(function () {
-	// do something
 });
 ```
 
@@ -96,7 +101,6 @@ pact.publishPacts(opts)).then(function () {
 	// do something
 });
 ```
-
 
 ### List Mock Servers
 
@@ -176,3 +180,8 @@ To develop this project, simply install the dependencies and run `npm run watch`
 ## Testing
 
 Running `npm test` will execute the tests that has the `*.spec.js` pattern.
+
+
+## Questions?
+
+Please search for potential answers or post question on our [official Pact StackOverflow](https://stackoverflow.com/questions/tagged/pact).
