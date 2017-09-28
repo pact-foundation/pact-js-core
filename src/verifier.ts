@@ -1,19 +1,19 @@
 // tslint:disable:no-string-literal
+import pactStandalone = require('@pact-foundation/pact-standalone');
+import checkTypes = require('check-types');
+import cp = require('child_process');
+import { ChildProcess, SpawnOptions } from 'child_process';
+import path = require('path');
+import q = require('q');
+import _ = require('underscore');
+import unixify = require('unixify');
+import url = require('url');
 
-import checkTypes = require("check-types");
-import _ = require("underscore");
-import path = require("path");
+import Broker from './broker';
+import logger from './logger';
+import pactUtil from './pact-util';
+
 import fs = require("fs");
-import cp = require("child_process");
-import q = require("q");
-import unixify = require("unixify");
-import url = require("url");
-import verifierPath = require("@pact-foundation/pact-provider-verifier");
-import Broker from "./broker";
-import logger from "./logger";
-import pactUtil from "./pact-util";
-import {ChildProcess, SpawnOptions} from "child_process";
-
 const isWindows = process.platform === "win32";
 
 export class Verifier {
@@ -140,7 +140,7 @@ export class Verifier {
 
 			let file: string;
 			let opts: SpawnOptions = {
-				cwd: verifierPath.cwd,
+				cwd: pactStandalone.cwd,
 				detached: !isWindows,
 				env: envVars
 			};
@@ -154,7 +154,7 @@ export class Verifier {
 				"providerVersion": "--provider-app-version"
 			});
 
-			let cmd = [verifierPath.file].concat(args).join(" ");
+			let cmd = [pactStandalone.verifierPath].concat(args).join(" ");
 
 			if (isWindows) {
 				file = "cmd.exe";
