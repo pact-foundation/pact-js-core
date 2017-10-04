@@ -191,7 +191,6 @@ To develop this project, simply install the dependencies and run `npm run watch`
 
 Running `npm test` will execute the tests that has the `*.spec.js` pattern.
 
-
 ## Questions?
 
 Please search for potential answers or post question on our [official Pact StackOverflow](https://stackoverflow.com/questions/tagged/pact).

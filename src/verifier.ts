@@ -1,17 +1,17 @@
 // tslint:disable:no-string-literal
-import pactStandalone = require('@pact-foundation/pact-standalone');
-import checkTypes = require('check-types');
-import cp = require('child_process');
-import { ChildProcess, SpawnOptions } from 'child_process';
-import path = require('path');
-import q = require('q');
-import _ = require('underscore');
-import unixify = require('unixify');
-import url = require('url');
+import pactStandalone = require("@pact-foundation/pact-standalone");
+import checkTypes = require("check-types");
+import cp = require("child_process");
+import { ChildProcess, SpawnOptions } from "child_process";
+import path = require("path");
+import q = require("q");
+import _ = require("underscore");
+import unixify = require("unixify");
+import url = require("url");
 
-import Broker from './broker';
-import logger from './logger';
-import pactUtil from './pact-util';
+import Broker from "./broker";
+import logger from "./logger";
+import pactUtil from "./pact-util";
 
 import fs = require("fs");
 const isWindows = process.platform === "win32";
