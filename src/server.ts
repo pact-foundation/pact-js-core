@@ -8,7 +8,7 @@ import cp = require("child_process");
 import events = require("events");
 import http = require("request");
 import q = require("q");
-import pactPath = require("@pact-foundation/pact-mock-service");
+import pact = require("@pact-foundation/pact-standalone");
 import mkdirp = require("mkdirp");
 import logger from "./logger";
 import pactUtil from "./pact-util";
@@ -149,7 +149,7 @@ export class Server extends events.EventEmitter {
 		delete envVars["RUBYGEMS_GEMDEPS"];
 		let file: string;
 		let opts: SpawnOptions = {
-			cwd: pactPath.cwd,
+			cwd: pact.cwd,
 			detached: !isWindows,
 			env: envVars
 		};
@@ -167,7 +167,7 @@ export class Server extends events.EventEmitter {
 			"provider": "--provider"
 		});
 
-		let cmd: string = [pactPath.file].concat(args).join(" ");
+		let cmd: string = [pact.mockServicePath].concat("service", ...args).join(" ");
 
 		if (isWindows) {
 			file = "cmd.exe";
