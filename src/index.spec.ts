@@ -11,9 +11,9 @@ describe("Index Spec", () => {
 	});
 
 	it("Node Require import should work", () => {
-		let entrypoint = require("./index");
+		const entrypoint = require("./index");
 		expect(entrypoint).to.be.ok;
-		expect(index.createServer).to.be.ok;
-		expect(index.createServer).to.be.a("function");
+		expect(entrypoint.createServer).to.be.ok;
+		expect(entrypoint.createServer).to.be.a("function");
 	});
 });
