@@ -46,7 +46,7 @@ describe("Pact CLI Spec", () => {
 			const p = CLI.runMock({port: 9500}).then((cp) => cp.stdout);
 			return q.all([
 				expect(p).to.eventually.be.fulfilled,
-				expect(p).to.eventually.contain("Creating Pact with PID"),
+				expect(p).to.eventually.contain(" service' process with PID"),
 			]);
 		});
 	});

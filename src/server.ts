@@ -1,20 +1,17 @@
 // tslint:disable:no-string-literal
 
 import checkTypes = require("check-types");
-import _ = require("underscore");
 import path = require("path");
 import fs = require("fs");
-import cp = require("child_process");
 import events = require("events");
 import http = require("request");
 import q = require("q");
 import pact = require("@pact-foundation/pact-standalone");
 import mkdirp = require("mkdirp");
 import logger from "./logger";
-import pactUtil from "./pact-util";
-import {ChildProcess, SpawnOptions} from "child_process";
+import pactUtil, {SpawnArguments} from "./pact-util";
+import {ChildProcess} from "child_process";
 
-const isWindows = process.platform === "win32";
 const CHECKTIME = 500;
 const RETRY_AMOUNT = 60;
 const PROCESS_TIMEOUT = 30000;
@@ -128,6 +125,19 @@ export class Server extends events.EventEmitter {
 	public readonly options: ServerOptions;
 	private __running: boolean;
 	private __instance: ChildProcess;
+	private readonly __argMapping = {
+		"port": "--port",
+		"host": "--host",
+		"log": "--log",
+		"ssl": "--ssl",
+		"sslcert": "--sslcert",
+		"sslkey": "--sslkey",
+		"cors": "--cors",
+		"dir": "--pact_dir",
+		"spec": "--pact_specification_version",
+		"consumer": "--consumer",
+		"provider": "--provider"
+	};
 
 	constructor(options: ServerOptions) {
 		super();
@@ -141,76 +151,24 @@ export class Server extends events.EventEmitter {
 			logger.warn(`You already have a process running with PID: ${this.__instance.pid}`);
 			return;
 		}
-
-		const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
-		// Remove environment variable if there
-		// This is a hack to prevent some weird Travelling Ruby behaviour with Gems
-		// https://github.com/pact-foundation/pact-mock-service-npm/issues/16
-		delete envVars["RUBYGEMS_GEMDEPS"];
-		let file: string;
-		let opts: SpawnOptions = {
-			cwd: pact.cwd,
-			detached: !isWindows,
-			env: envVars
-		};
-		let args: string[] = pactUtil.createArguments(this.options, {
-			"port": "--port",
-			"host": "--host",
-			"log": "--log",
-			"ssl": "--ssl",
-			"sslcert": "--sslcert",
-			"sslkey": "--sslkey",
-			"cors": "--cors",
-			"dir": "--pact_dir",
-			"spec": "--pact_specification_version",
-			"consumer": "--consumer",
-			"provider": "--provider"
-		});
-
-		let cmd: string = [pact.mockServicePath].concat("service", ...args).join(" ");
-
-		if (isWindows) {
-			file = "cmd.exe";
-			args = ["/s", "/c", cmd];
-			(opts as any).windowsVerbatimArguments = true;
-		} else {
-			cmd = `./${cmd}`;
-			file = "/bin/sh";
-			args = ["-c", cmd];
-		}
-		logger.debug(`Starting binary with '${_.flatten([file, args, JSON.stringify(opts)])}'`);
-		this.__instance = cp.spawn(file, args, opts);
-
-		this.__instance.stdout.setEncoding("utf8");
-		this.__instance.stdout.on("data", logger.debug.bind(logger));
-		this.__instance.stderr.setEncoding("utf8");
-		this.__instance.stderr.on("data", logger.debug.bind(logger));
-		this.__instance.on("error", logger.error.bind(logger));
-
-		// if port isn't specified, listen for it when pact runs
-		const catchPort = (data) => {
-			const match = data.match(/port=([0-9]+)/);
-			if (match && match[1]) {
-				this.options.port = parseInt(match[1], 10);
-				this.__instance.stdout.removeListener("data", catchPort.bind(this));
-				this.__instance.stderr.removeListener("data", catchPort.bind(this));
-				logger.info(`Pact running on port ${this.options.port}`);
-			}
-		};
+		this.__instance = pactUtil.spawnBinary(`${pact.mockServicePath} service`, this.options, this.__argMapping);
+		this.__instance.once("close", () => this.stop());
 
 		if (!this.options.port) {
-			this.__instance.stdout.on("data", catchPort.bind(this));
-			this.__instance.stderr.on("data", catchPort.bind(this));
+			// if port isn't specified, listen for it when pact runs
+			const catchPort = (data) => {
+				const match = data.match(/port=([0-9]+)/);
+				if (match && match[1]) {
+					this.options.port = parseInt(match[1], 10);
+					this.__instance.stdout.removeListener("data", catchPort);
+					this.__instance.stderr.removeListener("data", catchPort);
+					logger.info(`Pact running on port ${this.options.port}`);
+				}
+			};
+
+			this.__instance.stdout.on("data", catchPort);
+			this.__instance.stderr.on("data", catchPort);
 		}
-
-		logger.info(`Creating Pact with PID: ${this.__instance.pid}`);
-
-		this.__instance.once("close", (code) => {
-			if (code !== 0) {
-				logger.warn(`Pact exited with code ${code}.`);
-			}
-			return this.stop();
-		});
 
 		// check service is available
 		return this.__waitForServerUp(this.options)
@@ -224,29 +182,13 @@ export class Server extends events.EventEmitter {
 
 	// Stop the server instance, no more mocking
 	public stop(): q.Promise<Server> {
-		let pid = -1;
-		if (this.__instance) {
-			pid = this.__instance.pid;
-			logger.info(`Removing Pact with PID: ${pid}`);
-			this.__instance.removeAllListeners();
-			// Killing instance, since windows can't send signals, must kill process forcefully
-			try {
-				if (isWindows) {
-					cp.execSync(`taskkill /f /t /pid ${pid}`);
-				} else {
-					process.kill(-pid, "SIGINT");
-				}
-			} catch (e) {
-
-			}
-
-			this.__instance = undefined;
-		}
-
-		return this.__waitForServerDown(this.options)
+		const pid = this.__instance ? this.__instance.pid : -1;
+		return q(pactUtil.killBinary(this.__instance))
+			.then(() => this.__waitForServerDown(this.options))
 			.timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
 			.then(() => {
 				this.__running = false;
+				this.__instance = undefined;
 				this.emit(Server.Events.STOP_EVENT, this);
 				return this;
 			});
@@ -333,7 +275,7 @@ export class Server extends events.EventEmitter {
 // Creates a new instance of the pact server with the specified option
 export default Server.create;
 
-export interface ServerOptions {
+export interface ServerOptions extends SpawnArguments {
 	port?: number;
 	ssl?: boolean;
 	cors?: boolean;
