@@ -59,13 +59,17 @@ export class Publisher {
 	public publish(): q.Promise<string> {
 		logger.info(`Publishing pacts to broker at: ${this.options.pactBroker}`);
 		const deferred = q.defer<string>();
-		const instance = pactUtil.spawnBinary(pactStandalone.publisherPath, this.options, this.__argMapping);
+		const instance = pactUtil.spawnBinary(`${pactStandalone.brokerPath} publish`, this.options, this.__argMapping);
 		const output = [];
 		instance.stdout.on("data", (l) => output.push(l));
 		instance.stderr.on("data", (l) => output.push(l));
 		instance.once("close", (code) => {
 			const o = output.join("\n");
-			code === 0 ? deferred.resolve(o) : deferred.reject(new Error(o));
+			if (code !== 0) {
+				return deferred.reject(new Error(o));
+			}
+
+			return deferred.resolve(o);
 		});
 
 		return deferred.promise

@@ -20,7 +20,7 @@ const pactFunction = (req, res) => {
 	) {
 		return res.sendStatus(400);
 	}
-	res.status(201).json(req.body);
+	res.status(200).json(req.body);
 };
 
 const tagPactFunction = (req, res) => {

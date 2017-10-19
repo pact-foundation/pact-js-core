@@ -110,8 +110,7 @@ describe("Publish Spec", () => {
 
 				expect(publisher).to.be.a("object");
 				expect(publisher).to.respondTo("publish");
-				return expect(publisher.publish()
-					.then((res) => expect(res.length).to.eq(2))).to.eventually.be.fulfilled;
+				return expect(publisher.publish()).to.eventually.be.fulfilled;
 			});
 
 			it("should successfully tag all Pacts sent with `test` and `latest`", () => {
@@ -124,8 +123,7 @@ describe("Publish Spec", () => {
 
 				expect(publisher).to.be.a("object");
 				expect(publisher).to.respondTo("publish");
-				return expect(publisher.publish()
-					.then((res) => expect(res.length).to.eq(2))).to.eventually.be.fulfilled;
+				return expect(publisher.publish()).to.eventually.be.fulfilled;
 			});
 		});
 
@@ -139,8 +137,7 @@ describe("Publish Spec", () => {
 
 				expect(publisher).to.be.a("object");
 				expect(publisher).to.respondTo("publish");
-				return expect(publisher.publish()
-					.then((res) => expect(res.length).to.eq(2))).to.eventually.be.fulfilled;
+				return expect(publisher.publish()).to.eventually.be.fulfilled;
 			});
 		});
 	});
