@@ -65,7 +65,7 @@ export class Broker {
 
 	// Find all consumers collates all of the pacts for a given provider (with optional tags)
 	// and removes duplicates (e.g. where multiple tags on the same pact)
-	public findConsumers() {
+	public findConsumers():q.Promise<string[]> {
 		logger.debug("Finding consumers");
 		const promises = (this.__options.tags.length > 0) ? this.__options.tags.map(this.findPacts, this) : [this.findPacts()];
 

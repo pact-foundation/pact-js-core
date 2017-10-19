@@ -8,14 +8,23 @@ import {ChildProcess, SpawnOptions} from "child_process";
 
 const isWindows = process.platform === "win32";
 
+export const DEFAULT_ARG = "DEFAULT";
+
 export class PactUtil {
 	public createArguments(args: SpawnArguments, mappings: { [id: string]: string }): string[] {
 		return _.chain(args)
-			.map((value, key) => {
+			.reduce((acc, value, key) => {
 				if (value && mappings[key]) {
-					return [mappings[key], `'${checkTypes.array(value) ? value.join(",") : value}'`];
+					let mapping = mappings[key];
+					let f = acc.push.bind(acc);
+					if (mapping === DEFAULT_ARG) {
+						mapping = null;
+						f = acc.unshift.bind(acc);
+					}
+					_.map(checkTypes.array(value) ? value : [value], (v) => f([mapping, `'${v}'`]));
 				}
-			})
+				return acc;
+			}, [])
 			.flatten()
 			.compact()
 			.value();

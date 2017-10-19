@@ -7,7 +7,7 @@ import url = require("url");
 import pactStandalone = require("@pact-foundation/pact-standalone");
 import Broker from "./broker";
 import logger from "./logger";
-import pactUtil, {SpawnArguments} from "./pact-util";
+import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 
 import fs = require("fs");
 
@@ -94,9 +94,9 @@ export class Verifier {
 	}
 
 	private options: VerifierOptions;
-	private readonly __argumentMapping = {
+	private readonly __argMapping = {
+		"pactUrls": DEFAULT_ARG,
 		"providerBaseUrl": "--provider-base-url",
-		"pactUrls": "--pact-urls",
 		"providerStatesSetupUrl": "--provider-states-setup-url",
 		"pactBrokerUsername": "--broker-username",
 		"pactBrokerPassword": "--broker-password",
@@ -109,38 +109,36 @@ export class Verifier {
 	}
 
 	public verify(): q.Promise<string> {
-		logger.info("Verifier verify()");
-		let retrievePactsPromise;
+		logger.info("Verifying Pact Files");
+		return q(this.options.pactUrls)
+			.then((uris) => {
+				if (!uris || uris.length === 0) {
+					return new Broker({
+						brokerUrl: this.options.pactBrokerUrl,
+						provider: this.options.provider,
+						username: this.options.pactBrokerUsername,
+						password: this.options.pactBrokerPassword,
+						tags: this.options.tags
+					}).findConsumers();
+				}
+				return uris;
+			})
+			.then((data: string[]): q.Promise<string> => {
+				const deferred = q.defer<string>();
+				this.options.pactUrls = data;
+				const instance = pactUtil.spawnBinary(pactStandalone.verifierPath, this.options, this.__argMapping);
+				const output = [];
+				instance.stdout.on("data", (l) => output.push(l));
+				instance.stderr.on("data", (l) => output.push(l));
+				instance.once("close", (code) => {
+					const o = output.join("\n");
+					code === 0 ? deferred.resolve(o) : deferred.reject(new Error(o));
+				});
 
-		if (this.options.pactUrls.length > 0) {
-			retrievePactsPromise = q(this.options.pactUrls);
-		} else {
-			// If no pactUrls provided, we must fetch them from the broker!
-			retrievePactsPromise = new Broker({
-				brokerUrl: this.options.pactBrokerUrl,
-				provider: this.options.provider,
-				username: this.options.pactBrokerUsername,
-				password: this.options.pactBrokerPassword,
-				tags: this.options.tags
-			}).findConsumers();
-		}
-
-		return retrievePactsPromise.then((data: string[]) => {
-			const deferred = q.defer();
-			this.options.pactUrls = data;
-			const instance = pactUtil.spawnBinary(pactStandalone.verifierPath, this.options, this.__argumentMapping);
-			const output = [];
-			instance.stdout.on("data", (l) => output.push(l));
-			instance.stderr.on("data", (l) => output.push(l));
-			instance.once("close", (code) => {
-				const o = output.join("\n");
-				code === 0 ? deferred.resolve(o) : deferred.reject(new Error(o));
+				return deferred.promise
+					.timeout(this.options.timeout, `Timeout waiting for verification process to complete (PID: ${instance.pid})`)
+					.tap(() => logger.info("Pact Verification succeeded."));
 			});
-
-			return deferred.promise
-				.timeout(this.options.timeout, `Timeout waiting for verification process to complete (PID: ${instance.pid})`)
-				.tap(() => logger.info("Pact Verification succeeded."));
-		});
 	}
 }
 
