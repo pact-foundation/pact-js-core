@@ -38,6 +38,8 @@ export class Publisher {
 			checkTypes.assert.string(options.pactBroker);
 		}
 
+		options.output = "json";
+
 		return new Publisher(options);
 	}
 
@@ -49,7 +51,8 @@ export class Publisher {
 		"pactBrokerPassword": "--broker-password",
 		"tags": "--tag",
 		"consumerVersion": "--consumer-app-version",
-		"verbose": "--verbose"
+		"verbose": "--verbose",
+		"output": "--output",
 	};
 
 	constructor(options: PublisherOptions = {}) {
@@ -89,6 +92,7 @@ export interface PublisherOptions extends SpawnArguments {
 	tags?: string[];
 	verbose?: boolean;
 	timeout?: number;
+	output?:string;
 }
 
 export interface PublishData {

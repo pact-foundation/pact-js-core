@@ -44,7 +44,7 @@
 		"access": "public"
 	},
 	"dependencies": {
-		"@pact-foundation/pact-standalone": "~2.3.0",
+		"@pact-foundation/pact-standalone": "~3.0.0",
 		"bunyan": "1.8.12",
 		"bunyan-prettystream": "0.1.3",
 		"check-types": "7.3.0",

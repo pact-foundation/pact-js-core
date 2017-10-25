@@ -10,7 +10,8 @@ chai.use(chaiAsPromised);
 describe("Publish Spec", () => {
 	let server;
 	const PORT = Math.floor(Math.random() * 999) + 9000;
-	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
+	// const pactBrokerBaseUrl = `http://localhost:${PORT}`;
+	const pactBrokerBaseUrl = `http://localhost:80`;
 	const authenticatedPactBrokerBaseUrl = `http://localhost:${PORT}/auth`;
 
 	before((done) => server = broker.listen(PORT, () => {
@@ -20,7 +21,7 @@ describe("Publish Spec", () => {
 
 	after(() => server.close());
 
-	context("when publishing a to a broker", () => {
+	context.only("when publishing a to a broker", () => {
 		context("without authentication", () => {
 			context("and the Pact contract is valid", () => {
 				it("should successfully publish all Pacts", () => {

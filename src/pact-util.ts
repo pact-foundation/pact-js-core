@@ -71,7 +71,7 @@ export class PactUtil {
 			}
 		});
 
-		logger.info(`Created '${command}' process with PID: ${instance.pid}`);
+		logger.info(`Created '${cmd}' process with PID: ${instance.pid}`);
 		return instance;
 	}
 
