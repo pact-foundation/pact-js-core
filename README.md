@@ -107,7 +107,7 @@ var opts = {
 	consumerVersion: <String>        // A string containing a semver-style version e.g. 1.0.0. Required.
 };
 
-pact.publishPacts(opts)).then(function () {
+pact.publishPacts(opts).then(function () {
 	// do something
 });
 ```
