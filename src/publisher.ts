@@ -59,17 +59,17 @@ export class Publisher {
 		return new Publisher(options);
 	}
 
-	private __options: PublisherOptions;
+	public readonly options: PublisherOptions;
 
 	constructor(options: PublisherOptions = {}) {
-		this.__options = options;
+		this.options = options;
 	}
 
 	public publish(): q.Promise<any[]> {
-		logger.info(`Publishing pacts to broker at: ${this.__options.pactBroker}`);
+		logger.info(`Publishing pacts to broker at: ${this.options.pactBroker}`);
 
 		// Return a promise that does everything one after another
-		return q(_.chain(this.__options.pactUrls)
+		return q(_.chain(this.options.pactUrls)
 			.map((uri) => {
 				// Stat all paths in pactUrls to make sure they exist
 				// publish template $pactHost/pacts/provider/$provider/consumer/$client/$version
@@ -90,7 +90,7 @@ export class Publisher {
 			.value())
 		// Get the pact contract either from local file or broker
 			.then((uris) => q.allSettled(
-				_.map(uris, (uri) => this.__getPactFile(this.__options, uri)))
+				_.map(uris, (uri) => this.__getPactFile(this.options, uri)))
 				.then((data) => { // Make sure all files have been retrieved
 					let rejects = [];
 					data = _.map(data, (result) => {
@@ -104,8 +104,8 @@ export class Publisher {
 			// Publish the contracts to broker
 			.tap((files) => q.allSettled(
 				_.map(files, (data) =>
-					this.__callPact(this.__options, {
-						uri: this.__constructPutUrl(this.__options, data),
+					this.__callPact(this.options, {
+						uri: this.__constructPutUrl(this.options, data),
 						method: "PUT",
 						headers: {
 							"Content-Type": "application/json",
@@ -118,21 +118,21 @@ export class Publisher {
 				.then((results) => { // Make sure publishing promises came back fulfilled, or else error out
 					let rejects = _.where(results, {state: "rejected"});
 					if (rejects.length) {
-						return q.reject(new Error(`Could not publish pacts to broker at '${this.__options.pactBroker}':\n  - ${rejects.join("\n  - ")}`));
+						return q.reject(new Error(`Could not publish pacts to broker at '${this.options.pactBroker}':\n  - ${rejects.join("\n  - ")}`));
 					}
 				})
 			)
 			// If publishing works, try to tag those contracts
 			.tap((files) => {
-				if (!this.__options.tags || !this.__options.tags.length) {
+				if (!this.options.tags || !this.options.tags.length) {
 					return;
 				}
 				return q.allSettled(
 					_.chain(files)
 						.map((data) =>
-							_.map(this.__options.tags, (tag) =>
-								this.__callPact(this.__options, {
-									uri: this.__constructTagUrl(this.__options, tag, data),
+							_.map(this.options.tags, (tag) =>
+								this.__callPact(this.options, {
+									uri: this.__constructTagUrl(this.options, tag, data),
 									method: "PUT",
 									headers: {
 										"Content-Type": "application/json"

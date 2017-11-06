@@ -98,32 +98,32 @@ export class Verifier {
 		return new Verifier(options);
 	}
 
-	private __options: VerifierOptions;
+	public readonly options: VerifierOptions;
 	private __instance: ChildProcess;
 
 	constructor(options: VerifierOptions) {
-		this.__options = options;
+		this.options = options;
 	}
 
 	public verify(): q.Promise<string> {
 		logger.info("Verifier verify()");
 		let retrievePactsPromise;
 
-		if (this.__options.pactUrls.length > 0) {
-			retrievePactsPromise = q(this.__options.pactUrls);
+		if (this.options.pactUrls.length > 0) {
+			retrievePactsPromise = q(this.options.pactUrls);
 		} else {
 			// If no pactUrls provided, we must fetch them from the broker!
 			retrievePactsPromise = new Broker({
-				brokerUrl: this.__options.pactBrokerUrl,
-				provider: this.__options.provider,
-				username: this.__options.pactBrokerUsername,
-				password: this.__options.pactBrokerPassword,
-				tags: this.__options.tags
+				brokerUrl: this.options.pactBrokerUrl,
+				provider: this.options.provider,
+				username: this.options.pactBrokerUsername,
+				password: this.options.pactBrokerPassword,
+				tags: this.options.tags
 			}).findConsumers();
 		}
 
 		return retrievePactsPromise.then((data) => {
-			this.__options.pactUrls = data;
+			this.options.pactUrls = data;
 
 			const deferred = q.defer();
 			let output = ""; // Store output here in case of error
@@ -144,7 +144,7 @@ export class Verifier {
 				detached: !isWindows,
 				env: envVars
 			};
-			let args: string[] = pactUtil.createArguments(this.__options, {
+			let args: string[] = pactUtil.createArguments(this.options, {
 				"providerBaseUrl": "--provider-base-url",
 				"pactUrls": "--pact-urls",
 				"providerStatesSetupUrl": "--provider-states-setup-url",
@@ -177,7 +177,7 @@ export class Verifier {
 			this.__instance.once("close", (code) => code === 0 ? deferred.resolve(output) : deferred.reject(new Error(output)));
 
 			logger.info(`Created Pact Verifier process with PID: ${this.__instance.pid}`);
-			return deferred.promise.timeout(this.__options.timeout, `Timeout waiting for verification process to complete (PID: ${this.__instance.pid})`)
+			return deferred.promise.timeout(this.options.timeout, `Timeout waiting for verification process to complete (PID: ${this.__instance.pid})`)
 				.tap(() => logger.info("Pact Verification succeeded."));
 		});
 	}

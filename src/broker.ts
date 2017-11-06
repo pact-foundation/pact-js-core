@@ -35,27 +35,27 @@ export class Broker {
 		return new Broker(options);
 	}
 
-	private __options:BrokerOptions;
+	public readonly options: BrokerOptions;
 	private __requestOptions;
 
-	constructor(options:BrokerOptions) {
-		this.__options = options;
-		this.__requestOptions = this.__options.username && this.__options.password ? {
+	constructor(options: BrokerOptions) {
+		this.options = options;
+		this.__requestOptions = this.options.username && this.options.password ? {
 			"auth": {
-				"user": this.__options.username,
-				"password": this.__options.password
+				"user": this.options.username,
+				"password": this.options.password
 			}
 		} : {};
 	}
 
 	// Find Pacts returns the raw response from the HAL resource
 	public findPacts(tag?: string) {
-		logger.debug("finding pacts for Provider:", this.__options.provider, ", Tag:", tag);
+		logger.debug("finding pacts for Provider:", this.options.provider, ", Tag:", tag);
 
 		const linkName = tag ? "pb:latest-provider-pacts-with-tag" : "pb:latest-provider-pacts";
 		return traverson
-			.from(this.__options.brokerUrl)
-			.withTemplateParameters({provider: this.__options.provider, tag: tag})
+			.from(this.options.brokerUrl)
+			.withTemplateParameters({provider: this.options.provider, tag: tag})
 			.withRequestOptions(this.__requestOptions)
 			.jsonHal()
 			.follow(linkName)
@@ -67,7 +67,7 @@ export class Broker {
 	// and removes duplicates (e.g. where multiple tags on the same pact)
 	public findConsumers() {
 		logger.debug("Finding consumers");
-		const promises = (this.__options.tags.length > 0) ? this.__options.tags.map(this.findPacts, this) : [this.findPacts()];
+		const promises = (this.options.tags.length > 0) ? this.options.tags.map(this.findPacts, this) : [this.findPacts()];
 
 		return q.all(promises)
 			.then((values) => {
@@ -82,7 +82,7 @@ export class Broker {
 					return pacts;
 				}, []);
 			})
-			.catch(() => q.reject(`Unable to find pacts for given provider '${this.__options.provider}' and tags '${this.__options.tags}'`));
+			.catch(() => q.reject(`Unable to find pacts for given provider '${this.options.provider}' and tags '${this.options.tags}'`));
 	}
 }
 
