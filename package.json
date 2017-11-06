@@ -88,12 +88,12 @@
 		"typescript": "2.4.2"
 	},
 	"scripts": {
-		"clean": "./node_modules/.bin/rimraf '{src,test,bin}/**/*.{js,map,d.ts}' 'package.zip'",
-		"lint": "./node_modules/.bin/tslint -p tsconfig.json",
+		"clean": "rimraf '{src,test,bin}/**/*.{js,map,d.ts}' 'package.zip'",
+		"lint": "tslint -p tsconfig.json",
 		"pretest": "npm run build",
-		"test": "./node_modules/.bin/mocha -r ts-node/register -R spec --timeout 10000 --recursive '{src,test,bin}/**/*.spec.ts'",
+		"test": "mocha -r ts-node/register -R spec --timeout 10000 --recursive '{src,test,bin}/**/*.spec.ts'",
 		"dev": "npm run lint --force && npm test && node .",
-		"build": "npm run clean && ./node_modules/.bin/tsc",
+		"build": "npm run clean && tsc",
 		"start": "npm run watch"
 	}
 }
