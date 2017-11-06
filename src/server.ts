@@ -171,7 +171,7 @@ export class Server extends events.EventEmitter {
 		}
 
 		// check service is available
-		return this.__waitForServerUp(this.options)
+		return this.__waitForServerUp()
 			.timeout(PROCESS_TIMEOUT, `Couldn't start Pact with PID: ${this.__instance.pid}`)
 			.then(() => {
 				this.__running = true;
@@ -200,7 +200,7 @@ export class Server extends events.EventEmitter {
 	}
 
 	// Wait for pact-mock-service to be initialized and ready
-	private __waitForServerUp(options: ServerOptions): q.Promise<any> {
+	private __waitForServerUp(): q.Promise<any> {
 		let amount = 0;
 		const deferred = q.defer();
 
@@ -213,8 +213,8 @@ export class Server extends events.EventEmitter {
 
 		const check = () => {
 			amount++;
-			if (options.port) {
-				this.__call(options).then(() => deferred.resolve(), retry.bind(this));
+			if (this.options.port) {
+				this.__call(this.options).then(() => deferred.resolve(), retry.bind(this));
 			} else {
 				retry();
 			}
@@ -224,14 +224,14 @@ export class Server extends events.EventEmitter {
 		return deferred.promise;
 	}
 
-	private __waitForServerDown(options: ServerOptions): q.Promise<any> {
+	private __waitForServerDown(): q.Promise<any> {
 		let amount = 0;
 		const deferred = q.defer();
 
 		const check = () => {
 			amount++;
-			if (options.port) {
-				this.__call(options).then(() => {
+			if (this.options.port) {
+				this.__call(this.options).then(() => {
 					if (amount >= RETRY_AMOUNT) {
 						deferred.reject(new Error("Pact stop failed; tried calling service 10 times with no result."));
 						return;

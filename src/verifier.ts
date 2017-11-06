@@ -93,7 +93,7 @@ export class Verifier {
 		return new Verifier(options);
 	}
 
-	private options: VerifierOptions;
+	public readonly options: VerifierOptions;
 	private readonly __argMapping = {
 		"pactUrls": DEFAULT_ARG,
 		"providerBaseUrl": "--provider-base-url",
