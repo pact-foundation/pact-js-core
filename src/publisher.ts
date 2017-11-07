@@ -38,8 +38,6 @@ export class Publisher {
 			checkTypes.assert.string(options.pactBroker);
 		}
 
-		options.output = "json";
-
 		return new Publisher(options);
 	}
 
@@ -51,33 +49,34 @@ export class Publisher {
 		"pactBrokerPassword": "--broker-password",
 		"tags": "--tag",
 		"consumerVersion": "--consumer-app-version",
-		"verbose": "--verbose",
-		"output": "--output",
+		"verbose": "--verbose"
 	};
 
 	constructor(options: PublisherOptions = {}) {
 		this.options = options;
 	}
 
-	public publish(): q.Promise<string> {
+	public publish(): q.Promise<string[]> {
 		logger.info(`Publishing pacts to broker at: ${this.options.pactBroker}`);
-		const deferred = q.defer<string>();
+		const deferred = q.defer<string[]>();
 		const instance = pactUtil.spawnBinary(`${pactStandalone.brokerPath} publish`, this.options, this.__argMapping);
 		const output = [];
 		instance.stdout.on("data", (l) => output.push(l));
 		instance.stderr.on("data", (l) => output.push(l));
 		instance.once("close", (code) => {
 			const o = output.join("\n");
-			if (code !== 0) {
+			const pactUrls = /^https?:\/\/.*\/pacts\/.*$/igm.exec(o);
+			if (code !== 0 || !pactUrls) {
+				logger.error(`Could not publish pact:\n${o}`);
 				return deferred.reject(new Error(o));
 			}
 
-			return deferred.resolve(o);
+			logger.info(o);
+			return deferred.resolve(pactUrls);
 		});
 
 		return deferred.promise
-			.timeout(this.options.timeout, `Timeout waiting for verification process to complete (PID: ${instance.pid})`)
-			.tap(() => logger.info("Pact Verification succeeded."));
+			.timeout(this.options.timeout, `Timeout waiting for verification process to complete (PID: ${instance.pid})`);
 	}
 }
 
@@ -92,7 +91,6 @@ export interface PublisherOptions extends SpawnArguments {
 	tags?: string[];
 	verbose?: boolean;
 	timeout?: number;
-	output?:string;
 }
 
 export interface PublishData {

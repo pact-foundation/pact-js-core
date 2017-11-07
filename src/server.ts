@@ -184,7 +184,7 @@ export class Server extends events.EventEmitter {
 	public stop(): q.Promise<Server> {
 		const pid = this.__instance ? this.__instance.pid : -1;
 		return q(pactUtil.killBinary(this.__instance))
-			.then(() => this.__waitForServerDown(this.options))
+			.then(() => this.__waitForServerDown())
 			.timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
 			.then(() => {
 				this.__running = false;

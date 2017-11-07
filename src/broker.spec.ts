@@ -1,20 +1,24 @@
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import logger from "./logger";
-import brokerMock from "../test/integration/brokerMock.js";
+import brokerMock from "../test/integration/brokerMock";
 import brokerFactory from "./broker";
+import * as http from "http";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 describe("Broker Spec", () => {
-	const PORT = 9124;
+	let server: http.Server;
+	const PORT = Math.floor(Math.random() * 999) + 9000;
 	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
 
-	before((done) => brokerMock.listen(PORT, () => {
-		logger.debug(`Broker (Mock) running on port: ${PORT}`);
-		done();
+	before(() => brokerMock(PORT).then((s) => {
+		logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
+		server = s;
 	}));
+
+	after(() => server.close());
 
 	describe("Broker", () => {
 		context("when not given a Pact Broker URL", () => {

@@ -1,74 +1,143 @@
 import cors = require("cors");
 import _ = require("underscore");
+import q = require("q");
 import express = require("express");
 import bodyParser = require("body-parser");
 import basicAuth = require("basic-auth");
+import * as http from "http";
 
-const server: express.Express = express();
-server.use(cors());
-server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({extended: true}));
+export default (port: number): q.Promise<http.Server> => {
+	const BROKER_HOST = `http://localhost:${port}`;
+	const server: express.Express = express();
+	server.use(cors());
+	server.use(bodyParser.json());
+	server.use(bodyParser.urlencoded({extended: true}));
 
-const BROKER_HOST = "http://localhost:9124";
-
-const pactFunction = (req, res) => {
-	if (
-		// 1. Is there a body?
-	_.isEmpty(req.body) ||
-	// 2. Is there a consumer, provider and version in the request?
-	_.isEmpty(req.params.consumer) || _.isEmpty(req.params.provider) || _.isEmpty(req.params.version)
-	) {
-		return res.sendStatus(400);
+	function pactFunction(req: express.Request, res: express.Response) {
+		if (
+			_.isEmpty(req.body) ||
+			// 2. Is there a consumer, provider and version in the request?
+			_.isEmpty(req.params.consumer) || _.isEmpty(req.params.provider) || _.isEmpty(req.params.version)
+		) {
+			return res.sendStatus(400);
+		}
+		return res.status(201).json({
+			"consumer": {"name": "consumer"},
+			"provider": {"name": "publisher"},
+			"interactions": [{
+				"description": "Greeting",
+				"request": {"method": "GET", "path": "/"},
+				"response": {"status": 200, "headers": {}, "body": {"greeting": "Hello"}}
+			}],
+			"metadata": {"pactSpecificationVersion": "2.0.0"},
+			"createdAt": "2017-11-06T13:06:48+00:00",
+			"_links": {
+				"self": {
+					"title": "Pact",
+					"name": "Pact between consumer (v1.0.0) and publisher",
+					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/version/1.0.0`
+				},
+				"pb:consumer": {
+					"title": "Consumer",
+					"name": "consumer",
+					"href": `${BROKER_HOST}/pacticipants/consumer`
+				},
+				"pb:consumer-version": {
+					"title": "Consumer version",
+					"name": "1.0.0",
+					"href": `${BROKER_HOST}/pacticipants/consumer/versions/1.0.0`
+				},
+				"pb:provider": {
+					"title": "Provider",
+					"name": "publisher",
+					"href": `${BROKER_HOST}/pacticipants/publisher`
+				},
+				"pb:latest-pact-version": {
+					"title": "Latest version of this pact",
+					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/latest`
+				},
+				"pb:all-pact-versions": {
+					"title": "All versions of this pact",
+					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/versions`
+				},
+				"pb:latest-untagged-pact-version": {
+					"title": "Latest untagged version of this pact",
+					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/latest-untagged`
+				},
+				"pb:latest-tagged-pact-version": {
+					"title": "Latest tagged version of this pact",
+					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/latest/{tag}`,
+					"templated": true
+				},
+				"pb:previous-distinct": {
+					"title": "Previous distinct version of this pact",
+					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/version/1.0.0/previous-distinct`
+				},
+				"pb:diff-previous-distinct": {
+					"title": "Diff with previous distinct version of this pact",
+					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/version/1.0.0/diff/previous-distinct`
+				},
+				"pb:pact-webhooks": {
+					"title": "Webhooks for the pact between consumer and publisher",
+					"href": `${BROKER_HOST}/webhooks/provider/publisher/consumer/consumer`
+				},
+				"pb:tag-prod-version": {
+					"title": "PUT to this resource to tag this consumer version as 'production'",
+					"href": `${BROKER_HOST}/pacticipants/consumer/versions/1.0.0/tags/prod`
+				},
+				"pb:tag-version": {
+					"title": "PUT to this resource to tag this consumer version",
+					"href": `${BROKER_HOST}/pacticipants/consumer/versions/1.0.0/tags/{tag}`
+				},
+				"pb:publish-verification-results": {
+					"title": "Publish verification results",
+					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/pact-version/7c36fc0ded24117ec189db3f54fadffc23a56d68/verification-results`
+				},
+				"curies": [{"name": "pb", "href": `${BROKER_HOST}/doc/{rel}`, "templated": true}]
+			}
+		});
 	}
-	res.status(200).json(req.body);
-};
 
-const tagPactFunction = (req, res) => {
-	if (_.isEmpty(req.params.consumer) || _.isEmpty(req.params.version) || _.isEmpty(req.params.tag)) {
-		return res.sendStatus(400);
+	function tagPactFunction(req: express.Request, res: express.Response) {
+		if (_.isEmpty(req.params.consumer) || _.isEmpty(req.params.version) || _.isEmpty(req.params.tag)) {
+			return res.sendStatus(400);
+		}
+		return res.sendStatus(201);
 	}
-	res.sendStatus(201);
-};
 
-// Let"s add Auth for good measure
-const auth = (req, res, next) => {
-	const user = basicAuth(req);
-	if (user && user.name === "foo" && user.pass === "bar") {
-		return next();
-	} else {
-		res.set("WWW-Authenticate", "Basic realm=Authorization Required");
-		return res.sendStatus(401);
+	function auth(req: express.Request, res: express.Response, next: express.NextFunction) {
+		const user = basicAuth(req);
+		if (user && user.name === "foo" && user.pass === "bar") {
+			return next();
+		} else {
+			res.set("WWW-Authenticate", "Basic realm=Authorization Required");
+			return res.sendStatus(401);
+		}
 	}
-};
 
-server.get("/somebrokenpact", (req, res) => {
-	res.json({});
-});
+	server.get("/somebrokenpact", (req: express.Request, res: express.Response) => res.json({}));
 
-server.get("/somepact", (req, res) => {
-	res.json({
+	server.get("/somepact", (req: express.Request, res: express.Response) => res.json({
 		"consumer": {
 			"name": "anotherclient"
 		},
 		"provider": {
 			"name": "they"
 		}
-	});
-});
+	}));
 
-// Pretend to be a Pact Broker (https://github.com/bethesque/pact_broker) for integration tests
-server.put("/pacts/provider/:provider/consumer/:consumer/version/:version", pactFunction);
+	// Pretend to be a Pact Broker (https://github.com/bethesque/pact_broker) for integration tests
+	server.put("/pacts/provider/:provider/consumer/:consumer/version/:version", pactFunction);
 
-// Authenticated calls...
-server.put("/auth/pacts/provider/:provider/consumer/:consumer/version/:version", auth, pactFunction);
+	// Authenticated calls...
+	server.put("/auth/pacts/provider/:provider/consumer/:consumer/version/:version", auth, pactFunction);
 
-// Tagging
-server.put("/pacticipants/:consumer/versions/:version/tags/:tag", tagPactFunction);
-server.put("/auth/pacticipants/:consumer/versions/:version/tags/:tag", tagPactFunction);
+	// Tagging
+	server.put("/pacticipants/:consumer/versions/:version/tags/:tag", tagPactFunction);
+	server.put("/auth/pacticipants/:consumer/versions/:version/tags/:tag", tagPactFunction);
 
-// Get root HAL links
-server.get("/", (req, res) => {
-	res.json({
+	// Get root HAL links
+	server.get("/", (req: express.Request, res: express.Response) => res.json({
 		"_links": {
 			"self": {
 				"href": BROKER_HOST,
@@ -111,17 +180,13 @@ server.get("/", (req, res) => {
 				"templated": true
 			}]
 		}
-	});
-});
+	}));
 
-// Get pacts by Provider "notfound"
-server.get("/pacts/provider/notfound/latest", (req, res) => {
-	res.status(404).end();
-});
+	// Get pacts by Provider "notfound"
+	server.get("/pacts/provider/notfound/latest", (req: express.Request, res: express.Response) => res.status(404));
 
-// Get pacts by Provider "nolinks"
-server.get("/pacts/provider/nolinks/latest", (req, res) => {
-	res.json({
+	// Get pacts by Provider "nolinks"
+	server.get("/pacts/provider/nolinks/latest", (req: express.Request, res: express.Response) => res.json({
 		"_links": {
 			"self": {
 				"href": `${BROKER_HOST}/pacts/provider/nolinks/latest/sit4`,
@@ -133,12 +198,10 @@ server.get("/pacts/provider/nolinks/latest", (req, res) => {
 			},
 			"pacts": []
 		}
-	});
-});
+	}));
 
-// Get pacts by Provider (all)
-server.get("/pacts/provider/:provider/latest", (req, res) => {
-	res.json({
+	// Get pacts by Provider (all)
+	server.get("/pacts/provider/:provider/latest", (req: express.Request, res: express.Response) => res.json({
 		"_links": {
 			"self": {
 				"href": `${BROKER_HOST}/pacts/provider/bobby/latest/sit4`,
@@ -158,12 +221,10 @@ server.get("/pacts/provider/:provider/latest", (req, res) => {
 				"name": "someotherguy"
 			}]
 		}
-	});
-});
+	}));
 
-// Get pacts by Provider and Tag
-server.get("/pacts/provider/:provider/latest/:tag", (req, res) => {
-	res.json({
+	// Get pacts by Provider and Tag
+	server.get("/pacts/provider/:provider/latest/:tag", (req: express.Request, res: express.Response) => res.json({
 		"_links": {
 			"self": {
 				"href": "https://test.pact.dius.com.au/pacts/provider/notfound/latest",
@@ -183,11 +244,9 @@ server.get("/pacts/provider/:provider/latest/:tag", (req, res) => {
 				"name": "someotherguy"
 			}]
 		}
-	});
-});
+	}));
 
-server.get("/noauth/pacts/provider/they/consumer/me/latest", (req, res) => {
-	res.json({
+	server.get("/noauth/pacts/provider/they/consumer/me/latest", (req: express.Request, res: express.Response) => res.json({
 		"consumer": {
 			"name": "me"
 		},
@@ -263,11 +322,9 @@ server.get("/noauth/pacts/provider/they/consumer/me/latest", (req, res) => {
 				"templated": true
 			}]
 		}
-	});
-});
+	}));
 
-server.get("/noauth/pacts/provider/they/consumer/anotherclient/latest", (req, res) => {
-	res.json({
+	server.get("/noauth/pacts/provider/they/consumer/anotherclient/latest", (req: express.Request, res: express.Response) => res.json({
 		"consumer": {
 			"name": "anotherclient"
 		},
@@ -343,7 +400,9 @@ server.get("/noauth/pacts/provider/they/consumer/anotherclient/latest", (req, re
 				"templated": true
 			}]
 		}
-	});
-});
+	}));
 
-export default server;
+	const deferred = q.defer<http.Server>();
+	let s = server.listen(port, deferred.makeNodeResolver());
+	return deferred.promise.then(() => s);
+};

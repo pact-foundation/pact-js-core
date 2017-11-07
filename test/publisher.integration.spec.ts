@@ -1,27 +1,29 @@
 import path = require("path");
 import chai = require("chai");
+import logger from "../src/logger";
 import chaiAsPromised = require("chai-as-promised");
 import publisherFactory from "../src/publisher";
-import broker from "./integration/brokerMock";
+import brokerMock from "./integration/brokerMock";
+import * as http from "http";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe("Publish Spec", () => {
-	let server;
+describe.only("Publish Spec", () => {
+	let server: http.Server;
 	const PORT = Math.floor(Math.random() * 999) + 9000;
 	// const pactBrokerBaseUrl = `http://localhost:${PORT}`;
-	const pactBrokerBaseUrl = `http://localhost:80`;
-	const authenticatedPactBrokerBaseUrl = `http://localhost:${PORT}/auth`;
+	const pactBrokerBaseUrl = `http://172.17.0.2`;
+	const authenticatedPactBrokerBaseUrl = `${pactBrokerBaseUrl}/auth`;
 
-	before((done) => server = broker.listen(PORT, () => {
-		console.log(`Pact Broker Mock listening on port: ${PORT}`);
-		done();
+	before(() => brokerMock(PORT).then((s) => {
+		logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
+		server = s;
 	}));
 
 	after(() => server.close());
 
-	context.only("when publishing a to a broker", () => {
+	context("when publishing a to a broker", () => {
 		context("without authentication", () => {
 			context("and the Pact contract is valid", () => {
 				it("should successfully publish all Pacts", () => {
@@ -175,7 +177,9 @@ describe("Publish Spec", () => {
 				});
 
 				return publisher.publish()
-					.then(() => { throw new Error("Expected an error but got none"); })
+					.then(() => {
+						throw new Error("Expected an error but got none");
+					})
 					.catch((err) => expect(err.message).to.contain("Cannot GET /somepacturlthatdoesntexist"));
 			});
 		});
@@ -189,7 +193,9 @@ describe("Publish Spec", () => {
 				});
 
 				return publisher.publish()
-					.then(() => { throw new Error("Expected an error but got none"); })
+					.then(() => {
+						throw new Error("Expected an error but got none");
+					})
 					.catch((err) => expect(err.message).to.contain("Invalid Pact contract given. Unable to parse consumer and provider name"));
 			});
 		});
