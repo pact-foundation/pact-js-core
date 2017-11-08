@@ -324,7 +324,7 @@ export class Server extends events.EventEmitter {
 			config.agentOptions.agent = false;
 		}
 
-		http(config, (err, res) => (!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject(`HTTP Error: '${err.message}'`));
+		http(config, (err, res) => (!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject(`HTTP Error: '${err ? err.message : ""}'`));
 
 		return deferred.promise;
 	}
