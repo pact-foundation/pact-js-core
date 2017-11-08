@@ -81,8 +81,8 @@ var pact = require('@pact-foundation/pact-node');
 
 pact.verifyPacts({
 	providerBaseUrl: <String>,           // Running API provider host endpoint. Required.
-	pactBrokerUrl: <String>              // URL of the Pact Broker to retrieve pacts from. Required if not using pactUrls.
-	provider: <String>                   // Name of the Provider. Required if not using pactUrls.
+	pactBrokerUrl: <String>              pactFilesOrDirs
+	provider: <String>                   pactFilesOrDirs
 	tags: <Array>                        // Array of tags, used to filter pacts from the Broker. Optional.
 	pactUrls: <Array>,                   // Array of local Pact file paths or HTTP-based URLs (e.g. from a broker). Required if not using a Broker.
 	providerStatesSetupUrl: <String>,    // URL to send PUT requests to setup a given provider state. Optional.
@@ -99,7 +99,7 @@ pact.verifyPacts({
 ```js
 var pact = require('@pact-foundation/pact-node');
 var opts = {
-	pactUrls: <Array>,               // Array of local Pact files or directories containing them. Required.
+	pactFilesOrDirs: <Array>,               // Array of local Pact files or directories containing them. Required.
 	pactBroker: <String>,            // URL to fetch the provider states for the given provider API. Optional.
 	pactBrokerUsername: <String>,    // Username for Pact Broker basic authentication. Optional
 	pactBrokerPassword: <String>,    // Password for Pact Broker basic authentication. Optional,

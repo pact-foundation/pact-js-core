@@ -183,7 +183,7 @@ export default (port: number): q.Promise<http.Server> => {
 	}));
 
 	// Get pacts by Provider "notfound"
-	server.get("/pacts/provider/notfound/latest", (req: express.Request, res: express.Response) => res.status(404));
+	server.get("/pacts/provider/notfound/latest", (req: express.Request, res: express.Response) => res.sendStatus(404));
 
 	// Get pacts by Provider "nolinks"
 	server.get("/pacts/provider/nolinks/latest", (req: express.Request, res: express.Response) => res.json({

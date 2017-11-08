@@ -4,7 +4,9 @@ import path = require("path");
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import publisherFactory from "./publisher";
-import brokerMock from "../test/integration/brokerMock";
+import logger from "./logger";
+import brokerMock from "../test/integration/broker-mock";
+import * as http from "http";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -12,14 +14,17 @@ chai.use(chaiAsPromised);
 describe("Publish Spec", () => {
 
 	const PORT = Math.floor(Math.random() * 999) + 9000;
+	let server: http.Server;
 
-	before((done) => brokerMock.listen(PORT, () => {
-		console.log(`Broker (Mock) running on port: ${PORT}`);
-		done();
+	before(() => brokerMock(PORT).then((s) => {
+		logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
+		server = s;
 	}));
 
+	after(() => server.close());
+
 	describe("Publisher", () => {
-		context("when not given pactUrls", () => {
+		context("when not given pactFilesOrDirs", () => {
 			it("should fail with an error", () => {
 				expect(() => {
 					publisherFactory({
@@ -34,7 +39,7 @@ describe("Publish Spec", () => {
 			it("should fail with an error", () => {
 				expect(() => {
 					publisherFactory({
-						pactUrls: ["http://localhost"],
+						pactFilesOrDirs: [path.dirname(process.mainModule.filename)],
 						consumerVersion: "1.0.0"
 					});
 				}).to.throw(Error);
@@ -46,7 +51,7 @@ describe("Publish Spec", () => {
 				expect(() => {
 					publisherFactory({
 						pactBroker: "http://localhost",
-						pactUrls: [path.dirname(process.mainModule.filename)]
+						pactFilesOrDirs: [path.dirname(process.mainModule.filename)]
 					});
 				}).to.throw(Error);
 			});
@@ -57,7 +62,7 @@ describe("Publish Spec", () => {
 				expect(() => {
 					publisherFactory({
 						pactBroker: "http://localhost",
-						pactUrls: ["./test.json"]
+						pactFilesOrDirs: ["./test.json"]
 					});
 				}).to.throw(Error);
 			});
@@ -68,7 +73,7 @@ describe("Publish Spec", () => {
 				expect(() => {
 					publisherFactory({
 						pactBroker: "http://localhost",
-						pactUrls: [path.dirname(process.mainModule.filename)],
+						pactFilesOrDirs: [path.dirname(process.mainModule.filename)],
 						consumerVersion: "1.0.0"
 					});
 				}).to.not.throw(Error);
@@ -79,7 +84,7 @@ describe("Publish Spec", () => {
 			it("should return a Publisher object", () => {
 				const p = publisherFactory({
 					pactBroker: "http://localhost",
-					pactUrls: ["http://idontexist"],
+					pactFilesOrDirs: ["http://idontexist"],
 					consumerVersion: "1.0.0"
 				});
 				expect(p).to.be.ok;

@@ -10,17 +10,17 @@ export class Publisher {
 		options = options || {};
 		// Setting defaults
 		options.pactBroker = options.pactBroker || "";
-		options.pactUrls = options.pactUrls || [];
+		options.pactFilesOrDirs = options.pactFilesOrDirs || [];
 		options.tags = options.tags || [];
 		options.timeout = options.timeout || 60000;
 
-		if (options.pactUrls) {
-			checkTypes.assert.array.of.string(options.pactUrls);
+		if (options.pactFilesOrDirs) {
+			checkTypes.assert.array.of.string(options.pactFilesOrDirs);
 		}
 
 		checkTypes.assert.nonEmptyString(options.pactBroker, "Must provide the pactBroker argument");
 		checkTypes.assert.nonEmptyString(options.consumerVersion, "Must provide the consumerVersion argument");
-		checkTypes.assert.not.emptyArray(options.pactUrls, "Must provide the pactUrls argument");
+		checkTypes.assert.not.emptyArray(options.pactFilesOrDirs, "Must provide the pactFilesOrDirs argument");
 
 		if (options.pactBrokerUsername) {
 			checkTypes.assert.string(options.pactBrokerUsername);
@@ -43,7 +43,7 @@ export class Publisher {
 
 	public readonly options: PublisherOptions;
 	private readonly __argMapping = {
-		"pactUrls": DEFAULT_ARG,
+		"pactFilesOrDirs": DEFAULT_ARG,
 		"pactBroker": "--broker-base-url",
 		"pactBrokerUsername": "--broker-username",
 		"pactBrokerPassword": "--broker-password",
@@ -83,7 +83,7 @@ export class Publisher {
 export default Publisher.create;
 
 export interface PublisherOptions extends SpawnArguments {
-	pactUrls?: string[];
+	pactFilesOrDirs?: string[];
 	pactBroker?: string;
 	consumerVersion?: string;
 	pactBrokerUsername?: string;

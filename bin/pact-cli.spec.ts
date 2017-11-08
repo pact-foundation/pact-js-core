@@ -2,15 +2,14 @@ import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import childProcess = require("child_process");
 import q = require("q");
-import request = require("request");
 import path = require("path");
 import _ = require("underscore");
 import {ChildProcess} from "child_process";
 import {ServerOptions} from "../src/server";
 import decamelize = require("decamelize");
-import provider from "../test/integration/provider";
+import providerMock from "../test/integration/provider-mock";
 
-const http = q.denodeify(request);
+const request = q.denodeify(require("request"));
 const pkg = require("../package.json");
 const isWindows = process.platform === "win32";
 chai.use(chaiAsPromised);
@@ -46,7 +45,7 @@ describe("Pact CLI Spec", () => {
 			const p = CLI.runMock({port: 9500}).then((cp) => cp.stdout);
 			return q.all([
 				expect(p).to.eventually.be.fulfilled,
-				expect(p).to.eventually.contain(" service' process with PID"),
+				expect(p).to.eventually.match(/Created.*process with PID/),
 			]);
 		});
 	});
@@ -69,7 +68,7 @@ describe("Pact CLI Spec", () => {
 			const PORT = 9123;
 			const providerBaseUrl = `http://localhost:${PORT}`;
 
-			before((done) => server = provider.listen(PORT, () => done()));
+			before(() => providerMock(PORT).then((s) => server = s));
 			after(() => server.close());
 
 			it("should work pointing to fake broker", () => {
@@ -181,7 +180,7 @@ class CLI {
 			config.agentOptions.agent = false;
 		}
 
-		return http(config)
+		return request(config)
 			.then((data) => data[0])
 			.then((response) => {
 				if (response.statusCode !== 200) {

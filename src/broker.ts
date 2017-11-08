@@ -1,14 +1,13 @@
 import checkTypes = require("check-types");
-import traverson = require("traverson-promise");
-import JsonHalAdapter = require("traverson-hal");
 import q = require("q");
+import _ = require("underscore");
 import logger from "./logger";
+import * as http from "http";
 
-// register the traverson-hal plug-in for media type "application/hal+json"
-traverson.registerMediaType(JsonHalAdapter.mediaType, JsonHalAdapter);
+const request = q.denodeify(require("request"));
 
-const pactURLPattern = "/pacts/provider/%s/latest";
-const pactURLPatternWithTag = "/pacts/provider/%s/latest/%s";
+// const pactURLPattern = "/pacts/provider/%s/latest";
+// const pactURLPatternWithTag = "/pacts/provider/%s/latest/%s";
 
 export class Broker {
 	public static create(options: BrokerOptions) {
@@ -40,48 +39,48 @@ export class Broker {
 
 	constructor(options: BrokerOptions) {
 		this.options = options;
-		this.__requestOptions = this.options.username && this.options.password ? {
-			"auth": {
-				"user": this.options.username,
-				"password": this.options.password
-			}
-		} : {};
 	}
 
 	// Find Pacts returns the raw response from the HAL resource
-	public findPacts(tag?: string) {
-		logger.debug("finding pacts for Provider:", this.options.provider, ", Tag:", tag);
-
-		const linkName = tag ? "pb:latest-provider-pacts-with-tag" : "pb:latest-provider-pacts";
-		return traverson
-			.from(this.options.brokerUrl)
-			.withTemplateParameters({provider: this.options.provider, tag: tag})
-			.withRequestOptions(this.__requestOptions)
-			.jsonHal()
-			.follow(linkName)
-			.getResource()
-			.result;
+	public findPacts(tag?: string): q.Promise<any> {
+		logger.debug(`finding pacts for Provider: ${this.options.provider} Tag: ${tag}`);
+		const requestOptions = {
+			uri: this.options.brokerUrl,
+			method: "GET",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			"auth": this.options.username && this.options.password ? {
+				"user": this.options.username,
+				"password": this.options.password
+			} : null
+		};
+		return request(requestOptions)
+			.then((data) => data[0])
+			.then((response) => {
+				if (response.statusCode < 200 && response.statusCode >= 300) {
+					return q.reject(response);
+				}
+				const body = JSON.parse(response.body);
+				return request(_.extend({}, requestOptions, {uri: body._links[`pb:latest-provider-pacts${tag ? "-with-tag" : ""}`].href.replace("{tag}", tag).replace("{provider}", this.options.provider)}));
+			})
+			.then((data) => data[0])
+			.then((response) => response.statusCode < 200 && response.statusCode >= 300 ? q.reject(response) : JSON.parse(response.body));
 	}
 
 	// Find all consumers collates all of the pacts for a given provider (with optional tags)
 	// and removes duplicates (e.g. where multiple tags on the same pact)
-	public findConsumers():q.Promise<string[]> {
+	public findConsumers(): q.Promise<string[]> {
 		logger.debug("Finding consumers");
-		const promises = (this.options.tags.length > 0) ? this.options.tags.map(this.findPacts, this) : [this.findPacts()];
+		const promises = _.isEmpty(this.options.tags) ? [this.findPacts()] : _.map(this.options.tags, (t) => this.findPacts(t));
 
 		return q.all(promises)
-			.then((values) => {
-				const pactUrls = {};
-				values.forEach((response) => {
-					if (response && response._links && response._links.pacts) {
-						response._links.pacts.forEach((pact) => pactUrls[pact.title] = pact.href);
-					}
-				});
-				return Object.keys(pactUrls).reduce((pacts, key) => {
-					pacts.push(pactUrls[key]);
-					return pacts;
-				}, []);
-			})
+			.then((values) => _.reduce(values, (array, v) => {
+				if (v && v._links && v._links.pacts) {
+					array.push(..._.pluck(v._links.pacts, "href"));
+				}
+				return array;
+			}, []))
 			.catch(() => q.reject(`Unable to find pacts for given provider '${this.options.provider}' and tags '${this.options.tags}'`));
 	}
 }

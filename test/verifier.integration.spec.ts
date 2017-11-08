@@ -2,22 +2,23 @@ import verifierFactory from "../src/verifier";
 import chai = require("chai");
 import path = require("path");
 import chaiAsPromised = require("chai-as-promised");
-import provider from "./integration/provider";
+import providerMock from "./integration/provider-mock";
+import * as http from "http";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 describe("Verifier Integration Spec", () => {
 
-	let server;
+	let server:http.Server;
 	const PORT = 9123;
 	const providerBaseUrl = `http://localhost:${PORT}`;
 	const providerStatesSetupUrl = `${providerBaseUrl}/provider-state/`;
 	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
 
-	before((done) => server = provider.listen(PORT, () => {
+	before(() => providerMock(PORT).then((s) => {
 		console.log(`Pact Broker Mock listening on port: ${PORT}`);
-		done();
+		server = s;
 	}));
 
 	after(() => server.close());
