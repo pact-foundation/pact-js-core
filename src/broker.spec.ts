@@ -53,9 +53,7 @@ describe("Broker Spec", () => {
 				it("should fail with an Error", () => {
 					return expect(brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
-						provider: "notfound",
-						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
-						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
+						provider: "notfound"
 					}).findConsumers()).to.eventually.be.rejected;
 				});
 			});
@@ -65,9 +63,7 @@ describe("Broker Spec", () => {
 				it("should return an empty array of pact links", () => {
 					return expect(brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
-						provider: "nolinks",
-						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
-						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
+						provider: "nolinks"
 					}).findConsumers()).to.eventually.eql([]);
 				});
 			});
@@ -79,8 +75,6 @@ describe("Broker Spec", () => {
 					return expect(brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
 						provider: "they",
-						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
-						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1",
 						tags: ["prod"]
 					}).findConsumers()).to.eventually.have.lengthOf(2);
 				});
@@ -90,9 +84,7 @@ describe("Broker Spec", () => {
 				it("should find pacts from all known consumers of the provider", () => {
 					return expect(brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
-						provider: "they",
-						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
-						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
+						provider: "they"
 					}).findConsumers()).to.eventually.have.lengthOf(2);
 				});
 			});
