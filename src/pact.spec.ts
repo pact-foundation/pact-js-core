@@ -89,7 +89,7 @@ describe("Pact Spec", () => {
 					spec: 1,
 					consumer: "consumerName",
 					provider: "providerName",
-					monkeypatch: "/absolute/path/to/ruby/patch.rb"
+					monkeypatch: __filename // Need not be a Ruby file here
 				};
 				let server = pact.createServer(options);
 				expect(server).to.be.an("object");
