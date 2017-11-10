@@ -94,6 +94,15 @@ export class Verifier {
 		}
 
 		checkTypes.assert.positive(options.timeout);
+		
+		// monkeypatch check
+		if (options.monkeypatch) {
+			try {
+				fs.statSync(path.normalize(options.monkeypatch)).isFile();
+			} catch (e) {
+				throw new Error(`Monkeypatch not found at path: ${options.monkeypatch}`);
+			}
+		}
 
 		return new Verifier(options);
 	}
@@ -151,7 +160,8 @@ export class Verifier {
 				"pactBrokerUsername": "--broker-username",
 				"pactBrokerPassword": "--broker-password",
 				"publishVerificationResult": "--publish-verification-results",
-				"providerVersion": "--provider-app-version"
+				"providerVersion": "--provider-app-version",
+				"monkeypatch": "--monkeypatch"
 			});
 
 			let cmd = [pactStandalone.verifierPath].concat(args).join(" ");
@@ -198,4 +208,5 @@ export interface VerifierOptions {
 	pactBrokerUrl?: string;
 	tags?: string[];
 	timeout?: number;
+	monkeypatch?: string;
 }

@@ -122,6 +122,15 @@ export class Server extends events.EventEmitter {
 			checkTypes.assert.string(options.provider);
 		}
 
+		// monkeypatch check
+		if (options.monkeypatch) {
+			try {
+				fs.statSync(path.normalize(options.monkeypatch)).isFile();
+			} catch (e) {
+				throw new Error(`Monkeypatch not found at path: ${options.monkeypatch}`);
+			}
+		}
+
 		return new Server(options);
 	}
 
@@ -164,7 +173,8 @@ export class Server extends events.EventEmitter {
 			"dir": "--pact_dir",
 			"spec": "--pact_specification_version",
 			"consumer": "--consumer",
-			"provider": "--provider"
+			"provider": "--provider",
+			"monkeypatch": "--monkeypatch"
 		});
 
 		let cmd: string = [pact.mockServicePath].concat("service", ...args).join(" ");
@@ -252,7 +262,7 @@ export class Server extends events.EventEmitter {
 			});
 	}
 
-	// Deletes this server instance and emit an event
+	// Delete this server instance and emit an event
 	public delete(): q.Promise<Server> {
 		return this.stop().tap(() => this.emit(Server.Events.DELETE_EVENT, this));
 	}
@@ -345,4 +355,5 @@ export interface ServerOptions {
 	spec?: number;
 	consumer?: string;
 	provider?: string;
+	monkeypatch?: string;
 }
