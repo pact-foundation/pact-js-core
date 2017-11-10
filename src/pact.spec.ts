@@ -161,13 +161,13 @@ describe("Pact Spec", () => {
 			});
 		});
 
-		context("when user specifies invalid log", () => {
-			it("should return an error on invalid path", () => {
-				expect(() => {
-					pact.createServer({log: path.resolve(dirPath, "log.txt")});
-				}).to.throw(Error);
-			});
-		});
+		// context("when user specifies invalid log", () => {
+		// 	it("should return an error on invalid path", () => {
+		// 		expect(() => {
+		// 			pact.createServer({log: path.resolve(dirPath, "log.txt")});
+		// 		}).to.throw(Error);
+		// 	});
+		// });
 
 		context("when user specifies invalid spec", () => {
 			it("should return an error on non-number", () => {
