@@ -2,12 +2,8 @@ import checkTypes = require("check-types");
 import q = require("q");
 import _ = require("underscore");
 import logger from "./logger";
-import * as http from "http";
 
 const request = q.denodeify(require("request"));
-
-// const pactURLPattern = "/pacts/provider/%s/latest";
-// const pactURLPatternWithTag = "/pacts/provider/%s/latest/%s";
 
 export class Broker {
 	public static create(options: BrokerOptions) {

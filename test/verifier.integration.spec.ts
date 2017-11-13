@@ -13,7 +13,7 @@ describe("Verifier Integration Spec", () => {
 	let server:http.Server;
 	const PORT = 9123;
 	const providerBaseUrl = `http://localhost:${PORT}`;
-	const providerStatesSetupUrl = `${providerBaseUrl}/provider-state/`;
+	const providerStatesSetupUrl = `${providerBaseUrl}/provider-state`;
 	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
 
 	before(() => providerMock(PORT).then((s) => {

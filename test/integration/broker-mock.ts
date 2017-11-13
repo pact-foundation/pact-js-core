@@ -3,8 +3,8 @@ import _ = require("underscore");
 import q = require("q");
 import express = require("express");
 import bodyParser = require("body-parser");
-import basicAuth = require("basic-auth");
 import * as http from "http";
+import {auth, returnJson} from "./data-utils";
 
 export default (port: number): q.Promise<http.Server> => {
 	const BROKER_HOST = `http://localhost:${port}`;
@@ -105,19 +105,9 @@ export default (port: number): q.Promise<http.Server> => {
 		return res.sendStatus(201);
 	}
 
-	function auth(req: express.Request, res: express.Response, next: express.NextFunction) {
-		const user = basicAuth(req);
-		if (user && user.name === "foo" && user.pass === "bar") {
-			return next();
-		} else {
-			res.set("WWW-Authenticate", "Basic realm=Authorization Required");
-			return res.sendStatus(401);
-		}
-	}
+	server.get("/somebrokenpact", returnJson({}));
 
-	server.get("/somebrokenpact", (req: express.Request, res: express.Response) => res.json({}));
-
-	server.get("/somepact", (req: express.Request, res: express.Response) => res.json({
+	server.get("/somepact", returnJson({
 		"consumer": {
 			"name": "anotherclient"
 		},
@@ -137,7 +127,7 @@ export default (port: number): q.Promise<http.Server> => {
 	server.put("/auth/pacticipants/:consumer/versions/:version/tags/:tag", tagPactFunction);
 
 	// Get root HAL links
-	server.get("/", (req: express.Request, res: express.Response) => res.json({
+	server.get("/", returnJson({
 		"_links": {
 			"self": {
 				"href": BROKER_HOST,
@@ -186,7 +176,7 @@ export default (port: number): q.Promise<http.Server> => {
 	server.get("/pacts/provider/notfound/latest", (req: express.Request, res: express.Response) => res.sendStatus(404));
 
 	// Get pacts by Provider "nolinks"
-	server.get("/pacts/provider/nolinks/latest", (req: express.Request, res: express.Response) => res.json({
+	server.get("/pacts/provider/nolinks/latest", returnJson({
 		"_links": {
 			"self": {
 				"href": `${BROKER_HOST}/pacts/provider/nolinks/latest/sit4`,
@@ -201,7 +191,7 @@ export default (port: number): q.Promise<http.Server> => {
 	}));
 
 	// Get pacts by Provider (all)
-	server.get("/pacts/provider/:provider/latest", (req: express.Request, res: express.Response) => res.json({
+	server.get("/pacts/provider/:provider/latest", returnJson({
 		"_links": {
 			"self": {
 				"href": `${BROKER_HOST}/pacts/provider/bobby/latest/sit4`,
@@ -224,7 +214,7 @@ export default (port: number): q.Promise<http.Server> => {
 	}));
 
 	// Get pacts by Provider and Tag
-	server.get("/pacts/provider/:provider/latest/:tag", (req: express.Request, res: express.Response) => res.json({
+	server.get("/pacts/provider/:provider/latest/:tag", returnJson({
 		"_links": {
 			"self": {
 				"href": "https://test.pact.dius.com.au/pacts/provider/notfound/latest",
@@ -246,7 +236,7 @@ export default (port: number): q.Promise<http.Server> => {
 		}
 	}));
 
-	server.get("/noauth/pacts/provider/they/consumer/me/latest", (req: express.Request, res: express.Response) => res.json({
+	server.get("/noauth/pacts/provider/they/consumer/me/latest", returnJson({
 		"consumer": {
 			"name": "me"
 		},
@@ -324,7 +314,7 @@ export default (port: number): q.Promise<http.Server> => {
 		}
 	}));
 
-	server.get("/noauth/pacts/provider/they/consumer/anotherclient/latest", (req: express.Request, res: express.Response) => res.json({
+	server.get("/noauth/pacts/provider/they/consumer/anotherclient/latest", returnJson({
 		"consumer": {
 			"name": "anotherclient"
 		},
