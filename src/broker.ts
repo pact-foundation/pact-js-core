@@ -31,7 +31,6 @@ export class Broker {
 	}
 
 	public readonly options: BrokerOptions;
-	private __requestOptions;
 
 	constructor(options: BrokerOptions) {
 		this.options = options;
