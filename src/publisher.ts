@@ -92,8 +92,3 @@ export interface PublisherOptions extends SpawnArguments {
 	verbose?: boolean;
 	timeout?: number;
 }
-
-export interface PublishData {
-	consumer: { name: string };
-	provider: { name: string };
-}
