@@ -2,11 +2,13 @@
 
 import serverFactory from "./server";
 import chai = require("chai");
+import chaiAsPromised = require("chai-as-promised");
 import fs = require("fs");
 import path = require("path");
 import q = require("q");
 import _ = require("underscore");
 
+chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 describe("Server Spec", () => {
@@ -18,7 +20,7 @@ describe("Server Spec", () => {
 		context("when no options are set", () => {
 			it("should start correctly with defaults", () => {
 				server = serverFactory();
-				return server.start();
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 		});
 
@@ -81,8 +83,8 @@ describe("Server Spec", () => {
 
 			it("should start correctly with ssl", () => {
 				server = serverFactory({ssl: true});
-				return server.start()
-					.then(() => expect(server.options.ssl).to.equal(true));
+				expect(server.options.ssl).to.equal(true);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with custom ssl cert/key", () => {
@@ -91,8 +93,8 @@ describe("Server Spec", () => {
 					sslcert: path.resolve(__dirname, "../test/ssl/server.crt"),
 					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
 				});
-				return server.start()
-					.then(() => expect(server.options.ssl).to.equal(true));
+				expect(server.options.ssl).to.equal(true);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with custom ssl cert/key but without specifying ssl flag", () => {
@@ -100,62 +102,68 @@ describe("Server Spec", () => {
 					sslcert: path.resolve(__dirname, "../test/ssl/server.crt"),
 					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
 				});
-				return server.start()
-					.then(() => expect(server.options.ssl).to.equal(true));
+
+				expect(server.options.ssl).to.equal(true);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with cors", () => {
 				server = serverFactory({cors: true});
-				return server.start()
-					.then(() => expect(server.options.cors).to.equal(true));
+				expect(server.options.cors).to.equal(true);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with port", () => {
-				server = serverFactory({port: 9500});
-				return server.start()
-					.then(() => expect(server.options.port).to.equal(9500));
+				const port = Math.floor(Math.random() * 999) + 9000;
+				server = serverFactory({port: port});
+				expect(server.options.port).to.equal(port);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with host", () => {
-				server = serverFactory({host: "localhost"});
-				return server.start()
-					.then(() => expect(server.options.host).to.equal("localhost"));
+				const host = "localhost";
+				server = serverFactory({host: host});
+				expect(server.options.host).to.equal(host);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with spec version 1", () => {
 				server = serverFactory({spec: 1});
-				return server.start().then(() => expect(server.options.spec).to.equal(1));
+				expect(server.options.spec).to.equal(1);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with spec version 2", () => {
 				server = serverFactory({spec: 2});
-				return server.start()
-					.then(() => expect(server.options.spec).to.equal(2));
+				expect(server.options.spec).to.equal(2);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with dir", () => {
 				server = serverFactory({dir: dirPath});
-				return server.start()
-					.then(() => expect(server.options.dir).to.equal(dirPath));
+				expect(server.options.dir).to.equal(dirPath);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with log", () => {
 				const logPath = path.resolve(dirPath, "log.txt");
 				server = serverFactory({log: logPath});
-				return server.start()
-					.then(() => expect(server.options.log).to.equal(logPath));
+				expect(server.options.log).to.equal(logPath);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with consumer name", () => {
-				server = serverFactory({consumer: "cName"});
-				return server.start()
-					.then(() => expect(server.options.consumer).to.equal("cName"));
+				const consumerName = "cName";
+				server = serverFactory({consumer: consumerName});
+				expect(server.options.consumer).to.equal(consumerName);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
 			it("should start correctly with provider name", () => {
-				server = serverFactory({provider: "pName"});
-				return server.start()
-					.then(() => expect(server.options.provider).to.equal("pName"));
+				const providerName = "pName";
+				server = serverFactory({provider: providerName});
+				expect(server.options.provider).to.equal(providerName);
+				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 		});
 

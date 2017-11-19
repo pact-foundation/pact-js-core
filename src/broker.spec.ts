@@ -1,20 +1,24 @@
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import logger from "./logger";
-import brokerMock from "../test/integration/brokerMock.js";
+import brokerMock from "../test/integration/broker-mock";
 import brokerFactory from "./broker";
+import * as http from "http";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
 describe("Broker Spec", () => {
-	const PORT = 9124;
+	let server: http.Server;
+	const PORT = Math.floor(Math.random() * 999) + 9000;
 	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
 
-	before((done) => brokerMock.listen(PORT, () => {
-		logger.debug(`Broker (Mock) running on port: ${PORT}`);
-		done();
+	before(() => brokerMock(PORT).then((s) => {
+		logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
+		server = s;
 	}));
+
+	after(() => server.close());
 
 	describe("Broker", () => {
 		context("when not given a Pact Broker URL", () => {
@@ -47,28 +51,20 @@ describe("Broker Spec", () => {
 		context("when provider 'notfound' does not exist", () => {
 			context("and given the provider name 'notfound'", () => {
 				it("should fail with an Error", () => {
-					const broker = brokerFactory({
+					return expect(brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
-						provider: "notfound",
-						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
-						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
-					});
-					const promise = broker.findConsumers();
-					return expect(promise).to.eventually.be.rejected;
+						provider: "notfound"
+					}).findConsumers()).to.eventually.be.rejected;
 				});
 			});
 		});
 		context("when no pacts exist for provider 'nolinks'", () => {
 			context("and given the provider name", () => {
 				it("should return an empty array of pact links", () => {
-					const broker = brokerFactory({
+					return expect(brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
-						provider: "nolinks",
-						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
-						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
-					});
-					const promise = broker.findConsumers();
-					return expect(promise).to.eventually.eql([]);
+						provider: "nolinks"
+					}).findConsumers()).to.eventually.eql([]);
 				});
 			});
 		});
@@ -76,28 +72,20 @@ describe("Broker Spec", () => {
 		context("When pacts exist for provider 'they'", () => {
 			context("and given the provider name and tags", () => {
 				it("should find pacts from all known consumers of the provider given any of the tags", () => {
-					const broker = brokerFactory({
+					return expect(brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
 						provider: "they",
-						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
-						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1",
 						tags: ["prod"]
-					});
-					const promise = broker.findConsumers();
-					return expect(promise).to.eventually.have.lengthOf(2);
+					}).findConsumers()).to.eventually.have.lengthOf(2);
 				});
 			});
 
 			context("and given the provider name without tags", () => {
 				it("should find pacts from all known consumers of the provider", () => {
-					const broker = brokerFactory({
+					return expect(brokerFactory({
 						brokerUrl: pactBrokerBaseUrl,
-						provider: "they",
-						username: "dXfltyFMgNOFZAxr8io9wJ37iUpY42M",
-						password: "O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1"
-					});
-					const promise = broker.findConsumers();
-					return expect(promise).to.eventually.have.lengthOf(2);
+						provider: "they"
+					}).findConsumers()).to.eventually.have.lengthOf(2);
 				});
 			});
 		});
