@@ -2,7 +2,6 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "es5",
-		"noImplicitAny": false,
 		"removeComments": true,
 		"noLib": false,
 		"emitDecoratorMetadata": true,
@@ -12,7 +11,8 @@
 		"isolatedModules": false,
 		"moduleResolution": "node",
 		"suppressImplicitAnyIndexErrors": true,
-		"declaration": true
+		"declaration": true,
+		"noImplicitReturns": true
 	},
 	"include": [
 		"**/*.ts",
