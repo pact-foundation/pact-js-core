@@ -8,8 +8,6 @@ const request = q.denodeify(require("request"));
 export class Broker {
 	public static create(options: BrokerOptions) {
 		// defaults
-		options.username = options.username;
-		options.password = options.password;
 		options.tags = options.tags || [];
 
 		checkTypes.assert.nonEmptyString(options.brokerUrl);
