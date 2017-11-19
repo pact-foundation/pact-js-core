@@ -1,5 +1,5 @@
 import express = require("express");
-import basicAuth = require("basic-auth");
+const basicAuth = require("basic-auth");
 
 export function returnJsonFile(filename: string): (req: express.Request, res: express.Response) => express.Response {
 	return returnJson(require(filename));

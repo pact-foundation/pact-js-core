@@ -1,8 +1,8 @@
-import checkTypes = require("check-types");
 import q = require("q");
 import logger from "./logger";
-import pactStandalone = require("@pact-foundation/pact-standalone");
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
+const pactStandalone = require("@pact-foundation/pact-standalone");
+const checkTypes = require("check-types");
 
 export class Publisher {
 
@@ -60,7 +60,7 @@ export class Publisher {
 		logger.info(`Publishing pacts to broker at: ${this.options.pactBroker}`);
 		const deferred = q.defer<string[]>();
 		const instance = pactUtil.spawnBinary(`${pactStandalone.brokerPath} publish`, this.options, this.__argMapping);
-		const output = [];
+		const output: any[] = [];
 		instance.stdout.on("data", (l) => output.push(l));
 		instance.stderr.on("data", (l) => output.push(l));
 		instance.once("close", (code) => {

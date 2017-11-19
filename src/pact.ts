@@ -32,7 +32,7 @@ export class Pact {
 		logger.info(`Creating Pact Server with options: \n${this.__stringifyOptions(server.options)}`);
 
 		// Listen to server delete events, to remove from server list
-		server.once("delete", (s) => {
+		server.once("delete", (s: any) => {
 			logger.info(`Deleting Pact Server with options: \n${this.__stringifyOptions(s.options)}`);
 			this.__servers = _.without(this.__servers, s);
 		});

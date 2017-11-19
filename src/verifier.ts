@@ -1,13 +1,13 @@
-import checkTypes = require("check-types");
 import path = require("path");
 import q = require("q");
 import _ = require("underscore");
-import unixify = require("unixify");
 import url = require("url");
-import pactStandalone = require("@pact-foundation/pact-standalone");
 import Broker from "./broker";
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
+const pactStandalone = require("@pact-foundation/pact-standalone");
+const checkTypes = require("check-types");
+const unixify = require("unixify");
 
 import fs = require("fs");
 
@@ -127,7 +127,7 @@ export class Verifier {
 				const deferred = q.defer<string>();
 				this.options.pactUrls = data;
 				const instance = pactUtil.spawnBinary(pactStandalone.verifierPath, this.options, this.__argMapping);
-				const output = [];
+				const output: any[] = [];
 				instance.stdout.on("data", (l) => output.push(l));
 				instance.stderr.on("data", (l) => output.push(l));
 				instance.once("close", (code) => {

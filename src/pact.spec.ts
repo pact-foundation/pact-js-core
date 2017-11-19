@@ -12,7 +12,7 @@ describe("Pact Spec", () => {
 	afterEach(() => pact.removeAllServers());
 
 	describe("Set Log Level", () => {
-		let originalLogLevel;
+		let originalLogLevel: any;
 		// Reset lot level after the tests
 		before(() => originalLogLevel = pact.logLevel());
 		after(() => pact.logLevel(originalLogLevel));
@@ -51,7 +51,7 @@ describe("Pact Spec", () => {
 	});
 
 	describe("Create serverFactory", () => {
-		let dirPath;
+		let dirPath: any;
 
 		beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
 
