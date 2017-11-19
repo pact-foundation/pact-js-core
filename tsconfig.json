@@ -12,7 +12,8 @@
 		"moduleResolution": "node",
 		"suppressImplicitAnyIndexErrors": true,
 		"declaration": true,
-		"noImplicitReturns": true
+		"noImplicitReturns": true,
+		"noImplicitThis": true
 	},
 	"include": [
 		"**/*.ts",
