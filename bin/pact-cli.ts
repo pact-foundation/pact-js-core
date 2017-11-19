@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import pact from "../src/pact";
-import cli = require("caporal");
+const cli = require("caporal");
 
 const pkg = require("../package.json");
 
@@ -23,7 +23,7 @@ cli
 	.option("-i, --pact-version [n]", "The Pact specification version to use when writing the Pact files. Default is 1.", cli.INT)
 	.option("--consumer [consumerName]", "Specify consumer name for written Pact files.")
 	.option("--provider [providerName]", "Specify provider name for written Pact files.")
-	.action((args, options) => pact.createServer(options).start());
+	.action((args: any, options: any) => pact.createServer(options).start());
 
 cli
 	.command("verify")
@@ -38,6 +38,6 @@ cli
 	.option("-v, --provider-version [version]", "Provider version, required to publish verification result to Broker.")
 	.option("-t, --timeout [milliseconds]", "The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.", cli.INT)
 	.option("-pub, --publish-verification-result", "Publish verification result to Broker.")
-	.action((args, options) => pact.verifyPacts(options));
+	.action((args: any, options: any) => pact.verifyPacts(options));
 
 cli.parse(process.argv);

@@ -13,6 +13,7 @@
 		"suppressImplicitAnyIndexErrors": true,
 		"declaration": true,
 		"noImplicitReturns": true,
+		"noImplicitAny": true,
 		"noImplicitThis": true
 	},
 	"include": [
