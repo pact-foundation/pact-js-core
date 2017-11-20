@@ -13,7 +13,7 @@ describe("Pact Spec", () => {
 
 	describe("Set Log Level", () => {
 		let originalLogLevel;
-		// Reset lot level after the tests
+		// Reset log level after the tests
 		before(() => originalLogLevel = pact.logLevel());
 		after(() => pact.logLevel(originalLogLevel));
 

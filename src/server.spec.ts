@@ -162,7 +162,7 @@ describe("Server Spec", () => {
 			// it("should start correctly with monkeypatch", () => {
 			// 	server = serverFactory({monkeypatch: "???? what file can I use here"});
 			// 	return server.start()
-			// 		.then(() => expect(server.options.provider).to.equal("???? what file can I use here"));
+			// 		.then(() => expect(server.options.monkeypatch).to.equal("???? what file can I use here"));
 			// });
 		});
 
