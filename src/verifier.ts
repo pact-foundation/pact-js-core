@@ -1,20 +1,15 @@
-// tslint:disable:no-string-literal
-import pactStandalone = require("@pact-foundation/pact-standalone");
 import checkTypes = require("check-types");
-import cp = require("child_process");
-import { ChildProcess, SpawnOptions } from "child_process";
 import path = require("path");
 import q = require("q");
 import _ = require("underscore");
 import unixify = require("unixify");
 import url = require("url");
-
+import pactStandalone = require("@pact-foundation/pact-standalone");
 import Broker from "./broker";
 import logger from "./logger";
-import pactUtil from "./pact-util";
+import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 
 import fs = require("fs");
-const isWindows = process.platform === "win32";
 
 export class Verifier {
 	public static create(options: VerifierOptions): Verifier {
@@ -35,7 +30,7 @@ export class Verifier {
 						// Unixify the paths. Pact in multiple places uses URI and matching and
 						// hasn"t really taken Windows into account. This is much easier, albeit
 						// might be a problem on non root-drives
-						// options.pactUrls.push(uri);
+						// options.pactFilesOrDirs.push(uri);
 						return unixify(uri);
 					} catch (e) {
 						throw new Error(`Pact file: ${uri} doesn"t exist`);
@@ -50,11 +45,11 @@ export class Verifier {
 		checkTypes.assert.nonEmptyString(options.providerBaseUrl, "Must provide the providerBaseUrl argument");
 
 		if (checkTypes.emptyArray(options.pactUrls) && !options.pactBrokerUrl) {
-			throw new Error("Must provide the pactUrls argument if no brokerUrl provided");
+			throw new Error("Must provide the pactFilesOrDirs argument if no brokerUrl provided");
 		}
 
 		if ((!options.pactBrokerUrl || _.isEmpty(options.provider)) && checkTypes.emptyArray(options.pactUrls)) {
-			throw new Error("Must provide both provider and brokerUrl or if pactUrls not provided.");
+			throw new Error("Must provide both provider and brokerUrl or if pactFilesOrDirs not provided.");
 		}
 
 		if (options.providerStatesSetupUrl) {
@@ -108,95 +103,59 @@ export class Verifier {
 	}
 
 	public readonly options: VerifierOptions;
-	private __instance: ChildProcess;
+	private readonly __argMapping = {
+		"pactUrls": DEFAULT_ARG,
+		"providerBaseUrl": "--provider-base-url",
+		"providerStatesSetupUrl": "--provider-states-setup-url",
+		"pactBrokerUsername": "--broker-username",
+		"pactBrokerPassword": "--broker-password",
+		"publishVerificationResult": "--publish-verification-results",
+		"providerVersion": "--provider-app-version",
+		"monkeypatch": "--monkeypatch"
+	};
 
 	constructor(options: VerifierOptions) {
 		this.options = options;
 	}
 
 	public verify(): q.Promise<string> {
-		logger.info("Verifier verify()");
-		let retrievePactsPromise;
+		logger.info("Verifying Pact Files");
+		return q(this.options.pactUrls)
+			.then((uris) => {
+				if (!uris || uris.length === 0) {
+					return new Broker({
+						brokerUrl: this.options.pactBrokerUrl,
+						provider: this.options.provider,
+						username: this.options.pactBrokerUsername,
+						password: this.options.pactBrokerPassword,
+						tags: this.options.tags
+					}).findConsumers();
+				}
+				return uris;
+			})
+			.then((data: string[]): q.Promise<string> => {
+				const deferred = q.defer<string>();
+				this.options.pactUrls = data;
+				const instance = pactUtil.spawnBinary(pactStandalone.verifierPath, this.options, this.__argMapping);
+				const output = [];
+				instance.stdout.on("data", (l) => output.push(l));
+				instance.stderr.on("data", (l) => output.push(l));
+				instance.once("close", (code) => {
+					const o = output.join("\n");
+					code === 0 ? deferred.resolve(o) : deferred.reject(new Error(o));
+				});
 
-		if (this.options.pactUrls.length > 0) {
-			retrievePactsPromise = q(this.options.pactUrls);
-		} else {
-			// If no pactUrls provided, we must fetch them from the broker!
-			retrievePactsPromise = new Broker({
-				brokerUrl: this.options.pactBrokerUrl,
-				provider: this.options.provider,
-				username: this.options.pactBrokerUsername,
-				password: this.options.pactBrokerPassword,
-				tags: this.options.tags
-			}).findConsumers();
-		}
-
-		return retrievePactsPromise.then((data) => {
-			this.options.pactUrls = data;
-
-			const deferred = q.defer();
-			let output = ""; // Store output here in case of error
-			function outputHandler(log) {
-				logger.info(log);
-				output += log;
-			}
-
-			const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
-			// Remove environment variable if there
-			// This is a hack to prevent some weird Travelling Ruby behaviour with Gems
-			// https://github.com/pact-foundation/pact-mock-service-npm/issues/16
-			delete envVars["RUBYGEMS_GEMDEPS"];
-
-			let file: string;
-			let opts: SpawnOptions = {
-				cwd: pactStandalone.cwd,
-				detached: !isWindows,
-				env: envVars
-			};
-			let args: string[] = pactUtil.createArguments(this.options, {
-				"providerBaseUrl": "--provider-base-url",
-				"pactUrls": "--pact-urls",
-				"providerStatesSetupUrl": "--provider-states-setup-url",
-				"pactBrokerUsername": "--broker-username",
-				"pactBrokerPassword": "--broker-password",
-				"publishVerificationResult": "--publish-verification-results",
-				"providerVersion": "--provider-app-version",
-				"monkeypatch": "--monkeypatch"
+				return deferred.promise
+					.timeout(this.options.timeout, `Timeout waiting for verification process to complete (PID: ${instance.pid})`)
+					.tap(() => logger.info("Pact Verification succeeded."));
 			});
-
-			let cmd = [pactStandalone.verifierPath].concat(args).join(" ");
-
-			if (isWindows) {
-				file = "cmd.exe";
-				args = ["/s", "/c", cmd];
-				(opts as any).windowsVerbatimArguments = true;
-			} else {
-				cmd = `./${cmd}`;
-				file = "/bin/sh";
-				args = ["-c", cmd];
-			}
-
-			this.__instance = cp.spawn(file, args, opts);
-
-			this.__instance.stdout.setEncoding("utf8");
-			this.__instance.stdout.on("data", outputHandler);
-			this.__instance.stderr.setEncoding("utf8");
-			this.__instance.stderr.on("data", outputHandler);
-			this.__instance.on("error", logger.error.bind(logger));
-
-			this.__instance.once("close", (code) => code === 0 ? deferred.resolve(output) : deferred.reject(new Error(output)));
-
-			logger.info(`Created Pact Verifier process with PID: ${this.__instance.pid}`);
-			return deferred.promise.timeout(this.options.timeout, `Timeout waiting for verification process to complete (PID: ${this.__instance.pid})`)
-				.tap(() => logger.info("Pact Verification succeeded."));
-		});
 	}
 }
 
 // Creates a new instance of the pact server with the specified option
 export default Verifier.create;
 
-export interface VerifierOptions {
+export interface VerifierOptions extends SpawnArguments {
 	providerBaseUrl: string;
 	provider?: string;
 	pactUrls?: string[];

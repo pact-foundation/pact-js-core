@@ -248,7 +248,7 @@ describe("Pact Spec", () => {
 	});
 
 	// These tests never worked because the expect was wrong.  When fixed, massive issue ensues
-	xdescribe("Verify Pacts", () => {
+	describe.skip("Verify Pacts", () => {
 		context("With provider states", () => {
 			it("should start the pact-provider-verifier service and verify pacts", () => {
 				let opts = {
@@ -260,7 +260,7 @@ describe("Pact Spec", () => {
 		});
 	});
 
-	xdescribe("Publish Pacts", () => {
+	describe.skip("Publish Pacts", () => {
 		it("should start running the Pact publishing process", () => {
 			let opts = {
 				pactBroker: "http://localhost",
