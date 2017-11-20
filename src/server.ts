@@ -145,7 +145,7 @@ export class Server extends events.EventEmitter {
 		"dir": "--pact_dir",
 		"spec": "--pact_specification_version",
 		"consumer": "--consumer",
-		"provider": "--provider"
+		"provider": "--provider",
 		"monkeypatch": "--monkeypatch"
 	};
 
