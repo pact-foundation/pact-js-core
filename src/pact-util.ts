@@ -19,7 +19,7 @@ export class PactUtil {
 					let mapping = mappings[key];
 					let f = acc.push.bind(acc);
 					if (mapping === DEFAULT_ARG) {
-						mapping = null;
+						mapping = "";
 						f = acc.unshift.bind(acc);
 					}
 					_.map(checkTypes.array(value) ? value : [value], (v: any) => f([mapping, `'${v}'`]));
@@ -93,7 +93,7 @@ export class PactUtil {
 }
 
 export interface SpawnArguments {
-	[id: string]: string | string[] | boolean | number;
+	[id: string]: string | string[] | boolean | number | undefined;
 }
 
 export default new PactUtil();

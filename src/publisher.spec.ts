@@ -10,6 +10,7 @@ import * as http from "http";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
+const currentDir = (process && process.mainModule) ? process.mainModule.filename : "";
 
 describe("Publish Spec", () => {
 
@@ -39,7 +40,7 @@ describe("Publish Spec", () => {
 			it("should fail with an error", () => {
 				expect(() => {
 					publisherFactory({
-						pactFilesOrDirs: [path.dirname(process.mainModule.filename)],
+						pactFilesOrDirs: [path.dirname(currentDir)],
 						consumerVersion: "1.0.0"
 					});
 				}).to.throw(Error);
@@ -51,7 +52,7 @@ describe("Publish Spec", () => {
 				expect(() => {
 					publisherFactory({
 						pactBroker: "http://localhost",
-						pactFilesOrDirs: [path.dirname(process.mainModule.filename)]
+						pactFilesOrDirs: [path.dirname(currentDir)]
 					});
 				}).to.throw(Error);
 			});
@@ -73,7 +74,7 @@ describe("Publish Spec", () => {
 				expect(() => {
 					publisherFactory({
 						pactBroker: "http://localhost",
-						pactFilesOrDirs: [path.dirname(process.mainModule.filename)],
+						pactFilesOrDirs: [path.dirname(currentDir)],
 						consumerVersion: "1.0.0"
 					});
 				}).to.not.throw(Error);

@@ -76,7 +76,7 @@ export class Publisher {
 		});
 
 		return deferred.promise
-			.timeout(this.options.timeout, `Timeout waiting for verification process to complete (PID: ${instance.pid})`);
+			.timeout(this.options.timeout as number, `Timeout waiting for verification process to complete (PID: ${instance.pid})`);
 	}
 }
 

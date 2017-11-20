@@ -1,5 +1,6 @@
 import q = require("q");
 import logger from "./logger";
+import { IWhenable } from "q";
 const _ = require("underscore");
 const checkTypes = require("check-types");
 const request = q.denodeify(require("request"));
@@ -50,7 +51,7 @@ export class Broker {
 			} : null
 		};
 		return request(requestOptions)
-			.then((data) => data[0])
+			.then((data: any) => data[0])
 			.then((response) => {
 				if (response.statusCode < 200 && response.statusCode >= 300) {
 					return q.reject(response);
@@ -58,7 +59,7 @@ export class Broker {
 				const body = JSON.parse(response.body);
 				return request(_.extend({}, requestOptions, {uri: body._links[`pb:latest-provider-pacts${tag ? "-with-tag" : ""}`].href.replace("{tag}", tag).replace("{provider}", this.options.provider)}));
 			})
-			.then((data) => data[0])
+			.then((data: any) => data[0])
 			.then((response) => response.statusCode < 200 && response.statusCode >= 300 ? q.reject(response) : JSON.parse(response.body));
 	}
 
@@ -75,7 +76,7 @@ export class Broker {
 				}
 				return array;
 			}, []))
-			.catch(() => q.reject(`Unable to find pacts for given provider '${this.options.provider}' and tags '${this.options.tags}'`));
+			.catch(() => q.reject(`Unable to find pacts for given provider '${this.options.provider}' and tags '${this.options.tags}'`) as IWhenable<any>);
 	}
 }
 

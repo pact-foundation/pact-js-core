@@ -1,9 +1,9 @@
-import _ = require("underscore");
 import q = require("q");
 import serverFactory, {Server, ServerOptions} from "./server";
 import verifierFactory, {VerifierOptions} from "./verifier";
 import publisherFactory, {PublisherOptions} from "./publisher";
 import logger, {LogLevels} from "./logger";
+import _ = require("underscore");
 
 export class Pact {
 	private __servers: Server[] = [];
@@ -53,7 +53,7 @@ export class Pact {
 		}
 
 		logger.info("Removing all Pact servers.");
-		return q.all<Server>(_.map(this.__servers, (server:Server) => server.delete()));
+		return q.all<Server>(_.map(this.__servers, (server:Server) => server.delete() as PromiseLike<Server>));
 	}
 
 	// Run the Pact Verification process

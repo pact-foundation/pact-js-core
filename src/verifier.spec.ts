@@ -5,6 +5,7 @@ import verifierFactory from "./verifier";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
+const currentDir = (process && process.mainModule) ? process.mainModule.filename : "";
 
 describe("Verifier Spec", () => {
 	describe("Verifier", () => {
@@ -86,7 +87,7 @@ describe("Verifier Spec", () => {
 			it("should not fail", () => {
 				expect(() => verifierFactory({
 					providerBaseUrl: "http://localhost",
-					pactUrls: [path.dirname(process.mainModule.filename)]
+					pactUrls: [path.dirname(currentDir)]
 				})).to.not.throw(Error);
 			});
 		});

@@ -13,7 +13,6 @@ export function auth(req: express.Request, res: express.Response, next: express.
 	const user = basicAuth(req);
 	if (user && user.name === "foo" && user.pass === "bar") {
 		next();
-		return null;
 	}
 
 	res.set("WWW-Authenticate", "Basic realm=Authorization Required");

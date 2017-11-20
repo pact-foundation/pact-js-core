@@ -149,7 +149,7 @@ export class Server extends events.EventEmitter {
 	public start(): q.Promise<Server> {
 		if (this.__instance && this.__instance.connected) {
 			logger.warn(`You already have a process running with PID: ${this.__instance.pid}`);
-			return null;
+			return q.resolve(this);
 		}
 		this.__instance = pactUtil.spawnBinary(`${pact.mockServicePath} service`, this.options, this.__argMapping);
 		this.__instance.once("close", () => this.stop());
@@ -188,7 +188,6 @@ export class Server extends events.EventEmitter {
 			.timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
 			.then(() => {
 				this.__running = false;
-				this.__instance = undefined;
 				this.emit(Server.Events.STOP_EVENT, this);
 				return this;
 			});
