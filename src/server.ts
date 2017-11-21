@@ -99,7 +99,7 @@ export class Server extends events.EventEmitter {
 			try {
 				fs.statSync(fileObj.dir).isDirectory();
 			} catch (e) {
-				// If log path doesn"t exist, create it
+				// If log path doesn't exist, create it
 				mkdirp.sync(fileObj.dir);
 			}
 		}
