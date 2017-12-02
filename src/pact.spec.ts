@@ -51,7 +51,7 @@ describe("Pact Spec", () => {
 	});
 
 	describe("Create serverFactory", () => {
-		let dirPath: any;
+		let dirPath: string;
 
 		beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
 

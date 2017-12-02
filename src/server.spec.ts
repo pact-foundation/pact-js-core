@@ -57,7 +57,7 @@ describe("Server Spec", () => {
 		});
 
 		context("when valid options are set", () => {
-			let dirPath: any;
+			let dirPath: string;
 
 			beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
 

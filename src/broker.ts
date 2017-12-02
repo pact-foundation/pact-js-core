@@ -76,7 +76,7 @@ export class Broker {
 				}
 				return array;
 			}, []))
-			.catch(() => q.reject(`Unable to find pacts for given provider '${this.options.provider}' and tags '${this.options.tags}'`) as IWhenable<any>);
+			.catch(() => q.reject<IWhenable<any>>(`Unable to find pacts for given provider '${this.options.provider}' and tags '${this.options.tags}'`));
 	}
 }
 

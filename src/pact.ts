@@ -21,7 +21,7 @@ export class Pact {
 
 	// Creates server with specified options
 	public createServer(options: ServerOptions = {}): Server {
-		if (options && options.port && _.some(this.__servers, (s) => s.options.port === options.port)) {
+		if (options && options.port && _.some(this.__servers, (s: Server) => s.options.port === options.port)) {
 			let msg = `Port '${options.port}' is already in use by another process.`;
 			logger.error(msg);
 			throw new Error(msg);
@@ -32,7 +32,7 @@ export class Pact {
 		logger.info(`Creating Pact Server with options: \n${this.__stringifyOptions(server.options)}`);
 
 		// Listen to server delete events, to remove from server list
-		server.once("delete", (s: any) => {
+		server.once("delete", (s: Server) => {
 			logger.info(`Deleting Pact Server with options: \n${this.__stringifyOptions(s.options)}`);
 			this.__servers = _.without(this.__servers, s);
 		});
@@ -71,7 +71,7 @@ export class Pact {
 	private __stringifyOptions(obj: ServerOptions): string {
 		return _.chain(obj)
 			.pairs()
-			.map((v) => v.join(" = "))
+			.map((v: string[]) => v.join(" = "))
 			.value()
 			.join(",\n");
 	}
