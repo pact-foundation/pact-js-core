@@ -1,16 +1,16 @@
 // tslint:disable:no-string-literal
 
-import checkTypes = require("check-types");
 import path = require("path");
 import fs = require("fs");
 import events = require("events");
 import http = require("request");
 import q = require("q");
-import pact = require("@pact-foundation/pact-standalone");
-import mkdirp = require("mkdirp");
 import logger from "./logger";
 import pactUtil, {SpawnArguments} from "./pact-util";
 import {ChildProcess} from "child_process";
+const mkdirp = require("mkdirp");
+const pact = require("@pact-foundation/pact-standalone");
+const checkTypes = require("check-types");
 
 const CHECKTIME = 500;
 const RETRY_AMOUNT = 60;
@@ -149,14 +149,14 @@ export class Server extends events.EventEmitter {
 	public start(): q.Promise<Server> {
 		if (this.__instance && this.__instance.connected) {
 			logger.warn(`You already have a process running with PID: ${this.__instance.pid}`);
-			return;
+			return q.resolve(this);
 		}
 		this.__instance = pactUtil.spawnBinary(`${pact.mockServicePath} service`, this.options, this.__argMapping);
 		this.__instance.once("close", () => this.stop());
 
 		if (!this.options.port) {
 			// if port isn't specified, listen for it when pact runs
-			const catchPort = (data) => {
+			const catchPort = (data: any) => {
 				const match = data.match(/port=([0-9]+)/);
 				if (match && match[1]) {
 					this.options.port = parseInt(match[1], 10);
@@ -188,7 +188,6 @@ export class Server extends events.EventEmitter {
 			.timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
 			.then(() => {
 				this.__running = false;
-				this.__instance = undefined;
 				this.emit(Server.Events.STOP_EVENT, this);
 				return this;
 			});
@@ -266,7 +265,7 @@ export class Server extends events.EventEmitter {
 			config.agentOptions.agent = false;
 		}
 
-		http(config, (err, res) => (!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`));
+		http(config, (err: any, res: any) => (!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`));
 
 		return deferred.promise;
 	}

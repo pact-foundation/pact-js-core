@@ -68,6 +68,7 @@
     "@types/node": "8.0.26",
     "@types/q": "1.0.5",
     "@types/request": "2.0.3",
+    "@types/underscore": "^1.8.5",
     "basic-auth": "1.1.0",
     "body-parser": "1.17.2",
     "caporal": "0.7.0",
@@ -92,7 +93,7 @@
     "clean": "rimraf '{src,test,bin}/**/*.{js,map,d.ts}' 'package.zip' '.tmp'",
     "lint": "tslint -p tsconfig.json",
     "pretest": "npm run build",
-    "test": "mocha -r ts-node/register -R mocha-unfunk-reporter --timeout 10000 \"{src,test,bin}/**/*.spec.ts\"",
+    "test": "mocha -r ts-node/register -R mocha-unfunk-reporter --timeout 15000 \"{src,test,bin}/**/*.spec.ts\"",
     "dev": "npm run lint --force && npm test && node .",
     "build": "npm run clean && tsc",
     "start": "npm run watch"

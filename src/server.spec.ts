@@ -12,7 +12,7 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 describe("Server Spec", () => {
-	let server;
+	let server: any;
 
 	afterEach(() => server ? server.delete() : null);
 
@@ -57,7 +57,7 @@ describe("Server Spec", () => {
 		});
 
 		context("when valid options are set", () => {
-			let dirPath;
+			let dirPath: string;
 
 			beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
 

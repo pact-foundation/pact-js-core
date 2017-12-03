@@ -1,9 +1,9 @@
-import cors = require("cors");
 import express = require("express");
 import q = require("q");
-import bodyParser = require("body-parser");
 import * as http from "http";
 import {returnJson, returnJsonFile, auth} from "./data-utils";
+const cors = require("cors");
+const bodyParser = require("body-parser");
 
 export default (port: number): q.Promise<http.Server> => {
 	const server: express.Express = express();

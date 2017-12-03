@@ -1,9 +1,9 @@
-import _ = require("underscore");
 import q = require("q");
 import serverFactory, {Server, ServerOptions} from "./server";
 import verifierFactory, {VerifierOptions} from "./verifier";
 import publisherFactory, {PublisherOptions} from "./publisher";
 import logger, {LogLevels} from "./logger";
+import _ = require("underscore");
 
 export class Pact {
 	private __servers: Server[] = [];
@@ -21,7 +21,7 @@ export class Pact {
 
 	// Creates server with specified options
 	public createServer(options: ServerOptions = {}): Server {
-		if (options && options.port && _.some(this.__servers, (s) => s.options.port === options.port)) {
+		if (options && options.port && _.some(this.__servers, (s: Server) => s.options.port === options.port)) {
 			let msg = `Port '${options.port}' is already in use by another process.`;
 			logger.error(msg);
 			throw new Error(msg);
@@ -32,7 +32,7 @@ export class Pact {
 		logger.info(`Creating Pact Server with options: \n${this.__stringifyOptions(server.options)}`);
 
 		// Listen to server delete events, to remove from server list
-		server.once("delete", (s) => {
+		server.once("delete", (s: Server) => {
 			logger.info(`Deleting Pact Server with options: \n${this.__stringifyOptions(s.options)}`);
 			this.__servers = _.without(this.__servers, s);
 		});
@@ -53,7 +53,7 @@ export class Pact {
 		}
 
 		logger.info("Removing all Pact servers.");
-		return q.all<Server>(_.map(this.__servers, (server:Server) => server.delete()));
+		return q.all<Server>(_.map(this.__servers, (server:Server) => server.delete() as PromiseLike<Server>));
 	}
 
 	// Run the Pact Verification process
@@ -71,7 +71,7 @@ export class Pact {
 	private __stringifyOptions(obj: ServerOptions): string {
 		return _.chain(obj)
 			.pairs()
-			.map((v) => v.join(" = "))
+			.map((v: string[]) => v.join(" = "))
 			.value()
 			.join(",\n");
 	}

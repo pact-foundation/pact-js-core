@@ -5,14 +5,14 @@ import fs = require("fs");
 import pact from "./pact";
 
 const expect = chai.expect;
-
 chai.use(chaiAsPromised);
+const currentDir = (process && process.mainModule) ? process.mainModule.filename : "";
 
 describe("Pact Spec", () => {
 	afterEach(() => pact.removeAllServers());
 
 	describe("Set Log Level", () => {
-		let originalLogLevel;
+		let originalLogLevel: any;
 		// Reset lot level after the tests
 		before(() => originalLogLevel = pact.logLevel());
 		after(() => pact.logLevel(originalLogLevel));
@@ -51,7 +51,7 @@ describe("Pact Spec", () => {
 	});
 
 	describe("Create serverFactory", () => {
-		let dirPath;
+		let dirPath: string;
 
 		beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
 
@@ -242,7 +242,7 @@ describe("Pact Spec", () => {
 			it("should start the pact-provider-verifier service and verify pacts", () => {
 				let opts = {
 					providerBaseUrl: "http://localhost",
-					pactUrls: [path.dirname(process.mainModule.filename)]
+					pactUrls: [path.dirname(currentDir)]
 				};
 				return expect(pact.verifyPacts(opts)).to.eventually.be.fulfilled;
 			});
@@ -253,7 +253,7 @@ describe("Pact Spec", () => {
 		it("should start running the Pact publishing process", () => {
 			let opts = {
 				pactBroker: "http://localhost",
-				pactUrls: [path.dirname(process.mainModule.filename)],
+				pactUrls: [path.dirname(currentDir)],
 				consumerVersion: "1.0.0"
 			};
 			return expect(pact.publishPacts(opts)).to.eventually.be.fulfilled;

@@ -1,8 +1,8 @@
-import checkTypes = require("check-types");
 import q = require("q");
-import _ = require("underscore");
 import logger from "./logger";
-
+import { IWhenable } from "q";
+const _ = require("underscore");
+const checkTypes = require("check-types");
 const request = q.denodeify(require("request"));
 
 export class Broker {
@@ -49,7 +49,7 @@ export class Broker {
 			} : null
 		};
 		return request(requestOptions)
-			.then((data) => data[0])
+			.then((data: any) => data[0])
 			.then((response) => {
 				if (response.statusCode < 200 && response.statusCode >= 300) {
 					return q.reject(response);
@@ -57,7 +57,7 @@ export class Broker {
 				const body = JSON.parse(response.body);
 				return request(_.extend({}, requestOptions, {uri: body._links[`pb:latest-provider-pacts${tag ? "-with-tag" : ""}`].href.replace("{tag}", tag).replace("{provider}", this.options.provider)}));
 			})
-			.then((data) => data[0])
+			.then((data: any) => data[0])
 			.then((response) => response.statusCode < 200 && response.statusCode >= 300 ? q.reject(response) : JSON.parse(response.body));
 	}
 
@@ -65,16 +65,16 @@ export class Broker {
 	// and removes duplicates (e.g. where multiple tags on the same pact)
 	public findConsumers(): q.Promise<string[]> {
 		logger.debug("Finding consumers");
-		const promises = _.isEmpty(this.options.tags) ? [this.findPacts()] : _.map(this.options.tags, (t) => this.findPacts(t));
+		const promises = _.isEmpty(this.options.tags) ? [this.findPacts()] : _.map(this.options.tags, (t: string) => this.findPacts(t));
 
 		return q.all(promises)
-			.then((values) => _.reduce(values, (array, v) => {
+			.then((values) => _.reduce(values, (array: string[], v: any) => {
 				if (v && v._links && v._links.pacts) {
 					array.push(..._.pluck(v._links.pacts, "href"));
 				}
 				return array;
 			}, []))
-			.catch(() => q.reject(`Unable to find pacts for given provider '${this.options.provider}' and tags '${this.options.tags}'`));
+			.catch(() => q.reject<IWhenable<any>>(`Unable to find pacts for given provider '${this.options.provider}' and tags '${this.options.tags}'`));
 	}
 }
 

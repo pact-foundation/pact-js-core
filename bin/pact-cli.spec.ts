@@ -3,11 +3,11 @@ import chaiAsPromised = require("chai-as-promised");
 import childProcess = require("child_process");
 import q = require("q");
 import path = require("path");
-import _ = require("underscore");
 import {ChildProcess} from "child_process";
 import {ServerOptions} from "../src/server";
-import decamelize = require("decamelize");
 import providerMock from "../test/integration/provider-mock";
+const decamelize = require("decamelize");
+const _ = require("underscore");
 
 const request = q.denodeify(require("request"));
 const pkg = require("../package.json");
@@ -64,7 +64,7 @@ describe("Pact CLI Spec", () => {
 		});
 
 		context("with mock broker", () => {
-			let server;
+			let server: any;
 			const PORT = 9123;
 			const providerBaseUrl = `http://localhost:${PORT}`;
 
@@ -83,7 +83,7 @@ class CLI {
 	public static runMock(options: ServerOptions = {}): q.Promise<CLI> {
 		const args = _.chain(options)
 			.pairs()
-			.map((arr) => [`--${decamelize(arr[0], "-")}`, `${arr[1]}`])
+			.map((arr: any[]) => [`--${decamelize(arr[0], "-")}`, `${arr[1]}`])
 			.flatten()
 			.value();
 
@@ -113,6 +113,7 @@ class CLI {
 					cp.process.once("exit", () => deferred.resolve());
 					return deferred.promise;
 				}
+				return null;
 			});
 	}
 
