@@ -1,6 +1,16 @@
 <img src="https://raw.githubusercontent.com/pact-foundation/pact-logo/master/media/logo-black.png" width="200">
 
-# Releasing Pact Node
+## Publishing via Travis (recommended)
+
+Make your changes in a new branch, when merged into master:
+
+        $ npm run release
+        $ # review workspace and commits - if all looks good...
+        $ git push --follow-tags
+
+Travis CI will do the rest.
+
+## Releasing Pact Node Manually
 
 If any changes needs to be released, let it be dependencies or code, you must have access to push directly to master on the pact-node repo, then follow these steps:
 
