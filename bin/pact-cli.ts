@@ -38,6 +38,7 @@ cli
 	.option("-v, --provider-version [version]", "Provider version, required to publish verification result to Broker.")
 	.option("-t, --timeout [milliseconds]", "The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.", cli.INT)
 	.option("-pub, --publish-verification-result", "Publish verification result to Broker.")
+	.option("-c, --custom-provider-header", "Header to add to provider state set up and pact verification requests. eg 'Authorization: Basic cGFjdDpwYWN0'.", cli.LIST)
 	.action((args: any, options: any) => pact.verifyPacts(options));
 
 cli.parse(process.argv);

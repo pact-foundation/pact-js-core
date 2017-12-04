@@ -101,7 +101,8 @@ export class Verifier {
 		"pactBrokerUsername": "--broker-username",
 		"pactBrokerPassword": "--broker-password",
 		"publishVerificationResult": "--publish-verification-results",
-		"providerVersion": "--provider-app-version"
+		"providerVersion": "--provider-app-version",
+		"customProviderHeaders": "--custom-provider-header"
 	};
 
 	constructor(options: VerifierOptions) {
@@ -152,6 +153,7 @@ export interface VerifierOptions extends SpawnArguments {
 	providerStatesSetupUrl?: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
+	customProviderHeaders?: string[];
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
 	pactBrokerUrl?: string;
