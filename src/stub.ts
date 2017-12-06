@@ -6,7 +6,7 @@ import events = require("events");
 import http = require("request");
 import q = require("q");
 import logger from "./logger";
-import pactUtil, {SpawnArguments} from "./pact-util";
+import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 import {ChildProcess} from "child_process";
 const mkdirp = require("mkdirp");
 const pact = require("@pact-foundation/pact-standalone");
@@ -16,7 +16,7 @@ const CHECKTIME = 500;
 const RETRY_AMOUNT = 60;
 const PROCESS_TIMEOUT = 30000;
 
-export class Server extends events.EventEmitter {
+export class Stub extends events.EventEmitter {
 	public static get Events() {
 		return {
 			START_EVENT: "start",
@@ -25,12 +25,18 @@ export class Server extends events.EventEmitter {
 		};
 	}
 
-	public static create(options: ServerOptions = {}): Server {
+	public static create(options: StubOptions = {}): Stub {
 		// defaults
+		options.pactUrls = options.pactUrls || [];
 		options.ssl = options.ssl || false;
 		options.cors = options.cors || false;
-		options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
 		options.host = options.host || "localhost";
+
+		if (options.pactUrls) {
+			checkTypes.assert.array.of.string(options.pactUrls);
+		}
+
+		checkTypes.assert.not.emptyArray(options.pactUrls, "Must provide the pactUrls argument");
 
 		// port checking
 		if (options.port) {
@@ -69,29 +75,13 @@ export class Server extends events.EventEmitter {
 			}
 		}
 
-		// If both sslcert and sslkey option has been specified, let"s assume the user wants to enable ssl
+		// If both sslcert and sslkey option has been specified, let's assume the user wants to enable ssl
 		if (options.sslcert && options.sslkey) {
 			options.ssl = true;
 		}
 
-		// cors check"
+		// cors check
 		checkTypes.assert.boolean(options.cors);
-
-		// spec checking
-		if (options.spec) {
-			checkTypes.assert.number(options.spec);
-			checkTypes.assert.integer(options.spec);
-			checkTypes.assert.positive(options.spec);
-		}
-
-		// dir check
-		if (options.dir) {
-			try {
-				fs.statSync(path.normalize(options.dir)).isDirectory();
-			} catch (e) {
-				mkdirp.sync(path.normalize(options.dir));
-			}
-		}
 
 		// log check
 		if (options.log) {
@@ -99,7 +89,7 @@ export class Server extends events.EventEmitter {
 			try {
 				fs.statSync(fileObj.dir).isDirectory();
 			} catch (e) {
-				// If log path doesn"t exist, create it
+				// If log path doesn't exist, create it
 				mkdirp.sync(fileObj.dir);
 			}
 		}
@@ -109,21 +99,14 @@ export class Server extends events.EventEmitter {
 			checkTypes.assert.string(options.host);
 		}
 
-		// consumer name check
-		if (options.consumer) {
-			checkTypes.assert.string(options.consumer);
-		}
-
-		// provider name check
-		if (options.provider) {
-			checkTypes.assert.string(options.provider);
-		}
-
-		return new Server(options);
+		return new Stub(options);
 	}
 
-	public readonly options: ServerOptions;
-	protected readonly __argMapping = {
+	public readonly options: StubOptions;
+	private __running: boolean;
+	private __instance: ChildProcess;
+	private readonly __argMapping = {
+		"pactUrls": DEFAULT_ARG,
 		"port": "--port",
 		"host": "--host",
 		"log": "--log",
@@ -131,27 +114,21 @@ export class Server extends events.EventEmitter {
 		"sslcert": "--sslcert",
 		"sslkey": "--sslkey",
 		"cors": "--cors",
-		"dir": "--pact_dir",
-		"spec": "--pact_specification_version",
-		"consumer": "--consumer",
-		"provider": "--provider"
 	};
-	private __running: boolean;
-	private __instance: ChildProcess;
 
-	constructor(options: ServerOptions) {
+	constructor(options: StubOptions) {
 		super();
 		this.options = options;
 		this.__running = false;
 	}
 
-	// Let the mocking begin!
-	public start(): q.Promise<Server> {
+	// Let the stubbing begin!
+	public start(): q.Promise<Stub> {
 		if (this.__instance && this.__instance.connected) {
 			logger.warn(`You already have a process running with PID: ${this.__instance.pid}`);
 			return q.resolve(this);
 		}
-		this.__instance = pactUtil.spawnBinary(`${pact.mockServicePath} service`, this.options, this.__argMapping);
+		this.__instance = pactUtil.spawnBinary(`${pact.stubPath} service`, this.options, this.__argMapping);
 		this.__instance.once("close", () => this.stop());
 
 		if (!this.options.port) {
@@ -171,35 +148,35 @@ export class Server extends events.EventEmitter {
 		}
 
 		// check service is available
-		return this.__waitForServerUp()
+		return this.__waitForStubUp()
 			.timeout(PROCESS_TIMEOUT, `Couldn't start Pact with PID: ${this.__instance.pid}`)
 			.then(() => {
 				this.__running = true;
-				this.emit(Server.Events.START_EVENT, this);
+				this.emit(Stub.Events.START_EVENT, this);
 				return this;
 			});
 	}
 
-	// Stop the server instance, no more mocking
-	public stop(): q.Promise<Server> {
+	// Stop the stub instance
+	public stop(): q.Promise<Stub> {
 		const pid = this.__instance ? this.__instance.pid : -1;
 		return q(pactUtil.killBinary(this.__instance))
-			.then(() => this.__waitForServerDown())
+			.then(() => this.__waitForStubDown())
 			.timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
 			.then(() => {
 				this.__running = false;
-				this.emit(Server.Events.STOP_EVENT, this);
+				this.emit(Stub.Events.STOP_EVENT, this);
 				return this;
 			});
 	}
 
-	// Deletes this server instance and emit an event
-	public delete(): q.Promise<Server> {
-		return this.stop().tap(() => this.emit(Server.Events.DELETE_EVENT, this));
+	// Deletes this stub instance and emit an event
+	public delete(): q.Promise<Stub> {
+		return this.stop().tap(() => this.emit(Stub.Events.DELETE_EVENT, this));
 	}
 
-	// Wait for pact-mock-service to be initialized and ready
-	private __waitForServerUp(): q.Promise<any> {
+	// Wait for pact-stub-service to be initialized and ready
+	private __waitForStubUp(): q.Promise<any> {
 		let amount = 0;
 		const deferred = q.defer();
 
@@ -223,7 +200,7 @@ export class Server extends events.EventEmitter {
 		return deferred.promise;
 	}
 
-	private __waitForServerDown(): q.Promise<any> {
+	private __waitForStubDown(): q.Promise<any> {
 		let amount = 0;
 		const deferred = q.defer();
 
@@ -246,7 +223,7 @@ export class Server extends events.EventEmitter {
 		return deferred.promise;
 	}
 
-	private __call(options: ServerOptions): q.Promise<any> {
+	private __call(options: StubOptions): q.Promise<any> {
 		const deferred = q.defer();
 		const config: any = {
 			uri: `http${options.ssl ? "s" : ""}://${options.host}:${options.port}`,
@@ -271,19 +248,16 @@ export class Server extends events.EventEmitter {
 	}
 }
 
-// Creates a new instance of the pact server with the specified option
-export default Server.create;
+// Creates a new instance of the pact stub with the specified option
+export default Stub.create;
 
-export interface ServerOptions extends SpawnArguments {
+export interface StubOptions extends SpawnArguments {
+	pactUrls?: string[];
 	port?: number;
 	ssl?: boolean;
 	cors?: boolean;
-	dir?: string;
 	host?: string;
 	sslcert?: string;
 	sslkey?: string;
 	log?: string;
-	spec?: number;
-	consumer?: string;
-	provider?: string;
 }
