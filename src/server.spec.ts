@@ -73,8 +73,8 @@ describe("Server Spec", () => {
 
 			it("should start correctly when instance is delayed", () => {
 				server = serverFactory();
-				const waitForServerUp = (server as any)["__waitForServerUp"].bind(server);
 
+				const waitForServerUp = (server as any)["__waitForServiceUp"].bind(server);
 				return q.allSettled([
 					waitForServerUp(server.options),
 					q.delay(5000).then(() => server.start())
