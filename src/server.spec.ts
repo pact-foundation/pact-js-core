@@ -54,6 +54,12 @@ describe("Server Spec", () => {
 					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
 				})).to.throw(Error);
 			});
+
+			it("should fail if incorrect pactFileWriteMode provided", () => {
+				expect(() => serverFactory({
+					pactFileWriteMode: "notarealoption",
+				})).to.throw(Error);
+			});
 		});
 
 		context("when valid options are set", () => {

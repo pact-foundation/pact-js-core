@@ -89,9 +89,11 @@ pact.verifyPacts({
 	pactBrokerUsername: <String>,        // Username for Pact Broker basic authentication. Optional.
 	pactBrokerPassword: <String>,        // Password for Pact Broker basic authentication. Optional
 	publishVerificationResult: <Boolean> // Publish verification result to Broker. Optional
-	customProviderHeaders: <Array>       // Header(s) to add to provider state set up and pact verification requests. eg 'Authorization: Basic cGFjdDpwYWN0'.
+	customProviderHeaders: <Array>       // Header(s) to add to provider state set up and pact verification 
+	requests. eg 'Authorization: Basic cGFjdDpwYWN0'.
 	providerVersion: <Boolean>           // Provider version, required to publish verification result to Broker. Optional otherwise.
 	timeout: <Number>                    // The duration in ms we should wait to confirm verification process was successful. Defaults to 30000, Optional.
+	pactFileWriteMode: <String>          // Control how the pact file is created. One of 'overwrite', 'update' or 'merge'. Defaults to 'overwrite'.
 });
 ```
 

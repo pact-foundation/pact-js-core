@@ -31,6 +31,7 @@ export class Server extends events.EventEmitter {
 		options.cors = options.cors || false;
 		options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
 		options.host = options.host || "localhost";
+		options.pactFileWriteMode = options.pactFileWriteMode || "overwrite";
 
 		// port checking
 		if (options.port) {
@@ -119,6 +120,9 @@ export class Server extends events.EventEmitter {
 			checkTypes.assert.string(options.provider);
 		}
 
+		// pactFileWriteMode check
+		checkTypes.assert.includes(["overwrite", "update", "merge"], options.pactFileWriteMode);
+
 		return new Server(options);
 	}
 
@@ -135,6 +139,7 @@ export class Server extends events.EventEmitter {
 		"cors": "--cors",
 		"dir": "--pact_dir",
 		"spec": "--pact_specification_version",
+		"pactFileWriteMode": "--pact-file-write-mode",
 		"consumer": "--consumer",
 		"provider": "--provider"
 	};
@@ -286,4 +291,5 @@ export interface ServerOptions extends SpawnArguments {
 	spec?: number;
 	consumer?: string;
 	provider?: string;
+	pactFileWriteMode?: "overwrite" | "update" | "merge";
 }
