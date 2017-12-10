@@ -21,6 +21,7 @@ cli
 	.option("-o, --cors [boolean]", "Support browser security in tests by responding to OPTIONS requests and adding CORS headers to mocked responses. Default is false.", cli.BOOL)
 	.option("-d, --pact-dir [directory]", "Directory to which the pacts will be written. Default is cwd.")
 	.option("-i, --pact-version [n]", "The Pact specification version to use when writing the Pact files. Default is 1.", cli.INT)
+	.option("-w, --pact-file-write-mode [m]", "Controls how pact files are written to disk. One of 'overwrite', 'update', 'merge'")
 	.option("--consumer [consumerName]", "Specify consumer name for written Pact files.")
 	.option("--provider [providerName]", "Specify provider name for written Pact files.")
 	.action((args: any, options: any) => pact.createServer(options).start());
