@@ -16,6 +16,7 @@ const PROCESS_TIMEOUT = 30000;
 export class Server extends AbstractService {
 	public static create(options: ServerOptions = {}): Server {
 		options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
+		options.pactFileWriteMode = options.pactFileWriteMode || "overwrite";
 
 		// spec checking
 		if (options.spec) {
@@ -43,6 +44,9 @@ export class Server extends AbstractService {
 			checkTypes.assert.string(options.provider);
 		}
 
+		// pactFileWriteMode check
+		checkTypes.assert.includes(["overwrite", "update", "merge"], options.pactFileWriteMode);
+
 		return new Server(options);
 	}
 
@@ -57,6 +61,7 @@ export class Server extends AbstractService {
 		"cors": "--cors",
 		"dir": "--pact_dir",
 		"spec": "--pact_specification_version",
+		"pactFileWriteMode": "--pact-file-write-mode",
 		"consumer": "--consumer",
 		"provider": "--provider"
 	};
@@ -85,4 +90,5 @@ export interface ServerOptions extends SpawnArguments {
 	spec?: number;
 	consumer?: string;
 	provider?: string;
+	pactFileWriteMode?: "overwrite" | "update" | "merge";
 }

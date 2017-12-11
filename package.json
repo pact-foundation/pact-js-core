@@ -1,6 +1,6 @@
 {
   "name": "@pact-foundation/pact-node",
-  "version": "6.3.0",
+  "version": "6.5.0",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "src/index.js",
   "homepage": "https://github.com/pact-foundation/pact-node#readme",
@@ -45,7 +45,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@pact-foundation/pact-standalone": "~3.3.0",
+    "@pact-foundation/pact-standalone": "~3.4.0",
     "bunyan": "1.8.12",
     "bunyan-prettystream": "0.1.3",
     "check-types": "7.3.0",

@@ -104,8 +104,9 @@ var server = pact.createServer({
 | `cors`   | false |  boolean         | Allow CORS OPTION requests to be accepted, defaults to 'false' |
 | `dir`    | false |  string          | Directory to write the pact contracts relative to the current working directory, defaults to none  |
 | `spec`   | false | number           | The pact specification version to use when writing pact contracts, defaults to '1' |
-| `consumer`  | false |  string  | The name of the consumer to be written to the pact contracts, defaults to none |
-| `provider`  | false |  string  |  The name of the provider to be written to the pact contracts, defaults to none |
+| `consumer`          | false  | string  | The name of the consumer to be written to the pact contracts, defaults to none |
+| `provider`          | false  | string  |  The name of the provider to be written to the pact contracts, defaults to none |
+| `pactFileWriteMode` | false  | string  | Control how the pact file is created. One of 'overwrite', 'update' or 'merge', defaults to 'overwrite' |
 
 #### List Mock Servers
 

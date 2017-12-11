@@ -60,7 +60,7 @@ export default (port: number): q.Promise<http.Server> => {
 	});
 
 	// Verification result
-	server.post("/pacts/provider/:provider/consumer/:consumer/pact-version/:version/verification-results", returnJson({}));
+	server.post("/pacts/provider/:provider/consumer/:consumer/pact-version/:version/verification-results", returnJsonFile("./data/get-provider_they-consumer_me-latest.json"));
 	server.get("/pacts/provider/they/consumer/me/latest", auth, returnJsonFile("./data/get-provider_they-consumer_me-latest.json"));
 	server.get("/pacts/provider/they/consumer/anotherclient/latest", auth, returnJsonFile("./data/get-provider_they-consumer_anotherclient-latest.json"));
 	server.get("/noauth/pacts/provider/they/consumer/me/latest", returnJsonFile("./data/get-noauth-provider_they-consumer_me-latest.json"));
