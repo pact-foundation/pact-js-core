@@ -106,7 +106,7 @@ var server = pact.createServer({
 | `spec`   | false | number           | The pact specification version to use when writing pact contracts, defaults to '1' |
 | `consumer`          | false  | string  | The name of the consumer to be written to the pact contracts, defaults to none |
 | `provider`          | false  | string  |  The name of the provider to be written to the pact contracts, defaults to none |
-| `pactFileWriteMode` | false  | string  | Control how the pact file is created. One of 'overwrite', 'update' or 'merge', defaults to 'overwrite' |
+| `pactFileWriteMode` | false  | `"overwrite" | "update" | "merge"`  | Control how the pact file is created. Defaults to "overwrite" |
 
 #### List Mock Servers
 

@@ -1,7 +1,6 @@
 // tslint:disable:no-string-literal
-import pactUtil, { DEFAULT_ARG, SpawnArguments } from "./pact-util";
+import { DEFAULT_ARG, SpawnArguments } from "./pact-util";
 import { AbstractService } from "./service";
-import { ChildProcess } from "child_process";
 const pact = require("@pact-foundation/pact-standalone");
 const checkTypes = require("check-types");
 
@@ -31,11 +30,7 @@ export class Stub extends AbstractService {
 	};
 
 	constructor(options: StubOptions) {
-		super(options);
-	}
-
-	protected spawnBinary(): ChildProcess {
-		return pactUtil.spawnBinary(`${pact.stubPath}`, this.options, this.__argMapping);
+		super(`${pact.stubPath}`, options);
 	}
 }
 

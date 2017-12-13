@@ -1,17 +1,11 @@
 // tslint:disable:no-string-literal
 import { AbstractService } from "./service";
-
 import path = require("path");
 import fs = require("fs");
-import pactUtil, {SpawnArguments} from "./pact-util";
-import { ChildProcess } from "child_process";
+import {SpawnArguments} from "./pact-util";
 const mkdirp = require("mkdirp");
 const pact = require("@pact-foundation/pact-standalone");
 const checkTypes = require("check-types");
-
-const CHECKTIME = 500;
-const RETRY_AMOUNT = 60;
-const PROCESS_TIMEOUT = 30000;
 
 export class Server extends AbstractService {
 	public static create(options: ServerOptions = {}): Server {
@@ -67,11 +61,7 @@ export class Server extends AbstractService {
 	};
 
 	constructor(options: ServerOptions) {
-		super(options);
-	}
-
-	protected spawnBinary(): ChildProcess {
-		return pactUtil.spawnBinary(`${pact.mockServicePath} service`, this.options, this.__argMapping);
+		super(`${pact.mockServicePath} service`, options);
 	}
 }
 

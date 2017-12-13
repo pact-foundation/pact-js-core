@@ -1,10 +1,12 @@
-import q = require("q");
+import * as q from "q";
 import serverFactory, {Server, ServerOptions} from "./server";
 import stubFactory, {Stub, StubOptions} from "./stub";
 import verifierFactory, {VerifierOptions} from "./verifier";
 import publisherFactory, {PublisherOptions} from "./publisher";
 import logger, {LogLevels} from "./logger";
-import _ = require("underscore");
+import { AbstractService } from "./service";
+
+const _ = require("underscore");
 
 export class Pact {
 	private __servers: Server[] = [];
@@ -34,7 +36,7 @@ export class Pact {
 		logger.info(`Creating Pact Server with options: \n${this.__stringifyOptions(server.options)}`);
 
 		// Listen to server delete events, to remove from server list
-		server.once("delete", (s: Server) => {
+		server.once(AbstractService.Events.DELETE_EVENT, (s: Server) => {
 			logger.info(`Deleting Pact Server with options: \n${this.__stringifyOptions(s.options)}`);
 			this.__servers = _.without(this.__servers, s);
 		});
@@ -71,7 +73,7 @@ export class Pact {
 		logger.info(`Creating Pact Stub with options: \n${this.__stringifyOptions(stub.options)}`);
 
 		// Listen to stub delete events, to remove from stub list
-		stub.once("delete", (s: Stub) => {
+		stub.once(AbstractService.Events.DELETE_EVENT, (s: Stub) => {
 			logger.info(`Deleting Pact Stub with options: \n${this.__stringifyOptions(s.options)}`);
 			this.__stubs = _.without(this.__stubs, s);
 		});

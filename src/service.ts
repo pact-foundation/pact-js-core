@@ -6,10 +6,9 @@ import events = require("events");
 import http = require("request");
 import q = require("q");
 import logger from "./logger";
-import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
+import pactUtil, {SpawnArguments} from "./pact-util";
 import {ChildProcess} from "child_process";
 const mkdirp = require("mkdirp");
-const pact = require("@pact-foundation/pact-standalone");
 const checkTypes = require("check-types");
 
 const CHECKTIME = 500;
@@ -29,8 +28,9 @@ export abstract class AbstractService extends events.EventEmitter {
 	protected abstract readonly __argMapping: any;
 	protected __running: boolean;
 	protected __instance: ChildProcess;
+	protected __serviceCommand: string;
 
-	constructor(options: ServiceOptions) {
+	constructor(command: string, options: ServiceOptions) {
 		super();
 
 		// defaults
@@ -101,6 +101,7 @@ export abstract class AbstractService extends events.EventEmitter {
 
 		this.options = options;
 		this.__running = false;
+		this.__serviceCommand = command;
 	}
 
 	public start(): q.Promise<AbstractService> {
@@ -157,7 +158,9 @@ export abstract class AbstractService extends events.EventEmitter {
 	}
 
 	// Subclass responsible for spawning the process
-	protected abstract spawnBinary(): ChildProcess;
+	protected spawnBinary(): ChildProcess {
+		return pactUtil.spawnBinary(this.__serviceCommand, this.options, this.__argMapping);
+	}
 
 	// Wait for the service to be initialized and ready
 	protected __waitForServiceUp(): q.Promise<any> {
