@@ -2,7 +2,6 @@
 import cp = require("child_process");
 import logger from "./logger";
 import {ChildProcess, SpawnOptions} from "child_process";
-import { Dictionary } from "underscore";
 const _ = require("underscore");
 const checkTypes = require("check-types");
 const pactStandalone = require("@pact-foundation/pact-standalone");

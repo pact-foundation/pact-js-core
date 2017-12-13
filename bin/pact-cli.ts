@@ -10,8 +10,6 @@ cli
 	.description("Pact CLI tool")
 	.version(pkg.version);
 
-// TODO: add 'arguments' for required information on commands instead of using 'option' to be more consistent with standalone
-
 cli
 	.command("mock")
 	.description("Creates a pact mock service to start contract testing")
@@ -26,6 +24,18 @@ cli
 	.option("--consumer <consumerName>", "Specify consumer name for written Pact files.")
 	.option("--provider <providerName>", "Specify provider name for written Pact files.")
 	.action((args: any, options: any) => pact.createServer(options).start());
+
+cli
+	.command("stub")
+	.description("Creates an API stub from pact files")
+	.option("-p, --port <n>", "Port on which to run the service. Default is random.", cli.INT)
+	.option("-h, --host <hostname>", "Host on which to bind the service. Default is localhost.")
+	.option("-l, --log <file>", "File to which to log output to.")
+	.option("-s, --ssl <boolean>", "Use a self-signed SSL cert to run the service over HTTPS. Default is false (HTTP).", cli.BOOL)
+	.option("-o, --cors <boolean>", "Support browser security in tests by responding to OPTIONS requests and adding CORS headers to mocked responses. Default is false.", cli.BOOL)
+	.option("-i, --pact-version <n>", "The Pact specification version to use when writing the Pact files. Default is 1.", cli.INT)
+	.option("-u, --pact-urls <URLs>", "Comma separated list of local Pact files", cli.LIST)
+	.action((args: any, options: any) => pact.createStub(options).start());
 
 cli
 	.command("verify")
