@@ -15,7 +15,7 @@ export class Pact {
 	constructor() {
 		// Listen for Node exiting or someone killing the process
 		// Must remove all the instances of Pact mock service
-		process.once("exit", () => this.removeAllServers());
+		process.once("exit", () => this.removeAll());
 		process.once("SIGINT", process.exit);
 	}
 
@@ -95,6 +95,11 @@ export class Pact {
 
 		logger.info("Removing all Pact stubs.");
 		return q.all<Stub>(_.map(this.__stubs, (stub:Stub) => stub.delete() as PromiseLike<Stub>));
+	}
+
+	// Remove all the servers and stubs
+	public removeAll(): q.Promise<any> {
+		return q.all<any>([this.removeAllStubs(), this.removeAllServers()]);
 	}
 
 	// Run the Pact Verification process

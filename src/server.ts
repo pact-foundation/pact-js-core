@@ -45,23 +45,22 @@ export class Server extends AbstractService {
 	}
 
 	public readonly options: ServerOptions;
-	protected readonly __argMapping = {
-		"port": "--port",
-		"host": "--host",
-		"log": "--log",
-		"ssl": "--ssl",
-		"sslcert": "--sslcert",
-		"sslkey": "--sslkey",
-		"cors": "--cors",
-		"dir": "--pact_dir",
-		"spec": "--pact_specification_version",
-		"pactFileWriteMode": "--pact-file-write-mode",
-		"consumer": "--consumer",
-		"provider": "--provider"
-	};
 
 	constructor(options: ServerOptions) {
-		super(`${pact.mockServicePath} service`, options);
+		super(`${pact.mockServicePath} service`, options, {
+			"port": "--port",
+			"host": "--host",
+			"log": "--log",
+			"ssl": "--ssl",
+			"sslcert": "--sslcert",
+			"sslkey": "--sslkey",
+			"cors": "--cors",
+			"dir": "--pact_dir",
+			"spec": "--pact_specification_version",
+			"pactFileWriteMode": "--pact-file-write-mode",
+			"consumer": "--consumer",
+			"provider": "--provider"
+		});
 	}
 }
 

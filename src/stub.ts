@@ -18,19 +18,18 @@ export class Stub extends AbstractService {
 	}
 
 	public readonly options: StubOptions;
-	protected readonly __argMapping = {
-		"pactUrls": DEFAULT_ARG,
-		"port": "--port",
-		"host": "--host",
-		"log": "--log",
-		"ssl": "--ssl",
-		"sslcert": "--sslcert",
-		"sslkey": "--sslkey",
-		"cors": "--cors",
-	};
 
 	constructor(options: StubOptions) {
-		super(`${pact.stubPath}`, options);
+		super(`${pact.stubPath}`, options, {
+			"pactUrls": DEFAULT_ARG,
+			"port": "--port",
+			"host": "--host",
+			"log": "--log",
+			"ssl": "--ssl",
+			"sslcert": "--sslcert",
+			"sslkey": "--sslkey",
+			"cors": "--cors",
+		});
 	}
 }
 

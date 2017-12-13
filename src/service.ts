@@ -25,12 +25,12 @@ export abstract class AbstractService extends events.EventEmitter {
 	}
 
 	public readonly options: ServiceOptions;
-	protected abstract readonly __argMapping: any;
+	protected __argMapping: any;
 	protected __running: boolean;
 	protected __instance: ChildProcess;
 	protected __serviceCommand: string;
 
-	constructor(command: string, options: ServiceOptions) {
+	constructor(command: string, options: ServiceOptions, argMapping: any) {
 		super();
 
 		// defaults
@@ -102,6 +102,7 @@ export abstract class AbstractService extends events.EventEmitter {
 		this.options = options;
 		this.__running = false;
 		this.__serviceCommand = command;
+		this.__argMapping = argMapping;
 	}
 
 	public start(): q.Promise<AbstractService> {
