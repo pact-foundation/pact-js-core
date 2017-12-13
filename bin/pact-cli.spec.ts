@@ -6,6 +6,8 @@ import path = require("path");
 import {ChildProcess} from "child_process";
 import {ServerOptions} from "../src/server";
 import providerMock from "../test/integration/provider-mock";
+import brokerMock from "../test/integration/broker-mock";
+import * as http from "http";
 const decamelize = require("decamelize");
 const _ = require("underscore");
 
@@ -63,8 +65,8 @@ describe("Pact CLI Spec", () => {
 			return expect(CLI.runSync(["verify"]).then((cp) => cp.stderr)).to.eventually.contain("Must provide the providerBaseUrl argument");
 		});
 
-		context("with mock broker", () => {
-			let server: any;
+		context("with provider mock", () => {
+			let server: http.Server;
 			const PORT = 9123;
 			const providerBaseUrl = `http://localhost:${PORT}`;
 
@@ -73,6 +75,35 @@ describe("Pact CLI Spec", () => {
 
 			it("should work pointing to fake broker", () => {
 				const p = CLI.runSync(["verify", "--provider-base-url", providerBaseUrl, "--pact-urls", path.resolve(__dirname, "integration/me-they-success.json")]).then((cp) => cp.stdout);
+				return expect(p).to.eventually.be.fulfilled;
+			});
+		});
+	});
+
+	describe("Publish Command", () => {
+		it("should display help", () => {
+			const p = CLI.runSync(["publish", "--help"]).then((cp) => cp.stdout);
+			return q.all([
+				expect(p).to.eventually.contain("USAGE"),
+				expect(p).to.eventually.contain("pact publish")
+			]);
+		});
+
+		it("should fail if missing 'provider-base-url' argument", () => {
+			return expect(CLI.runSync(["verify"]).then((cp) => cp.stderr)).to.eventually.contain("Must provide the providerBaseUrl argument");
+		});
+
+		context("with broker mock", () => {
+			const PORT = 9123;
+			const brokerBaseUrl = `http://localhost:${PORT}`;
+			const currentDir = (process && process.mainModule) ? process.mainModule.filename : "";
+			let server: http.Server;
+
+			before(() => brokerMock(PORT).then((s) => server = s));
+			after(() => server.close());
+
+			it("should work pointing to fake broker", () => {
+				const p = CLI.runSync(["publish", "--pact-files-or-dirs", path.dirname(currentDir), "--consumer-version", "1.0.0", "--pact-broker", brokerBaseUrl]).then((cp) => cp.stdout);
 				return expect(p).to.eventually.be.fulfilled;
 			});
 		});
