@@ -98,7 +98,7 @@ export class Pact {
 
 	// Remove all the servers and stubs
 	public removeAll(): q.Promise<any> {
-		return q.all<any>([this.removeAllStubs(), this.removeAllServers()]);
+		return q.all<any>(_.flatten([this.removeAllStubs(), this.removeAllServers()]));
 	}
 
 	// Run the Pact Verification process
