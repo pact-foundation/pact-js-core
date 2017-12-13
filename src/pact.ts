@@ -5,8 +5,7 @@ import verifierFactory, {VerifierOptions} from "./verifier";
 import publisherFactory, {PublisherOptions} from "./publisher";
 import logger, {LogLevels} from "./logger";
 import { AbstractService } from "./service";
-
-const _ = require("underscore");
+import * as _ from "underscore";
 
 export class Pact {
 	private __servers: Server[] = [];
