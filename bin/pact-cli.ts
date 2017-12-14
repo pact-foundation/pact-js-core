@@ -2,7 +2,6 @@
 
 import pact from "../src/pact";
 const cli = require("caporal");
-
 const pkg = require("../package.json");
 
 cli
@@ -21,7 +20,7 @@ cli
 	.option("-o, --cors <boolean>", "Support browser security in tests by responding to OPTIONS requests and adding CORS headers to mocked responses. Default is false.", cli.BOOL)
 	.option("-d, --pact-dir <directory>", "Directory to which the pacts will be written. Default is cwd.")
 	.option("-i, --pact-version <n>", "The Pact specification version to use when writing the Pact files. Default is 1.", cli.INT)
-	.option("-w, --pact-file-write-mode <m>", "Controls how pact files are written to disk. One of 'overwrite', 'update', 'merge'")
+	.option("-w, --pact-file-write-mode <m>", "Controls how pact files are written to disk. One of 'overwrite', 'update', 'merge'", /^overwrite|update|merge$/)
 	.option("--consumer <consumerName>", "Specify consumer name for written Pact files.")
 	.option("--provider <providerName>", "Specify provider name for written Pact files.")
 	.action((args: any, options: any) => pact.createServer(options).start());
@@ -53,5 +52,16 @@ cli
 	.option("-pub, --publish-verification-result", "Publish verification result to Broker.")
 	.option("-c, --custom-provider-header", "Header to add to provider state set up and pact verification requests. eg 'Authorization: Basic cGFjdDpwYWN0'.", cli.LIST)
 	.action((args: any, options: any) => pact.verifyPacts(options));
+
+cli
+	.command("publish")
+	.description("Publishes Pact Contracts to the broker")
+	.option("-p, --pact-files-or-dirs <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, null, true)
+	.option("-c, --consumer-version <version>", "Semver-style version of the consumer e.g. 1.0.0.", /^\d+\.\d+\.\d+$/, null, true)
+	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.")
+	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
+	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
+	.option("-t, --tags <tags>", "Comma separated list of tags to attach to the Pact Contracts being published", cli.LIST)
+	.action((args: any, options: any) => pact.publishPacts(options));
 
 cli.parse(process.argv);
