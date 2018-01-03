@@ -226,12 +226,12 @@ pact.publishPacts(opts).then(function () {
 
 |Parameter              | Required?  | Type        | Description |
 |-----------------------|------------|-------------|-------------|
-| `pactFilesOrDirs` 	| false | array  | Array of local Pact files or directories containing them. Required. |
+| `pactFilesOrDirs` 	| true | array  | Array of local Pact files or directories containing them. Required. |
 | `pactBroker` 			| false | string | URL to fetch the provider states for the given provider API. Optional. |
 | `pactBrokerUsername`	| false | string | Username for Pact Broker basic authentication. Optional |
 | `pactBrokerPassword` 	| false | string | Password for Pact Broker basic authentication. Optional, |
 | `tags` 				| false | array  | An array of Strings to tag the Pacts being published. Optional |
-| `consumerVersion` 	| false | string | A string containing a semver-style version e.g. 1.0.0. Required. |
+| `consumerVersion` 	| true | string | A string containing a semver-style version e.g. 1.0.0. Required. |
 
 
 ### Stub Servers
