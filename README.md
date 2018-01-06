@@ -27,7 +27,7 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
             - [Check if a Mock server is running](#check-if-a-mock-server-is-running)
             - [Mock Server Events](#mock-server-events)
         - [Provider Verification](#provider-verification)
-        - [Pact Broker publishing](#pact-broker-publishing)
+        - [Pact Broker Publishing](#pact-broker-publishing)
         - [Stub Servers](#stub-servers)
             - [Create Stub Server](#create-stub-server)
     - [Contributing](#contributing)
