@@ -33,7 +33,7 @@ cli
 	.option("-l, --log <file>", "File to which to log output to.")
 	.option("-s, --ssl <boolean>", "Use a self-signed SSL cert to run the service over HTTPS. Default is false (HTTP).", cli.BOOL)
 	.option("-o, --cors <boolean>", "Support browser security in tests by responding to OPTIONS requests and adding CORS headers to mocked responses. Default is false.", cli.BOOL)
-	.option("-i, --pact-version <n>", "The Pact specification version to use when writing the Pact files. Default is 1.", cli.INT)
+	.option("-i, --pact-version <n>", "Thea Pact specification version to use when writing the Pact files. Default is 1.", cli.INT)
 	.option("-u, --pact-urls <URLs>", "Comma separated list of local Pact files", cli.LIST)
 	.action((args: any, options: any) => pact.createStub(options).start());
 
@@ -58,7 +58,7 @@ cli
 	.description("Publishes Pact Contracts to the broker")
 	.option("-p, --pact-files-or-dirs <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, null, true)
 	.option("-c, --consumer-version <version>", "Semver-style version of the consumer e.g. 1.0.0.", /^\d+\.\d+\.\d+$/, null, true)
-	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.")
+	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", null, null, true)
 	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
 	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
 	.option("-t, --tags <tags>", "Comma separated list of tags to attach to the Pact Contracts being published", cli.LIST)

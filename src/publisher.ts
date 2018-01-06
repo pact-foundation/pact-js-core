@@ -9,18 +9,21 @@ export class Publisher {
 	public static create(options: PublisherOptions): Publisher {
 		options = options || {};
 		// Setting defaults
-		options.pactBroker = options.pactBroker || "";
-		options.pactFilesOrDirs = options.pactFilesOrDirs || [];
 		options.tags = options.tags || [];
 		options.timeout = options.timeout || 60000;
+
+		checkTypes.assert.nonEmptyString(options.pactBroker, "Must provide the pactBroker argument");
+		checkTypes.assert.nonEmptyString(options.consumerVersion, "Must provide the consumerVersion argument");
+		checkTypes.assert.arrayLike(options.pactFilesOrDirs, "Must provide the pactFilesOrDirs argument");
+		checkTypes.assert.nonEmptyArray(options.pactFilesOrDirs, "Must provide the pactFilesOrDirs argument with an array");
 
 		if (options.pactFilesOrDirs) {
 			checkTypes.assert.array.of.string(options.pactFilesOrDirs);
 		}
 
-		checkTypes.assert.nonEmptyString(options.pactBroker, "Must provide the pactBroker argument");
-		checkTypes.assert.nonEmptyString(options.consumerVersion, "Must provide the consumerVersion argument");
-		checkTypes.assert.not.emptyArray(options.pactFilesOrDirs, "Must provide the pactFilesOrDirs argument");
+		if (options.pactBroker) {
+			checkTypes.assert.string(options.pactBroker);
+		}
 
 		if (options.pactBrokerUsername) {
 			checkTypes.assert.string(options.pactBrokerUsername);
@@ -32,10 +35,6 @@ export class Publisher {
 
 		if ((options.pactBrokerUsername && !options.pactBrokerPassword) || (options.pactBrokerPassword && !options.pactBrokerUsername)) {
 			throw new Error("Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.");
-		}
-
-		if (options.pactBroker) {
-			checkTypes.assert.string(options.pactBroker);
 		}
 
 		return new Publisher(options);
@@ -52,7 +51,7 @@ export class Publisher {
 		"verbose": "--verbose"
 	};
 
-	constructor(options: PublisherOptions = {}) {
+	constructor(options: PublisherOptions) {
 		this.options = options;
 	}
 
@@ -83,9 +82,9 @@ export class Publisher {
 export default Publisher.create;
 
 export interface PublisherOptions extends SpawnArguments {
-	pactFilesOrDirs?: string[];
-	pactBroker?: string;
-	consumerVersion?: string;
+	pactFilesOrDirs: string[];
+	pactBroker: string;
+	consumerVersion: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
 	tags?: string[];

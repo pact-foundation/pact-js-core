@@ -209,7 +209,8 @@ pact.verifyPacts({
 | `timeout` | false | number |  The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.
 
 
-### Pact Broker publishing
+### Pact Broker Publishing
+
 
 ```js
 var pact = require('@pact-foundation/pact-node');
@@ -226,12 +227,12 @@ pact.publishPacts(opts).then(function () {
 
 |Parameter              | Required?  | Type        | Description |
 |-----------------------|------------|-------------|-------------|
-| `pactFilesOrDirs` 	| false | array  | Array of local Pact files or directories containing them. Required. |
-| `pactBroker` 			| false | string | URL to fetch the provider states for the given provider API. Optional. |
+| `pactFilesOrDirs` 	| true  | array  | Array of local Pact files or directories containing them. Required. |
+| `pactBroker` 			| true  | string | URL of the Pact Broker to publish pacts to. Required. |
+| `consumerVersion` 	| true  | string | A string containing a semver-style version e.g. 1.0.0. Required. |
 | `pactBrokerUsername`	| false | string | Username for Pact Broker basic authentication. Optional |
 | `pactBrokerPassword` 	| false | string | Password for Pact Broker basic authentication. Optional, |
 | `tags` 				| false | array  | An array of Strings to tag the Pacts being published. Optional |
-| `consumerVersion` 	| false | string | A string containing a semver-style version e.g. 1.0.0. Required. |
 
 
 ### Stub Servers

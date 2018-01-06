@@ -253,7 +253,7 @@ describe("Pact Spec", () => {
 		it("should start running the Pact publishing process", () => {
 			let opts = {
 				pactBroker: "http://localhost",
-				pactUrls: [path.dirname(currentDir)],
+				pactFilesOrDirs: [path.dirname(currentDir)],
 				consumerVersion: "1.0.0"
 			};
 			return expect(pact.publishPacts(opts)).to.eventually.be.fulfilled;
