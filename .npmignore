@@ -44,3 +44,8 @@ package.zip
 # ts-node cache
 ts-node-*
 
+# ignore the TypeScript sources as compiled JS is published
+*.ts
+
+# include TypeScript definitions to go with compiled JS
+!*.d.ts
