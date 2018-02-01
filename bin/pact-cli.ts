@@ -11,8 +11,7 @@ cli
 	.version(pkg.version);
 
 cli
-	.command("mock")
-	.description("Creates a pact mock service to start contract testing")
+	.command("mock", "Creates a pact mock service to start contract testing")
 	.option("-p, --port <n>", "Port on which to run the service. Default is random.", cli.INT)
 	.option("-h, --host <hostname>", "Host on which to bind the service. Default is localhost.")
 	.option("-l, --log <file>", "File to which to log output to.")
@@ -26,8 +25,7 @@ cli
 	.action((args: any, options: any) => pact.createServer(options).start());
 
 cli
-	.command("stub")
-	.description("Creates an API stub from pact files")
+	.command("stub", "Creates an API stub from pact files")
 	.option("-p, --port <n>", "Port on which to run the service. Default is random.", cli.INT)
 	.option("-h, --host <hostname>", "Host on which to bind the service. Default is localhost.")
 	.option("-l, --log <file>", "File to which to log output to.")
@@ -38,8 +36,7 @@ cli
 	.action((args: any, options: any) => pact.createStub(options).start());
 
 cli
-	.command("verify")
-	.description("Verifies Pact Contracts on the current provider")
+	.command("verify", "Verifies Pact Contracts on the current provider")
 	.option("-b, --provider-base-url <URL>", "The Pact Provider base URL.")
 	.option("-u, --pact-urls <URLs>", "Comma separated list of Pact files or URIs.", cli.LIST)
 	.option("-p, --provider <name>", "Name of the Provider to verify. Required if not using --pact-urls.")
@@ -54,11 +51,10 @@ cli
 	.action((args: any, options: any) => pact.verifyPacts(options));
 
 cli
-	.command("publish")
-	.description("Publishes Pact Contracts to the broker")
-	.option("-p, --pact-files-or-dirs <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, null, true)
-	.option("-c, --consumer-version <version>", "Semver-style version of the consumer e.g. 1.0.0.", /^\d+\.\d+\.\d+$/, null, true)
-	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", null, null, true)
+	.command("publish", "Publishes Pact Contracts to the broker")
+	.option("-p, --pact-files-or-dirs <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
+	.option("-c, --consumer-version <version>", "Semver-style version of the consumer e.g. 1.0.0.", /^\d+\.\d+\.\d+$/, undefined, true)
+	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
 	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
 	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
 	.option("-t, --tags <tags>", "Comma separated list of tags to attach to the Pact Contracts being published", cli.LIST)

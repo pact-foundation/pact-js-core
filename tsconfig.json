@@ -19,7 +19,6 @@
 		"noUnusedLocals": true
 	},
 	"include": [
-		"**/*.ts",
 		"**/*.ts"
 	],
 	"exclude": [

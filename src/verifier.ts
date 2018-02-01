@@ -1,6 +1,6 @@
 import path = require("path");
 import url = require("url");
-import Broker from "./broker";
+import brokerFactory from "./broker";
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 import q = require("q");
@@ -114,7 +114,7 @@ export class Verifier {
 		return q(this.options.pactUrls)
 		.then((uris) => {
 				if (!uris || uris.length === 0) {
-					return new Broker({
+					return brokerFactory({
 						brokerUrl: this.options.pactBrokerUrl,
 						provider: this.options.provider,
 						username: this.options.pactBrokerUsername,
