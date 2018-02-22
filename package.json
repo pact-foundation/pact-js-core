@@ -91,6 +91,7 @@
     "typescript": "2.4.2"
   },
   "scripts": {
+    "postinstall": "node postinstall.js",
     "clean": "rimraf '{src,test,bin}/**/*.{js,map,d.ts}' 'package.zip' '.tmp'",
     "lint": "tslint -p tsconfig.json",
     "pretest": "npm run build",

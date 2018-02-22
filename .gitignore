@@ -49,3 +49,5 @@ package.zip
 # ts-node cache
 ts-node-*
 
+# pact standalone binaries
+binaries/*.zip
