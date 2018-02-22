@@ -45,7 +45,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@pact-foundation/pact-standalone": "3.6.0",
+    "@pact-foundation/pact-standalone": "3.7.0",
     "@types/bunyan": "1.8.2",
     "@types/q": "1.0.6",
     "bunyan": "1.8.12",
