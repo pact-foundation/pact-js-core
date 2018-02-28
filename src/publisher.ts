@@ -1,12 +1,28 @@
 import q = require("q");
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
+import {deprecate} from "util";
+
 const pactStandalone = require("@pact-foundation/pact-standalone");
 const checkTypes = require("check-types");
 
 export class Publisher {
+	public static create = deprecate(
+		(options: PublisherOptions) => new Publisher(options),
+		"Create function will be removed in future release, please use the default export function or use `new Publisher()`");
 
-	public static create(options: PublisherOptions): Publisher {
+	public readonly options: PublisherOptions;
+	private readonly __argMapping = {
+		"pactFilesOrDirs": DEFAULT_ARG,
+		"pactBroker": "--broker-base-url",
+		"pactBrokerUsername": "--broker-username",
+		"pactBrokerPassword": "--broker-password",
+		"tags": "--tag",
+		"consumerVersion": "--consumer-app-version",
+		"verbose": "--verbose"
+	};
+
+	constructor(options: PublisherOptions) {
 		options = options || {};
 		// Setting defaults
 		options.tags = options.tags || [];
@@ -37,21 +53,6 @@ export class Publisher {
 			throw new Error("Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.");
 		}
 
-		return new Publisher(options);
-	}
-
-	public readonly options: PublisherOptions;
-	private readonly __argMapping = {
-		"pactFilesOrDirs": DEFAULT_ARG,
-		"pactBroker": "--broker-base-url",
-		"pactBrokerUsername": "--broker-username",
-		"pactBrokerPassword": "--broker-password",
-		"tags": "--tag",
-		"consumerVersion": "--consumer-app-version",
-		"verbose": "--verbose"
-	};
-
-	constructor(options: PublisherOptions) {
 		this.options = options;
 	}
 
@@ -79,7 +80,7 @@ export class Publisher {
 	}
 }
 
-export default Publisher.create;
+export default (options: PublisherOptions) => new Publisher(options);
 
 export interface PublisherOptions extends SpawnArguments {
 	pactFilesOrDirs: string[];

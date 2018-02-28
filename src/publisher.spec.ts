@@ -3,7 +3,7 @@
 import path = require("path");
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
-import publisherFactory from "./publisher";
+import publisherFactory, {PublisherOptions} from "./publisher";
 import logger from "./logger";
 import brokerMock from "../test/integration/broker-mock";
 import * as http from "http";
@@ -31,7 +31,7 @@ describe("Publish Spec", () => {
 					publisherFactory({
 						pactBroker: "http://localhost",
 						consumerVersion: "1.0.0"
-					});
+					} as PublisherOptions);
 				}).to.throw(Error);
 			});
 		});
@@ -42,7 +42,7 @@ describe("Publish Spec", () => {
 					publisherFactory({
 						pactFilesOrDirs: [path.dirname(currentDir)],
 						consumerVersion: "1.0.0"
-					});
+					} as PublisherOptions);
 				}).to.throw(Error);
 			});
 		});
@@ -53,7 +53,7 @@ describe("Publish Spec", () => {
 					publisherFactory({
 						pactBroker: "http://localhost",
 						pactFilesOrDirs: [path.dirname(currentDir)]
-					});
+					} as PublisherOptions);
 				}).to.throw(Error);
 			});
 		});
@@ -64,7 +64,7 @@ describe("Publish Spec", () => {
 					publisherFactory({
 						pactBroker: "http://localhost",
 						pactFilesOrDirs: ["./test.json"]
-					});
+					} as PublisherOptions);
 				}).to.throw(Error);
 			});
 		});

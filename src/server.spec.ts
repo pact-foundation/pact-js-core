@@ -58,7 +58,7 @@ describe("Server Spec", () => {
 			it("should fail if incorrect pactFileWriteMode provided", () => {
 				expect(() => serverFactory({
 					pactFileWriteMode: "notarealoption",
-				})).to.throw(Error);
+				} as any)).to.throw(Error);
 			});
 		});
 

@@ -1,14 +1,23 @@
 // tslint:disable:no-string-literal
-import { AbstractService } from "./service";
+import {AbstractService} from "./service";
 import path = require("path");
 import fs = require("fs");
 import {SpawnArguments} from "./pact-util";
+import {deprecate} from "util";
+
 const mkdirp = require("mkdirp");
 const pact = require("@pact-foundation/pact-standalone");
 const checkTypes = require("check-types");
 
 export class Server extends AbstractService {
-	public static create(options: ServerOptions = {}): Server {
+	public static create = deprecate(
+		(options?: ServerOptions) => new Server(options),
+		"Create function will be removed in future release, please use the default export function or use `new Server()`");
+
+	public readonly options: ServerOptions;
+
+	constructor(options?: ServerOptions) {
+		options = options || {};
 		options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
 		options.pactFileWriteMode = options.pactFileWriteMode || "overwrite";
 
@@ -41,12 +50,6 @@ export class Server extends AbstractService {
 		// pactFileWriteMode check
 		checkTypes.assert.includes(["overwrite", "update", "merge"], options.pactFileWriteMode);
 
-		return new Server(options);
-	}
-
-	public readonly options: ServerOptions;
-
-	constructor(options: ServerOptions) {
 		super(`${pact.mockServicePath} service`, options, {
 			"port": "--port",
 			"host": "--host",
@@ -65,7 +68,7 @@ export class Server extends AbstractService {
 }
 
 // Creates a new instance of the pact server with the specified option
-export default Server.create;
+export default (options?: ServerOptions) => new Server(options);
 
 export interface ServerOptions extends SpawnArguments {
 	port?: number;
