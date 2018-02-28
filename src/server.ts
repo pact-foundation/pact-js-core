@@ -21,14 +21,12 @@ export class Server extends AbstractService {
 		options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
 		options.pactFileWriteMode = options.pactFileWriteMode || "overwrite";
 
-		// spec checking
 		if (options.spec) {
 			checkTypes.assert.number(options.spec);
 			checkTypes.assert.integer(options.spec);
 			checkTypes.assert.positive(options.spec);
 		}
 
-		// dir check
 		if (options.dir) {
 			try {
 				fs.statSync(path.normalize(options.dir)).isDirectory();
@@ -37,18 +35,24 @@ export class Server extends AbstractService {
 			}
 		}
 
-		// consumer name check
 		if (options.consumer) {
 			checkTypes.assert.string(options.consumer);
 		}
 
-		// provider name check
 		if (options.provider) {
 			checkTypes.assert.string(options.provider);
 		}
 
-		// pactFileWriteMode check
 		checkTypes.assert.includes(["overwrite", "update", "merge"], options.pactFileWriteMode);
+
+		if (options.monkeypatch) {
+			checkTypes.assert.string(options.monkeypatch);
+			try {
+				fs.statSync(path.normalize(options.monkeypatch)).isFile();
+			} catch (e) {
+				throw new Error(`Monkeypatch ruby file not found at path: ${options.monkeypatch}`);
+			}
+		}
 
 		super(`${pact.mockServicePath} service`, options, {
 			"port": "--port",
@@ -62,7 +66,8 @@ export class Server extends AbstractService {
 			"spec": "--pact_specification_version",
 			"pactFileWriteMode": "--pact-file-write-mode",
 			"consumer": "--consumer",
-			"provider": "--provider"
+			"provider": "--provider",
+			"monkeypatch": "--monkeypatch"
 		});
 	}
 }
@@ -82,5 +87,6 @@ export interface ServerOptions extends SpawnArguments {
 	spec?: number;
 	consumer?: string;
 	provider?: string;
+	monkeypatch?: string;
 	pactFileWriteMode?: "overwrite" | "update" | "merge";
 }

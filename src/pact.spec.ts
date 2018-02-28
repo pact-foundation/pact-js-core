@@ -6,14 +6,13 @@ import pact from "./pact";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
-const currentDir = (process && process.mainModule) ? process.mainModule.filename : "";
 
 describe("Pact Spec", () => {
 	afterEach(() => pact.removeAllServers());
 
 	describe("Set Log Level", () => {
 		let originalLogLevel: any;
-		// Reset lot level after the tests
+		// Reset log level after the tests
 		before(() => originalLogLevel = pact.logLevel());
 		after(() => pact.logLevel(originalLogLevel));
 
@@ -52,17 +51,17 @@ describe("Pact Spec", () => {
 
 	describe("Create serverFactory", () => {
 		let dirPath: string;
+		const monkeypatchFile: string = path.resolve(__dirname, "../test/monkeypatch.rb");
 
 		beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
 
-		afterEach((done) => {
+		afterEach(() => {
 			try {
 				if (fs.statSync(dirPath).isDirectory()) {
 					fs.rmdirSync(dirPath);
 				}
 			} catch (e) {
 			}
-			done();
 		});
 
 		context("when no options are set", () => {
@@ -88,7 +87,8 @@ describe("Pact Spec", () => {
 					log: "log.txt",
 					spec: 1,
 					consumer: "consumerName",
-					provider: "providerName"
+					provider: "providerName",
+					monkeypatch: monkeypatchFile
 				};
 				let server = pact.createServer(options);
 				expect(server).to.be.an("object");
@@ -102,6 +102,7 @@ describe("Pact Spec", () => {
 				expect(server.options.spec).to.equal(options.spec);
 				expect(server.options.consumer).to.equal(options.consumer);
 				expect(server.options.provider).to.equal(options.provider);
+				expect(server.options.monkeypatch).to.equal(options.monkeypatch);
 			});
 		});
 
@@ -159,13 +160,6 @@ describe("Pact Spec", () => {
 			});
 		});
 
-		context("when user specifies invalid log", () => {
-			it("should return an error on invalid path", () => {
-				pact.createServer({log: path.resolve(dirPath, "log.txt")});
-				expect(fs.statSync(dirPath).isDirectory()).to.be.true;
-			});
-		});
-
 		context("when user specifies invalid spec", () => {
 			it("should return an error on non-number", () => {
 				expect(() => pact.createServer({spec: "1"} as any)).to.throw(Error);
@@ -193,6 +187,14 @@ describe("Pact Spec", () => {
 		context("when user specifies invalid provider name", () => {
 			it("should return an error on non-string", () => {
 				expect(() => pact.createServer({provider: 2341} as any)).to.throw(Error);
+			});
+		});
+
+		context("when user specifies invalid monkeypatch", () => {
+			it("should return an error on invalid path", () => {
+				expect(() => {
+					pact.createServer({monkeypatch: "some-ruby-file.rb"});
+				}).to.throw(Error);
 			});
 		});
 	});
@@ -235,29 +237,4 @@ describe("Pact Spec", () => {
 			});
 		});
 	});
-
-	// These tests never worked because the expect was wrong.  When fixed, massive issue ensues
-	describe.skip("Verify Pacts", () => {
-		context("With provider states", () => {
-			it("should start the pact-provider-verifier service and verify pacts", () => {
-				let opts = {
-					providerBaseUrl: "http://localhost",
-					pactUrls: [path.dirname(currentDir)]
-				};
-				return expect(pact.verifyPacts(opts)).to.eventually.be.fulfilled;
-			});
-		});
-	});
-
-	describe.skip("Publish Pacts", () => {
-		it("should start running the Pact publishing process", () => {
-			let opts = {
-				pactBroker: "http://localhost",
-				pactFilesOrDirs: [path.dirname(currentDir)],
-				consumerVersion: "1.0.0"
-			};
-			return expect(pact.publishPacts(opts)).to.eventually.be.fulfilled;
-		});
-	});
-})
-;
+});

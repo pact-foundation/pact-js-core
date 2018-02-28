@@ -15,6 +15,7 @@ describe("Verifier Integration Spec", () => {
 	const providerBaseUrl = `http://localhost:${PORT}`;
 	const providerStatesSetupUrl = `${providerBaseUrl}/provider-state`;
 	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
+	const monkeypatchFile: string = path.resolve(__dirname, "monkeypatch.rb");
 
 	before(() => providerMock(PORT).then((s) => {
 		console.log(`Pact Broker Mock listening on port: ${PORT}`);
@@ -60,6 +61,17 @@ describe("Verifier Integration Spec", () => {
 				const verifier = verifierFactory({
 					providerBaseUrl: providerBaseUrl,
 					pactUrls: [path.resolve(__dirname, "integration/me-they-post-regex-success.json")]
+				});
+				return expect(verifier.verify()).to.eventually.be.fulfilled;
+			});
+		});
+
+		context("with monkeypatch file specified", () => {
+			it("should return a successful promise", () => {
+				const verifier = verifierFactory({
+					providerBaseUrl: providerBaseUrl,
+					pactUrls: [path.resolve(__dirname, "integration/me-they-success.json")],
+					monkeypatch: monkeypatchFile
 				});
 				return expect(verifier.verify()).to.eventually.be.fulfilled;
 			});

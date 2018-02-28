@@ -1,5 +1,0 @@
---bail
---reporter spec
---colors
---recursive
---timeout 15000

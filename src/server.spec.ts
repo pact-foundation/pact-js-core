@@ -13,6 +13,7 @@ const expect = chai.expect;
 
 describe("Server Spec", () => {
 	let server: any;
+	const monkeypatchFile: string = path.resolve(__dirname, "../test/monkeypatch.rb");
 
 	afterEach(() => server ? server.delete() : null);
 
@@ -67,14 +68,13 @@ describe("Server Spec", () => {
 
 			beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
 
-			afterEach((done) => {
+			afterEach(() => {
 				try {
 					if (fs.statSync(dirPath).isDirectory()) {
 						fs.rmdirSync(dirPath);
 					}
 				} catch (e) {
 				}
-				done();
 			});
 
 			it("should start correctly when instance is delayed", () => {
@@ -169,6 +169,12 @@ describe("Server Spec", () => {
 				const providerName = "pName";
 				server = serverFactory({provider: providerName});
 				expect(server.options.provider).to.equal(providerName);
+				return expect(server.start()).to.eventually.be.fulfilled;
+			});
+
+			it("should start correctly with monkeypatch", () => {
+				const server = serverFactory({monkeypatch: monkeypatchFile});
+				expect(server.options.monkeypatch).to.equal(monkeypatchFile);
 				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 		});

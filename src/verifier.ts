@@ -109,6 +109,15 @@ export class Verifier {
 
 		checkTypes.assert.positive(options.timeout);
 
+		if (options.monkeypatch) {
+			checkTypes.assert.string(options.monkeypatch);
+			try {
+				fs.statSync(path.normalize(options.monkeypatch)).isFile();
+			} catch (e) {
+				throw new Error(`Monkeypatch ruby file not found at path: ${options.monkeypatch}`);
+			}
+		}
+
 		this.options = options;
 	}
 
@@ -163,4 +172,5 @@ export interface VerifierOptions extends SpawnArguments {
 	pactBrokerUrl?: string;
 	tags?: string[];
 	timeout?: number;
+	monkeypatch?: string;
 }
