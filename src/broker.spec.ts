@@ -2,7 +2,7 @@ import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import logger from "./logger";
 import brokerMock from "../test/integration/broker-mock";
-import brokerFactory from "./broker";
+import brokerFactory, {BrokerOptions} from "./broker";
 import * as http from "http";
 
 const expect = chai.expect;
@@ -25,7 +25,7 @@ describe("Broker Spec", () => {
 			it("should fail with an error", () => {
 				expect(() => brokerFactory({
 					provider: "foobar"
-				})).to.throw(Error);
+				} as BrokerOptions)).to.throw(Error);
 			});
 		});
 		context("when not given a Provider name", () => {
@@ -33,7 +33,7 @@ describe("Broker Spec", () => {
 				expect(() => {
 					brokerFactory({
 						brokerUrl: "http://test.pact.dius.com.au"
-					});
+					} as BrokerOptions);
 				}).to.throw(Error);
 			});
 		});

@@ -1,5 +1,5 @@
-import bunyan = require("bunyan");
-import PrettyStream = require("bunyan-prettystream");
+import * as bunyan from "bunyan";
+const PrettyStream = require("bunyan-prettystream");
 
 const pkg = require("../package.json");
 const prettyStdOut = new PrettyStream();

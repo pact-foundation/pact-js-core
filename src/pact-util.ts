@@ -1,10 +1,10 @@
 // tslint:disable:no-string-literal
-import _ = require("underscore");
-import checkTypes = require("check-types");
-import pactStandalone = require("@pact-foundation/pact-standalone");
 import cp = require("child_process");
 import logger from "./logger";
 import {ChildProcess, SpawnOptions} from "child_process";
+const _ = require("underscore");
+const checkTypes = require("check-types");
+const pactStandalone = require("@pact-foundation/pact-standalone");
 
 const isWindows = process.platform === "win32";
 
@@ -13,15 +13,15 @@ export const DEFAULT_ARG = "DEFAULT";
 export class PactUtil {
 	public createArguments(args: SpawnArguments, mappings: { [id: string]: string }): string[] {
 		return _.chain(args)
-			.reduce((acc, value, key) => {
+			.reduce((acc: any, value: any, key: any) => {
 				if (value && mappings[key]) {
 					let mapping = mappings[key];
 					let f = acc.push.bind(acc);
 					if (mapping === DEFAULT_ARG) {
-						mapping = null;
+						mapping = "";
 						f = acc.unshift.bind(acc);
 					}
-					_.map(checkTypes.array(value) ? value : [value], (v) => f([mapping, `'${v}'`]));
+					_.map(checkTypes.array(value) ? value : [value], (v: any) => f([mapping, `'${v}'`]));
 				}
 				return acc;
 			}, [])
@@ -92,7 +92,7 @@ export class PactUtil {
 }
 
 export interface SpawnArguments {
-	[id: string]: string | string[] | boolean | number;
+	[id: string]: string | string[] | boolean | number | undefined;
 }
 
 export default new PactUtil();

@@ -1,10 +1,10 @@
-import cors = require("cors");
-import _ = require("underscore");
 import q = require("q");
 import express = require("express");
-import bodyParser = require("body-parser");
 import * as http from "http";
 import {auth, returnJson} from "./data-utils";
+const cors = require("cors");
+const _ = require("underscore");
+const bodyParser = require("body-parser");
 
 export default (port: number): q.Promise<http.Server> => {
 	const BROKER_HOST = `http://localhost:${port}`;

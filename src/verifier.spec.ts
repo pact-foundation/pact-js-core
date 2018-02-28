@@ -1,10 +1,11 @@
 import path = require("path");
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
-import verifierFactory from "./verifier";
+import verifierFactory, {VerifierOptions} from "./verifier";
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
+const currentDir = (process && process.mainModule) ? process.mainModule.filename : "";
 
 describe("Verifier Spec", () => {
 	describe("Verifier", () => {
@@ -42,13 +43,15 @@ describe("Verifier Spec", () => {
 
 		context("when not given --pact-urls or --provider-base-url", () => {
 			it("should fail with an error", () => {
-				expect(() => verifierFactory({})).to.throw(Error);
+				expect(() => verifierFactory({} as VerifierOptions)).to.throw(Error);
 			});
 		});
 
 		context("when given --provider-states-setup-url", () => {
 			it("should fail with an error", () => {
-				expect(() => verifierFactory({"providerStatesSetupUrl": "http://foo/provider-states/setup"})).to.throw(Error);
+				expect(() => verifierFactory({
+					"providerStatesSetupUrl": "http://foo/provider-states/setup"
+				} as VerifierOptions)).to.throw(Error);
 			});
 		});
 
@@ -98,7 +101,7 @@ describe("Verifier Spec", () => {
 			it("should not fail", () => {
 				expect(() => verifierFactory({
 					providerBaseUrl: "http://localhost",
-					pactUrls: [path.dirname(process.mainModule.filename)]
+					pactUrls: [path.dirname(currentDir)]
 				})).to.not.throw(Error);
 			});
 		});

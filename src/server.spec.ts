@@ -12,7 +12,7 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 describe("Server Spec", () => {
-	let server;
+	let server: any;
 
 	afterEach(() => server ? server.delete() : null);
 
@@ -54,10 +54,16 @@ describe("Server Spec", () => {
 					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
 				})).to.throw(Error);
 			});
+
+			it("should fail if incorrect pactFileWriteMode provided", () => {
+				expect(() => serverFactory({
+					pactFileWriteMode: "notarealoption",
+				} as any)).to.throw(Error);
+			});
 		});
 
 		context("when valid options are set", () => {
-			let dirPath;
+			let dirPath: string;
 
 			beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
 
@@ -73,8 +79,8 @@ describe("Server Spec", () => {
 
 			it("should start correctly when instance is delayed", () => {
 				server = serverFactory();
-				const waitForServerUp = (server as any)["__waitForServerUp"].bind(server);
 
+				const waitForServerUp = (server as any)["__waitForServiceUp"].bind(server);
 				return q.allSettled([
 					waitForServerUp(server.options),
 					q.delay(5000).then(() => server.start())

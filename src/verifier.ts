@@ -1,18 +1,37 @@
-import checkTypes = require("check-types");
 import path = require("path");
-import q = require("q");
-import _ = require("underscore");
-import unixify = require("unixify");
 import url = require("url");
-import pactStandalone = require("@pact-foundation/pact-standalone");
-import Broker from "./broker";
+import brokerFactory, {BrokerOptions} from "./broker";
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
+import q = require("q");
+
+const _ = require("underscore");
+const pactStandalone = require("@pact-foundation/pact-standalone");
+const checkTypes = require("check-types");
+const unixify = require("unixify");
 
 import fs = require("fs");
+import {deprecate} from "util";
 
 export class Verifier {
-	public static create(options: VerifierOptions): Verifier {
+	public static create = deprecate(
+		(options: VerifierOptions) => new Verifier(options),
+		"Create function will be removed in future release, please use the default export function or use `new Verifier()`");
+
+	public readonly options: VerifierOptions;
+	private readonly __argMapping = {
+		"pactUrls": DEFAULT_ARG,
+		"providerBaseUrl": "--provider-base-url",
+		"providerStatesSetupUrl": "--provider-states-setup-url",
+		"pactBrokerUsername": "--broker-username",
+		"pactBrokerPassword": "--broker-password",
+		"publishVerificationResult": "--publish-verification-results",
+		"providerVersion": "--provider-app-version",
+		"customProviderHeaders": "--custom-provider-header"
+	};
+
+	constructor(options: VerifierOptions) {
+		options = options || {};
 		options.pactBrokerUrl = options.pactBrokerUrl || "";
 		options.tags = options.tags || [];
 		options.pactUrls = options.pactUrls || [];
@@ -21,9 +40,9 @@ export class Verifier {
 		options.timeout = options.timeout || 30000;
 
 		options.pactUrls = _.chain(options.pactUrls)
-			.map((uri) => {
+			.map((uri: string) => {
 				// only check local files
-				if (!/https?:/.test(url.parse(uri).protocol)) { // If it"s not a URL, check if file is available
+				if (!/https?:/.test(url.parse(uri).protocol || "")) { // If it's not a URL, check if file is available
 					try {
 						fs.statSync(path.normalize(uri)).isFile();
 
@@ -87,57 +106,37 @@ export class Verifier {
 		if (options.providerVersion) {
 			checkTypes.assert.string(options.providerVersion);
 		}
-
-		checkTypes.assert.positive(options.timeout);
-		
-		// monkeypatch check
+    
 		if (options.monkeypatch) {
-			try {
-				fs.statSync(path.normalize(options.monkeypatch)).isFile();
-			} catch (e) {
-				throw new Error(`Monkeypatch not found at path: ${options.monkeypatch}`);
-			}
+			checkTypes.assert.string(options.monkeypatch);
 		}
 
-		return new Verifier(options);
-	}
+		checkTypes.assert.positive(options.timeout);
 
-	public readonly options: VerifierOptions;
-	private readonly __argMapping = {
-		"pactUrls": DEFAULT_ARG,
-		"providerBaseUrl": "--provider-base-url",
-		"providerStatesSetupUrl": "--provider-states-setup-url",
-		"pactBrokerUsername": "--broker-username",
-		"pactBrokerPassword": "--broker-password",
-		"publishVerificationResult": "--publish-verification-results",
-		"providerVersion": "--provider-app-version",
-		"monkeypatch": "--monkeypatch"
-	};
-
-	constructor(options: VerifierOptions) {
 		this.options = options;
 	}
 
 	public verify(): q.Promise<string> {
 		logger.info("Verifying Pact Files");
 		return q(this.options.pactUrls)
-			.then((uris) => {
+		// TODO: fix this promise type issue by using regular old es6 promises, remove Q
+			.then((uris): any => {
 				if (!uris || uris.length === 0) {
-					return new Broker({
+					return brokerFactory({
 						brokerUrl: this.options.pactBrokerUrl,
 						provider: this.options.provider,
 						username: this.options.pactBrokerUsername,
 						password: this.options.pactBrokerPassword,
 						tags: this.options.tags
-					}).findConsumers();
+					} as BrokerOptions).findConsumers();
 				}
 				return uris;
 			})
-			.then((data: string[]): q.Promise<string> => {
+			.then((data: string[]): PromiseLike<string> => {
 				const deferred = q.defer<string>();
 				this.options.pactUrls = data;
 				const instance = pactUtil.spawnBinary(pactStandalone.verifierPath, this.options, this.__argMapping);
-				const output = [];
+				const output: any[] = [];
 				instance.stdout.on("data", (l) => output.push(l));
 				instance.stderr.on("data", (l) => output.push(l));
 				instance.once("close", (code) => {
@@ -146,14 +145,14 @@ export class Verifier {
 				});
 
 				return deferred.promise
-					.timeout(this.options.timeout, `Timeout waiting for verification process to complete (PID: ${instance.pid})`)
-					.tap(() => logger.info("Pact Verification succeeded."));
+					.timeout(this.options.timeout as number, `Timeout waiting for verification process to complete (PID: ${instance.pid})`)
+					.tap(() => logger.info("Pact Verification succeeded.")) as PromiseLike<string>;
 			});
 	}
 }
 
 // Creates a new instance of the pact server with the specified option
-export default Verifier.create;
+export default (options: VerifierOptions) => new Verifier(options);
 
 export interface VerifierOptions extends SpawnArguments {
 	providerBaseUrl: string;
@@ -162,10 +161,11 @@ export interface VerifierOptions extends SpawnArguments {
 	providerStatesSetupUrl?: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
+	customProviderHeaders?: string[];
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
 	pactBrokerUrl?: string;
 	tags?: string[];
 	timeout?: number;
-	monkeypatch?: string;
+  monkeypatch?: string;
 }
