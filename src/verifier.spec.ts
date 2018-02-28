@@ -76,6 +76,18 @@ describe("Verifier Spec", () => {
 			});
 		});
 
+		context("when user specifies invalid monkeypatch", () => {
+			it("should return an error on invalid path", () => {
+				expect(() => {
+					verifierFactory({
+						providerBaseUrl: "http://localhost",
+						pactUrls: ["http://idontexist"],
+						monkeypatch: "/this/file/does/not/exist.rb"
+					});
+				}).to.throw(Error);
+			});
+		});
+
 		context("when given remote Pact URLs that don't exist", () => {
 			it("should pass through to the Pact Verifier regardless", () => {
 				expect(() => verifierFactory({

@@ -13,7 +13,7 @@ describe("Pact Spec", () => {
 
 	describe("Set Log Level", () => {
 		let originalLogLevel: any;
-		// Reset lot level after the tests
+		// Reset log level after the tests
 		before(() => originalLogLevel = pact.logLevel());
 		after(() => pact.logLevel(originalLogLevel));
 
@@ -88,7 +88,8 @@ describe("Pact Spec", () => {
 					log: "log.txt",
 					spec: 1,
 					consumer: "consumerName",
-					provider: "providerName"
+					provider: "providerName",
+					monkeypatch: __filename // Need not be a Ruby file here
 				};
 				let server = pact.createServer(options);
 				expect(server).to.be.an("object");
@@ -102,6 +103,7 @@ describe("Pact Spec", () => {
 				expect(server.options.spec).to.equal(options.spec);
 				expect(server.options.consumer).to.equal(options.consumer);
 				expect(server.options.provider).to.equal(options.provider);
+				expect(server.options.monkeypatch).to.equal(options.monkeypatch);
 			});
 		});
 
@@ -159,12 +161,13 @@ describe("Pact Spec", () => {
 			});
 		});
 
-		context("when user specifies invalid log", () => {
-			it("should return an error on invalid path", () => {
-				pact.createServer({log: path.resolve(dirPath, "log.txt")});
-				expect(fs.statSync(dirPath).isDirectory()).to.be.true;
-			});
-		});
+		// context("when user specifies invalid log", () => {
+		// 	it("should return an error on invalid path", () => {
+		// 		expect(() => {
+		// 			pact.createServer({log: path.resolve(dirPath, "log.txt")});
+		// 		}).to.throw(Error);
+		// 	});
+		// });
 
 		context("when user specifies invalid spec", () => {
 			it("should return an error on non-number", () => {
@@ -193,6 +196,14 @@ describe("Pact Spec", () => {
 		context("when user specifies invalid provider name", () => {
 			it("should return an error on non-string", () => {
 				expect(() => pact.createServer({provider: 2341} as any)).to.throw(Error);
+			});
+		});
+
+		context("when user specifies invalid monkeypatch", () => {
+			it("should return an error on invalid path", () => {
+				expect(() => {
+					pact.createServer({monkeypatch: path.resolve(dirPath, "nothingthere.rb")});
+				}).to.throw(Error);
 			});
 		});
 	});

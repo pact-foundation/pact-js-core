@@ -171,6 +171,13 @@ describe("Server Spec", () => {
 				expect(server.options.provider).to.equal(providerName);
 				return expect(server.start()).to.eventually.be.fulfilled;
 			});
+			
+			// Hard to write a test here
+			// it("should start correctly with monkeypatch", () => {
+			// 	server = serverFactory({monkeypatch: "???? what file can I use here"});
+			// 	return server.start()
+			// 		.then(() => expect(server.options.monkeypatch).to.equal("???? what file can I use here"));
+			// });
 		});
 
 		it("should dispatch event when starting", (done) => {

@@ -22,6 +22,7 @@ cli
 	.option("-w, --pact-file-write-mode <m>", "Controls how pact files are written to disk. One of 'overwrite', 'update', 'merge'", /^overwrite|update|merge$/)
 	.option("--consumer <consumerName>", "Specify consumer name for written Pact files.")
 	.option("--provider <providerName>", "Specify provider name for written Pact files.")
+	.option("--monkeypatch <file>", "Path to a Ruby file that will monkeypatch the underlying Pact mock. ONLY USE THIS IF YOU KNOW WHAT YOU'RE DOING!")
 	.action((args: any, options: any) => pact.createServer(options).start());
 
 cli
@@ -48,7 +49,8 @@ cli
 	.option("-t, --timeout <milliseconds>", "The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.", cli.INT)
 	.option("-pub, --publish-verification-result", "Publish verification result to Broker.")
 	.option("-c, --custom-provider-header", "Header to add to provider state set up and pact verification requests. eg 'Authorization: Basic cGFjdDpwYWN0'.", cli.LIST)
-	.action((args: any, options: any) => pact.verifyPacts(options));
+	.option("--monkeypatch <file>", "Path to a Ruby file that will monkeypatch the underlying Pact mock. ONLY USE THIS IF YOU KNOW WHAT YOU'RE DOING!")
+  .action((args: any, options: any) => pact.verifyPacts(options));
 
 cli
 	.command("publish", "Publishes Pact Contracts to the broker")

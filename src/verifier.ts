@@ -106,6 +106,10 @@ export class Verifier {
 		if (options.providerVersion) {
 			checkTypes.assert.string(options.providerVersion);
 		}
+    
+		if (options.monkeypatch) {
+			checkTypes.assert.string(options.monkeypatch);
+		}
 
 		checkTypes.assert.positive(options.timeout);
 
@@ -163,4 +167,5 @@ export interface VerifierOptions extends SpawnArguments {
 	pactBrokerUrl?: string;
 	tags?: string[];
 	timeout?: number;
+  monkeypatch?: string;
 }
