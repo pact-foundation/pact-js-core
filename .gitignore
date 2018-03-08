@@ -50,4 +50,4 @@ package.zip
 ts-node-*
 
 # pact standalone binaries
-binaries/*.zip
+standalone/**/*
