@@ -4,7 +4,7 @@ import path = require("path");
 import fs = require("fs");
 import {SpawnArguments} from "./pact-util";
 const mkdirp = require("mkdirp");
-const pact = require("@pact-foundation/pact-standalone");
+import pact from "../standalone/pact-standalone";
 const checkTypes = require("check-types");
 
 export class Server extends AbstractService {

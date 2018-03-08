@@ -51,3 +51,5 @@ ts-node-*
 
 # pact standalone binaries
 standalone/**/*
+!standalone/*.ts
+standalone/*.d.ts

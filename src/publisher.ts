@@ -1,7 +1,7 @@
 import q = require("q");
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
-const pactStandalone = require("@pact-foundation/pact-standalone");
+import pactStandalone from "../standalone/pact-standalone";
 const checkTypes = require("check-types");
 
 export class Publisher {

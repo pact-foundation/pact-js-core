@@ -4,8 +4,8 @@ import brokerFactory from "./broker";
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 import q = require("q");
+import pactStandalone from "../standalone/pact-standalone";
 const _ = require("underscore");
-const pactStandalone = require("@pact-foundation/pact-standalone");
 const checkTypes = require("check-types");
 const unixify = require("unixify");
 

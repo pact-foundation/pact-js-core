@@ -1,7 +1,7 @@
 // tslint:disable:no-string-literal
 import { DEFAULT_ARG, SpawnArguments } from "./pact-util";
 import { AbstractService } from "./service";
-const pact = require("@pact-foundation/pact-standalone");
+import pact from "../standalone/pact-standalone";
 const checkTypes = require("check-types");
 
 export class Stub extends AbstractService {

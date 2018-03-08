@@ -1,4 +1,5 @@
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
+/* tslint:disable:no-string-literal */
 import * as fs from "fs";
 import * as path from "path";
 import * as chai from "chai";
@@ -10,7 +11,18 @@ const requireStandalone = () => require("./pact-standalone").default;
 
 describe.only("Pact Standalone", () => {
 	let pact: any;
-	afterEach(() => delete require.cache[require.resolve("./pact-standalone")]);
+
+	afterEach(() => {
+		delete require.cache[require.resolve("./pact-standalone")];
+
+		delete process.env.PLATFORM;
+		delete process.env.ARCH;
+		delete require.cache[require.resolve("./install")];
+	});
+
+	after(() => {
+		return require("./install").default;
+	});
 
 	it("should return an object with cwd, file and fullPath properties that is platform specific", () => {
 		pact = requireStandalone();
@@ -31,8 +43,12 @@ describe.only("Pact Standalone", () => {
 	});
 
 	describe("Check if OS specific files are there", () => {
-
 		describe("OSX", () => {
+			before(() => {
+				process.env.PLATFORM = "darwin";
+				return require("./install").default;
+			});
+
 			beforeEach(() => {
 				Object.defineProperty(process, "platform", {
 					value: "darwin"
@@ -77,6 +93,12 @@ describe.only("Pact Standalone", () => {
 		});
 
 		describe("Linux ia32", () => {
+			before(() => {
+				process.env.PLATFORM = "linux";
+				process.env.ARCH = "ia32";
+				return require("./install").default;
+			});
+
 			beforeEach(() => {
 				Object.defineProperty(process, "platform", {
 					value: "linux"
@@ -121,6 +143,12 @@ describe.only("Pact Standalone", () => {
 		});
 
 		describe("Linux X64", () => {
+			before(() => {
+				process.env.PLATFORM = "linux";
+				process.env.ARCH = "x64";
+				return require("./install").default;
+			});
+
 			beforeEach(() => {
 				Object.defineProperty(process, "platform", {
 					value: "linux"
@@ -165,6 +193,11 @@ describe.only("Pact Standalone", () => {
 		});
 
 		describe("Windows", () => {
+			before(() => {
+				process.env.PLATFORM = "win32";
+				return require("./install").default;
+			});
+
 			beforeEach(() => {
 				Object.defineProperty(process, "platform", {
 					value: "win32"
@@ -188,7 +221,6 @@ describe.only("Pact Standalone", () => {
 			);
 
 			it("broker relative path", () => {
-				console.log(`${basePath} ${pact.brokerPath} ${path.resolve(basePath, pact.brokerPath)}`);
 				expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be.true;
 			});
 
