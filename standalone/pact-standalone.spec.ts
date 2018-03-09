@@ -3,29 +3,19 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as chai from "chai";
+import {install} from "./install";
+import {PactStandalone, standalone} from "./pact-standalone";
 
 const expect = chai.expect;
 const basePath = path.resolve(__dirname, "..");
 
-const requireStandalone = () => require("./pact-standalone").default;
+describe("Pact Standalone", () => {
+	let pact: PactStandalone;
 
-describe.only("Pact Standalone", () => {
-	let pact: any;
-
-	afterEach(() => {
-		delete require.cache[require.resolve("./pact-standalone")];
-
-		delete process.env.PLATFORM;
-		delete process.env.ARCH;
-		delete require.cache[require.resolve("./install")];
-	});
-
-	after(() => {
-		return require("./install").default;
-	});
+	after(() => install());
 
 	it("should return an object with cwd, file and fullPath properties that is platform specific", () => {
-		pact = requireStandalone();
+		pact = standalone();
 		expect(pact).to.be.an("object");
 		expect(pact.cwd).to.be.ok;
 		expect(pact.brokerPath).to.contain("pact-broker");
@@ -44,20 +34,9 @@ describe.only("Pact Standalone", () => {
 
 	describe("Check if OS specific files are there", () => {
 		describe("OSX", () => {
-			before(() => {
-				process.env.PLATFORM = "darwin";
-				return require("./install").default;
-			});
+			before(() => install("darwin"));
 
-			beforeEach(() => {
-				Object.defineProperty(process, "platform", {
-					value: "darwin"
-				});
-				Object.defineProperty(process, "arch", {
-					value: null
-				});
-				pact = requireStandalone();
-			});
+			beforeEach(() => pact = standalone("darwin"));
 
 			it("broker relative path", () => {
 				expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be.true;
@@ -93,21 +72,9 @@ describe.only("Pact Standalone", () => {
 		});
 
 		describe("Linux ia32", () => {
-			before(() => {
-				process.env.PLATFORM = "linux";
-				process.env.ARCH = "ia32";
-				return require("./install").default;
-			});
+			before(() => install());
 
-			beforeEach(() => {
-				Object.defineProperty(process, "platform", {
-					value: "linux"
-				});
-				Object.defineProperty(process, "arch", {
-					value: "ia32"
-				});
-				pact = requireStandalone();
-			});
+			beforeEach(() => pact = standalone("linux", "ia32"));
 
 			it("broker relative path", () => {
 				expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be.true;
@@ -143,21 +110,9 @@ describe.only("Pact Standalone", () => {
 		});
 
 		describe("Linux X64", () => {
-			before(() => {
-				process.env.PLATFORM = "linux";
-				process.env.ARCH = "x64";
-				return require("./install").default;
-			});
+			before(() => install());
 
-			beforeEach(() => {
-				Object.defineProperty(process, "platform", {
-					value: "linux"
-				});
-				Object.defineProperty(process, "arch", {
-					value: "x64"
-				});
-				pact = requireStandalone();
-			});
+			beforeEach(() => pact = standalone("linux", "x64"));
 
 			it("broker relative path", () => {
 				expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be.true;
@@ -193,20 +148,9 @@ describe.only("Pact Standalone", () => {
 		});
 
 		describe("Windows", () => {
-			before(() => {
-				process.env.PLATFORM = "win32";
-				return require("./install").default;
-			});
+			before(() => install());
 
-			beforeEach(() => {
-				Object.defineProperty(process, "platform", {
-					value: "win32"
-				});
-				Object.defineProperty(process, "arch", {
-					value: null
-				});
-				pact = requireStandalone();
-			});
+			beforeEach(() => pact = standalone("win32"));
 
 			it("should add '.bat' to the end of the binary names", () => {
 					expect(pact.brokerPath).to.contain("pact-broker.bat");
