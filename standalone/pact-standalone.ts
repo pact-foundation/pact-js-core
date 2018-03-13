@@ -15,7 +15,7 @@ export interface PactStandalone {
 	verifierFullPath: string;
 }
 
-export const standalone = (platform?: string, arch?: string):PactStandalone => {
+export const standalone = (platform?: string, arch?: string): PactStandalone => {
 	platform = platform || process.platform;
 	arch = arch || process.arch;
 	const binName = (name: string) => `${name}${platform === "win32" ? ".bat" : ""}`;

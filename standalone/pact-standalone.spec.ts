@@ -3,7 +3,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as chai from "chai";
-import {install} from "./install";
+import install from "./install";
 import {PactStandalone, standalone} from "./pact-standalone";
 
 const expect = chai.expect;
@@ -12,6 +12,7 @@ const basePath = path.resolve(__dirname, "..");
 describe("Pact Standalone", () => {
 	let pact: PactStandalone;
 
+	// reinstall the correct binary
 	after(() => install());
 
 	it("should return an object with cwd, file and fullPath properties that is platform specific", () => {
@@ -72,7 +73,7 @@ describe("Pact Standalone", () => {
 		});
 
 		describe("Linux ia32", () => {
-			before(() => install());
+			before(() => install("linux", "ia32"));
 
 			beforeEach(() => pact = standalone("linux", "ia32"));
 
@@ -110,7 +111,7 @@ describe("Pact Standalone", () => {
 		});
 
 		describe("Linux X64", () => {
-			before(() => install());
+			before(() => install("linux", "x64"));
 
 			beforeEach(() => pact = standalone("linux", "x64"));
 
@@ -148,7 +149,7 @@ describe("Pact Standalone", () => {
 		});
 
 		describe("Windows", () => {
-			before(() => install());
+			before(() => install("win32"));
 
 			beforeEach(() => pact = standalone("win32"));
 
