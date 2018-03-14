@@ -40,7 +40,7 @@ function download(data: Data): Promise<Data> {
 				console.log(chalk.green(`Finished downloading binary to ${data.filepath}`));
 				resolve(data);
 			})
-			.on("error", (e: string) => reject(`Error downloading binary from ${URL}: ${e}`));
+			.on("error", (e: string) => reject(`Error downloading binary from ${data.url}: ${e}`));
 	});
 }
 
