@@ -31,5 +31,3 @@ deploy:
     branch: master
     tags: true
     node: 6
-after_failure:
-- find . -iname '*.log' -print0 | xargs -0 cat
