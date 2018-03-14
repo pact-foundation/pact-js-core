@@ -22,7 +22,7 @@ install:
   # Install Node
   - ps: Install-Product node $env:nodejs_version $env:platform
   # install modules
-  - npm install
+  - npm install --ignore-scripts
 
 # Post-install test scripts.
 test_script:
