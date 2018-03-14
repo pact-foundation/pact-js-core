@@ -57,14 +57,13 @@ describe("Stub Spec", () => {
 
 			beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
 
-			afterEach((done) => {
+			afterEach(() => {
 				try {
 					if (fs.statSync(dirPath).isDirectory()) {
 						fs.rmdirSync(dirPath);
 					}
 				} catch (e) {
 				}
-				done();
 			});
 
 			it("should start correctly when instance is delayed", () => {

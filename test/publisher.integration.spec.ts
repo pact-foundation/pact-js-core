@@ -13,7 +13,6 @@ describe("Publish Spec", () => {
 	let server: http.Server;
 	const PORT = Math.floor(Math.random() * 999) + 9000;
 	const pactBrokerBaseUrl = `http://localhost:${PORT}`;
-	// const pactBrokerBaseUrl = `http://172.17.0.2`;
 	const authenticatedPactBrokerBaseUrl = `${pactBrokerBaseUrl}/auth`;
 
 	before(() => brokerMock(PORT).then((s) => {

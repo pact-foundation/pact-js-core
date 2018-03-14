@@ -1,6 +1,8 @@
 "use strict";
+import * as http from "http";
+import * as request from "request";
+
 const path = require("path");
-const http = require("follow-redirects").https;
 const fs = require("fs");
 const decompress = require("decompress");
 const tar = require("tar");
@@ -16,23 +18,29 @@ function download(data: Data): Promise<Data> {
 			return resolve(data);
 		}
 
-		const file = fs.createWriteStream(data.filepath);
 		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.url}`));
 
 		// Get archive of release
-		http.get(data.url, (res: any) => {
-			const len = parseInt(res.headers["content-length"], 10);
-			let downloaded = 0;
-			res.on("data", (chunk: any) => {
-				file.write(chunk);
+		let len = 0;
+		let downloaded = 0;
+		let time = Date.now();
+		request(data.url)
+			.on("response", (res: http.IncomingMessage) => len = parseInt(res.headers["content-length"] as string, 10))
+			.on("data", (chunk: any[]) => {
 				downloaded += chunk.length;
-				console.log(chalk.gray(`Downloaded ${(100 * downloaded / len).toFixed(2)}%...`));
-			}).on("end", () => {
-				file.end();
+				// Only show download progress every second
+				const now = Date.now();
+				if(now - time > 1000) {
+					time = now;
+					console.log(chalk.gray(`Downloaded ${(100 * downloaded / len).toFixed(2)}%...`));
+				}
+			})
+			.pipe(fs.createWriteStream(data.filepath))
+			.on("finish", () => {
 				console.log(chalk.green(`Finished downloading binary to ${data.filepath}`));
 				resolve(data);
-			});
-		}).on("error", (e: any) => reject(`Error downloading binary from ${URL}: ${e.message}`));
+			})
+			.on("error", (e: string) => reject(`Error downloading binary from ${URL}: ${e}`));
 	});
 }
 
