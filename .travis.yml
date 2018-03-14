@@ -19,6 +19,7 @@ addons:
     - g++-4.8
 matrix:
   fast_finish: true
+install: npm install --ignore-scripts # ignore postinstall when doing local npm install
 script: npm test
 deploy:
 - provider: npm
