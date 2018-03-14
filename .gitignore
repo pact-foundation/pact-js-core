@@ -45,6 +45,7 @@ package.zip
 *.d.ts
 *.js
 *.js.map
+!postinstall.js
 
 # ts-node cache
 ts-node-*
