@@ -21,15 +21,15 @@ platform:
 install:
   # Install Node
   - ps: Install-Product node $env:nodejs_version $env:platform
+  - npm install -g npm@5.3
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
   # install modules
   - npm install --ignore-scripts
 
 # Post-install test scripts.
 test_script:
-  # Output useful info for debugging.
-  - node --version
-  - npm --version
-  # run tests
   - npm test
 
 # Don't actually build.
