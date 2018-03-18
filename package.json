@@ -55,9 +55,6 @@
     "mkdirp": "0.5.1",
     "q": "1.5.1",
     "request": "2.83.0",
-    "traverson": "6.0.3",
-    "traverson-hal": "6.0.0",
-    "traverson-promise": "0.0.9",
     "underscore": "1.8.3",
     "unixify": "1.0.0",
     "url-join": "4.0.0"
