@@ -54,6 +54,7 @@
     "check-types": "7.3.0",
     "decompress": "4.2.0",
     "mkdirp": "0.5.1",
+    "promise-retry": "^1.1.1",
     "q": "1.5.1",
     "request": "2.83.0",
     "tar": "4.4.0",

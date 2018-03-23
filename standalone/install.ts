@@ -8,6 +8,7 @@ const decompress = require("decompress");
 const tar = require("tar");
 const chalk = require("chalk");
 const rimraf = require("rimraf");
+const promiseRetry = require('promise-retry');
 
 const PACT_STANDALONE_VERSION = "1.29.1";
 
@@ -30,7 +31,7 @@ function download(data: Data): Promise<Data> {
 				downloaded += chunk.length;
 				// Only show download progress every second
 				const now = Date.now();
-				if(now - time > 1000) {
+				if (now - time > 1000) {
 					time = now;
 					console.log(chalk.gray(`Downloaded ${(100 * downloaded / len).toFixed(2)}%...`));
 				}
@@ -48,27 +49,31 @@ function extract(data: Data): Promise<void> {
 	console.log(chalk.yellow(`Extracting binary from ${data.filepath}.`));
 
 	// Remove old bin/lib directory if present
-	rimraf.sync(path.resolve(__dirname, "bin"));
-	rimraf.sync(path.resolve(__dirname, "lib"));
-
-	// Extract files
-	let p: Promise<void>;
-	if (data.isWindows) {
-		p = decompress(data.filepath, __dirname, {strip: 1});
-	} else {
-		p = tar.x({
-			file: data.filepath,
-			strip: 1,
-			cwd: __dirname,
-			Z: true
-		});
+	const binPath = path.resolve(__dirname, "bin");
+	const libPath = path.resolve(__dirname, "lib");
+	if (fs.existsSync(binPath)) {
+		rimraf.sync(binPath);
+		rimraf.sync(libPath);
 	}
 
-	return p.then(() => {
+	// Extract files, retry if it doesn't work the first time around
+	// this is to fix an issue with windows locking files temporary after an extraction
+	// Which tends to stop our unit tests because they're faster than windows can handle
+	return promiseRetry((retry: Function) => {
+		return (data.isWindows ?
+				decompress(data.filepath, __dirname, {strip: 1}) :
+				tar.x({
+					file: data.filepath,
+					strip: 1,
+					cwd: __dirname,
+					Z: true
+				})
+		).catch(retry);
+	}).then(() => {
 		// Remove pact-publish as it"s getting deprecated
 		rimraf.sync(path.resolve(__dirname, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`));
 		console.log(chalk.green("Extraction done."));
-	}, (e) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
+	}, (e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
 }
 
 function setup(platform?: string, arch?: string): Promise<Data> {
