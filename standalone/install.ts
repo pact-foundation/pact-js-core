@@ -67,7 +67,10 @@ function extract(data: Data): Promise<void> {
 					cwd: __dirname,
 					Z: true
 				})
-		).catch(retry);
+		).catch((e) => {
+			console.log(chalk.yellow(`Issue with extraction: ${e}`));
+			return retry(e);
+		});
 	}).then(() => {
 		// Remove pact-publish as it"s getting deprecated
 		rimraf.sync(path.resolve(__dirname, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`));
