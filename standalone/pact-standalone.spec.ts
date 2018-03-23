@@ -9,10 +9,14 @@ import {PactStandalone, standalone} from "./pact-standalone";
 const expect = chai.expect;
 const basePath = path.resolve(__dirname, "..");
 
-describe("Pact Standalone", () => {
+// Needs to stay a function and not an arrow function to access mocha 'this' context
+describe("Pact Standalone", function() {
+	// Set timeout to 10 minutes because downloading binaries might take a while.
+	this.timeout(600000);
+
 	let pact: PactStandalone;
 
-	// reinstall the correct binary
+	// reinstall the correct binary for the system for all other tests that might use it.
 	after(() => install());
 
 	it("should return an object with cwd, file and fullPath properties that is platform specific", () => {

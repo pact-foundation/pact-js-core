@@ -1,4 +1,3 @@
-"use strict";
 import * as http from "http";
 import * as request from "request";
 
@@ -10,7 +9,7 @@ const chalk = require("chalk");
 const rimraf = require("rimraf");
 const promiseRetry = require('promise-retry');
 
-const PACT_STANDALONE_VERSION = "1.29.1";
+const PACT_STANDALONE_VERSION = "1.30.1";
 
 function download(data: Data): Promise<Data> {
 	return new Promise((resolve: (f: Data) => void, reject: (e: string) => void) => {
