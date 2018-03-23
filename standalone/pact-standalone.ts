@@ -1,6 +1,5 @@
 import * as path from "path";
 
-const basePath = `standalone/bin`;
 const cwd = path.resolve(__dirname, "..");
 
 export interface PactStandalone {
@@ -15,6 +14,10 @@ export interface PactStandalone {
 	verifierFullPath: string;
 }
 
+export function getPlatformFolderName(platform:string, arch:string) {
+	return platform + (platform === "linux" ? `-${arch}` : "");
+}
+
 export const standalone = (platform?: string, arch?: string): PactStandalone => {
 	platform = platform || process.platform;
 	arch = arch || process.arch;
@@ -23,6 +26,7 @@ export const standalone = (platform?: string, arch?: string): PactStandalone => 
 	const verify = binName("pact-provider-verifier");
 	const broker = binName("pact-broker");
 	const stub = binName("pact-stub-service");
+	const basePath = path.join("standalone", getPlatformFolderName(platform, arch), "bin");
 
 	return {
 		cwd: cwd,

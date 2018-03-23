@@ -1,5 +1,6 @@
 import * as http from "http";
 import * as request from "request";
+import {getPlatformFolderName} from "./pact-standalone";
 
 const path = require("path");
 const fs = require("fs");
@@ -45,29 +46,28 @@ function download(data: Data): Promise<Data> {
 }
 
 function extract(data: Data): Promise<void> {
-	console.log(chalk.yellow(`Extracting binary from ${data.filepath}.`));
 
-	// Remove old bin/lib directory if present
-	const binPath = path.resolve(__dirname, "bin");
-	const libPath = path.resolve(__dirname, "lib");
-	if (fs.existsSync(binPath)) {
-		rimraf.sync(binPath);
-		rimraf.sync(libPath);
+	// If platform folder exists, binary already installed, skip to next step.
+	if(fs.existsSync(data.platformFolderPath)) {
+		return Promise.resolve();
 	}
 
+	fs.mkdirSync(data.platformFolderPath);
+
+	console.log(chalk.yellow(`Extracting binary from ${data.filepath}.`));
 	// Extract files, retry if it doesn't work the first time around
 	// this is to fix an issue with windows locking files temporary after an extraction
 	// Which tends to stop our unit tests because they're faster than windows can handle
 	return promiseRetry((retry: Function) => {
 		return (data.isWindows ?
-				decompress(data.filepath, __dirname, {strip: 1}) :
+				decompress(data.filepath, data.platformFolderPath, {strip: 1}) :
 				tar.x({
 					file: data.filepath,
 					strip: 1,
-					cwd: __dirname,
+					cwd: data.platformFolderPath,
 					Z: true
 				})
-		).catch((e:any) => {
+		).catch((e: any) => {
 			console.log(chalk.yellow(`Issue with extraction: ${e}`));
 			return retry(e);
 		});
@@ -99,7 +99,8 @@ function setup(platform?: string, arch?: string): Promise<Data> {
 		filepath: path.resolve(__dirname, binary),
 		platform: platform,
 		arch: arch,
-		isWindows: "win32" === platform
+		isWindows: "win32" === platform,
+		platformFolderPath: path.resolve(__dirname, getPlatformFolderName(platform, arch))
 	});
 }
 
@@ -109,6 +110,7 @@ export interface Data {
 	platform: string;
 	arch: string;
 	isWindows: boolean;
+	platformFolderPath?:string;
 }
 
 export default (platform?: string, arch?: string) =>
