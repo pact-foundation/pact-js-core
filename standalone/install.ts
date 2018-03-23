@@ -67,7 +67,7 @@ function extract(data: Data): Promise<void> {
 					cwd: __dirname,
 					Z: true
 				})
-		).catch((e) => {
+		).catch((e:any) => {
 			console.log(chalk.yellow(`Issue with extraction: ${e}`));
 			return retry(e);
 		});
