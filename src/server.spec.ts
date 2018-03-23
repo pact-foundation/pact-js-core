@@ -13,6 +13,7 @@ const expect = chai.expect;
 
 describe("Server Spec", () => {
 	let server: any;
+	const monkeypatchFile: string = path.resolve(__dirname, "../test/monkeypatch.rb");
 
 	afterEach(() => server ? server.delete() : null);
 
@@ -58,7 +59,7 @@ describe("Server Spec", () => {
 			it("should fail if incorrect pactFileWriteMode provided", () => {
 				expect(() => serverFactory({
 					pactFileWriteMode: "notarealoption",
-				})).to.throw(Error);
+				} as any)).to.throw(Error);
 			});
 		});
 
@@ -168,6 +169,12 @@ describe("Server Spec", () => {
 				const providerName = "pName";
 				server = serverFactory({provider: providerName});
 				expect(server.options.provider).to.equal(providerName);
+				return expect(server.start()).to.eventually.be.fulfilled;
+			});
+
+			it("should start correctly with monkeypatch", () => {
+				const server = serverFactory({monkeypatch: monkeypatchFile});
+				expect(server.options.monkeypatch).to.equal(monkeypatchFile);
 				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 		});

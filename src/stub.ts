@@ -1,11 +1,21 @@
 // tslint:disable:no-string-literal
-import { DEFAULT_ARG, SpawnArguments } from "./pact-util";
-import { AbstractService } from "./service";
+import {DEFAULT_ARG, SpawnArguments} from "./pact-util";
+import {AbstractService} from "./service";
+import {deprecate} from "util";
+
 import pact from "../standalone/pact-standalone";
 const checkTypes = require("check-types");
 
 export class Stub extends AbstractService {
-	public static create(options: StubOptions = {}): Stub {
+
+	public static create = deprecate(
+		(options?: StubOptions) => new Stub(options),
+		"Create function will be removed in future release, please use the default export function or use `new Stub()`");
+
+	public readonly options: StubOptions;
+
+	constructor(options?: StubOptions) {
+		options = options || {};
 		options.pactUrls = options.pactUrls || [];
 
 		if (options.pactUrls) {
@@ -14,12 +24,6 @@ export class Stub extends AbstractService {
 
 		checkTypes.assert.not.emptyArray(options.pactUrls, "Must provide the pactUrls argument");
 
-		return new Stub(options);
-	}
-
-	public readonly options: StubOptions;
-
-	constructor(options: StubOptions) {
 		super(`${pact.stubPath}`, options, {
 			"pactUrls": DEFAULT_ARG,
 			"port": "--port",
@@ -34,7 +38,7 @@ export class Stub extends AbstractService {
 }
 
 // Creates a new instance of the pact stub with the specified option
-export default Stub.create;
+export default (options?: StubOptions) => new Stub(options);
 
 export interface StubOptions extends SpawnArguments {
 	pactUrls?: string[];

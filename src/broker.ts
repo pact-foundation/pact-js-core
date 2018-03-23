@@ -1,13 +1,21 @@
 import q = require("q");
 import logger from "./logger";
-import { IWhenable } from "q";
+import {IWhenable} from "q";
+import {deprecate} from "util";
+
 const _ = require("underscore");
 const checkTypes = require("check-types");
 const request = q.denodeify(require("request"));
 
 export class Broker {
-	public static create(options: BrokerOptions) {
-		// defaults
+	public static create = deprecate(
+		(options: BrokerOptions) => new Broker(options),
+		"Create function will be removed in future release, please use the default export function or use `new Broker()`");
+
+	public readonly options: BrokerOptions;
+
+	constructor(options: BrokerOptions) {
+		options = options || {};
 		options.tags = options.tags || [];
 
 		checkTypes.assert.nonEmptyString(options.brokerUrl);
@@ -25,12 +33,6 @@ export class Broker {
 			checkTypes.assert.string(options.password);
 		}
 
-		return new Broker(options);
-	}
-
-	public readonly options: BrokerOptions;
-
-	constructor(options: BrokerOptions) {
 		this.options = options;
 	}
 
@@ -79,7 +81,7 @@ export class Broker {
 }
 
 // Creates a new instance of the Pact Broker HAL client with the specified option
-export default Broker.create;
+export default (options: BrokerOptions) => new Broker(options);
 
 export interface BrokerOptions {
 	brokerUrl: string;

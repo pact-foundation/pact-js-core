@@ -4,7 +4,7 @@ import stubFactory, {Stub, StubOptions} from "./stub";
 import verifierFactory, {VerifierOptions} from "./verifier";
 import publisherFactory, {PublisherOptions} from "./publisher";
 import logger, {LogLevels} from "./logger";
-import { AbstractService } from "./service";
+import {AbstractService} from "./service";
 import * as _ from "underscore";
 
 export class Pact {
@@ -15,7 +15,7 @@ export class Pact {
 		// Listen for Node exiting or someone killing the process
 		// Must remove all the instances of Pact mock service
 		process.once("exit", () => this.removeAll());
-		process.once("SIGINT", process.exit);
+		process.once("SIGINT", () => process.exit());
 	}
 
 	public logLevel(level?: LogLevels): number | void {
@@ -51,12 +51,12 @@ export class Pact {
 	// Remove all the servers that have been created
 	// Return promise of all others
 	public removeAllServers(): q.Promise<Server[]> {
-		if(this.__servers.length === 0) {
+		if (this.__servers.length === 0) {
 			return q(this.__servers);
 		}
 
 		logger.info("Removing all Pact servers.");
-		return q.all<Server>(_.map(this.__servers, (server:Server) => server.delete() as PromiseLike<Server>));
+		return q.all<Server>(_.map(this.__servers, (server: Server) => server.delete() as PromiseLike<Server>));
 	}
 
 	// Creates stub with specified options
@@ -88,12 +88,12 @@ export class Pact {
 	// Remove all the stubs that have been created
 	// Return promise of all others
 	public removeAllStubs(): q.Promise<Stub[]> {
-		if(this.__stubs.length === 0) {
+		if (this.__stubs.length === 0) {
 			return q(this.__stubs);
 		}
 
 		logger.info("Removing all Pact stubs.");
-		return q.all<Stub>(_.map(this.__stubs, (stub:Stub) => stub.delete() as PromiseLike<Stub>));
+		return q.all<Stub>(_.map(this.__stubs, (stub: Stub) => stub.delete() as PromiseLike<Stub>));
 	}
 
 	// Remove all the servers and stubs

@@ -1,25 +1,32 @@
 // tslint:disable:no-string-literal
-import { AbstractService } from "./service";
+import {AbstractService} from "./service";
 import path = require("path");
 import fs = require("fs");
 import {SpawnArguments} from "./pact-util";
+import {deprecate} from "util";
+
 const mkdirp = require("mkdirp");
 import pact from "../standalone/pact-standalone";
 const checkTypes = require("check-types");
 
 export class Server extends AbstractService {
-	public static create(options: ServerOptions = {}): Server {
+	public static create = deprecate(
+		(options?: ServerOptions) => new Server(options),
+		"Create function will be removed in future release, please use the default export function or use `new Server()`");
+
+	public readonly options: ServerOptions;
+
+	constructor(options?: ServerOptions) {
+		options = options || {};
 		options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
 		options.pactFileWriteMode = options.pactFileWriteMode || "overwrite";
 
-		// spec checking
 		if (options.spec) {
 			checkTypes.assert.number(options.spec);
 			checkTypes.assert.integer(options.spec);
 			checkTypes.assert.positive(options.spec);
 		}
 
-		// dir check
 		if (options.dir) {
 			try {
 				fs.statSync(path.normalize(options.dir)).isDirectory();
@@ -28,25 +35,25 @@ export class Server extends AbstractService {
 			}
 		}
 
-		// consumer name check
 		if (options.consumer) {
 			checkTypes.assert.string(options.consumer);
 		}
 
-		// provider name check
 		if (options.provider) {
 			checkTypes.assert.string(options.provider);
 		}
 
-		// pactFileWriteMode check
 		checkTypes.assert.includes(["overwrite", "update", "merge"], options.pactFileWriteMode);
 
-		return new Server(options);
-	}
+		if (options.monkeypatch) {
+			checkTypes.assert.string(options.monkeypatch);
+			try {
+				fs.statSync(path.normalize(options.monkeypatch)).isFile();
+			} catch (e) {
+				throw new Error(`Monkeypatch ruby file not found at path: ${options.monkeypatch}`);
+			}
+		}
 
-	public readonly options: ServerOptions;
-
-	constructor(options: ServerOptions) {
 		super(`${pact.mockServicePath} service`, options, {
 			"port": "--port",
 			"host": "--host",
@@ -59,13 +66,14 @@ export class Server extends AbstractService {
 			"spec": "--pact_specification_version",
 			"pactFileWriteMode": "--pact-file-write-mode",
 			"consumer": "--consumer",
-			"provider": "--provider"
+			"provider": "--provider",
+			"monkeypatch": "--monkeypatch"
 		});
 	}
 }
 
 // Creates a new instance of the pact server with the specified option
-export default Server.create;
+export default (options?: ServerOptions) => new Server(options);
 
 export interface ServerOptions extends SpawnArguments {
 	port?: number;
@@ -79,5 +87,6 @@ export interface ServerOptions extends SpawnArguments {
 	spec?: number;
 	consumer?: string;
 	provider?: string;
+	monkeypatch?: string;
 	pactFileWriteMode?: "overwrite" | "update" | "merge";
 }

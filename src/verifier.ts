@@ -1,6 +1,6 @@
 import path = require("path");
 import url = require("url");
-import brokerFactory from "./broker";
+import brokerFactory, {BrokerOptions} from "./broker";
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 import q = require("q");
@@ -10,9 +10,27 @@ const checkTypes = require("check-types");
 const unixify = require("unixify");
 
 import fs = require("fs");
+import {deprecate} from "util";
 
 export class Verifier {
-	public static create(options: VerifierOptions): Verifier {
+	public static create = deprecate(
+		(options: VerifierOptions) => new Verifier(options),
+		"Create function will be removed in future release, please use the default export function or use `new Verifier()`");
+
+	public readonly options: VerifierOptions;
+	private readonly __argMapping = {
+		"pactUrls": DEFAULT_ARG,
+		"providerBaseUrl": "--provider-base-url",
+		"providerStatesSetupUrl": "--provider-states-setup-url",
+		"pactBrokerUsername": "--broker-username",
+		"pactBrokerPassword": "--broker-password",
+		"publishVerificationResult": "--publish-verification-results",
+		"providerVersion": "--provider-app-version",
+		"customProviderHeaders": "--custom-provider-header"
+	};
+
+	constructor(options: VerifierOptions) {
+		options = options || {};
 		options.pactBrokerUrl = options.pactBrokerUrl || "";
 		options.tags = options.tags || [];
 		options.pactUrls = options.pactUrls || [];
@@ -90,29 +108,23 @@ export class Verifier {
 
 		checkTypes.assert.positive(options.timeout);
 
-		return new Verifier(options);
-	}
+		if (options.monkeypatch) {
+			checkTypes.assert.string(options.monkeypatch);
+			try {
+				fs.statSync(path.normalize(options.monkeypatch)).isFile();
+			} catch (e) {
+				throw new Error(`Monkeypatch ruby file not found at path: ${options.monkeypatch}`);
+			}
+		}
 
-	public readonly options: VerifierOptions;
-	private readonly __argMapping = {
-		"pactUrls": DEFAULT_ARG,
-		"providerBaseUrl": "--provider-base-url",
-		"providerStatesSetupUrl": "--provider-states-setup-url",
-		"pactBrokerUsername": "--broker-username",
-		"pactBrokerPassword": "--broker-password",
-		"publishVerificationResult": "--publish-verification-results",
-		"providerVersion": "--provider-app-version",
-		"customProviderHeaders": "--custom-provider-header"
-	};
-
-	constructor(options: VerifierOptions) {
 		this.options = options;
 	}
 
 	public verify(): q.Promise<string> {
 		logger.info("Verifying Pact Files");
 		return q(this.options.pactUrls)
-		.then((uris) => {
+		// TODO: fix this promise type issue by using regular old es6 promises, remove Q
+			.then((uris): any => {
 				if (!uris || uris.length === 0) {
 					return brokerFactory({
 						brokerUrl: this.options.pactBrokerUrl,
@@ -120,7 +132,7 @@ export class Verifier {
 						username: this.options.pactBrokerUsername,
 						password: this.options.pactBrokerPassword,
 						tags: this.options.tags
-					}).findConsumers();
+					} as BrokerOptions).findConsumers();
 				}
 				return uris;
 			})
@@ -144,7 +156,7 @@ export class Verifier {
 }
 
 // Creates a new instance of the pact server with the specified option
-export default Verifier.create;
+export default (options: VerifierOptions) => new Verifier(options);
 
 export interface VerifierOptions extends SpawnArguments {
 	providerBaseUrl: string;
@@ -159,4 +171,5 @@ export interface VerifierOptions extends SpawnArguments {
 	pactBrokerUrl?: string;
 	tags?: string[];
 	timeout?: number;
+	monkeypatch?: string;
 }
