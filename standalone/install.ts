@@ -8,7 +8,6 @@ const decompress = require("decompress");
 const tar = require("tar");
 const chalk = require("chalk");
 const rimraf = require("rimraf");
-const promiseRetry = require('promise-retry');
 
 const PACT_STANDALONE_VERSION = "1.30.1";
 
@@ -48,34 +47,29 @@ function download(data: Data): Promise<Data> {
 function extract(data: Data): Promise<void> {
 
 	// If platform folder exists, binary already installed, skip to next step.
-	if(fs.existsSync(data.platformFolderPath)) {
+	if (fs.existsSync(data.platformFolderPath)) {
 		return Promise.resolve();
 	}
 
 	fs.mkdirSync(data.platformFolderPath);
 
 	console.log(chalk.yellow(`Extracting binary from ${data.filepath}.`));
-	// Extract files, retry if it doesn't work the first time around
-	// this is to fix an issue with windows locking files temporary after an extraction
-	// Which tends to stop our unit tests because they're faster than windows can handle
-	return promiseRetry((retry: Function) => {
-		return (data.isWindows ?
-				decompress(data.filepath, data.platformFolderPath, {strip: 1}) :
-				tar.x({
-					file: data.filepath,
-					strip: 1,
-					cwd: data.platformFolderPath,
-					Z: true
-				})
-		).catch((e: any) => {
-			console.log(chalk.yellow(`Issue with extraction: ${e}`));
-			return retry(e);
-		});
-	}).then(() => {
-		// Remove pact-publish as it"s getting deprecated
-		rimraf.sync(path.resolve(__dirname, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`));
-		console.log(chalk.green("Extraction done."));
-	}, (e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
+
+	// Extract files into their platform folder
+	return (data.isWindows ?
+		decompress(data.filepath, data.platformFolderPath, {strip: 1}) :
+		tar.x({
+			file: data.filepath,
+			strip: 1,
+			cwd: data.platformFolderPath,
+			Z: true
+		}))
+		.then(() => {
+			// Remove pact-publish as it's getting deprecated
+			rimraf.sync(path.resolve(__dirname, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`));
+			console.log(chalk.green("Extraction done."));
+		})
+		.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
 }
 
 function setup(platform?: string, arch?: string): Promise<Data> {
@@ -110,7 +104,7 @@ export interface Data {
 	platform: string;
 	arch: string;
 	isWindows: boolean;
-	platformFolderPath?:string;
+	platformFolderPath?: string;
 }
 
 export default (platform?: string, arch?: string) =>
