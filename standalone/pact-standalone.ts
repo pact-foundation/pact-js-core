@@ -2,6 +2,8 @@ import * as path from "path";
 
 const cwd = path.resolve(__dirname, "..");
 
+export const PACT_STANDALONE_VERSION = "1.32.0";
+
 export interface PactStandalone {
 	cwd: string;
 	brokerPath: string;
@@ -15,7 +17,7 @@ export interface PactStandalone {
 }
 
 export function getPlatformFolderName(platform:string, arch:string) {
-	return platform + (platform === "linux" ? `-${arch}` : "");
+	return `${platform}${platform === "linux" ? `-${arch}` : ""}-${PACT_STANDALONE_VERSION}`;
 }
 
 export const standalone = (platform?: string, arch?: string): PactStandalone => {

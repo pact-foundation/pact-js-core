@@ -1,6 +1,6 @@
 import * as http from "http";
 import * as request from "request";
-import {getPlatformFolderName} from "./pact-standalone";
+import {getPlatformFolderName, PACT_STANDALONE_VERSION} from "./pact-standalone";
 
 const path = require("path");
 const fs = require("fs");
@@ -8,8 +8,6 @@ const decompress = require("decompress");
 const tar = require("tar");
 const chalk = require("chalk");
 const rimraf = require("rimraf");
-
-const PACT_STANDALONE_VERSION = "1.30.1";
 
 function download(data: Data): Promise<Data> {
 	return new Promise((resolve: (f: Data) => void, reject: (e: string) => void) => {
