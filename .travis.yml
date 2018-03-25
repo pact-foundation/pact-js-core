@@ -19,6 +19,7 @@ addons:
     - g++-4.8
 matrix:
   fast_finish: true
+install: npm install --ignore-scripts # ignore postinstall when doing local npm install
 script: npm test
 deploy:
 - provider: npm
@@ -30,5 +31,3 @@ deploy:
     branch: master
     tags: true
     node: 6
-after_failure:
-- find . -iname '*.log' -print0 | xargs -0 cat

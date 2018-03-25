@@ -33,13 +33,13 @@ node_modules
 .idea
 *.iml
 
-.tmp
-
 # npm
 package-lock.json
 
-# package
-package.zip
+# packages
+*.zip
+*.tgz
+*.tar.gz
 
 # ts-node cache
 ts-node-*
@@ -49,3 +49,14 @@ ts-node-*
 
 # include TypeScript definitions to go with compiled JS
 !*.d.ts
+
+# pact standalone binaries
+standalone/*
+!standalone/*.js
+!standalone/*.d.ts
+
+# Folders created during testing
+log
+reports
+tmp
+.tmp

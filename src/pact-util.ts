@@ -1,10 +1,10 @@
 // tslint:disable:no-string-literal
 import cp = require("child_process");
 import logger from "./logger";
+import pactStandalone from "./pact-standalone";
 import {ChildProcess, SpawnOptions} from "child_process";
 const _ = require("underscore");
 const checkTypes = require("check-types");
-const pactStandalone = require("@pact-foundation/pact-standalone");
 
 const isWindows = process.platform === "win32";
 

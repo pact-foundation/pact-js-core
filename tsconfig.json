@@ -2,6 +2,11 @@
 	"compilerOptions": {
 		"module": "commonjs",
 		"target": "es5",
+		"lib": [
+			"es5",
+			"dom",
+			"es2015.promise"
+		],
 		"removeComments": true,
 		"noLib": false,
 		"emitDecoratorMetadata": true,

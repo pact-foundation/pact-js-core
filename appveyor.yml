@@ -21,15 +21,14 @@ platform:
 install:
   # Install Node
   - ps: Install-Product node $env:nodejs_version $env:platform
-  # install modules
-  - npm install
-
-# Post-install test scripts.
-test_script:
   # Output useful info for debugging.
   - node --version
   - npm --version
-  # run tests
+  # install modules
+  - npm install --ignore-scripts
+
+# Post-install test scripts.
+test_script:
   - npm test
 
 # Don't actually build.

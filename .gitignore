@@ -33,19 +33,30 @@ node_modules
 .idea
 *.iml
 
-.tmp
-
 # npm
 package-lock.json
 
-# package
-package.zip
+# packages
+*.zip
+*.tgz
+*.tar.gz
 
 # Ignore compiled files
 *.d.ts
 *.js
 *.js.map
+!postinstall.js
 
 # ts-node cache
 ts-node-*
 
+# pact standalone binaries
+standalone/*
+!standalone/*.ts
+standalone/*.d.ts
+
+# Folders created during testing
+log
+reports
+tmp
+.tmp
