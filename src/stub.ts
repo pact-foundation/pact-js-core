@@ -3,7 +3,7 @@ import {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 import {AbstractService} from "./service";
 import {deprecate} from "util";
 
-import pact from "../standalone/pact-standalone";
+import pact from "./pact-standalone";
 const checkTypes = require("check-types");
 
 export class Stub extends AbstractService {

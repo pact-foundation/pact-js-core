@@ -1,6 +1,6 @@
 import * as http from "http";
 import * as request from "request";
-import {getPlatformFolderName, PACT_STANDALONE_VERSION} from "./pact-standalone";
+import {getPlatformFolderName, PACT_STANDALONE_VERSION} from "../src/pact-standalone";
 
 const path = require("path");
 const fs = require("fs");

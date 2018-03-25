@@ -3,7 +3,7 @@
 import * as fs from "fs";
 import * as path from "path";
 import * as chai from "chai";
-import install from "./install";
+import install from "../standalone/install";
 import {PactStandalone, standalone} from "./pact-standalone";
 
 const expect = chai.expect;

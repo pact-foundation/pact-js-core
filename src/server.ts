@@ -6,7 +6,7 @@ import {SpawnArguments} from "./pact-util";
 import {deprecate} from "util";
 
 const mkdirp = require("mkdirp");
-import pact from "../standalone/pact-standalone";
+import pact from "./pact-standalone";
 const checkTypes = require("check-types");
 
 export class Server extends AbstractService {
