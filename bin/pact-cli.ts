@@ -55,7 +55,7 @@ cli
 cli
 	.command("publish", "Publishes Pact Contracts to the broker")
 	.option("-p, --pact-files-or-dirs <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
-	.option("-c, --consumer-version <version>", "Semver-style version of the consumer e.g. 1.0.0.", /^\d+\.\d+\.\d+$/, undefined, true)
+	.option("-c, --consumer-version <version>", "Version of the consumer, can be any string, but recommended to use a semantic version or git hash.", undefined, undefined, true)
 	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
 	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
 	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
