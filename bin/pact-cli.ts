@@ -24,6 +24,14 @@ cli
 	.option("--provider <providerName>", "Specify provider name for written Pact files.")
 	.option("--monkeypatch <file>", "Absolute path to a Ruby file that will monkeypatch the underlying Pact mock.")
 	.action((args: any, options: any) => pact.createServer(options).start());
+cli
+	.command("message", "Creates or updates a message pact file")
+	.option("-c, --content <c>", "JSON content (message representation) to add to the contract file.")
+	.option("-w, --pact-file-write-mode <m>", "Controls how pact files are written to disk. One of 'overwrite', 'update', 'merge'", /^overwrite|update|merge$/)
+	.option("-d, --dir <directory>", "Directory to which the pacts will be written.")
+	.option("--consumer <consumerName>", "Specify consumer name for written Pact files.")
+	.option("--provider <providerName>", "Specify provider name for written Pact files.")
+	.action((args: any, options: any) => pact.createMessage(options));
 
 cli
 	.command("stub", "Creates an API stub from pact files")
