@@ -1,7 +1,7 @@
 import fs = require("fs");
 import q = require("q");
 import logger from "./logger";
-import pactUtil, { DEFAULT_ARG, SpawnArguments } from "./pact-util";
+import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 import pactStandalone from "./pact-standalone";
 import path = require("path");
 const mkdirp = require("mkdirp");

@@ -21,7 +21,7 @@ describe("Message Integration Spec", () => {
 				if (fs.statSync(contractFile)) {
 					rimraf(pactDir, () => logger.debug("removed existing pacts"));
 				}
-			} catch (e) { }
+			} catch (e) {}
 		});
 
 		it("should return a successful promise", (done) => {

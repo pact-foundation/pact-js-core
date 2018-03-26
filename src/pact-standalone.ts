@@ -17,7 +17,7 @@ export interface PactStandalone {
 	messageFullPath: string;
 }
 
-export function getPlatformFolderName(platform:string, arch:string) {
+export function getPlatformFolderName(platform: string, arch: string) {
 	return `${platform}${platform === "linux" ? `-${arch}` : ""}-${PACT_STANDALONE_VERSION}`;
 }
 

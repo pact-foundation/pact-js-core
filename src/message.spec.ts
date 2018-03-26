@@ -1,7 +1,6 @@
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import messageFactory from "./message";
-import { dirname } from "path";
 const path = require("path");
 const expect = chai.expect;
 chai.use(chaiAsPromised);

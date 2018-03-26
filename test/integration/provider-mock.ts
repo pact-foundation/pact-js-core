@@ -21,26 +21,26 @@ export default (port: number): q.Promise<http.Server> => {
 
 	server.get("/provider-states", returnJson({me: ["There is a greeting"], anotherclient: ["There is a greeting"]}));
 
-	server.post("/provider-state", (req:express.Request, res:express.Response) => {
+	server.post("/provider-state", (req: express.Request, res: express.Response) => {
 		stateData = "State data!";
 		return res.json({
 			greeting: stateData
 		});
 	});
 
-	server.get("/somestate", (req:express.Request, res:express.Response) => {
+	server.get("/somestate", (req: express.Request, res: express.Response) => {
 		return res.json({
 			greeting: stateData
 		});
 	});
 
-	server.post("/", (req:express.Request, res:express.Response) => {
+	server.post("/", (req: express.Request, res: express.Response) => {
 		return res.json({
 			greeting: `Hello ${req.body.name}`
 		});
 	});
 
-	server.get("/contract/:name", (req:express.Request, res:express.Response) => {
+	server.get("/contract/:name", (req: express.Request, res: express.Response) => {
 		const fileName = req.params.name;
 		res.sendFile(fileName, {
 			root: __dirname,
@@ -60,7 +60,8 @@ export default (port: number): q.Promise<http.Server> => {
 	});
 
 	// Verification result
-	server.post("/pacts/provider/:provider/consumer/:consumer/pact-version/:version/verification-results", returnJsonFile("./data/get-provider_they-consumer_me-latest.json"));
+	server.post("/pacts/provider/:provider/consumer/:consumer/pact-version/:version/verification-results",
+		returnJsonFile("./data/get-provider_they-consumer_me-latest.json"));
 	server.get("/pacts/provider/they/consumer/me/latest", auth, returnJsonFile("./data/get-provider_they-consumer_me-latest.json"));
 	server.get("/pacts/provider/they/consumer/anotherclient/latest", auth, returnJsonFile("./data/get-provider_they-consumer_anotherclient-latest.json"));
 	server.get("/noauth/pacts/provider/they/consumer/me/latest", returnJsonFile("./data/get-noauth-provider_they-consumer_me-latest.json"));

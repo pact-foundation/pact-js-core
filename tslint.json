@@ -4,7 +4,9 @@
 		"curly": true,
 		"indent": "tabs",
 		"no-console": false,
-		"max-line-length": 160,
+		"max-line-length": {
+			"options": 160
+		},
 		"trailing-comma": false,
 		"object-literal-sort-keys": false,
 		"no-reference": false,

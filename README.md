@@ -272,7 +272,7 @@ var server = pact.createStub({
 
 ```js
 var pact = require('@pact-foundation/pact-node');
-var server = pact.createMessage({
+var message = pact.createMessage({
 	...
 });
 ```
