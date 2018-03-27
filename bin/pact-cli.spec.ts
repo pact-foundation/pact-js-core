@@ -74,7 +74,8 @@ describe("Pact CLI Spec", () => {
 			after(() => server.close());
 
 			it("should work pointing to fake broker", () => {
-				const p = CLI.runSync(["verify", "--provider-base-url", providerBaseUrl, "--pact-urls", path.resolve(__dirname, "integration/me-they-success.json")]).then((cp) => cp.stdout);
+				const p = CLI.runSync(["verify", "--provider-base-url", providerBaseUrl, "--pact-urls", path.resolve(__dirname, "integration/me-they-success.json")])
+					.then((cp) => cp.stdout);
 				return expect(p).to.eventually.be.fulfilled;
 			});
 		});
@@ -103,7 +104,8 @@ describe("Pact CLI Spec", () => {
 			after(() => server.close());
 
 			it("should work pointing to fake broker", () => {
-				const p = CLI.runSync(["publish", "--pact-files-or-dirs", path.dirname(currentDir), "--consumer-version", "1.0.0", "--pact-broker", brokerBaseUrl]).then((cp) => cp.stdout);
+				const p = CLI.runSync(["publish", "--pact-files-or-dirs", path.dirname(currentDir), "--consumer-version", "1.0.0", "--pact-broker", brokerBaseUrl])
+					.then((cp) => cp.stdout);
 				return expect(p).to.eventually.be.fulfilled;
 			});
 		});

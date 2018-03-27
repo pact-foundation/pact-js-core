@@ -13,9 +13,11 @@ export interface PactStandalone {
 	stubFullPath: string;
 	verifierPath: string;
 	verifierFullPath: string;
+	messagePath: string;
+	messageFullPath: string;
 }
 
-export function getPlatformFolderName(platform:string, arch:string) {
+export function getPlatformFolderName(platform: string, arch: string) {
 	return `${platform}${platform === "linux" ? `-${arch}` : ""}-${PACT_STANDALONE_VERSION}`;
 }
 
@@ -24,6 +26,7 @@ export const standalone = (platform?: string, arch?: string): PactStandalone => 
 	arch = arch || process.arch;
 	const binName = (name: string) => `${name}${platform === "win32" ? ".bat" : ""}`;
 	const mock = binName("pact-mock-service");
+	const message = binName("pact-message");
 	const verify = binName("pact-provider-verifier");
 	const broker = binName("pact-broker");
 	const stub = binName("pact-stub-service");
@@ -33,6 +36,8 @@ export const standalone = (platform?: string, arch?: string): PactStandalone => 
 		cwd: cwd,
 		brokerPath: path.join(basePath, broker),
 		brokerFullPath: path.resolve(cwd, basePath, broker).trim(),
+		messagePath: path.join(basePath, message),
+		messageFullPath: path.resolve(cwd, basePath, message).trim(),
 		mockServicePath: path.join(basePath, mock),
 		mockServiceFullPath: path.resolve(cwd, basePath, mock).trim(),
 		stubPath: path.join(basePath, stub),

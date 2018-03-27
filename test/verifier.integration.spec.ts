@@ -10,7 +10,7 @@ chai.use(chaiAsPromised);
 
 describe("Verifier Integration Spec", () => {
 
-	let server:http.Server;
+	let server: http.Server;
 	const PORT = 9123;
 	const providerBaseUrl = `http://localhost:${PORT}`;
 	const providerStatesSetupUrl = `${providerBaseUrl}/provider-state`;
@@ -116,7 +116,8 @@ describe("Verifier Integration Spec", () => {
 				it("should return a successful promise", () => {
 					const verifier = verifierFactory({
 						providerBaseUrl: providerBaseUrl,
-						pactUrls: [`${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/me/latest`, `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/anotherclient/latest`],
+						pactUrls: [`${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/me/latest`,
+						`${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/anotherclient/latest`],
 						providerStatesSetupUrl: providerStatesSetupUrl
 					});
 					return expect(verifier.verify()).to.eventually.be.fulfilled;

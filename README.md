@@ -30,6 +30,10 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
         - [Pact Broker Publishing](#pact-broker-publishing)
         - [Stub Servers](#stub-servers)
             - [Create Stub Server](#create-stub-server)
+        - [Message Pacts](#message-pacts)
+            - [Create Message Pacts](#create-message-pacts)
+                - [Example](#example)
+                - [Example CLI invocation:](#example-cli-invocation)
     - [Contributing](#contributing)
     - [Testing](#testing)
     - [Questions?](#questions)
@@ -262,6 +266,53 @@ var server = pact.createStub({
 | sslkey 	| false |  string |  Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this option false. Defaults to none|
 | cors 		| false |  boolean |  Allow CORS OPTION requests to be accepted, defaults to 'false'|
 
+
+### Message Pacts
+#### Create Message Pacts
+
+```js
+var pact = require('@pact-foundation/pact-node');
+var message = pact.createMessage({
+	...
+});
+```
+**Options**:
+
+|Parameter            | Required? | Type         | Description |
+|---------------------|-----------|--------------|-------------|
+| `dir`               | true      |  string      | Directory to write the pact contracts relative to the current working directory, defaults to none  |
+| `consumer`          | true      | string       | The name of the consumer to be written to the pact contracts, defaults to none |
+| `provider`          | true     | string       |  The name of the provider to be written to the pact contracts, defaults to none |
+| `pactFileWriteMode` | false     | `"overwrite" | "update" | "merge"`  | Control how the pact file is created. Defaults to "update" |
+
+##### Example
+
+```js
+const messageFactory = messageFactory({
+	consumer: "consumer",
+	provider: "provider",
+	dir: dirname(`${__filename}/pacts`),
+	content: `{
+		"description": "a test mesage",
+		"content": {
+			"name": "Mary"
+		}
+	}`
+});
+
+messageFactory.createMessage()
+```
+
+##### Example CLI invocation:
+
+```sh
+node ./bin/pact-cli.js message --pact-file-write-mode update --consumer foo --provider bar -d /tmp/pacts -c '{
+  "description": "a test mesage",
+  "content": {
+    "name": "Mary"
+  }
+}'
+```
 
 ## Contributing
 

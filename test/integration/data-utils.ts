@@ -14,7 +14,7 @@ export function auth(req: express.Request, res: express.Response, next: express.
 	if (user && user.name === "foo" && user.pass === "bar") {
 		next();
 	} else {
-		res.set("WWW-Authenticate", "Basic realm=Authorization Required").sendStatus(401)
+		res.set("WWW-Authenticate", "Basic realm=Authorization Required").sendStatus(401);
 	}
 	return res;
 }

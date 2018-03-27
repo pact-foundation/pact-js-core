@@ -57,7 +57,9 @@ export class Broker {
 					return q.reject(response);
 				}
 				const body = JSON.parse(response.body);
-				return request(_.extend({}, requestOptions, {uri: body._links[`pb:latest-provider-pacts${tag ? "-with-tag" : ""}`].href.replace("{tag}", tag).replace("{provider}", this.options.provider)}));
+				return request(_.extend({}, requestOptions, {
+					uri: body._links[`pb:latest-provider-pacts${tag ? "-with-tag" : ""}`].href.replace("{tag}", tag).replace("{provider}", this.options.provider)
+				}));
 			})
 			.then((data: any) => data[0])
 			.then((response) => response.statusCode < 200 && response.statusCode >= 300 ? q.reject(response) : JSON.parse(response.body));

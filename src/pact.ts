@@ -2,6 +2,7 @@ import * as q from "q";
 import serverFactory, {Server, ServerOptions} from "./server";
 import stubFactory, {Stub, StubOptions} from "./stub";
 import verifierFactory, {VerifierOptions} from "./verifier";
+import messageFactory, {MessageOptions} from "./message";
 import publisherFactory, {PublisherOptions} from "./publisher";
 import logger, {LogLevels} from "./logger";
 import {AbstractService} from "./service";
@@ -105,6 +106,12 @@ export class Pact {
 	public verifyPacts(options: VerifierOptions): q.Promise<string> {
 		logger.info("Verifying Pacts.");
 		return verifierFactory(options).verify();
+	}
+
+	// Run the Message Pact creation process
+	public createMessage(options: MessageOptions): q.Promise<string> {
+		logger.info("Creating Message");
+		return messageFactory(options).createMessage();
 	}
 
 	// Publish Pacts to a Pact Broker

@@ -230,7 +230,9 @@ export abstract class AbstractService extends events.EventEmitter {
 			config.agentOptions.agent = false;
 		}
 
-		http(config, (err: any, res: any) => (!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`));
+		http(config, (err: any, res: any) => {
+			(!err && res.statusCode === 200) ? deferred.resolve() : deferred.reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
+		});
 
 		return deferred.promise;
 	}

@@ -173,9 +173,9 @@ describe("Server Spec", () => {
 			});
 
 			it("should start correctly with monkeypatch", () => {
-				const server = serverFactory({monkeypatch: monkeypatchFile});
-				expect(server.options.monkeypatch).to.equal(monkeypatchFile);
-				return expect(server.start()).to.eventually.be.fulfilled;
+				const s = serverFactory({monkeypatch: monkeypatchFile});
+				expect(s.options.monkeypatch).to.equal(monkeypatchFile);
+				return expect(s.start()).to.eventually.be.fulfilled;
 			});
 		});
 
