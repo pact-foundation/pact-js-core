@@ -24,8 +24,11 @@ install:
   # Output useful info for debugging.
   - node --version
   - npm --version
+  # Fix for stupid windows/appveyor bug with NPM
+  - npm install -g npm@latest --force
+  - npm cache clean
   # install modules
-  - npm install --ignore-scripts
+  - npm install --ignore-scripts --force
 
 # Post-install test scripts.
 test_script:
