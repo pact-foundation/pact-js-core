@@ -7,7 +7,6 @@ const fs = require("fs");
 const decompress = require("decompress");
 const tar = require("tar");
 const chalk = require("chalk");
-const rimraf = require("rimraf");
 
 function download(data: Data): Promise<Data> {
 	return new Promise((resolve: (f: Data) => void, reject: (e: string) => void) => {
@@ -64,7 +63,10 @@ function extract(data: Data): Promise<void> {
 		}))
 		.then(() => {
 			// Remove pact-publish as it's getting deprecated
-			rimraf.sync(path.resolve(__dirname, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`));
+			const publishPath = path.resolve(data.platformFolderPath, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`);
+			if(fs.existsSync(publishPath)) {
+				fs.unlinkSync(publishPath);
+			}
 			console.log(chalk.green("Extraction done."));
 		})
 		.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));

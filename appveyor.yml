@@ -21,12 +21,12 @@ platform:
 install:
   # Install Node
   - ps: Install-Product node $env:nodejs_version $env:platform
-  # Output useful info for debugging.
-  - node --version
-  - npm --version
   # Fix for stupid windows/appveyor bug with NPM
   - npm install -g npm@latest --force
   - npm cache clean --force
+  # Output useful info for debugging.
+  - node --version
+  - npm --version
   # install modules
   - npm install --ignore-scripts --force
 
