@@ -26,7 +26,7 @@ install:
   - npm --version
   # Fix for stupid windows/appveyor bug with NPM
   - npm install -g npm@latest --force
-  - npm cache clean
+  - npm cache clean --force
   # install modules
   - npm install --ignore-scripts --force
 
