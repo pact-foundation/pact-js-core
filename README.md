@@ -282,8 +282,8 @@ var message = pact.createMessage({
 |---------------------|-----------|--------------|-------------|
 | `dir`               | true      |  string      | Directory to write the pact contracts relative to the current working directory, defaults to none  |
 | `consumer`          | true      | string       | The name of the consumer to be written to the pact contracts, defaults to none |
-| `provider`          | false     | string       |  The name of the provider to be written to the pact contracts, defaults to none |
-| `pactFileWriteMode` | false     | `"overwrite" | "update" | "merge"`  | Control how the pact file is created. Defaults to "overwrite" |
+| `provider`          | true     | string       |  The name of the provider to be written to the pact contracts, defaults to none |
+| `pactFileWriteMode` | false     | `"overwrite" | "update" | "merge"`  | Control how the pact file is created. Defaults to "update" |
 
 ##### Example
 
