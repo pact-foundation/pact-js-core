@@ -32,6 +32,8 @@ cli
 	.option("-d, --dir <directory>", "Directory to which the pacts will be written.")
 	.option("--consumer <consumerName>", "Specify consumer name for written Pact files.")
 	.option("--provider <providerName>", "Specify provider name for written Pact files.")
+	.option("-s, --spec <n>", "The Pact specification version to use when writing the" +
+	" Pact files. Default is 3.", cli.INT)
 	.action((args: any, options: any) => pact.createMessage(options));
 
 cli

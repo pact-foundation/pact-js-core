@@ -15,16 +15,24 @@ export class Message {
 		"dir": "--pact_dir",
 		"consumer": "--consumer",
 		"provider": "--provider",
+		"spec": "--pact_specification_version",
 	};
 
 	constructor(options: MessageOptions) {
 		options = options || {};
 		options.pactFileWriteMode = options.pactFileWriteMode || "update";
+		options.spec = options.spec || 3;
 
 		checkTypes.assert.nonEmptyString(options.consumer, "Must provide the consumer name");
 		checkTypes.assert.nonEmptyString(options.provider, "Must provide the provider name");
 		checkTypes.assert.nonEmptyString(options.content, "Must provide message content");
 		checkTypes.assert.nonEmptyString(options.dir, "Must provide pact output dir");
+
+		if (options.spec) {
+			checkTypes.assert.number(options.spec);
+			checkTypes.assert.integer(options.spec);
+			checkTypes.assert.positive(options.spec);
+		}
 
 		if (options.dir) {
 			try {
@@ -90,4 +98,5 @@ export interface MessageOptions extends SpawnArguments {
 	consumer?: string;
 	provider?: string;
 	pactFileWriteMode?: "overwrite" | "update" | "merge";
+	spec?: number;
 }
