@@ -1,6 +1,7 @@
 // tslint:disable:no-string-literal
 
 import path = require("path");
+import fs = require("fs");
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import publisherFactory, {PublisherOptions} from "./publisher";
@@ -8,14 +9,18 @@ import logger from "./logger";
 import brokerMock from "../test/integration/broker-mock";
 import * as http from "http";
 
+const rimraf = require("rimraf");
+const mkdirp = require("mkdirp");
 const expect = chai.expect;
 chai.use(chaiAsPromised);
-const currentDir = (process && process.mainModule) ? process.mainModule.filename : "";
 
-describe("Publish Spec", () => {
+describe.only("Publish Spec", () => {
 
 	const PORT = Math.floor(Math.random() * 999) + 9000;
+	const pactFile = path.resolve(__dirname, "../test/integration/me-they-success.json");
 	let server: http.Server;
+	let absolutePath: string;
+	let relativePath: string;
 
 	before(() => brokerMock(PORT).then((s) => {
 		logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
@@ -24,73 +29,74 @@ describe("Publish Spec", () => {
 
 	after(() => server.close());
 
-	describe("Publisher", () => {
-		context("when not given pactFilesOrDirs", () => {
-			it("should fail with an error", () => {
-				expect(() => {
-					publisherFactory({
-						pactBroker: "http://localhost",
-						consumerVersion: "1.0.0"
-					} as PublisherOptions);
-				}).to.throw(Error);
-			});
+	beforeEach(() => {
+		relativePath = `.tmp/${Math.floor(Math.random() * 1000)}`;
+		absolutePath = path.resolve(__dirname, "..", relativePath);
+		mkdirp.sync(absolutePath);
+	});
+
+	afterEach(() => {
+		if (fs.existsSync(absolutePath)) {
+			rimraf.sync(absolutePath);
+		}
+	});
+
+	context("when invalid options are set", () => {
+		it("should fail with an Error when not given pactBroker", () => {
+			expect(() => {
+				publisherFactory({
+					pactFilesOrDirs: [absolutePath],
+					consumerVersion: "1.0.0"
+				} as PublisherOptions);
+			}).to.throw(Error);
 		});
 
-		context("when not given pactBroker", () => {
-			it("should fail with an error", () => {
-				expect(() => {
-					publisherFactory({
-						pactFilesOrDirs: [path.dirname(currentDir)],
-						consumerVersion: "1.0.0"
-					} as PublisherOptions);
-				}).to.throw(Error);
-			});
-		});
-
-		context("when not given consumerVersion", () => {
-			it("should fail with an error", () => {
-				expect(() => {
-					publisherFactory({
-						pactBroker: "http://localhost",
-						pactFilesOrDirs: [path.dirname(currentDir)]
-					} as PublisherOptions);
-				}).to.throw(Error);
-			});
-		});
-
-		context("when given local Pact URLs that don't exist ", () => {
-			it("should fail with an error", () => {
-				expect(() => {
-					publisherFactory({
-						pactBroker: "http://localhost",
-						pactFilesOrDirs: ["./test.json"]
-					} as PublisherOptions);
-				}).to.throw(Error);
-			});
-		});
-
-		context("when given local Pact URLs that do exist", () => {
-			it("should not fail", () => {
-				expect(() => {
-					publisherFactory({
-						pactBroker: "http://localhost",
-						pactFilesOrDirs: [path.dirname(currentDir)],
-						consumerVersion: "1.0.0"
-					});
-				}).to.not.throw(Error);
-			});
-		});
-
-		context("when given the correct arguments", () => {
-			it("should return a Publisher object", () => {
-				const p = publisherFactory({
+		it("should fail with an Error when not given consumerVersion", () => {
+			expect(() => {
+				publisherFactory({
 					pactBroker: "http://localhost",
-					pactFilesOrDirs: ["http://idontexist"],
+					pactFilesOrDirs: [absolutePath]
+				} as PublisherOptions);
+			}).to.throw(Error);
+		});
+
+		it("should fail with an error when not given pactFilesOrDirs", () => {
+			expect(() => {
+				publisherFactory({
+					pactBroker: "http://localhost",
+					consumerVersion: "1.0.0"
+				} as PublisherOptions);
+			}).to.throw(Error);
+		});
+
+		it("should fail with an Error when given Pact paths that do not exist", () => {
+			expect(() => {
+				publisherFactory({
+					pactBroker: "http://localhost",
+					pactFilesOrDirs: ["test.json"],
 					consumerVersion: "1.0.0"
 				});
-				expect(p).to.be.ok;
-				expect(p.publish).to.be.a("function");
+			}).to.throw(Error);
+		});
+	});
+
+	context("when valid options are set", () => {
+		it("should return an absolute path when a relative one is given", () => {
+			expect(publisherFactory({
+				pactBroker: "http://localhost",
+				pactFilesOrDirs: [relativePath],
+				consumerVersion: "1.0.0"
+			}).options.pactFilesOrDirs[0]).to.be.equal(path.resolve(__dirname, "..", relativePath));
+		});
+
+		it("should return a Publisher object when given the correct arguments", () => {
+			const p = publisherFactory({
+				pactBroker: "http://localhost",
+				pactFilesOrDirs: [pactFile],
+				consumerVersion: "1.0.0"
 			});
+			expect(p).to.be.ok;
+			expect(p.publish).to.be.a("function");
 		});
 	});
 });
