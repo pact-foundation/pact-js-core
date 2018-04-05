@@ -26,7 +26,8 @@ export class Verifier {
 		"pactBrokerPassword": "--broker-password",
 		"publishVerificationResult": "--publish-verification-results",
 		"providerVersion": "--provider-app-version",
-		"customProviderHeaders": "--custom-provider-header"
+		"customProviderHeaders": "--custom-provider-header",
+		"format": "--format"
 	};
 
 	constructor(options: VerifierOptions) {
@@ -106,6 +107,14 @@ export class Verifier {
 			checkTypes.assert.string(options.providerVersion);
 		}
 
+		if (options.format) {
+			checkTypes.assert.string(options.format);
+		}
+
+		if (options.excludeInfo) {
+			checkTypes.assert.boolean(options.excludeInfo);
+		}
+
 		checkTypes.assert.positive(options.timeout);
 
 		if (options.monkeypatch) {
@@ -142,7 +151,9 @@ export class Verifier {
 				const instance = pactUtil.spawnBinary(pactStandalone.verifierPath, this.options, this.__argMapping);
 				const output: any[] = [];
 				instance.stdout.on("data", (l) => output.push(l));
-				instance.stderr.on("data", (l) => output.push(l));
+				if (!this.options.excludeInfo) {
+					instance.stderr.on("data", (l) => output.push(l));
+				}
 				instance.once("close", (code) => {
 					const o = output.join("\n");
 					code === 0 ? deferred.resolve(o) : deferred.reject(new Error(o));
@@ -172,4 +183,6 @@ export interface VerifierOptions extends SpawnArguments {
 	tags?: string[];
 	timeout?: number;
 	monkeypatch?: string;
+	format?: "json" | "RspecJunitFormatter";
+	excludeInfo?: boolean;
 }
