@@ -64,10 +64,22 @@ function extract(data: Data): Promise<void> {
 		.then(() => {
 			// Remove pact-publish as it's getting deprecated
 			const publishPath = path.resolve(data.platformFolderPath, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`);
-			if(fs.existsSync(publishPath)) {
+			if (fs.existsSync(publishPath)) {
 				fs.unlinkSync(publishPath);
 			}
 			console.log(chalk.green("Extraction done."));
+		})
+		.then(() => {
+			console.log(
+				"\n\n" +
+				chalk.bgYellow(
+					chalk.black("If you") +
+					chalk.red(" ❤ ") +
+					chalk.black("Pact and want us to continue, please support us here:")
+				) +
+				chalk.blue(" https://opencollective.com/pact-foundation") +
+				"\n\n"
+			);
 		})
 		.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
 }
