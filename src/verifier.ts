@@ -48,7 +48,7 @@ export class Verifier {
 						// Unixify the paths. Pact in multiple places uses URI and matching and
 						// hasn"t really taken Windows into account. This is much easier, albeit
 						// might be a problem on non root-drives
-						// options.pactFilesOrDirs.push(uri);
+						// options.pactUrls.push(uri);
 						return unixify(uri);
 					} catch (e) {
 						throw new Error(`Pact file: ${uri} doesn"t exist`);
@@ -63,11 +63,11 @@ export class Verifier {
 		checkTypes.assert.nonEmptyString(options.providerBaseUrl, "Must provide the providerBaseUrl argument");
 
 		if (checkTypes.emptyArray(options.pactUrls) && !options.pactBrokerUrl) {
-			throw new Error("Must provide the pactFilesOrDirs argument if no brokerUrl provided");
+			throw new Error("Must provide the pactUrls argument if no brokerUrl provided");
 		}
 
 		if ((!options.pactBrokerUrl || _.isEmpty(options.provider)) && checkTypes.emptyArray(options.pactUrls)) {
-			throw new Error("Must provide both provider and brokerUrl or if pactFilesOrDirs not provided.");
+			throw new Error("Must provide both provider and brokerUrl or if pactUrls not provided.");
 		}
 
 		if (options.providerStatesSetupUrl) {
@@ -123,7 +123,7 @@ export class Verifier {
 	public verify(): q.Promise<string> {
 		logger.info("Verifying Pact Files");
 		return q(this.options.pactUrls)
-		// TODO: fix this promise type issue by using regular old es6 promises, remove Q
+			// TODO: fix this promise type issue by using regular old es6 promises, remove Q
 			.then((uris): any => {
 				if (!uris || uris.length === 0) {
 					return brokerFactory({
