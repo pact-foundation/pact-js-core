@@ -73,11 +73,11 @@ function extract(data: Data): Promise<void> {
 			console.log(
 				"\n\n" +
 				chalk.bgYellow(
-					chalk.black("If you") +
+					chalk.black("### If you") +
 					chalk.red(" ❤ ") +
 					chalk.black("Pact and want us to continue, please support us here:")
 				) +
-				chalk.blue(" https://donate.pact.io") +
+				chalk.blue(" https://donate.pact.io?node") +
 				"\n\n"
 			);
 		})
