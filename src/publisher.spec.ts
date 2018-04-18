@@ -14,7 +14,7 @@ const mkdirp = require("mkdirp");
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe.only("Publish Spec", () => {
+describe("Publish Spec", () => {
 
 	const PORT = Math.floor(Math.random() * 999) + 9000;
 	const pactFile = path.resolve(__dirname, "../test/integration/me-they-success.json");

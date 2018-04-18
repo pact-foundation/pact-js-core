@@ -14,7 +14,7 @@ const rimraf = require("rimraf");
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe.only("Server Spec", () => {
+describe("Server Spec", () => {
 	let server: any;
 	const monkeypatchFile: string = path.resolve(__dirname, "../test/monkeypatch.rb");
 

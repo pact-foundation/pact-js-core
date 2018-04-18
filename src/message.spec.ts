@@ -9,7 +9,7 @@ const rimraf = require("rimraf");
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe.only("Message Spec", () => {
+describe("Message Spec", () => {
 	const validJSON = `{ "description": "a test mesage", "content": { "name": "Mary" } }`;
 
 	let absolutePath: string;
