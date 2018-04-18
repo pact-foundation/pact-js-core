@@ -17,8 +17,9 @@ function download(data: Data): Promise<Data> {
 
 		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.url}`));
 
-		// Track downloads through Google Analytics
-		request.post({
+		// Track downloads through Google Analytics, but ignore travis CI builds
+		if(!process.env.TESTING) {
+			request.post({
 				url: "https://www.google-analytics.com/collect",
 				form: {
 					v: 1,
@@ -29,9 +30,10 @@ function download(data: Data): Promise<Data> {
 					av: require("../package.json").version, // App version.
 					aid: "pact-node", // App Id.
 					aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
-					cd: "download-node"
+					cd: `download-node-${data.platform}`
 				}
 			});
+		}
 
 		// Get archive of release
 		let len = 0;
@@ -93,7 +95,7 @@ function extract(data: Data): Promise<void> {
 					chalk.red(" ❤ ") +
 					chalk.black("Pact and want us to continue, please support us here:")
 				) +
-				chalk.blue(" https://donate.pact.io?node") +
+				chalk.blue(" http://donate.pact.io/node") +
 				"\n\n"
 			);
 		})
