@@ -17,6 +17,22 @@ function download(data: Data): Promise<Data> {
 
 		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.url}`));
 
+		// Track downloads through Google Analytics
+		request.post({
+				url: "https://www.google-analytics.com/collect",
+				form: {
+					v: 1,
+					tid: "UA-117778936-1", // Tracking ID / Property ID.
+					cid: Math.round(2147483647 * Math.random()).toString(), // Anonymous Client ID.
+					t: "screenview", // Screenview hit type.
+					an: "pact-install", // App name.
+					av: require("../package.json").version, // App version.
+					aid: "pact-node", // App Id.
+					aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
+					cd: "download-node"
+				}
+			});
+
 		// Get archive of release
 		let len = 0;
 		let downloaded = 0;
