@@ -8,6 +8,9 @@ import path = require("path");
 import q = require("q");
 import _ = require("underscore");
 
+const mkdirp = require("mkdirp");
+const rimraf = require("rimraf");
+
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -16,6 +19,26 @@ describe("Server Spec", () => {
 	const monkeypatchFile: string = path.resolve(__dirname, "../test/monkeypatch.rb");
 
 	afterEach(() => server ? server.delete() : null);
+
+	let absolutePath: string;
+	let relativePath: string;
+
+	const relativeSSLCertPath = "test/ssl/server.crt";
+	const absoluteSSLCertPath = path.resolve(__dirname, "..", relativeSSLCertPath);
+	const relativeSSLKeyPath = "test/ssl/server.key";
+	const absoluteSSLKeyPath = path.resolve(__dirname, "..", relativeSSLKeyPath);
+
+	beforeEach(() => {
+		relativePath = `.tmp/${Math.floor(Math.random() * 1000)}`;
+		absolutePath = path.resolve(__dirname, "..", relativePath);
+		mkdirp.sync(absolutePath);
+	});
+
+	afterEach(() => {
+		if (fs.existsSync(absolutePath)) {
+			rimraf.sync(absolutePath);
+		}
+	});
 
 	describe("Start server", () => {
 		context("when no options are set", () => {
@@ -30,14 +53,14 @@ describe("Server Spec", () => {
 				expect(() => serverFactory({
 					ssl: true,
 					sslcert: "does/not/exist",
-					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
+					sslkey: absoluteSSLKeyPath
 				})).to.throw(Error);
 			});
 
 			it("should fail if custom ssl keys do not exist", () => {
 				expect(() => serverFactory({
 					ssl: true,
-					sslcert: path.resolve(__dirname, "../test/ssl/server.crt"),
+					sslcert: absoluteSSLCertPath,
 					sslkey: "does/not/exist"
 				})).to.throw(Error);
 			});
@@ -45,14 +68,14 @@ describe("Server Spec", () => {
 			it("should fail if custom ssl cert is set, but ssl key isn't", () => {
 				expect(() => serverFactory({
 					ssl: true,
-					sslcert: path.resolve(__dirname, "../test/ssl/server.crt")
+					sslcert: absoluteSSLCertPath
 				})).to.throw(Error);
 			});
 
 			it("should fail if custom ssl key is set, but ssl cert isn't", () => {
 				expect(() => serverFactory({
 					ssl: true,
-					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
+					sslkey: absoluteSSLKeyPath
 				})).to.throw(Error);
 			});
 
@@ -64,19 +87,6 @@ describe("Server Spec", () => {
 		});
 
 		context("when valid options are set", () => {
-			let dirPath: string;
-
-			beforeEach(() => dirPath = path.resolve(__dirname, `../.tmp/${Math.floor(Math.random() * 1000)}`));
-
-			afterEach(() => {
-				try {
-					if (fs.statSync(dirPath).isDirectory()) {
-						fs.rmdirSync(dirPath);
-					}
-				} catch (e) {
-				}
-			});
-
 			it("should start correctly when instance is delayed", () => {
 				server = serverFactory();
 
@@ -96,8 +106,8 @@ describe("Server Spec", () => {
 			it("should start correctly with custom ssl cert/key", () => {
 				server = serverFactory({
 					ssl: true,
-					sslcert: path.resolve(__dirname, "../test/ssl/server.crt"),
-					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
+					sslcert: absoluteSSLCertPath,
+					sslkey: absoluteSSLKeyPath
 				});
 				expect(server.options.ssl).to.equal(true);
 				return expect(server.start()).to.eventually.be.fulfilled;
@@ -105,8 +115,8 @@ describe("Server Spec", () => {
 
 			it("should start correctly with custom ssl cert/key but without specifying ssl flag", () => {
 				server = serverFactory({
-					sslcert: path.resolve(__dirname, "../test/ssl/server.crt"),
-					sslkey: path.resolve(__dirname, "../test/ssl/server.key")
+					sslcert: absoluteSSLCertPath,
+					sslkey: absoluteSSLKeyPath
 				});
 
 				expect(server.options.ssl).to.equal(true);
@@ -145,14 +155,8 @@ describe("Server Spec", () => {
 				return expect(server.start()).to.eventually.be.fulfilled;
 			});
 
-			it("should start correctly with dir", () => {
-				server = serverFactory({dir: dirPath});
-				expect(server.options.dir).to.equal(dirPath);
-				return expect(server.start()).to.eventually.be.fulfilled;
-			});
-
 			it("should start correctly with log", () => {
-				const logPath = path.resolve(dirPath, "log.txt");
+				const logPath = path.resolve(absolutePath, "log.txt");
 				server = serverFactory({log: logPath});
 				expect(server.options.log).to.equal(logPath);
 				return expect(server.start()).to.eventually.be.fulfilled;
@@ -176,6 +180,31 @@ describe("Server Spec", () => {
 				const s = serverFactory({monkeypatch: monkeypatchFile});
 				expect(s.options.monkeypatch).to.equal(monkeypatchFile);
 				return expect(s.start()).to.eventually.be.fulfilled;
+			});
+
+			context("Paths", () => {
+				it("should start correctly with dir, absolute path", () => {
+					server = serverFactory({dir: relativePath});
+					expect(server.options.dir).to.equal(absolutePath);
+					return expect(server.start()).to.eventually.be.fulfilled;
+				});
+
+				it("should start correctly with log, relative paths", () => {
+					const logPath = path.join(relativePath, "log.txt");
+					server = serverFactory({log: logPath});
+					expect(server.options.log).to.equal(path.resolve(logPath));
+					return expect(server.start()).to.eventually.be.fulfilled;
+				});
+
+				it("should start correctly with custom ssl cert/key, relative paths", () => {
+					server = serverFactory({
+						sslcert: relativeSSLCertPath,
+						sslkey: relativeSSLKeyPath
+					});
+					expect(server.options.sslcert).to.equal(absoluteSSLCertPath);
+					expect(server.options.sslkey).to.equal(absoluteSSLKeyPath);
+					return expect(server.start()).to.eventually.be.fulfilled;
+				});
 			});
 		});
 

@@ -1,4 +1,6 @@
 import q = require("q");
+import path = require("path");
+import fs = require("fs");
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 import {deprecate} from "util";
@@ -34,6 +36,15 @@ export class Publisher {
 
 		if (options.pactFilesOrDirs) {
 			checkTypes.assert.array.of.string(options.pactFilesOrDirs);
+
+			// Resolve all paths as absolute paths
+			options.pactFilesOrDirs = options.pactFilesOrDirs.map((v) => {
+				const newPath = path.resolve(v);
+				if(!fs.existsSync(newPath)) {
+					throw new Error(`Path '${v}' given in pactFilesOrDirs does not exists.`);
+				}
+				return newPath;
+			});
 		}
 
 		if (options.pactBroker) {

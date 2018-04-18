@@ -1,12 +1,12 @@
 // tslint:disable:no-string-literal
 import {AbstractService} from "./service";
-import path = require("path");
-import fs = require("fs");
 import {SpawnArguments} from "./pact-util";
 import {deprecate} from "util";
+import pact from "./pact-standalone";
+import path = require("path");
+import fs = require("fs");
 
 const mkdirp = require("mkdirp");
-import pact from "./pact-standalone";
 const checkTypes = require("check-types");
 
 export class Server extends AbstractService {
@@ -28,11 +28,24 @@ export class Server extends AbstractService {
 		}
 
 		if (options.dir) {
+			const dir = path.resolve(options.dir);
 			try {
-				fs.statSync(path.normalize(options.dir)).isDirectory();
+				fs.statSync(dir).isDirectory();
 			} catch (e) {
-				mkdirp.sync(path.normalize(options.dir));
+				mkdirp.sync(dir);
 			}
+		}
+
+		if (options.log) {
+			options.log = path.resolve(options.log);
+		}
+
+		if (options.sslcert) {
+			options.sslcert = path.resolve(options.sslcert);
+		}
+
+		if (options.sslkey) {
+			options.sslkey = path.resolve(options.sslkey);
 		}
 
 		if (options.consumer) {
