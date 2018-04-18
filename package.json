@@ -97,7 +97,7 @@
     "install:win": "node postinstall.js win32",
     "install:linux32": "node postinstall.js linux ia32",
     "install:linux64": "node postinstall.js linux x64",
-    "clean": "rimraf '{src,test,bin,standalone}/**/*.{js,map,d.ts}' 'package.zip' '.tmp'",
+    "clean": "rimraf '{src,test,bin,standalone}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
     "lint": "tslint -p tsconfig.json",
     "pretest": "npm run build && npm run install:current",
     "test": "mocha -r ts-node/register -R mocha-unfunk-reporter -t 15000 -s 5000 -b --check-leaks --exit \"{src,test,bin}/**/*.spec.ts\"",

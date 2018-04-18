@@ -35,10 +35,11 @@ export class Message {
 		}
 
 		if (options.dir) {
+			options.dir = path.resolve(options.dir);
 			try {
-				fs.statSync(path.normalize(options.dir)).isDirectory();
+				fs.statSync(options.dir).isDirectory();
 			} catch (e) {
-				mkdirp.sync(path.normalize(options.dir));
+				mkdirp.sync(options.dir);
 			}
 		}
 
