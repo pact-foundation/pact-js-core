@@ -77,7 +77,7 @@ function extract(data: Data): Promise<void> {
 					chalk.red(" ❤ ") +
 					chalk.black("Pact and want us to continue, please support us here:")
 				) +
-				chalk.blue(" https://opencollective.com/pact-foundation") +
+				chalk.blue(" https://donate.pact.io") +
 				"\n\n"
 			);
 		})
