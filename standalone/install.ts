@@ -14,11 +14,13 @@ function download(data: Data): Promise<Data> {
 			console.log(chalk.yellow("Binary already downloaded, skipping..."));
 			return resolve(data);
 		}
-
 		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.url}`));
 
-		// Track downloads through Google Analytics, but ignore travis CI builds
-		if(!process.env.TESTING) {
+		// Track downloads through Google Analytics unless testing or don't want to be tracked
+		if (!process.env.DO_NOT_TRACK) {
+			console.log(chalk.gray("Please note: we are tracking this download anonymously to gather important usage statistics. " +
+			"To disable tracking, set 'DO_NOT_TRACK=true' as an environment variable."));
+			const CI = ["CI", "CONTINUOUS_INTEGRATION"].some((key) => process.env[key] !== undefined);
 			request.post({
 				url: "https://www.google-analytics.com/collect",
 				form: {
@@ -30,7 +32,7 @@ function download(data: Data): Promise<Data> {
 					av: require("../package.json").version, // App version.
 					aid: "pact-node", // App Id.
 					aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
-					cd: `download-node-${data.platform}`
+					cd: `download-node-${data.platform}-${CI ? "ci" : "user"}`
 				}
 			});
 		}
@@ -93,7 +95,7 @@ function extract(data: Data): Promise<void> {
 				chalk.bgYellow(
 					chalk.black("### If you") +
 					chalk.red(" ❤ ") +
-					chalk.black("Pact and want us to continue, please support us here:")
+					chalk.black("Pact and want to support us, please donate here:")
 				) +
 				chalk.blue(" http://donate.pact.io/node") +
 				"\n\n"
