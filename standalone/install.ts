@@ -19,7 +19,7 @@ function download(data: Data): Promise<Data> {
 		// Track downloads through Google Analytics unless testing or don't want to be tracked
 		if (!process.env.DO_NOT_TRACK) {
 			console.log(chalk.gray("Please note: we are tracking this download anonymously to gather important usage statistics. " +
-			"To disable tracking, set 'DO_NOT_TRACK=true' as an environment variable."));
+				"To disable tracking, set 'DO_NOT_TRACK=true' as an environment variable."));
 			const CI = ["CI", "CONTINUOUS_INTEGRATION"].some((key) => process.env[key] !== undefined);
 			request.post({
 				url: "https://www.google-analytics.com/collect",
@@ -81,27 +81,27 @@ function extract(data: Data): Promise<void> {
 			cwd: data.basePath,
 			Z: true
 		}))
-		.then(() => {
-			// Remove pact-publish as it's getting deprecated
-			const publishPath = path.resolve(data.basePath, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`);
-			if (fs.existsSync(publishPath)) {
-				fs.unlinkSync(publishPath);
-			}
-			console.log(chalk.green("Extraction done."));
-		})
-		.then(() => {
-			console.log(
-				"\n\n" +
-				chalk.bgYellow(
-					chalk.black("### If you") +
-					chalk.red(" ❤ ") +
-					chalk.black("Pact and want to support us, please donate here:")
-				) +
-				chalk.blue(" http://donate.pact.io/node") +
-				"\n\n"
-			);
-		})
-		.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
+	.then(() => {
+		// Remove pact-publish as it's getting deprecated
+		const publishPath = path.resolve(data.basePath, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`);
+		if (fs.existsSync(publishPath)) {
+			fs.unlinkSync(publishPath);
+		}
+		console.log(chalk.green("Extraction done."));
+	})
+	.then(() => {
+		console.log(
+			"\n\n" +
+			chalk.bgYellow(
+				chalk.black("### If you") +
+				chalk.red(" ❤ ") +
+				chalk.black("Pact and want to support us, please donate here:")
+			) +
+			chalk.blue(" http://donate.pact.io/node") +
+			"\n\n"
+		);
+	})
+	.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
 }
 
 function setup(platform?: string, arch?: string): Promise<Data> {

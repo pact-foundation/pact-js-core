@@ -17,29 +17,29 @@ const archive = `pact-${version}-osx.tar.gz`;
 const archivePath = path.resolve(basePath, archive);
 
 const clean = () => {
-  process.env.PACT_STANDALONE_BASE_URL = "";
-  process.env.PACT_STANDALONE_VERSION = "";
-  return install();
+	process.env.PACT_STANDALONE_BASE_URL = "";
+	process.env.PACT_STANDALONE_VERSION = "";
+	return install();
 };
 
 const safeUnlinkSync = (path: string) => {
-  try {
-    fs.unlinkSync(path);
-  } catch (err){ }
+	try {
+		fs.unlinkSync(path);
+	} catch (err){ }
 }
 
 describe("Pact install", function() {
-  this.timeout(600000);
+	this.timeout(600000);
 
-  describe("Supports Pact standalone version and base url", () => {
-    after(clean);
+	describe("Supports Pact standalone version and base url", () => {
+		after(clean);
 
-    it("Downloads executable", () => {
-      safeUnlinkSync(archivePath);
-      return install(platform)
-        .then(() => {
-          expect(fs.existsSync(archivePath)).to.be.true;
-        });
-    });
-  });
+		it("Downloads executable", () => {
+			safeUnlinkSync(archivePath);
+			return install(platform)
+				.then(() => {
+					expect(fs.existsSync(archivePath)).to.be.true;
+				});
+		});
+	});
 });
