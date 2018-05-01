@@ -1,7 +1,6 @@
 import * as path from "path";
 
 const cwd = path.resolve(__dirname, "..");
-export const PACT_STANDALONE_VERSION = "1.38.0";
 
 export interface PactStandalone {
 	cwd: string;
@@ -15,10 +14,17 @@ export interface PactStandalone {
 	verifierFullPath: string;
 	messagePath: string;
 	messageFullPath: string;
+	version: string;
+	basePath: string;
+	baseUrl: string;
 }
 
-export function getPlatformFolderName(platform: string, arch: string) {
-	return `${platform}${platform === "linux" ? `-${arch}` : ""}-${PACT_STANDALONE_VERSION}`;
+function getPlatformFolderName(platform: string, arch: string, version: string) {
+	return `${platform}${platform === "linux" ? `-${arch}` : ""}-${version}`;
+}
+
+function envOrDefault (key: string, fallback: string){
+	return process.env[key] || fallback;
 }
 
 export const standalone = (platform?: string, arch?: string): PactStandalone => {
@@ -30,20 +36,29 @@ export const standalone = (platform?: string, arch?: string): PactStandalone => 
 	const verify = binName("pact-provider-verifier");
 	const broker = binName("pact-broker");
 	const stub = binName("pact-stub-service");
-	const basePath = path.join("standalone", getPlatformFolderName(platform, arch), "bin");
+	const version = envOrDefault("PACT_STANDALONE_VERSION", "1.38.0");
+	const basePath = path.join("standalone", getPlatformFolderName(platform, arch, version));
+	const binPath = path.join(basePath, "bin");
+	const baseUrl = envOrDefault(
+		"PACT_STANDALONE_BASE_URL",
+		`https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${version}`
+	);
 
 	return {
 		cwd: cwd,
-		brokerPath: path.join(basePath, broker),
-		brokerFullPath: path.resolve(cwd, basePath, broker).trim(),
-		messagePath: path.join(basePath, message),
-		messageFullPath: path.resolve(cwd, basePath, message).trim(),
-		mockServicePath: path.join(basePath, mock),
-		mockServiceFullPath: path.resolve(cwd, basePath, mock).trim(),
-		stubPath: path.join(basePath, stub),
-		stubFullPath: path.resolve(cwd, basePath, stub).trim(),
-		verifierPath: path.join(basePath, verify),
-		verifierFullPath: path.resolve(cwd, basePath, verify).trim()
+		brokerPath: path.join(binPath, broker),
+		brokerFullPath: path.resolve(cwd, binPath, broker).trim(),
+		messagePath: path.join(binPath, message),
+		messageFullPath: path.resolve(cwd, binPath, message).trim(),
+		mockServicePath: path.join(binPath, mock),
+		mockServiceFullPath: path.resolve(cwd, binPath, mock).trim(),
+		stubPath: path.join(binPath, stub),
+		stubFullPath: path.resolve(cwd, binPath, stub).trim(),
+		verifierPath: path.join(binPath, verify),
+		verifierFullPath: path.resolve(cwd, binPath, verify).trim(),
+		version,
+		basePath,
+		baseUrl
 	};
 };
 

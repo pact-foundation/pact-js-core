@@ -1,6 +1,6 @@
 import * as http from "http";
 import * as request from "request";
-import {getPlatformFolderName, PACT_STANDALONE_VERSION} from "../src/pact-standalone";
+import {standalone} from "../src/pact-standalone";
 
 const path = require("path");
 const fs = require("fs");
@@ -14,12 +14,12 @@ function download(data: Data): Promise<Data> {
 			console.log(chalk.yellow("Binary already downloaded, skipping..."));
 			return resolve(data);
 		}
-		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.url}`));
+		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${data.version} for platform ${data.platform} from ${data.url}`));
 
 		// Track downloads through Google Analytics unless testing or don't want to be tracked
 		if (!process.env.DO_NOT_TRACK) {
 			console.log(chalk.gray("Please note: we are tracking this download anonymously to gather important usage statistics. " +
-			"To disable tracking, set 'DO_NOT_TRACK=true' as an environment variable."));
+				"To disable tracking, set 'DO_NOT_TRACK=true' as an environment variable."));
 			const CI = ["CI", "CONTINUOUS_INTEGRATION"].some((key) => process.env[key] !== undefined);
 			request.post({
 				url: "https://www.google-analytics.com/collect",
@@ -31,7 +31,7 @@ function download(data: Data): Promise<Data> {
 					an: "pact-install", // App name.
 					av: require("../package.json").version, // App version.
 					aid: "pact-node", // App Id.
-					aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
+					aiid: `standalone-${data.version}`, // App Installer Id.
 					cd: `download-node-${data.platform}-${CI ? "ci" : "user"}`
 				}
 			});
@@ -64,50 +64,51 @@ function download(data: Data): Promise<Data> {
 function extract(data: Data): Promise<void> {
 
 	// If platform folder exists, binary already installed, skip to next step.
-	if (fs.existsSync(data.platformFolderPath)) {
+	if (fs.existsSync(data.basePath)) {
 		return Promise.resolve();
 	}
 
-	fs.mkdirSync(data.platformFolderPath);
+	fs.mkdirSync(data.basePath);
 
 	console.log(chalk.yellow(`Extracting binary from ${data.filepath}.`));
 
 	// Extract files into their platform folder
 	return (data.isWindows ?
-		decompress(data.filepath, data.platformFolderPath, {strip: 1}) :
+		decompress(data.filepath, data.basePath, {strip: 1}) :
 		tar.x({
 			file: data.filepath,
 			strip: 1,
-			cwd: data.platformFolderPath,
+			cwd: data.basePath,
 			Z: true
 		}))
-		.then(() => {
-			// Remove pact-publish as it's getting deprecated
-			const publishPath = path.resolve(data.platformFolderPath, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`);
-			if (fs.existsSync(publishPath)) {
-				fs.unlinkSync(publishPath);
-			}
-			console.log(chalk.green("Extraction done."));
-		})
-		.then(() => {
-			console.log(
-				"\n\n" +
-				chalk.bgYellow(
-					chalk.black("### If you") +
-					chalk.red(" ❤ ") +
-					chalk.black("Pact and want to support us, please donate here:")
-				) +
-				chalk.blue(" http://donate.pact.io/node") +
-				"\n\n"
-			);
-		})
-		.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
+	.then(() => {
+		// Remove pact-publish as it's getting deprecated
+		const publishPath = path.resolve(data.basePath, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`);
+		if (fs.existsSync(publishPath)) {
+			fs.unlinkSync(publishPath);
+		}
+		console.log(chalk.green("Extraction done."));
+	})
+	.then(() => {
+		console.log(
+			"\n\n" +
+			chalk.bgYellow(
+				chalk.black("### If you") +
+				chalk.red(" ❤ ") +
+				chalk.black("Pact and want to support us, please donate here:")
+			) +
+			chalk.blue(" http://donate.pact.io/node") +
+			"\n\n"
+		);
+	})
+	.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
 }
 
 function setup(platform?: string, arch?: string): Promise<Data> {
 	platform = platform || process.platform;
 	arch = arch || process.arch;
-	let binary = "pact-" + PACT_STANDALONE_VERSION + "-";
+	const {version, basePath, baseUrl} = standalone(platform, arch);
+	let binary = "pact-" + version + "-";
 	switch (platform) {
 		case "win32":
 			binary += "win32.zip";
@@ -121,22 +122,24 @@ function setup(platform?: string, arch?: string): Promise<Data> {
 	}
 	console.log(chalk.gray(`Installing Pact Standalone Binary for ${platform}.`));
 	return Promise.resolve({
-		url: `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/${binary}`,
+		url: `${baseUrl}/${binary}`,
 		filepath: path.resolve(__dirname, binary),
 		platform: platform,
 		arch: arch,
 		isWindows: "win32" === platform,
-		platformFolderPath: path.resolve(__dirname, getPlatformFolderName(platform, arch))
+		basePath,
+		version
 	});
 }
 
 export interface Data {
+	version: string;
 	url: string;
 	filepath: string;
 	platform: string;
 	arch: string;
 	isWindows: boolean;
-	platformFolderPath?: string;
+	basePath?: string;
 }
 
 export default (platform?: string, arch?: string) =>
