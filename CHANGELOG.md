@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="6.14.4"></a>
+## [6.14.4](https://github.com/pact-foundation/pact-node/compare/v6.14.3...v6.14.4) (2018-05-08)
+
+
+
 <a name="6.14.3"></a>
 ## [6.14.3](https://github.com/pact-foundation/pact-node/compare/v6.14.2...v6.14.3) (2018-04-17)
 
