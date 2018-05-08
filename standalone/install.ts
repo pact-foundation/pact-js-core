@@ -19,7 +19,7 @@ function download(data: Data): Promise<Data> {
 		// Track downloads through Google Analytics unless testing or don't want to be tracked
 		if (!process.env.DO_NOT_TRACK) {
 			console.log(chalk.gray("Please note: we are tracking this download anonymously to gather important usage statistics. " +
-			"To disable tracking, set 'DO_NOT_TRACK=true' as an environment variable."));
+				"To disable tracking, set 'DO_NOT_TRACK=true' as an environment variable."));
 			const CI = ["CI", "CONTINUOUS_INTEGRATION"].some((key) => process.env[key] !== undefined);
 			request.post({
 				url: "https://www.google-analytics.com/collect",
@@ -34,7 +34,9 @@ function download(data: Data): Promise<Data> {
 					aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
 					cd: `download-node-${data.platform}-${CI ? "ci" : "user"}`
 				}
-			});
+			})
+				// Ignore all errors
+				.on("error", () => {});
 		}
 
 		// Get archive of release
