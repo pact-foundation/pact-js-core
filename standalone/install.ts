@@ -20,7 +20,32 @@ function download(data: Data): Promise<Data> {
 		if (!process.env.DO_NOT_TRACK) {
 			console.log(chalk.gray("Please note: we are tracking this download anonymously to gather important usage statistics. " +
 				"To disable tracking, set 'DO_NOT_TRACK=true' as an environment variable."));
-			const CI = ["CI", "CONTINUOUS_INTEGRATION"].some((key) => process.env[key] !== undefined);
+			// Trying to find all environment variables of all possible CI services to get more accurate stats
+			// but it's still not 100% since not all systems have unique environment variables for their CI server
+			const isCI = [
+				"CI",
+				"CONTINUOUS_INTEGRATION",
+				"ABSTRUSE_BUILD_DIR",
+				"APPVEYOR",
+				"BUDDY_WORKSPACE_URL",
+				"BUILDKITE",
+				"CF_BUILD_URL",
+				"CIRCLECI",
+				"CODEBUILD_BUILD_ARN",
+				"CONCOURSE_URL",
+				"DRONE",
+				"GITLAB_CI",
+				"GO_SERVER_URL",
+				"JENKINS_URL",
+				"PROBO_ENVIRONMENT",
+				"SEMAPHORE",
+				"SHIPPABLE",
+				"TDDIUM",
+				"TEAMCITY_VERSION",
+				"TF_BUILD",
+				"TRAVIS",
+				"WERCKER_ROOT",
+			].some((key) => process.env[key] !== undefined);
 			request.post({
 				url: "https://www.google-analytics.com/collect",
 				form: {
@@ -32,7 +57,7 @@ function download(data: Data): Promise<Data> {
 					av: require("../package.json").version, // App version.
 					aid: "pact-node", // App Id.
 					aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
-					cd: `download-node-${data.platform}-${CI ? "ci" : "user"}`
+					cd: `download-node-${data.platform}-${isCI ? "ci" : "user"}`
 				}
 			})
 				// Ignore all errors
