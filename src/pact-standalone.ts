@@ -1,7 +1,7 @@
 import * as path from "path";
 
 const cwd = path.resolve(__dirname, "..");
-export const PACT_STANDALONE_VERSION = "1.43.0";
+export const PACT_STANDALONE_VERSION = "1.43.1";
 
 export interface PactStandalone {
 	cwd: string;
