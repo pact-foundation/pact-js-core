@@ -56,6 +56,7 @@
     "mkdirp": "0.5.1",
     "q": "1.5.1",
     "request": "2.83.0",
+    "sumchecker": "^2.0.2",
     "tar": "4.4.0",
     "underscore": "1.8.3",
     "unixify": "1.0.0",
@@ -99,11 +100,12 @@
     "install:linux64": "cross-env DO_NOT_TRACK=true node postinstall.js linux x64",
     "clean": "rimraf '{src,test,bin,standalone}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
     "lint": "tslint -p tsconfig.json",
-    "pretest": "npm run build && npm run install:current",
+    "pretest": "npm run build && npm run download-checksums && npm run install:current",
     "test": "cross-env DO_NOT_TRACK=true mocha -r ts-node/register -R mocha-unfunk-reporter -t 15000 -s 5000 -b --check-leaks --exit \"{src,test,bin}/**/*.spec.ts\"",
     "dev": "npm run lint --force && npm test && node .",
     "build": "npm run clean && tsc",
     "start": "npm run watch",
+    "download-checksums": "node download-checksums.js",
     "prerelease": "npm i && npm t && rm package-lock.json",
     "release": "standard-version"
   }

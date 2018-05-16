@@ -7,14 +7,19 @@ const fs = require("fs");
 const decompress = require("decompress");
 const tar = require("tar");
 const chalk = require("chalk");
+const sumchecker = require("sumchecker");
+
+export const PACT_BINARY_LOCATION = process.env.PACT_BINARY_LOCATION ||
+	`https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 
 function download(data: Data): Promise<Data> {
+	console.log(chalk.gray(`Installing Pact Standalone Binary for ${data.platform}.`));
 	return new Promise((resolve: (f: Data) => void, reject: (e: string) => void) => {
 		if (fs.existsSync(path.resolve(data.filepath))) {
 			console.log(chalk.yellow("Binary already downloaded, skipping..."));
 			return resolve(data);
 		}
-		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.url}`));
+		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.binaryDownloadPath}`));
 
 		// Track downloads through Google Analytics unless testing or don't want to be tracked
 		if (!process.env.DO_NOT_TRACK) {
@@ -60,31 +65,46 @@ function download(data: Data): Promise<Data> {
 					cd: `download-node-${data.platform}-${isCI ? "ci" : "user"}`
 				}
 			})
-				// Ignore all errors
-				.on("error", () => {});
+			// Ignore all errors
+				.on("error", () => {
+				});
 		}
 
 		// Get archive of release
 		let len = 0;
 		let downloaded = 0;
 		let time = Date.now();
-		request(data.url)
-			.on("response", (res: http.IncomingMessage) => len = parseInt(res.headers["content-length"] as string, 10))
-			.on("data", (chunk: any[]) => {
-				downloaded += chunk.length;
-				// Only show download progress every second
-				const now = Date.now();
-				if (now - time > 1000) {
-					time = now;
-					console.log(chalk.gray(`Downloaded ${(100 * downloaded / len).toFixed(2)}%...`));
-				}
-			})
-			.pipe(fs.createWriteStream(data.filepath))
-			.on("finish", () => {
-				console.log(chalk.green(`Finished downloading binary to ${data.filepath}`));
-				resolve(data);
-			})
-			.on("error", (e: string) => reject(`Error downloading binary from ${data.url}: ${e}`));
+		// If URL, download via HTTP
+		if (/^http(s?):\/\//.test(data.binaryDownloadPath)) {
+			request(data.binaryDownloadPath)
+				.on("response", (res: http.IncomingMessage) => len = parseInt(res.headers["content-length"] as string, 10))
+				.on("data", (chunk: any[]) => {
+					downloaded += chunk.length;
+					// Only show download progress every second
+					const now = Date.now();
+					if (now - time > 1000) {
+						time = now;
+						console.log(chalk.gray(`Downloaded ${(100 * downloaded / len).toFixed(2)}%...`));
+					}
+				})
+				.pipe(fs.createWriteStream(data.filepath))
+				.on("finish", () => {
+					console.log(chalk.green(`Finished downloading binary to ${data.filepath}`));
+					resolve(data);
+				})
+				.on("error", (e: string) => reject(`Error downloading binary from ${data.binaryDownloadPath}: ${e}`));
+		} else if (fs.existsSync(data.binaryDownloadPath)) {
+			// Or else it might be a local file, try to copy it over to the correct directory
+			fs.createReadStream(data.binaryDownloadPath)
+				.on("error", (e: string) => reject(`Error reading the file at '${data.binaryDownloadPath}': ${e}`))
+				.pipe(
+					fs.createWriteStream(data.filepath)
+						.on("error", (e: string) => reject(`Error writing the file to '${data.filepath}': ${e}`))
+						.on("close", () => resolve(data))
+				);
+		} else {
+			reject(`Could not get binary from locale ${data.binaryDownloadPath} as it's not a URL and does not exist at the path specified.`);
+		}
 	});
 }
 
@@ -95,19 +115,31 @@ function extract(data: Data): Promise<void> {
 		return Promise.resolve();
 	}
 
-	fs.mkdirSync(data.platformFolderPath);
+	// Make sure checksum is available
+	if(!fs.existsSync(data.checksumFilepath)) {
+		return Promise.reject(`Checksum file missing from standalone directory. Aborting.`);
+	}
 
+	fs.mkdirSync(data.platformFolderPath);
 	console.log(chalk.yellow(`Extracting binary from ${data.filepath}.`));
 
-	// Extract files into their platform folder
-	return (data.isWindows ?
-		decompress(data.filepath, data.platformFolderPath, {strip: 1}) :
-		tar.x({
-			file: data.filepath,
-			strip: 1,
-			cwd: data.platformFolderPath,
-			Z: true
-		}))
+	// Validate checksum to make sure it's the correct binary
+	const basename = path.basename(data.filepath);
+	return sumchecker("sha1", data.checksumFilepath, __dirname, basename)
+		.then(
+			() => console.log(chalk.green(`Checksum passed for '${basename}'.`)),
+			() => Promise.reject(`Checksum rejected for file '${basename}' with checksum ${path.basename(data.checksumFilepath)}`)
+		)
+		// Extract files into their platform folder
+		.then(() => data.isWindows ?
+			decompress(data.filepath, data.platformFolderPath, {strip: 1}) :
+			tar.x({
+				file: data.filepath,
+				strip: 1,
+				cwd: data.platformFolderPath,
+				Z: true
+			})
+		)
 		.then(() => {
 			// Remove pact-publish as it's getting deprecated
 			const publishPath = path.resolve(data.platformFolderPath, "bin", `pact-publish${data.isWindows ? ".bat" : ""}`);
@@ -131,25 +163,12 @@ function extract(data: Data): Promise<void> {
 		.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
 }
 
-function setup(platform?: string, arch?: string): Promise<Data> {
-	platform = platform || process.platform;
-	arch = arch || process.arch;
-	let binary = "pact-" + PACT_STANDALONE_VERSION + "-";
-	switch (platform) {
-		case "win32":
-			binary += "win32.zip";
-			break;
-		case "darwin":
-			binary += "osx.tar.gz";
-			break;
-		case "linux":
-			binary += "linux-x86" + (arch === "x64" ? "_64" : "") + ".tar.gz";
-			break;
-	}
-	console.log(chalk.gray(`Installing Pact Standalone Binary for ${platform}.`));
+function setup(platform: string = process.platform, arch: string = process.arch): Promise<Data> {
 	return Promise.resolve({
-		url: `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/${binary}`,
-		filepath: path.resolve(__dirname, binary),
+		binaryDownloadPath: getBinaryDownloadPath(platform, arch),
+		checksumDownloadPath: getBinaryChecksumDownloadPath(platform, arch),
+		filepath: path.resolve(__dirname, getBinaryFilename(platform, arch)),
+		checksumFilepath: path.resolve(__dirname, getBinaryChecksumFilename(platform, arch)),
 		platform: platform,
 		arch: arch,
 		isWindows: "win32" === platform,
@@ -158,12 +177,85 @@ function setup(platform?: string, arch?: string): Promise<Data> {
 }
 
 export interface Data {
-	url: string;
+	binaryDownloadPath: string;
+	checksumDownloadPath: string;
 	filepath: string;
+	checksumFilepath: string;
 	platform: string;
 	arch: string;
 	isWindows: boolean;
 	platformFolderPath?: string;
+}
+
+interface BinaryEntry {
+	platform: string;
+	arch?: string;
+	binary: string;
+}
+
+const BINARIES: BinaryEntry[] = [
+	{
+		platform: "win32",
+		binary: `pact-${PACT_STANDALONE_VERSION}-win32.zip`
+	},
+	{
+		platform: "darwin",
+		binary: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz`
+	},
+	{
+		platform: "linux",
+		arch: "x64",
+		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`
+	},
+	{
+		platform: "linux",
+		arch: "ia32",
+		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz`
+	}
+];
+
+export function getBinaryFilename(platform: string = process.platform, arch: string = process.arch): string {
+	const entry = BINARIES.find((value) => value.platform === platform && (value.arch ? value.arch === arch : true));
+	if (entry) {
+		return entry.binary;
+	}
+
+	throw new Error(`Cannot find binary for platform '${platform}' with architecture '${arch}'.`);
+}
+
+export function getBinaryChecksumFilename(platform?: string, arch?: string): string {
+	return addChecksum(getBinaryFilename(platform, arch));
+}
+
+export function getBinaryDownloadPath(platform?: string, arch?: string): string {
+	return path.join(PACT_BINARY_LOCATION, getBinaryFilename(platform, arch));
+}
+
+export function getBinaryChecksumDownloadPath(platform?: string, arch?: string): string {
+	return addChecksum(getBinaryDownloadPath(platform, arch));
+}
+
+function addChecksum(name: string): string {
+	return `${name}.checksum`;
+}
+
+export function downloadChecksums() {
+	console.log(chalk.gray(`Downloading All Pact Standalone Binary Checksums.`));
+	return Promise.all(
+		BINARIES.map((value) => setup(value.platform, value.arch)
+			.then((data) => new Promise((resolve: (f: Data) => void, reject: (e: string) => void) => {
+				request(data.checksumDownloadPath)
+					.pipe(fs.createWriteStream(data.checksumFilepath))
+					.on("finish", () => {
+						console.log(chalk.green(`Finished downloading checksum ${path.basename(data.checksumFilepath)}`));
+						resolve(data);
+					})
+					.on("error", (e: string) => reject(`Error downloading checksum from ${data.checksumDownloadPath}: ${e}`));
+			}))
+		)
+	)
+		.then(() => console.log(chalk.green("All checksums downloaded.")))
+		.catch((e: string) => console.log(chalk.red(`Checksum Download Failed Unexpectedly: ${e}`)));
 }
 
 export default (platform?: string, arch?: string) =>

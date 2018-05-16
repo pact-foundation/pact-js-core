@@ -1,12 +1,7 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "es5",
-		"lib": [
-			"es5",
-			"dom",
-			"es2015.promise"
-		],
+		"target": "es6",
 		"removeComments": true,
 		"noLib": false,
 		"emitDecoratorMetadata": true,
