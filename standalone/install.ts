@@ -10,8 +10,8 @@ const chalk = require("chalk");
 const sumchecker = require("sumchecker");
 
 export const PACT_STANDALONE_VERSION = "1.44.0";
-export const PACT_BINARY_LOCATION = process.env.PACT_BINARY_LOCATION ||
-	`https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
+const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
+export const PACT_BINARY_LOCATION = process.env.PACT_BINARY_LOCATION || PACT_DEFAULT_LOCATION;
 
 const HTTP_REGEX = /^http(s?):\/\//;
 
@@ -106,7 +106,7 @@ function download(data: Data): Promise<Data> {
 						.on("close", () => resolve(data))
 				);
 		} else {
-			reject(`Could not get binary from locale ${data.binaryDownloadPath} as it's not a URL and does not exist at the path specified.`);
+			reject(`Could not get binary from '${data.binaryDownloadPath}' as it's not a URL and does not exist at the path specified.`);
 		}
 	});
 }
@@ -170,7 +170,7 @@ function setup(platform?: string, arch?: string): Promise<Data> {
 	const entry = getBinaryEntry(platform, arch);
 	return Promise.resolve({
 		binaryDownloadPath: join(entry.downloadLocation, entry.binary),
-		checksumDownloadPath: join(entry.downloadLocation, entry.binaryChecksum),
+		checksumDownloadPath: join(PACT_DEFAULT_LOCATION, entry.binaryChecksum),
 		filepath: path.resolve(__dirname, entry.binary),
 		checksumFilepath: path.resolve(__dirname, entry.binaryChecksum),
 		platform: entry.platform,
@@ -245,7 +245,11 @@ export function downloadChecksums() {
 		)
 	)
 		.then(() => console.log(chalk.green("All checksums downloaded.")))
-		.catch((e: string) => console.log(chalk.red(`Checksum Download Failed Unexpectedly: ${e}`)));
+		.catch((e: string) => {
+			const msg = `Checksum Download Failed Unexpectedly: ${e}`;
+			console.log(chalk.red(msg));
+			return Promise.reject(msg);
+		});
 }
 
 export default (platform?: string, arch?: string) =>
