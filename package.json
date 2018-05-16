@@ -60,7 +60,7 @@
     "tar": "4.4.0",
     "underscore": "1.8.3",
     "unixify": "1.0.0",
-    "url-join": "4.0.0"
+    "url-join": "^4.0.0"
   },
   "devDependencies": {
     "@types/chai": "4.1.2",

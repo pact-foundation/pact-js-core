@@ -1,16 +1,19 @@
 import * as http from "http";
 import * as request from "request";
-import {getPlatformFolderName, PACT_STANDALONE_VERSION} from "../src/pact-standalone";
 
 const path = require("path");
 const fs = require("fs");
+const urljoin = require("url-join");
 const decompress = require("decompress");
 const tar = require("tar");
 const chalk = require("chalk");
 const sumchecker = require("sumchecker");
 
+export const PACT_STANDALONE_VERSION = "1.44.0";
 export const PACT_BINARY_LOCATION = process.env.PACT_BINARY_LOCATION ||
 	`https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
+
+const HTTP_REGEX = /^http(s?):\/\//;
 
 function download(data: Data): Promise<Data> {
 	console.log(chalk.gray(`Installing Pact Standalone Binary for ${data.platform}.`));
@@ -75,7 +78,7 @@ function download(data: Data): Promise<Data> {
 		let downloaded = 0;
 		let time = Date.now();
 		// If URL, download via HTTP
-		if (/^http(s?):\/\//.test(data.binaryDownloadPath)) {
+		if (HTTP_REGEX.test(data.binaryDownloadPath)) {
 			request(data.binaryDownloadPath)
 				.on("response", (res: http.IncomingMessage) => len = parseInt(res.headers["content-length"] as string, 10))
 				.on("data", (chunk: any[]) => {
@@ -116,7 +119,7 @@ function extract(data: Data): Promise<void> {
 	}
 
 	// Make sure checksum is available
-	if(!fs.existsSync(data.checksumFilepath)) {
+	if (!fs.existsSync(data.checksumFilepath)) {
 		return Promise.reject(`Checksum file missing from standalone directory. Aborting.`);
 	}
 
@@ -163,80 +166,66 @@ function extract(data: Data): Promise<void> {
 		.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
 }
 
-function setup(platform: string = process.platform, arch: string = process.arch): Promise<Data> {
+function setup(platform?: string, arch?: string): Promise<Data> {
+	const entry = getBinaryEntry(platform, arch);
 	return Promise.resolve({
-		binaryDownloadPath: getBinaryDownloadPath(platform, arch),
-		checksumDownloadPath: getBinaryChecksumDownloadPath(platform, arch),
-		filepath: path.resolve(__dirname, getBinaryFilename(platform, arch)),
-		checksumFilepath: path.resolve(__dirname, getBinaryChecksumFilename(platform, arch)),
-		platform: platform,
-		arch: arch,
-		isWindows: "win32" === platform,
-		platformFolderPath: path.resolve(__dirname, getPlatformFolderName(platform, arch))
+		binaryDownloadPath: join(entry.downloadLocation, entry.binary),
+		checksumDownloadPath: join(entry.downloadLocation, entry.binaryChecksum),
+		filepath: path.resolve(__dirname, entry.binary),
+		checksumFilepath: path.resolve(__dirname, entry.binaryChecksum),
+		platform: entry.platform,
+		arch: entry.arch,
+		isWindows: "win32" === entry.platform,
+		platformFolderPath: path.resolve(__dirname, entry.folderName)
 	});
 }
 
-export interface Data {
-	binaryDownloadPath: string;
-	checksumDownloadPath: string;
-	filepath: string;
-	checksumFilepath: string;
-	platform: string;
-	arch: string;
-	isWindows: boolean;
-	platformFolderPath?: string;
+function join(...paths: string[]): string {
+	return HTTP_REGEX.test(paths[0]) ? urljoin(...paths) : path.join(...paths);
 }
 
-interface BinaryEntry {
-	platform: string;
-	arch?: string;
-	binary: string;
-}
-
+const checksumSuffix = ".checksum";
 const BINARIES: BinaryEntry[] = [
 	{
 		platform: "win32",
-		binary: `pact-${PACT_STANDALONE_VERSION}-win32.zip`
+		binary: `pact-${PACT_STANDALONE_VERSION}-win32.zip`,
+		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-win32.zip${checksumSuffix}`,
+		downloadLocation: PACT_BINARY_LOCATION,
+		folderName: `win32-${PACT_STANDALONE_VERSION}`
 	},
 	{
 		platform: "darwin",
-		binary: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz`
+		binary: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz`,
+		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz${checksumSuffix}`,
+		downloadLocation: PACT_BINARY_LOCATION,
+		folderName: `darwin-${PACT_STANDALONE_VERSION}`
 	},
 	{
 		platform: "linux",
 		arch: "x64",
-		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`
+		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`,
+		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${checksumSuffix}`,
+		downloadLocation: PACT_BINARY_LOCATION,
+		folderName: `linux-x64-${PACT_STANDALONE_VERSION}`
 	},
 	{
 		platform: "linux",
 		arch: "ia32",
-		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz`
+		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz`,
+		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz${checksumSuffix}`,
+		downloadLocation: PACT_BINARY_LOCATION,
+		folderName: `linux-ia32-${PACT_STANDALONE_VERSION}`
 	}
 ];
 
-export function getBinaryFilename(platform: string = process.platform, arch: string = process.arch): string {
+export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
+	platform = platform || process.platform;
+	arch = arch || process.arch;
 	const entry = BINARIES.find((value) => value.platform === platform && (value.arch ? value.arch === arch : true));
 	if (entry) {
-		return entry.binary;
+		return entry;
 	}
-
 	throw new Error(`Cannot find binary for platform '${platform}' with architecture '${arch}'.`);
-}
-
-export function getBinaryChecksumFilename(platform?: string, arch?: string): string {
-	return addChecksum(getBinaryFilename(platform, arch));
-}
-
-export function getBinaryDownloadPath(platform?: string, arch?: string): string {
-	return path.join(PACT_BINARY_LOCATION, getBinaryFilename(platform, arch));
-}
-
-export function getBinaryChecksumDownloadPath(platform?: string, arch?: string): string {
-	return addChecksum(getBinaryDownloadPath(platform, arch));
-}
-
-function addChecksum(name: string): string {
-	return `${name}.checksum`;
 }
 
 export function downloadChecksums() {
@@ -264,3 +253,23 @@ export default (platform?: string, arch?: string) =>
 		.then((d) => extract(d))
 		.then(() => console.log(chalk.green("Pact Standalone Binary is ready.")))
 		.catch((e: string) => console.log(chalk.red(`Postinstalled Failed Unexpectedly: ${e}`)));
+
+export interface Data {
+	binaryDownloadPath: string;
+	checksumDownloadPath: string;
+	filepath: string;
+	checksumFilepath: string;
+	platform: string;
+	arch?: string;
+	isWindows: boolean;
+	platformFolderPath?: string;
+}
+
+export interface BinaryEntry {
+	platform: string;
+	arch?: string;
+	binary: string;
+	binaryChecksum: string;
+	downloadLocation: string;
+	folderName: string;
+}
