@@ -221,9 +221,10 @@ const BINARIES: BinaryEntry[] = [
 export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
 	platform = platform || process.platform;
 	arch = arch || process.arch;
-	const entry = BINARIES.find((value) => value.platform === platform && (value.arch ? value.arch === arch : true));
-	if (entry) {
-		return entry;
+	for (let value of BINARIES) {
+		if (value.platform === platform && (value.arch ? value.arch === arch : true)) {
+			return value;
+		}
 	}
 	throw new Error(`Cannot find binary for platform '${platform}' with architecture '${arch}'.`);
 }
