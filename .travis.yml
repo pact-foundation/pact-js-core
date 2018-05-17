@@ -21,7 +21,7 @@ matrix:
   fast_finish: true
 install: npm install --ignore-scripts # ignore postinstall when doing local npm install
 script: npm test
-before_deploy: npm run download-checksums
+after_success: npm run download-checksums
 deploy:
 - provider: npm
   skip_cleanup: true
