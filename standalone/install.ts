@@ -10,10 +10,29 @@ const chalk = require("chalk");
 const sumchecker = require("sumchecker");
 
 export const PACT_STANDALONE_VERSION = "1.44.0";
-const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
-export const PACT_BINARY_LOCATION = process.env.PACT_BINARY_LOCATION || PACT_DEFAULT_LOCATION;
-
 const HTTP_REGEX = /^http(s?):\/\//;
+const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
+let PACT_BINARY_LOCATION = PACT_DEFAULT_LOCATION;
+let PACT_DO_NOT_TRACK: boolean = false;
+
+findPackageConfig(path.resolve(__dirname, "..", ".."));
+
+function findPackageConfig(location: string, tries: number = 10): void {
+	if (tries === 0) {
+		return;
+	}
+	const packagePath = path.resolve(location, "package.json");
+	if (fs.existsSync(packagePath)) {
+		const config = require(packagePath).config;
+		if (config && (config.pact_binary_location || config.pact_do_not_track)) {
+			PACT_BINARY_LOCATION = config.pact_binary_location || PACT_BINARY_LOCATION;
+			PACT_DO_NOT_TRACK = config.pact_do_not_track || PACT_DO_NOT_TRACK;
+			return;
+		}
+	}
+
+	findPackageConfig(path.resolve(location, ".."), tries - 1);
+}
 
 function download(data: Data): Promise<Data> {
 	console.log(chalk.gray(`Installing Pact Standalone Binary for ${data.platform}.`));
@@ -25,9 +44,9 @@ function download(data: Data): Promise<Data> {
 		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.binaryDownloadPath}`));
 
 		// Track downloads through Google Analytics unless testing or don't want to be tracked
-		if (!process.env.DO_NOT_TRACK) {
+		if (!PACT_DO_NOT_TRACK && !process.env.PACT_DO_NOT_TRACK) {
 			console.log(chalk.gray("Please note: we are tracking this download anonymously to gather important usage statistics. " +
-				"To disable tracking, set 'DO_NOT_TRACK=true' as an environment variable."));
+				"To disable tracking, set 'pact_do_not_track: true' in your package.json 'config' section."));
 			// Trying to find all environment variables of all possible CI services to get more accurate stats
 			// but it's still not 100% since not all systems have unique environment variables for their CI server
 			const isCI = [
