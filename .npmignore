@@ -53,6 +53,7 @@ ts-node-*
 # pact standalone binaries
 standalone/*
 !standalone/*.js
+!standalone/*.checksum
 !standalone/*.d.ts
 
 # Folders created during testing

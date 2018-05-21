@@ -1,0 +1,1 @@
+require("./standalone/install").downloadChecksums();

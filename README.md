@@ -44,6 +44,38 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
 
 `npm install @pact-foundation/pact-node --save`
 
+### Do Not Track
+
+In order to get better statistics as to who is using Pact, we have an anonymous tracking event that triggers when Pact installs for the first time.  To respect your privacy, anyone can turn it off by simply adding a 'do not track' flag within their package.json file:
+
+```json
+{
+	"name": "some-project",
+	...
+	"config": {
+		"pact_do_not_track": true
+	},
+	...
+}
+```
+
+### Pact Download Location
+
+For those that are behind a corporate firewall or simply cannot download the binaries directly from our github releases, you can specify the location where you want Pact to get the binaries from using the 'config' section in your package.json file:
+
+```json
+{
+	"name": "some-project",
+	...
+	"config": {
+		"pact_binary_location": "/home/some-user/Downloads"
+	},
+	...
+}
+```
+
+It will accept both a local path or an http(s) url.  It must point to the directory containing the binary needed as the binary name is appended to the end of the location.  For the example given above, Pact will look for the binary at `/home/some-user/Downloads/pact-1.44.0-win32.zip` for a Windows system.  However, by using this method, you must use the correct Pact version binary associated with this version of Pact-Node.  For extra security measurements, checksum validation has been added to prevent tampering with the binaries.
+
 ## Usage
 
 Simply require the library and call the create function to start the mock service
