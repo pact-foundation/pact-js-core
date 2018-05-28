@@ -141,4 +141,30 @@ describe("Verifier Spec", () => {
 			expect(verifier).to.respondTo("verify");
 		});
 	});
+
+	context("when an using format option", () => {
+		it("should throw an error with anything but a string", () => {
+			expect(() => verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: ["http://idontexist"],
+				format: 10
+			} as any)).to.throw(Error);
+		});
+
+		it("should throw an error with the wrong string", () => {
+			expect(() => verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: ["http://idontexist"],
+				format: "jsonformat"
+			} as any)).to.throw(Error);
+		});
+
+		it("should work with a case insensitive string", () => {
+			expect(() => verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: ["http://idontexist"],
+				format: "rspecjunitformatter"
+			} as any)).to.not.throw(Error);
+		});
+	});
 });
