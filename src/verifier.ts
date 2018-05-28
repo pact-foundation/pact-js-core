@@ -26,7 +26,9 @@ export class Verifier {
 		"pactBrokerPassword": "--broker-password",
 		"publishVerificationResult": "--publish-verification-results",
 		"providerVersion": "--provider-app-version",
-		"customProviderHeaders": "--custom-provider-header"
+		"customProviderHeaders": "--custom-provider-header",
+		"format": "--format",
+		"out": "--out",
 	};
 
 	constructor(options: VerifierOptions) {
@@ -106,6 +108,14 @@ export class Verifier {
 			checkTypes.assert.string(options.providerVersion);
 		}
 
+		if (options.format) {
+			checkTypes.assert.string(options.format);
+		}
+
+		if (options.out) {
+			checkTypes.assert.string(options.out);
+		}
+
 		checkTypes.assert.positive(options.timeout);
 
 		if (options.monkeypatch) {
@@ -172,4 +182,6 @@ export interface VerifierOptions extends SpawnArguments {
 	tags?: string[];
 	timeout?: number;
 	monkeypatch?: string;
+	format?: "json" | "RspecJunitFormatter";
+	out?: string;
 }
