@@ -143,6 +143,19 @@ describe("Verifier Spec", () => {
 	});
 
 	context("when an using format option", () => {
+		it("should work with either 'json' or 'xml'", () => {
+			expect(() => verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: ["http://idontexist"],
+				format: "xml"
+			} as any)).to.not.throw(Error);
+			expect(() => verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: ["http://idontexist"],
+				format: "json"
+			} as any)).to.not.throw(Error);
+		});
+
 		it("should throw an error with anything but a string", () => {
 			expect(() => verifierFactory({
 				providerBaseUrl: "http://localhost",
@@ -163,7 +176,7 @@ describe("Verifier Spec", () => {
 			expect(() => verifierFactory({
 				providerBaseUrl: "http://localhost",
 				pactUrls: ["http://idontexist"],
-				format: "rspecjunitformatter"
+				format: "XML"
 			} as any)).to.not.throw(Error);
 		});
 	});

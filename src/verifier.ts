@@ -110,8 +110,8 @@ export class Verifier {
 
 		if (options.format) {
 			checkTypes.assert.string(options.format);
-			checkTypes.assert.match(options.format, /^(rspecjunitformatter|json)$/i);
-			options.format = options.format.toLowerCase() === "rspecjunitformatter" ? "RspecJunitFormatter" : "json";
+			checkTypes.assert.match(options.format, /^(xml|json)$/i);
+			options.format = options.format.toLowerCase() === "xml" ? "RspecJunitFormatter" : "json";
 		}
 
 		if (options.out) {

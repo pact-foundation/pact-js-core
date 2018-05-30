@@ -142,7 +142,9 @@ var server = pact.createServer({
 | `spec`   | false | number           | The pact specification version to use when writing pact contracts, defaults to '1' |
 | `consumer`          | false  | string  | The name of the consumer to be written to the pact contracts, defaults to none |
 | `provider`          | false  | string  |  The name of the provider to be written to the pact contracts, defaults to none |
-| `pactFileWriteMode` | false  | `"overwrite" | "update" | "merge"`  | Control how the pact file is created. Defaults to "overwrite" |
+| `pactFileWriteMode` | false  | `overwrite` OR `update` OR `merge` | Control how the pact file is created. Defaults to "overwrite" |
+| `format`          | false  | `json` OR `xml`  |  Format to write the results as, either in JSON or XML, defaults to JSON |
+| `out`          | false  | string  |  Write output to a file instead of returning it in the promise, defaults to none |
 
 #### List Mock Servers
 
