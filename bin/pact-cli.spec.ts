@@ -145,7 +145,7 @@ class CLI {
 			detached: !isWindows,
 			windowsVerbatimArguments: isWindows
 		};
-		args = [this.__cliPath].concat(args);
+		args = [this.__cliPath].concat(args).map((v) => `"${v}"`);
 		const proc = childProcess.spawn("node", args, opts);
 		this.__children.push(proc);
 		return q(new CLI(proc))
