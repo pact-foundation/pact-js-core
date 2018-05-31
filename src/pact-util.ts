@@ -1,13 +1,11 @@
 // tslint:disable:no-string-literal
 import cp = require("child_process");
+import path = require("path");
 import logger from "./logger";
-import path from "path";
 import pactStandalone from "./pact-standalone";
 import {ChildProcess, SpawnOptions} from "child_process";
 const _ = require("underscore");
 const checkTypes = require("check-types");
-const spawn = require("cross-spawn");
-
 const isWindows = process.platform === "win32";
 
 export const DEFAULT_ARG = "DEFAULT";
@@ -59,20 +57,20 @@ export class PactUtil {
 		spawnArgs = spawnArgs.concat(this.createArguments(args, argMapping));
 
 		logger.debug(`Starting pact binary with '${_.flatten([file, args, JSON.stringify(opts)])}'`);
-		const instance = spawn(file, spawnArgs, opts);
+		const instance = cp.spawn(file, spawnArgs, opts);
 
 		instance.stdout.setEncoding("utf8");
 		instance.stderr.setEncoding("utf8");
 		instance.stdout.on("data", logger.debug.bind(logger));
 		instance.stderr.on("data", logger.debug.bind(logger));
 		instance.on("error", logger.error.bind(logger));
-		instance.once("close", (code: number) => {
+		instance.once("close", (code) => {
 			if (code !== 0) {
 				logger.warn(`Pact exited with code ${code}.`);
 			}
 		});
 
-		logger.info(`Created '${command.split(path.sep).pop()}' with PID: ${instance.pid}`);
+		logger.info(`Created '${command.split(path.sep).pop()}' process with PID: ${instance.pid}`);
 		return instance;
 	}
 
