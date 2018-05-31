@@ -1,6 +1,6 @@
 // tslint:disable:no-string-literal
 
-import stubFactory from "./stub";
+import stubFactory, {Stub} from "./stub";
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import fs = require("fs");
@@ -17,7 +17,7 @@ describe("Stub Spec", () => {
 		pactUrls: [path.resolve(__dirname, "../test/integration/me-they-success.json")]
 	};
 
-	afterEach(() => stub ? stub.delete() : null);
+	afterEach(() => stub ? stub.delete().then(() => stub = null) : null);
 
 	describe("Start stub", () => {
 		context("when invalid options are set", () => {
@@ -78,6 +78,13 @@ describe("Stub Spec", () => {
 
 			it("should start correctly with valid pact URLs", () => {
 				stub = stubFactory(validDefaults);
+				return expect(stub.start()).to.eventually.be.fulfilled;
+			});
+
+			it("should start correctly with valid pact URLs with spaces in it", () => {
+				stub = stubFactory({
+					pactUrls: [path.resolve(__dirname, "../test/integration/me-they-weird path-success.json")]
+				});
 				return expect(stub.start()).to.eventually.be.fulfilled;
 			});
 
