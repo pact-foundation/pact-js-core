@@ -1,6 +1,6 @@
 // tslint:disable:no-string-literal
 
-import stubFactory, {Stub} from "./stub";
+import stubFactory from "./stub";
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
 import fs = require("fs");
