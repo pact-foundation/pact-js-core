@@ -17,7 +17,7 @@ const isWindows = process.platform === "win32";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe.skip("Pact CLI Spec", () => {
+describe("Pact CLI Spec", () => {
 	afterEach(() => CLI.stopAll());
 
 	it("should show the proper version", () => {

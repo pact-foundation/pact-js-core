@@ -1,11 +1,11 @@
 // tslint:disable:no-string-literal
 import cp = require("child_process");
-import path = require("path");
 import logger from "./logger";
 import pactStandalone from "./pact-standalone";
 import {ChildProcess, SpawnOptions} from "child_process";
 const _ = require("underscore");
 const checkTypes = require("check-types");
+
 const isWindows = process.platform === "win32";
 
 export const DEFAULT_ARG = "DEFAULT";
@@ -44,17 +44,18 @@ export class PactUtil {
 			env: envVars
 		};
 
+		let cmd: string = [command].concat(this.createArguments(args, argMapping)).join(" ");
+
 		let spawnArgs: string[];
 		if (isWindows) {
 			file = "cmd.exe";
-			spawnArgs = ["/s", "/c", command];
+			spawnArgs = ["/s", "/c", cmd];
 			(opts as any).windowsVerbatimArguments = true;
 		} else {
+			cmd = `./${cmd}`;
 			file = "/bin/sh";
-			spawnArgs = ["-c", `./${command}`];
+			spawnArgs = ["-c", cmd];
 		}
-
-		spawnArgs = spawnArgs.concat(this.createArguments(args, argMapping));
 
 		logger.debug(`Starting pact binary with '${_.flatten([file, args, JSON.stringify(opts)])}'`);
 		const instance = cp.spawn(file, spawnArgs, opts);
@@ -70,7 +71,7 @@ export class PactUtil {
 			}
 		});
 
-		logger.info(`Created '${command.split(path.sep).pop()}' process with PID: ${instance.pid}`);
+		logger.info(`Created '${cmd}' process with PID: ${instance.pid}`);
 		return instance;
 	}
 
