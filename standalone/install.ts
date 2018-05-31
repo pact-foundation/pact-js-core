@@ -9,7 +9,7 @@ const tar = require("tar");
 const chalk = require("chalk");
 const sumchecker = require("sumchecker");
 
-export const PACT_STANDALONE_VERSION = "1.44.1";
+export const PACT_STANDALONE_VERSION = "1.44.3";
 const HTTP_REGEX = /^http(s?):\/\//;
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 let PACT_BINARY_LOCATION = PACT_DEFAULT_LOCATION;

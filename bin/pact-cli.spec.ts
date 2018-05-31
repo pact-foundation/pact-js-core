@@ -8,6 +8,7 @@ import {ServerOptions} from "../src/server";
 import providerMock from "../test/integration/provider-mock";
 import brokerMock from "../test/integration/broker-mock";
 import * as http from "http";
+
 const decamelize = require("decamelize");
 const _ = require("underscore");
 
@@ -73,11 +74,25 @@ describe("Pact CLI Spec", () => {
 			before(() => providerMock(PORT).then((s) => server = s));
 			after(() => server.close());
 
-			it("should work pointing to fake broker", () => {
-				const p = CLI.runSync(["verify", "--provider-base-url", providerBaseUrl, "--pact-urls", path.resolve(__dirname, "integration/me-they-success.json")])
-					.then((cp) => cp.stdout);
-				return expect(p).to.eventually.be.fulfilled;
-			});
+			it("should work pointing to fake broker", () =>
+				expect(
+					CLI.runSync([
+						"verify",
+						"--provider-base-url", providerBaseUrl,
+						"--pact-urls", path.resolve(__dirname, "integration/me-they-success.json")
+					]).then((cp) => cp.stdout)
+				).to.eventually.be.fulfilled
+			);
+
+			it("should work with a weird path to a file", () =>
+				expect(
+					CLI.runSync([
+						"verify",
+						"--provider-base-url", providerBaseUrl,
+						"--pact-urls", path.resolve(__dirname, "integration/me-they-weird path-success.json")
+					]).then((cp) => cp.stdout)
+				).to.eventually.be.fulfilled
+			);
 		});
 	});
 
@@ -130,7 +145,7 @@ class CLI {
 			detached: !isWindows,
 			windowsVerbatimArguments: isWindows
 		};
-		args = [this.__cliPath].concat(args);
+		args = [this.__cliPath].concat(args).map((v) => `"${v}"`);
 		const proc = childProcess.spawn("node", args, opts);
 		this.__children.push(proc);
 		return q(new CLI(proc))

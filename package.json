@@ -1,6 +1,6 @@
 {
   "name": "@pact-foundation/pact-node",
-  "version": "6.18.1",
+  "version": "6.18.3",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "src/index.js",
   "homepage": "https://github.com/pact-foundation/pact-node#readme",
@@ -101,7 +101,7 @@
     "clean": "rimraf '{src,test,bin,standalone}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
     "lint": "tslint -p tsconfig.json",
     "pretest": "npm run build && npm run download-checksums && npm run install:current",
-    "test": "cross-env PACT_DO_NOT_TRACK=true mocha -r ts-node/register -R mocha-unfunk-reporter -t 15000 -s 5000 -b --check-leaks --exit \"{src,test,bin}/**/*.spec.ts\"",
+    "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha -r ts-node/register -R mocha-unfunk-reporter -t 15000 -s 5000 -b --check-leaks --exit \"{src,test,bin}/**/*.spec.ts\"",
     "dev": "npm run lint --force && npm test && node .",
     "build": "npm run clean && tsc",
     "start": "npm run watch",

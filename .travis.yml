@@ -31,4 +31,4 @@ deploy:
   on:
     branch: master
     tags: true
-    node: 6
+    node: 8
