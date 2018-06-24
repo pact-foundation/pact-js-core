@@ -24,6 +24,7 @@ cli
 	.option("--consumer <consumerName>", "Specify consumer name for written Pact files.")
 	.option("--provider <providerName>", "Specify provider name for written Pact files.")
 	.option("--monkeypatch <file>", "Absolute path to a Ruby file that will monkeypatch the underlying Pact mock.")
+	.option("--log-level <level>", "Sets the log level for the mock server.  One of 'debug', 'info', 'warn', 'error'. Defaults to 'debug'.")
 	.action((args: any, options: any) => pact.createServer(options).start());
 cli
 	.command("message", "Creates or updates a message pact file")

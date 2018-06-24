@@ -9,11 +9,72 @@ const tar = require("tar");
 const chalk = require("chalk");
 const sumchecker = require("sumchecker");
 
-export const PACT_STANDALONE_VERSION = "1.44.3";
+// Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
+export const PACT_STANDALONE_VERSION = "1.47.0";
+
 const HTTP_REGEX = /^http(s?):\/\//;
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 let PACT_BINARY_LOCATION = PACT_DEFAULT_LOCATION;
 let PACT_DO_NOT_TRACK: boolean = false;
+
+const checksumSuffix = ".checksum";
+const BINARIES: BinaryEntry[] = [
+	{
+		platform: "win32",
+		binary: `pact-${PACT_STANDALONE_VERSION}-win32.zip`,
+		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-win32.zip${checksumSuffix}`,
+		downloadLocation: PACT_BINARY_LOCATION,
+		folderName: `win32-${PACT_STANDALONE_VERSION}`
+	},
+	{
+		platform: "darwin",
+		binary: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz`,
+		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz${checksumSuffix}`,
+		downloadLocation: PACT_BINARY_LOCATION,
+		folderName: `darwin-${PACT_STANDALONE_VERSION}`
+	},
+	{
+		platform: "linux",
+		arch: "x64",
+		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`,
+		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${checksumSuffix}`,
+		downloadLocation: PACT_BINARY_LOCATION,
+		folderName: `linux-x64-${PACT_STANDALONE_VERSION}`
+	},
+	{
+		platform: "linux",
+		arch: "ia32",
+		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz`,
+		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz${checksumSuffix}`,
+		downloadLocation: PACT_BINARY_LOCATION,
+		folderName: `linux-ia32-${PACT_STANDALONE_VERSION}`
+	}
+];
+
+const CIs = [
+	"CI",
+	"CONTINUOUS_INTEGRATION",
+	"ABSTRUSE_BUILD_DIR",
+	"APPVEYOR",
+	"BUDDY_WORKSPACE_URL",
+	"BUILDKITE",
+	"CF_BUILD_URL",
+	"CIRCLECI",
+	"CODEBUILD_BUILD_ARN",
+	"CONCOURSE_URL",
+	"DRONE",
+	"GITLAB_CI",
+	"GO_SERVER_URL",
+	"JENKINS_URL",
+	"PROBO_ENVIRONMENT",
+	"SEMAPHORE",
+	"SHIPPABLE",
+	"TDDIUM",
+	"TEAMCITY_VERSION",
+	"TF_BUILD",
+	"TRAVIS",
+	"WERCKER_ROOT",
+];
 
 findPackageConfig(path.resolve(__dirname, "..", ".."));
 
@@ -49,30 +110,7 @@ function download(data: Data): Promise<Data> {
 				"To disable tracking, set 'pact_do_not_track: true' in your package.json 'config' section."));
 			// Trying to find all environment variables of all possible CI services to get more accurate stats
 			// but it's still not 100% since not all systems have unique environment variables for their CI server
-			const isCI = [
-				"CI",
-				"CONTINUOUS_INTEGRATION",
-				"ABSTRUSE_BUILD_DIR",
-				"APPVEYOR",
-				"BUDDY_WORKSPACE_URL",
-				"BUILDKITE",
-				"CF_BUILD_URL",
-				"CIRCLECI",
-				"CODEBUILD_BUILD_ARN",
-				"CONCOURSE_URL",
-				"DRONE",
-				"GITLAB_CI",
-				"GO_SERVER_URL",
-				"JENKINS_URL",
-				"PROBO_ENVIRONMENT",
-				"SEMAPHORE",
-				"SHIPPABLE",
-				"TDDIUM",
-				"TEAMCITY_VERSION",
-				"TF_BUILD",
-				"TRAVIS",
-				"WERCKER_ROOT",
-			].some((key) => process.env[key] !== undefined);
+			const isCI = CIs.some((key) => process.env[key] !== undefined);
 			request.post({
 				url: "https://www.google-analytics.com/collect",
 				form: {
@@ -86,35 +124,21 @@ function download(data: Data): Promise<Data> {
 					aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
 					cd: `download-node-${data.platform}-${isCI ? "ci" : "user"}`
 				}
-			})
-			// Ignore all errors
-				.on("error", () => {
-				});
+			}).on("error", () => {
+			}); // Ignore all errors
 		}
 
 		// Get archive of release
-		let len = 0;
-		let downloaded = 0;
-		let time = Date.now();
 		// If URL, download via HTTP
 		if (HTTP_REGEX.test(data.binaryDownloadPath)) {
-			request(data.binaryDownloadPath)
-				.on("response", (res: http.IncomingMessage) => len = parseInt(res.headers["content-length"] as string, 10))
-				.on("data", (chunk: any[]) => {
-					downloaded += chunk.length;
-					// Only show download progress every second
-					const now = Date.now();
-					if (now - time > 1000) {
-						time = now;
-						console.log(chalk.gray(`Downloaded ${(100 * downloaded / len).toFixed(2)}%...`));
-					}
-				})
-				.pipe(fs.createWriteStream(data.filepath))
-				.on("finish", () => {
-					console.log(chalk.green(`Finished downloading binary to ${data.filepath}`));
-					resolve(data);
-				})
-				.on("error", (e: string) => reject(`Error downloading binary from ${data.binaryDownloadPath}: ${e}`));
+			downloadFileRetry(data.binaryDownloadPath, data.filepath)
+				.then(
+					() => {
+						console.log(chalk.green(`Finished downloading binary to ${data.filepath}`));
+						return data;
+					},
+					(e: string) => Promise.reject(`Error downloading binary from ${data.binaryDownloadPath}: ${e}`)
+				);
 		} else if (fs.existsSync(data.binaryDownloadPath)) {
 			// Or else it might be a local file, try to copy it over to the correct directory
 			fs.createReadStream(data.binaryDownloadPath)
@@ -203,39 +227,27 @@ function join(...paths: string[]): string {
 	return HTTP_REGEX.test(paths[0]) ? urljoin(...paths) : path.join(...paths);
 }
 
-const checksumSuffix = ".checksum";
-const BINARIES: BinaryEntry[] = [
-	{
-		platform: "win32",
-		binary: `pact-${PACT_STANDALONE_VERSION}-win32.zip`,
-		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-win32.zip${checksumSuffix}`,
-		downloadLocation: PACT_BINARY_LOCATION,
-		folderName: `win32-${PACT_STANDALONE_VERSION}`
-	},
-	{
-		platform: "darwin",
-		binary: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz`,
-		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz${checksumSuffix}`,
-		downloadLocation: PACT_BINARY_LOCATION,
-		folderName: `darwin-${PACT_STANDALONE_VERSION}`
-	},
-	{
-		platform: "linux",
-		arch: "x64",
-		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`,
-		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${checksumSuffix}`,
-		downloadLocation: PACT_BINARY_LOCATION,
-		folderName: `linux-x64-${PACT_STANDALONE_VERSION}`
-	},
-	{
-		platform: "linux",
-		arch: "ia32",
-		binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz`,
-		binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz${checksumSuffix}`,
-		downloadLocation: PACT_BINARY_LOCATION,
-		folderName: `linux-ia32-${PACT_STANDALONE_VERSION}`
-	}
-];
+function downloadFileRetry(url: string, filepath: string, retry: number = 3): Promise<any> {
+	return new Promise((resolve: () => void, reject: (e: string) => void) => {
+		let len = 0;
+		let downloaded = 0;
+		let time = Date.now();
+		request(url)
+			.on("error", (e: string) => reject(e))
+			.on("response", (res: http.IncomingMessage) => len = parseInt(res.headers["content-length"] as string, 10))
+			.on("data", (chunk: any[]) => {
+				downloaded += chunk.length;
+				// Only show download progress every second
+				const now = Date.now();
+				if (now - time > 1000) {
+					time = now;
+					console.log(chalk.gray(`Downloaded ${(100 * downloaded / len).toFixed(2)}%...`));
+				}
+			})
+			.pipe(fs.createWriteStream(filepath))
+			.on("finish", () => resolve());
+	}).catch((e: string) => retry-- === 0 ? Promise.reject(e) : downloadFileRetry(url, filepath, retry));
+}
 
 export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
 	platform = platform || process.platform;
@@ -252,23 +264,21 @@ export function downloadChecksums() {
 	console.log(chalk.gray(`Downloading All Pact Standalone Binary Checksums.`));
 	return Promise.all(
 		BINARIES.map((value) => setup(value.platform, value.arch)
-			.then((data) => new Promise((resolve: (f: Data) => void, reject: (e: string) => void) => {
-				request(data.checksumDownloadPath)
-					.pipe(fs.createWriteStream(data.checksumFilepath))
-					.on("finish", () => {
-						console.log(chalk.green(`Finished downloading checksum ${path.basename(data.checksumFilepath)}`));
-						resolve(data);
-					})
-					.on("error", (e: string) => reject(`Error downloading checksum from ${data.checksumDownloadPath}: ${e}`));
-			}))
+			.then((data: Data) =>
+				downloadFileRetry(data.checksumDownloadPath, data.checksumFilepath)
+					.then(
+						() => {
+							console.log(chalk.green(`Finished downloading checksum ${path.basename(data.checksumFilepath)}`));
+							return data;
+						},
+						(e: string) => Promise.reject(`Error downloading checksum from ${data.checksumDownloadPath}: ${e}`)
+					)
+			)
 		)
-	)
-		.then(() => console.log(chalk.green("All checksums downloaded.")))
-		.catch((e: string) => {
-			const msg = `Checksum Download Failed Unexpectedly: ${e}`;
-			console.log(chalk.red(msg));
-			return Promise.reject(msg);
-		});
+	).then(
+		() => console.log(chalk.green("All checksums downloaded.")),
+		(e: string) => Promise.reject(`Checksum Download Failed Unexpectedly: ${e}`)
+	);
 }
 
 export default (platform?: string, arch?: string) =>
@@ -276,7 +286,12 @@ export default (platform?: string, arch?: string) =>
 		.then((d) => download(d))
 		.then((d) => extract(d))
 		.then(() => console.log(chalk.green("Pact Standalone Binary is ready.")))
-		.catch((e: string) => console.log(chalk.red(`Postinstalled Failed Unexpectedly: ${e}`)));
+		.catch((e: string) => Promise.reject(`Postinstalled Failed Unexpectedly: ${e}`));
+
+// Handle all unhandled promise rejection
+process.on("unhandledRejection", (e: any) => {
+	throw new Error(chalk.red(`Unhandled Promise Rejection: ${e}`));
+});
 
 export interface Data {
 	binaryDownloadPath: string;

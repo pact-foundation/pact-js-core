@@ -58,6 +58,11 @@ export class Server extends AbstractService {
 
 		checkTypes.assert.includes(["overwrite", "update", "merge"], options.pactFileWriteMode);
 
+		if(options.logLevel) {
+			options.logLevel = options.logLevel.toLowerCase() as any;
+			checkTypes.assert.includes([ "debug", "info", "warn", "error"], options.logLevel);
+		}
+
 		if (options.monkeypatch) {
 			checkTypes.assert.string(options.monkeypatch);
 			try {
@@ -67,7 +72,15 @@ export class Server extends AbstractService {
 			}
 		}
 
-		super(`${pact.mockServicePath} service`, options, {
+		let opts: any = options;
+
+		// Need to uppercase logLevel for ruby
+		if(options.logLevel) {
+			opts = JSON.parse(JSON.stringify(options));
+			opts.logLevel = options.logLevel.toUpperCase();
+		}
+
+		super(`${pact.mockServicePath} service`, opts, {
 			"port": "--port",
 			"host": "--host",
 			"log": "--log",
@@ -80,7 +93,8 @@ export class Server extends AbstractService {
 			"pactFileWriteMode": "--pact-file-write-mode",
 			"consumer": "--consumer",
 			"provider": "--provider",
-			"monkeypatch": "--monkeypatch"
+			"monkeypatch": "--monkeypatch",
+			"logLevel": "--log-level"
 		});
 	}
 }
@@ -101,5 +115,6 @@ export interface ServerOptions extends SpawnArguments {
 	consumer?: string;
 	provider?: string;
 	monkeypatch?: string;
+	logLevel?: "debug" | "info" | "warn" | "error";
 	pactFileWriteMode?: "overwrite" | "update" | "merge";
 }

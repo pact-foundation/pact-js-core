@@ -84,6 +84,12 @@ describe("Server Spec", () => {
 					pactFileWriteMode: "notarealoption",
 				} as any)).to.throw(Error);
 			});
+
+			it("should fail if incorrect logLevel provided", () => {
+				expect(() => serverFactory({
+					logLevel: "nolog",
+				} as any)).to.throw(Error);
+			});
 		});
 
 		context("when valid options are set", () => {
@@ -204,6 +210,73 @@ describe("Server Spec", () => {
 					expect(server.options.sslcert).to.equal(absoluteSSLCertPath);
 					expect(server.options.sslkey).to.equal(absoluteSSLKeyPath);
 					return expect(server.start()).to.eventually.be.fulfilled;
+				});
+			});
+
+			context("File Write Mode", () => {
+				it("should start correctly with 'overwrite'", () =>
+					expect(serverFactory({
+						pactFileWriteMode: "overwrite",
+					}).start()).to.eventually.be.fulfilled);
+
+				it("should start correctly with 'merge'", () =>
+					expect(serverFactory({
+						pactFileWriteMode: "merge",
+					}).start()).to.eventually.be.fulfilled);
+
+				it("should start correctly with 'update'", () =>
+					expect(serverFactory({
+						pactFileWriteMode: "update",
+					}).start()).to.eventually.be.fulfilled);
+			});
+
+			context("Log Level", () => {
+				it("should start correctly with 'debug'", () => {
+					return q.allSettled([
+						expect(serverFactory({
+							logLevel: "debug",
+						}).start()).to.eventually.be.fulfilled,
+
+						expect(serverFactory({
+							logLevel: "DEBUG",
+						} as any).start()).to.eventually.be.fulfilled,
+					]);
+				});
+
+				it("should start correctly with 'info'", () => {
+					return q.allSettled([
+						expect(serverFactory({
+							logLevel: "info",
+						}).start()).to.eventually.be.fulfilled,
+
+						expect(serverFactory({
+							logLevel: "INFO",
+						} as any).start()).to.eventually.be.fulfilled,
+					]);
+				});
+
+				it("should start correctly with 'warn'", () => {
+					return q.allSettled([
+						expect(serverFactory({
+							logLevel: "warn",
+						}).start()).to.eventually.be.fulfilled,
+
+						expect(serverFactory({
+							logLevel: "WARN",
+						} as any).start()).to.eventually.be.fulfilled,
+					]);
+				});
+
+				it("should start correctly with 'error'", () => {
+					return q.allSettled([
+						expect(serverFactory({
+							logLevel: "error",
+						}).start()).to.eventually.be.fulfilled,
+
+						expect(serverFactory({
+							logLevel: "ERROR",
+						} as any).start()).to.eventually.be.fulfilled,
+					]);
 				});
 			});
 		});
