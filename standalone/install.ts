@@ -135,9 +135,9 @@ function download(data: Data): Promise<Data> {
 				.then(
 					() => {
 						console.log(chalk.green(`Finished downloading binary to ${data.filepath}`));
-						return data;
+						resolve(data);
 					},
-					(e: string) => Promise.reject(`Error downloading binary from ${data.binaryDownloadPath}: ${e}`)
+					(e: string) => reject(`Error downloading binary from ${data.binaryDownloadPath}: ${e}`)
 				);
 		} else if (fs.existsSync(data.binaryDownloadPath)) {
 			// Or else it might be a local file, try to copy it over to the correct directory
