@@ -1,6 +1,6 @@
 {
   "name": "@pact-foundation/pact-node",
-  "version": "6.19.1",
+  "version": "6.19.2",
   "description": "A wrapper for the Ruby version of Pact to work within Node",
   "main": "src/index.js",
   "homepage": "https://github.com/pact-foundation/pact-node#readme",
