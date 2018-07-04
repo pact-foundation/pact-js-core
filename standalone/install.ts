@@ -10,7 +10,7 @@ const chalk = require("chalk");
 const sumchecker = require("sumchecker");
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = "1.47.0";
+export const PACT_STANDALONE_VERSION = "1.47.1";
 
 const HTTP_REGEX = /^http(s?):\/\//;
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
