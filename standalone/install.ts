@@ -11,10 +11,9 @@ const sumchecker = require("sumchecker");
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
 export const PACT_STANDALONE_VERSION = "1.47.2";
-
-const HTTP_REGEX = /^http(s?):\/\//;
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
-const checksumSuffix = ".checksum";
+const HTTP_REGEX = /^http(s?):\/\//;
+const CONFIG = createConfig();
 
 const CIs = [
 	"CI",
@@ -41,66 +40,64 @@ const CIs = [
 	"WERCKER_ROOT",
 ];
 
-const CONFIG = createConfig();
+export function createConfig(): Config {
+	const packageConfig = findPackageConfig(path.resolve(__dirname, "..", ".."));
+	const PACT_BINARY_LOCATION = packageConfig.binaryLocation || PACT_DEFAULT_LOCATION;
+	const CHECKSUM_SUFFIX = ".checksum";
 
-function createConfig():Config {
-	let config = findPackageConfig(path.resolve(__dirname, "..", ".."));
-	let PACT_BINARY_LOCATION =
 	return {
-		binaryLocation: "" | PACT_DEFAULT_LOCATION,
-		doNotTrack: false,
+		doNotTrack: packageConfig.doNotTrack || process.env.PACT_DO_NOT_TRACK !== undefined || false,
 		binaries: [
 			{
 				platform: "win32",
 				binary: `pact-${PACT_STANDALONE_VERSION}-win32.zip`,
-				binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-win32.zip${checksumSuffix}`,
+				binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-win32.zip${CHECKSUM_SUFFIX}`,
 				downloadLocation: PACT_BINARY_LOCATION,
 				folderName: `win32-${PACT_STANDALONE_VERSION}`
+			},
+			{
+				platform: "darwin",
+				binary: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz`,
+				binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz${CHECKSUM_SUFFIX}`,
+				downloadLocation: PACT_BINARY_LOCATION,
+				folderName: `darwin-${PACT_STANDALONE_VERSION}`
+			},
+			{
+				platform: "linux",
+				arch: "x64",
+				binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`,
+				binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${CHECKSUM_SUFFIX}`,
+				downloadLocation: PACT_BINARY_LOCATION,
+				folderName: `linux-x64-${PACT_STANDALONE_VERSION}`
+			},
+			{
+				platform: "linux",
+				arch: "ia32",
+				binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz`,
+				binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz${CHECKSUM_SUFFIX}`,
+				downloadLocation: PACT_BINARY_LOCATION,
+				folderName: `linux-ia32-${PACT_STANDALONE_VERSION}`
 			}
-	},
-		{
-			platform: "darwin",
-			binary: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz`,
-			binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz${checksumSuffix}`,
-			downloadLocation: PACT_BINARY_LOCATION,
-			folderName: `darwin-${PACT_STANDALONE_VERSION}`
-		},
-		{
-			platform: "linux",
-			arch: "x64",
-			binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`,
-			binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${checksumSuffix}`,
-			downloadLocation: PACT_BINARY_LOCATION,
-			folderName: `linux-x64-${PACT_STANDALONE_VERSION}`
-		},
-		{
-			platform: "linux",
-			arch: "ia32",
-			binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz`,
-			binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz${checksumSuffix}`,
-			downloadLocation: PACT_BINARY_LOCATION,
-			folderName: `linux-ia32-${PACT_STANDALONE_VERSION}`
-		}
-]
-};
+		]
+	};
 }
 
-function findPackageConfig(location: string, tries: number = 10): any {
+function findPackageConfig(location: string, tries: number = 10): PackageConfig {
 	if (tries === 0) {
-		return;
+		return {};
 	}
 	const packagePath = path.resolve(location, "package.json");
 	if (fs.existsSync(packagePath)) {
 		const config = require(packagePath).config;
 		if (config && (config.pact_binary_location || config.pact_do_not_track)) {
 			return {
-				pact_binary_location: config.pact_binary_location,
-				pact_do_not_track: config.pact_do_not_track
+				binaryLocation: config.pact_binary_location,
+				doNotTrack: config.pact_do_not_track
 			};
 		}
 	}
 
-	findPackageConfig(path.resolve(location, ".."), tries - 1);
+	return findPackageConfig(path.resolve(location, ".."), tries - 1);
 }
 
 function download(data: Data): Promise<Data> {
@@ -113,7 +110,7 @@ function download(data: Data): Promise<Data> {
 		console.log(chalk.yellow(`Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.binaryDownloadPath}`));
 
 		// Track downloads through Google Analytics unless testing or don't want to be tracked
-		if (!PACT_DO_NOT_TRACK && !process.env.PACT_DO_NOT_TRACK) {
+		if (!CONFIG.doNotTrack) {
 			console.log(chalk.gray("Please note: we are tracking this download anonymously to gather important usage statistics. " +
 				"To disable tracking, set 'pact_do_not_track: true' in your package.json 'config' section."));
 			// Trying to find all environment variables of all possible CI services to get more accurate stats
@@ -260,7 +257,7 @@ function downloadFileRetry(url: string, filepath: string, retry: number = 3): Pr
 export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
 	platform = platform || process.platform;
 	arch = arch || process.arch;
-	for (let value of BINARIES) {
+	for (let value of CONFIG.binaries) {
 		if (value.platform === platform && (value.arch ? value.arch === arch : true)) {
 			return value;
 		}
@@ -271,7 +268,7 @@ export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
 export function downloadChecksums() {
 	console.log(chalk.gray(`Downloading All Pact Standalone Binary Checksums.`));
 	return Promise.all(
-		BINARIES.map((value) =>
+		CONFIG.binaries.map((value) =>
 			setup(value.platform, value.arch)
 				.then((data: Data) =>
 					downloadFileRetry(data.checksumDownloadPath, data.checksumFilepath)
@@ -302,10 +299,14 @@ process.on("unhandledRejection", (e: any) => {
 	throw new Error(chalk.red(`Unhandled Promise Rejection: ${e}`));
 });
 
+export interface PackageConfig {
+	binaryLocation?: string;
+	doNotTrack?: boolean;
+}
+
 export interface Config {
-	binaryLocation: string;
+	doNotTrack: boolean;
 	binaries: BinaryEntry[];
-	doNotTrack:boolean;
 }
 
 export interface Data {
