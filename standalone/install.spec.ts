@@ -8,7 +8,8 @@ const expect = chai.expect;
 
 // Needs to stay a function and not an arrow function to access mocha 'this' context
 describe("Install", () => {
-	const packagePath: string = path.resolve(__dirname, "../../package.json");
+	const packageBasePath: string = path.resolve(__dirname, "../..");
+	const packagePath: string = path.resolve(packageBasePath, "package.json");
 	beforeEach(() => {
 		// Clear require cache
 		for (let key in require.cache) {
@@ -32,16 +33,28 @@ describe("Install", () => {
 			}
 		});
 
-		it("Should be able to set binary location from package.json config", () => {
-			const binaryLocation = "some-location/or-other";
-			packageConfig.config = {
-				pact_binary_location: binaryLocation
-			};
-			fs.writeFileSync(packagePath, JSON.stringify(packageConfig));
-			const config = createConfig();
-			config.binaries.forEach((entry: any) => {
-				expect(entry.downloadLocation).to.be.equal(binaryLocation);
+		describe("Binary Location", () => {
+			function setBinaryLocation(location: string, expectation?: string) {
+				packageConfig.config = {
+					pact_binary_location: location
+				};
+				fs.writeFileSync(packagePath, JSON.stringify(packageConfig));
+				const config = createConfig();
+				config.binaries.forEach((entry: any) => {
+					expect(entry.downloadLocation).to.be.equal(expectation || location);
+				});
+			}
+
+			it("Should be able to set binary location as an absolute path", () => setBinaryLocation("/some-location/or-other"));
+
+			it("Should be able to set binary location as an relative path", () => {
+				const location = "some-location/or-other";
+				setBinaryLocation(location, path.resolve(packageBasePath, location));
 			});
+
+			it("Should be able to set binary location as an HTTP URL", () => setBinaryLocation("http://some.url"));
+
+			it("Should be able to set binary location as an HTTPS URL", () => setBinaryLocation("https://some.url"));
 		});
 
 		it("Should be able to set 'do not track' from package.json config", () => {

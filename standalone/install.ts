@@ -91,13 +91,23 @@ function findPackageConfig(location: string, tries: number = 10): PackageConfig 
 		const config = require(packagePath).config;
 		if (config && (config.pact_binary_location || config.pact_do_not_track)) {
 			return {
-				binaryLocation: config.pact_binary_location,
+				binaryLocation: getBinaryLocation(config.pact_binary_location, location),
 				doNotTrack: config.pact_do_not_track
 			};
 		}
 	}
 
 	return findPackageConfig(path.resolve(location, ".."), tries - 1);
+}
+
+function getBinaryLocation(location: string, basePath: string): string | undefined {
+	// Check if location is valid and is a string
+	if (!location || typeof location !== "string" || location.length === 0) {
+		return undefined;
+	}
+
+	// Check if it's a URL, if not, try to resolve the path to work with either absolute or relative paths
+	return HTTP_REGEX.test(location) ? location : path.resolve(basePath, location);
 }
 
 function download(data: Data): Promise<Data> {
