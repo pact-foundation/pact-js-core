@@ -45,7 +45,7 @@ describe("Install", () => {
 				});
 			}
 
-			it("Should be able to set binary location as an absolute path", () => setBinaryLocation("/some-location/or-other"));
+			it("Should be able to set binary location as an absolute path", () => setBinaryLocation("/some-location/or-other", path.resolve("/some-location/or-other")));
 
 			it("Should be able to set binary location as an relative path", () => {
 				const location = "some-location/or-other";
