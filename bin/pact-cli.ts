@@ -78,4 +78,19 @@ cli
 	.option("-t, --tags <tags>", "Comma separated list of tags to attach to the Pact Contracts being published", cli.LIST)
 	.action((args: any, options: any) => pact.publishPacts(options));
 
+cli
+	.command("can-i-deploy", "Check if you can deploy based on a Contract")
+	.option("-p, --pacticipant <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
+	.option("-v, --version <version>", "Version of the consumer, can be any string, but recommended to use a semantic version or git hash.", undefined, undefined, true)
+	.option("-l, --latest <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
+	.option("-t, --to <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
+	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
+	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
+	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
+	.option("-o, --output <output>", "Pact Broker password.")
+	.option("-vv, --verbose", "Pact Broker password.")
+	.option("--retry-while-unknown <times>", "Pact Broker password.")
+	.option("--retry-interval <seconds>", "Pact Broker password.")
+	.action((args: any, options: any) => pact.publishPacts(options));
+
 cli.parse(process.argv);

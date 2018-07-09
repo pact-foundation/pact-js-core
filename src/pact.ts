@@ -119,6 +119,11 @@ export class Pact {
 		logger.info("Publishing Pacts to Broker");
 		return publisherFactory(options).publish();
 	}
+	// Publish Pacts to a Pact Broker
+	public canDeploy(options: PublisherOptions): q.Promise<any[]> {
+		logger.info("Publishing Pacts to Broker");
+		return publisherFactory(options).canDeploy();
+	}
 
 	private __stringifyOptions(obj: ServerOptions): string {
 		return _.chain(obj)
