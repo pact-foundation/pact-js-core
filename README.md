@@ -12,31 +12,33 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
 
 <!-- TOC -->
 
-- [Pact Node](#pact-node)
-    - [Installation](#installation)
-    - [Usage](#usage)
-    - [Documentation](#documentation)
-        - [Set Log Level](#set-log-level)
-        - [Mock Servers](#mock-servers)
-            - [Create Mock Server](#create-mock-server)
-            - [List Mock Servers](#list-mock-servers)
-            - [Remove All Mock Servers](#remove-all-mock-servers)
-            - [Start a Mock Server](#start-a-mock-server)
-            - [Stop a Mock server](#stop-a-mock-server)
-            - [Delete a Mock server](#delete-a-mock-server)
-            - [Check if a Mock server is running](#check-if-a-mock-server-is-running)
-            - [Mock Server Events](#mock-server-events)
-        - [Provider Verification](#provider-verification)
-        - [Pact Broker Publishing](#pact-broker-publishing)
-        - [Stub Servers](#stub-servers)
-            - [Create Stub Server](#create-stub-server)
-        - [Message Pacts](#message-pacts)
-            - [Create Message Pacts](#create-message-pacts)
-                - [Example](#example)
-                - [Example CLI invocation:](#example-cli-invocation)
-    - [Contributing](#contributing)
-    - [Testing](#testing)
-    - [Questions?](#questions)
+-   [Pact Node](#pact-node)
+    -   [Installation](#installation)
+        -   [Do Not Track](#do-not-track)
+        -   [Pact Download Location](#pact-download-location)
+    -   [Usage](#usage)
+    -   [Documentation](#documentation)
+        -   [Set Log Level](#set-log-level)
+        -   [Mock Servers](#mock-servers)
+            -   [Create Mock Server](#create-mock-server)
+            -   [List Mock Servers](#list-mock-servers)
+            -   [Remove All Mock Servers](#remove-all-mock-servers)
+            -   [Start a Mock Server](#start-a-mock-server)
+            -   [Stop a Mock server](#stop-a-mock-server)
+            -   [Delete a Mock server](#delete-a-mock-server)
+            -   [Check if a Mock server is running](#check-if-a-mock-server-is-running)
+            -   [Mock Server Events](#mock-server-events)
+        -   [Provider Verification](#provider-verification)
+        -   [Pact Broker Publishing](#pact-broker-publishing)
+        -   [Stub Servers](#stub-servers)
+            -   [Create Stub Server](#create-stub-server)
+        -   [Message Pacts](#message-pacts)
+            -   [Create Message Pacts](#create-message-pacts)
+                -   [Example](#example)
+                -   [Example CLI invocation:](#example-cli-invocation)
+    -   [Contributing](#contributing)
+    -   [Testing](#testing)
+    -   [Questions?](#questions)
 
 <!-- /TOC -->
 
@@ -46,7 +48,7 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
 
 ### Do Not Track
 
-In order to get better statistics as to who is using Pact, we have an anonymous tracking event that triggers when Pact installs for the first time.  To respect your privacy, anyone can turn it off by simply adding a 'do not track' flag within their package.json file:
+In order to get better statistics as to who is using Pact, we have an anonymous tracking event that triggers when Pact installs for the first time. To respect your privacy, anyone can turn it off by simply adding a 'do not track' flag within their package.json file:
 
 ```json
 {
@@ -74,15 +76,15 @@ For those that are behind a corporate firewall or simply cannot download the bin
 }
 ```
 
-It will accept both a local path or an http(s) url.  It must point to the directory containing the binary needed as the binary name is appended to the end of the location.  For the example given above, Pact will look for the binary at `/home/some-user/Downloads/pact-1.44.0-win32.zip` for a Windows system.  However, by using this method, you must use the correct Pact version binary associated with this version of Pact-Node.  For extra security measurements, checksum validation has been added to prevent tampering with the binaries.
+It will accept both a local path or an http(s) url. It must point to the directory containing the binary needed as the binary name is appended to the end of the location. For the example given above, Pact will look for the binary at `/home/some-user/Downloads/pact-1.44.0-win32.zip` for a Windows system. However, by using this method, you must use the correct Pact version binary associated with this version of Pact-Node. For extra security measurements, checksum validation has been added to prevent tampering with the binaries.
 
 ## Usage
 
 Simply require the library and call the create function to start the mock service
 
 ```js
-var pact = require('@pact-foundation/pact-node');
-var server = pact.createServer({port: 9999});
+var pact = require("@pact-foundation/pact-node");
+var server = pact.createServer({ port: 9999 });
 server.start().then(function() {
 	// Do your testing/development here
 });
@@ -92,7 +94,7 @@ Or if you're using Typescript instead of plain old Javascript
 
 ```ts
 import pact from "@pact-foundation/pact-node";
-const server = pact.createServer({port: 9999});
+const server = pact.createServer({ port: 9999 });
 server.start().then(() => {
 	// Do your testing/development here
 });
@@ -111,9 +113,10 @@ To see the list commands possible with the CLI, simply ask for help `$# pact --h
 ### Set Log Level
 
 ```js
-var pact = require('@pact-foundation/pact-node');
-pact.logLevel('debug');
+var pact = require("@pact-foundation/pact-node");
+pact.logLevel("debug");
 ```
+
 ### Mock Servers
 
 Mock servers are used by Pact to record interactions and create pact contracts.
@@ -129,29 +132,29 @@ var server = pact.createServer({
 
 **Options:**
 
-|Parameter | Required?  | Type        | Description |
-|----------|------------|-------------|-------------|
-| `port`   | false |  number          | Port number that the server runs on, defaults to random available port |
-| `host`   | false |  string          | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
-| `log`    | false |  string          | File to log output on relative to current working directory, defaults to none |
-| `ssl`    | false |  boolean         | Create a self-signed SSL cert to run the server over HTTPS , defaults to `false` |
-| `sslcert`| false |  string          | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option, defaults to none |
-| `sslkey` | false |  string          | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this, defaults to none |
-| `cors`   | false |  boolean         | Allow CORS OPTION requests to be accepted, defaults to 'false' |
-| `dir`    | false |  string          | Directory to write the pact contracts relative to the current working directory, defaults to none  |
-| `spec`   | false | number           | The pact specification version to use when writing pact contracts, defaults to '1' |
-| `consumer`          | false  | string  | The name of the consumer to be written to the pact contracts, defaults to none |
-| `provider`          | false  | string  |  The name of the provider to be written to the pact contracts, defaults to none |
-| `pactFileWriteMode` | false  | `overwrite` OR `update` OR `merge` | Control how the pact file is created. Defaults to "overwrite" |
-| `format`          | false  | `json` OR `xml`  |  Format to write the results as, either in JSON or XML, defaults to JSON |
-| `out`          | false  | string  |  Write output to a file instead of returning it in the promise, defaults to none |
+| Parameter           | Required? | Type                               | Description                                                                                                                          |
+| ------------------- | --------- | ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `port`              | false     | number                             | Port number that the server runs on, defaults to random available port                                                               |
+| `host`              | false     | string                             | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
+| `log`               | false     | string                             | File to log output on relative to current working directory, defaults to none                                                        |
+| `ssl`               | false     | boolean                            | Create a self-signed SSL cert to run the server over HTTPS , defaults to `false`                                                     |
+| `sslcert`           | false     | string                             | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option, defaults to none                    |
+| `sslkey`            | false     | string                             | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this, defaults to none                  |
+| `cors`              | false     | boolean                            | Allow CORS OPTION requests to be accepted, defaults to 'false'                                                                       |
+| `dir`               | false     | string                             | Directory to write the pact contracts relative to the current working directory, defaults to none                                    |
+| `spec`              | false     | number                             | The pact specification version to use when writing pact contracts, defaults to '1'                                                   |
+| `consumer`          | false     | string                             | The name of the consumer to be written to the pact contracts, defaults to none                                                       |
+| `provider`          | false     | string                             | The name of the provider to be written to the pact contracts, defaults to none                                                       |
+| `pactFileWriteMode` | false     | `overwrite` OR `update` OR `merge` | Control how the pact file is created. Defaults to "overwrite"                                                                        |
+| `format`            | false     | `json` OR `xml`                    | Format to write the results as, either in JSON or XML, defaults to JSON                                                              |
+| `out`               | false     | string                             | Write output to a file instead of returning it in the promise, defaults to none                                                      |
 
 #### List Mock Servers
 
 If you ever need to see which servers are currently created.
 
 ```js
-var pact = require('@pact-foundation/pact-node');
+var pact = require("@pact-foundation/pact-node");
 var servers = pact.listServers();
 console.log(JSON.stringify(servers));
 ```
@@ -161,7 +164,7 @@ console.log(JSON.stringify(servers));
 Remove all servers once you're done with them in one fell swoop.
 
 ```js
-var pact = require('@pact-foundation/pact-node');
+var pact = require("@pact-foundation/pact-node");
 pact.removeAllServers();
 ```
 
@@ -170,10 +173,12 @@ pact.removeAllServers();
 Start the current server.
 
 ```js
-var pact = require('@pact-foundation/pact-node');
-pact.createServer().start().then(function(){
-	// Do something after it started
-});
+var pact = require("@pact-foundation/pact-node");
+pact.createServer()
+	.start()
+	.then(function() {
+		// Do something after it started
+	});
 ```
 
 #### Stop a Mock server
@@ -181,10 +186,12 @@ pact.createServer().start().then(function(){
 Stop the current server.
 
 ```js
-var pact = require('@pact-foundation/pact-node');
-pact.createServer().stop().then(function(){
-	// Do something after it stopped
-});
+var pact = require("@pact-foundation/pact-node");
+pact.createServer()
+	.stop()
+	.then(function() {
+		// Do something after it stopped
+	});
 ```
 
 #### Delete a Mock server
@@ -192,29 +199,37 @@ pact.createServer().stop().then(function(){
 Stop the current server and deletes it from the list.
 
 ```js
-var pact = require('@pact-foundation/pact-node');
-pact.createServer().delete().then(function(){
-	// Do something after it was killed
-});
+var pact = require("@pact-foundation/pact-node");
+pact.createServer()
+	.delete()
+	.then(function() {
+		// Do something after it was killed
+	});
 ```
 
 #### Check if a Mock server is running
 
 ```js
-var pact = require('@pact-foundation/pact-node');
+var pact = require("@pact-foundation/pact-node");
 pact.createServer().running;
 ```
 
 #### Mock Server Events
 
-There's 3 different events available, 'start', 'stop' and 'delete'.  They can be listened to the same way as an [EventEmitter](https://nodejs.org/api/events.html).
+There's 3 different events available, 'start', 'stop' and 'delete'. They can be listened to the same way as an [EventEmitter](https://nodejs.org/api/events.html).
 
 ```js
-var pact = require('@pact-foundation/pact-node');
+var pact = require("@pact-foundation/pact-node");
 var server = pact.createServer();
-server.on('start', function() { console.log('started'); });
-server.on('stop', function() { console.log('stopped'); });
-server.on('delete', function() { console.log('deleted'); });
+server.on("start", function() {
+	console.log("started");
+});
+server.on("stop", function() {
+	console.log("stopped");
+});
+server.on("delete", function() {
+	console.log("deleted");
+});
 ```
 
 ### Provider Verification
@@ -231,24 +246,22 @@ pact.verifyPacts({
 
 **Options**:
 
-|Parameter | Required?  | Type        | Description |
-|----------|------------|-------------|-------------|
-| `providerBaseUrl` | true | string |  Running API provider host endpoint. |
-| `pactBrokerUrl` | false | string |  URL to fetch the pacts if pactUrls not supplied|
-| `provider` | false | string |  Name of the provider if fetching from a Broker|
-| `tags` | false | array |  Array of tags, used to filter pacts from the Broker|
-| `pactUrls` | false | array |  Array of local Pact file paths or HTTP-based URLs (e.g. from a broker). Required if not using a Broker. |
-| `providerStatesSetupUrl` | false | string |  URL to send PUT requests to setup a given provider state|
-| `pactBrokerUsername` | false | string |  Username for Pact Broker basic authentication|
-| `pactBrokerPassword` | false | string |  Password for Pact Broker basic authentication |
-| `publishVerificationResult` | false | boolean |  Publish verification result to Broker |
-| `customProviderHeaders` | false | array |  Header(s) to add to provider state set up and pact verification|  |`requests`. eg 'Authorization: Basic cGFjdDpwYWN0'.
-| `providerVersion` | false | boolean |  Provider version, required to publish verification result to Broker. Optional otherwise.
-| `timeout` | false | number |  The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.
-
+| Parameter                   | Required? | Type    | Description                                                                                          |
+| --------------------------- | --------- | ------- | ---------------------------------------------------------------------------------------------------- |
+| `providerBaseUrl`           | true      | string  | Running API provider host endpoint.                                                                  |
+| `pactBrokerUrl`             | false     | string  | URL of your Pact Broker dynamically discover relevent pacts. Required if `pactUrls` not given        |
+| `provider`                  | false     | string  | Name of the provider if fetching from a Broker                                                       |
+| `tags`                      | false     | array   | Array of tags, used to filter pacts from the Broker                                                  |
+| `pactUrls`                  | false     | array   | Array of local Pact file paths or HTTP-based URLs. Required if _not_ using a Pact Broker.            |
+| `providerStatesSetupUrl`    | false     | string  | URL to send PUT requests to setup a given provider state                                             |
+| `pactBrokerUsername`        | false     | string  | Username for Pact Broker basic authentication                                                        |
+| `pactBrokerPassword`        | false     | string  | Password for Pact Broker basic authentication                                                        |
+| `publishVerificationResult` | false     | boolean | Publish verification result to Broker (_NOTE_: you should only enable this during CI builds)         |
+| `customProviderHeaders`     | false     | array   | Header(s) to add to provider state set up and pact verification                                      |  | `requests`. eg 'Authorization: Basic cGFjdDpwYWN0'. |
+| `providerVersion`           | false     | string  | Provider version, required to publish verification result to Broker. Optional otherwise.             |
+| `timeout`                   | false     | number  | The duration in ms we should wait to confirm verification process was successful. Defaults to 30000. |
 
 ### Pact Broker Publishing
-
 
 ```js
 var pact = require('@pact-foundation/pact-node');
@@ -263,15 +276,14 @@ pact.publishPacts(opts).then(function () {
 
 **Options**:
 
-|Parameter              | Required?  | Type        | Description |
-|-----------------------|------------|-------------|-------------|
-| `pactFilesOrDirs` 	| true  | array  | Array of local Pact files or directories containing them. Required. |
-| `pactBroker` 			| true  | string | URL of the Pact Broker to publish pacts to. Required. |
-| `consumerVersion` 	| true  | string | A string containing a semver-style version e.g. 1.0.0. Required. |
-| `pactBrokerUsername`	| false | string | Username for Pact Broker basic authentication. Optional |
-| `pactBrokerPassword` 	| false | string | Password for Pact Broker basic authentication. Optional, |
-| `tags` 				| false | array  | An array of Strings to tag the Pacts being published. Optional |
-
+| Parameter            | Required? | Type   | Description                                                         |
+| -------------------- | --------- | ------ | ------------------------------------------------------------------- |
+| `pactFilesOrDirs`    | true      | array  | Array of local Pact files or directories containing them. Required. |
+| `pactBroker`         | true      | string | URL of the Pact Broker to publish pacts to. Required.               |
+| `consumerVersion`    | true      | string | A string containing a semver-style version e.g. 1.0.0. Required.    |
+| `pactBrokerUsername` | false     | string | Username for Pact Broker basic authentication. Optional             |
+| `pactBrokerPassword` | false     | string | Password for Pact Broker basic authentication. Optional,            |
+| `tags`               | false     | array  | An array of Strings to tag the Pacts being published. Optional      |
 
 ### Stub Servers
 
@@ -287,21 +299,22 @@ var server = pact.createStub({
 	...
 });
 ```
+
 **Options**:
 
-|Parameter  | Required?  | Type        | Description |
-|-----------|------------|-------------|-------------|
-| pactUrls 	| true  |  array |  List of local Pact files to create the stub service from|
-| port 		| false |  number |  Port number that the server runs on, defaults to random available port|
-| host 		| false |  string |  Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4  addresses on the local machine.|
-| log 		| false |  string |  File to log output on relative to current working directory, defaults to none|
-| ssl 		| false |  boolean |  Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'|
-| sslcert 	| false |  string |  Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults false | to none|
-| sslkey 	| false |  string |  Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this option false. Defaults to none|
-| cors 		| false |  boolean |  Allow CORS OPTION requests to be accepted, defaults to 'false'|
-
+| Parameter | Required? | Type    | Description                                                                                                                          |
+| --------- | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| pactUrls  | true      | array   | List of local Pact files to create the stub service from                                                                             |
+| port      | false     | number  | Port number that the server runs on, defaults to random available port                                                               |
+| host      | false     | string  | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
+| log       | false     | string  | File to log output on relative to current working directory, defaults to none                                                        |
+| ssl       | false     | boolean | Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'                                                     |
+| sslcert   | false     | string  | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults false                      | to none |
+| sslkey    | false     | string  | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this option false. Defaults to none     |
+| cors      | false     | boolean | Allow CORS OPTION requests to be accepted, defaults to 'false'                                                                       |
 
 ### Message Pacts
+
 #### Create Message Pacts
 
 ```js
@@ -310,14 +323,15 @@ var message = pact.createMessage({
 	...
 });
 ```
+
 **Options**:
 
-|Parameter            | Required? | Type         | Description |
-|---------------------|-----------|--------------|-------------|
-| `dir`               | true      |  string      | Directory to write the pact contracts relative to the current working directory, defaults to none  |
-| `consumer`          | true      | string       | The name of the consumer to be written to the pact contracts, defaults to none |
-| `provider`          | true     | string       |  The name of the provider to be written to the pact contracts, defaults to none |
-| `pactFileWriteMode` | false     | `"overwrite" | "update" | "merge"`  | Control how the pact file is created. Defaults to "update" |
+| Parameter           | Required? | Type                               | Description                                                                                       |
+| ------------------- | --------- | ---------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `dir`               | true      | string                             | Directory to write the pact contracts relative to the current working directory, defaults to none |
+| `consumer`          | true      | string                             | The name of the consumer to be written to the pact contracts, defaults to none                    |
+| `provider`          | true      | string                             | The name of the provider to be written to the pact contracts, defaults to none                    |
+| `pactFileWriteMode` | false     | `"overwrite" | "update" | "merge"` | Control how the pact file is created. Defaults to "update"                                        |
 
 ##### Example
 
@@ -334,7 +348,7 @@ const messageFactory = messageFactory({
 	}`
 });
 
-messageFactory.createMessage()
+messageFactory.createMessage();
 ```
 
 ##### Example CLI invocation:
