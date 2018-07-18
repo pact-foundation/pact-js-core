@@ -1,5 +1,6 @@
 import * as path from "path";
 import {getBinaryEntry} from "../standalone/install";
+import util from "../src/pact-util";
 
 const cwd = path.resolve(__dirname, "..");
 
@@ -20,7 +21,7 @@ export interface PactStandalone {
 export const standalone = (platform?: string, arch?: string): PactStandalone => {
 	platform = platform || process.platform;
 	arch = arch || process.arch;
-	const binName = (name: string) => `${name}${platform === "win32" ? ".bat" : ""}`;
+	const binName = (name: string) => `${name}${util.isWindows(platform) ? ".bat" : ""}`;
 	const mock = binName("pact-mock-service");
 	const message = binName("pact-message");
 	const verify = binName("pact-provider-verifier");

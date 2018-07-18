@@ -121,14 +121,14 @@ export abstract class AbstractService extends events.EventEmitter {
 				if (match && match[1]) {
 					this.options.port = parseInt(match[1], 10);
 					this.__instance.stdout.removeListener("data", catchPort);
-					this.__instance.stderr.removeListener("data", catchPort);
 					logger.info(`Pact running on port ${this.options.port}`);
 				}
 			};
 
 			this.__instance.stdout.on("data", catchPort);
-			this.__instance.stderr.on("data", catchPort);
 		}
+
+		this.__instance.stderr.on("data", (data:any) => logger.error(`Pact Binary Error: ${data}`));
 
 		// check service is available
 		return this.__waitForServiceUp()

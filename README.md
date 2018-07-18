@@ -36,6 +36,7 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
             -   [Create Message Pacts](#create-message-pacts)
                 -   [Example](#example)
                 -   [Example CLI invocation:](#example-cli-invocation)
+    -   [Windows Issues](#windows-issues)
     -   [Contributing](#contributing)
     -   [Testing](#testing)
     -   [Questions?](#questions)
@@ -361,6 +362,12 @@ node ./bin/pact-cli.js message --pact-file-write-mode update --consumer foo --pr
   }
 }'
 ```
+
+## Windows Issues
+
+### Enable Long Paths
+
+[Windows has a default path length limit of 260](https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file#maximum-path-length-limitation) causing issues with projects that are nested deep inside several directory and with how npm handles node_modules directory structures.  To fix this issue, please enable Windows Long Paths in the registry by running `regedit.exe`, find the key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled` and change the value from `0` to `1`, then reboot your computer.  Pact should now work as it should, if not, please [raise an issue on github](https://github.com/pact-foundation/pact-node/issues).
 
 ## Contributing
 
