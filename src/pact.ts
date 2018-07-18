@@ -1,4 +1,3 @@
-import * as fs from "fs";
 import * as q from "q";
 import * as path from "path";
 import serverFactory, {Server, ServerOptions} from "./server";
@@ -10,6 +9,8 @@ import util from "./pact-util";
 import logger, {LogLevels} from "./logger";
 import {AbstractService} from "./service";
 import * as _ from "underscore";
+import * as mkdirp from "mkdirp";
+import * as rimraf from "rimraf";
 
 export class Pact {
 	private __servers: Server[] = [];
@@ -20,16 +21,12 @@ export class Pact {
 		if(util.isWindows()) {
 			try {
 				// Trying to trigger windows error by creating path that's over 260 characters long
-				const dir = path.resolve(
-					__dirname,
-					"Jctyo0NXwbPN6Y1o8p2TkicKma2kfqmXwVLw6ypBX47uktBPX9FM9kbPraQXsAUZuT6BvenTbnWczXzuN4js0KB9e7P5cccxvmXPYcFhJnBvPSKGH1FlTqEOsjl8djk3md",
-					"c8T65S510U5v8HCQNjwUprjAYrZNfmBXuRc4Ufc7xaSuZaYEeqQ8Maf5qJpgmWbXJkWKfAUmlwf7h1V4nzLtbrBnhpoZY7xzyoxIvUquRSQWts92218ZPm9k9bfJdfj3ki"
-				);
-				fs.mkdirSync(dir);
-				fs.rmdirSync(dir);
+				const name = "Jctyo0NXwbPN6Y1o8p2TkicKma2kfqmXwVLw6ypBX47uktBPX9FM9kbPraQXsAUZuT6BvenTbnWczXzuN4js0KB9e7P5cccxvmXPYcFhJnBvPSKGH1FlTqEOsjl8djk3md";
+				const dir = mkdirp.sync(path.resolve(__dirname, name, name));
+				dir && rimraf.sync(dir);
 			} catch {
-				logger.warn(`WARNING: Windows Long Paths is not enabled and might cause Pact to crash. 
-				To fix this issue, please consult https://github.com/pact-foundation/pact-node#enable-long-paths`);
+				logger.warn("WARNING: Windows Long Paths is not enabled and might cause Pact to crash if the path is too long. " +
+					"To fix this issue, please consult https://github.com/pact-foundation/pact-node#enable-long-paths`");
 			}
 		}
 

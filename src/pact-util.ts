@@ -1,8 +1,8 @@
 // tslint:disable:no-string-literal
 import cp = require("child_process");
 import logger from "./logger";
-import pactStandalone from "./pact-standalone";
 import {ChildProcess, SpawnOptions} from "child_process";
+import * as path from "path";
 
 const _ = require("underscore");
 const checkTypes = require("check-types");
@@ -10,6 +10,10 @@ const checkTypes = require("check-types");
 export const DEFAULT_ARG = "DEFAULT";
 
 export class PactUtil {
+	public get cwd():string {
+		return path.resolve(__dirname, "..");
+	}
+
 	public createArguments(args: SpawnArguments, mappings: { [id: string]: string }): string[] {
 		return _.chain(args)
 			.reduce((acc: any, value: any, key: any) => {
@@ -38,7 +42,7 @@ export class PactUtil {
 
 		let file: string;
 		let opts: SpawnOptions = {
-			cwd: pactStandalone.cwd,
+			cwd: this.cwd,
 			detached: !this.isWindows(),
 			env: envVars
 		};

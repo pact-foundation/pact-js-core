@@ -193,7 +193,7 @@ function extract(data: Data): Promise<void> {
 			() => Promise.reject(`Checksum rejected for file '${basename}' with checksum ${path.basename(data.checksumFilepath)}`)
 		)
 		// Extract files into their platform folder
-		.then(() => util.isWindows() ?
+		.then(() => data.isWindows ?
 			decompress(data.filepath, data.platformFolderPath, {strip: 1}) :
 			tar.x({
 				file: data.filepath,
@@ -232,6 +232,7 @@ function setup(platform?: string, arch?: string): Promise<Data> {
 		checksumDownloadPath: join(PACT_DEFAULT_LOCATION, entry.binaryChecksum),
 		filepath: path.resolve(__dirname, entry.binary),
 		checksumFilepath: path.resolve(__dirname, entry.binaryChecksum),
+		isWindows: util.isWindows(platform),
 		platform: entry.platform,
 		arch: entry.arch,
 		platformFolderPath: path.resolve(__dirname, entry.folderName)
@@ -325,6 +326,7 @@ export interface Data {
 	filepath: string;
 	checksumFilepath: string;
 	platform: string;
+	isWindows: boolean;
 	arch?: string;
 	platformFolderPath?: string;
 }
