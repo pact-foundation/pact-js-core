@@ -5,6 +5,7 @@ import q = require("q");
 import path = require("path");
 import {ChildProcess} from "child_process";
 import {ServerOptions} from "../src/server";
+import util from "../src/pact-util";
 import providerMock from "../test/integration/provider-mock";
 import brokerMock from "../test/integration/broker-mock";
 import * as http from "http";
@@ -14,7 +15,6 @@ const _ = require("underscore");
 
 const request = q.denodeify(require("request"));
 const pkg = require("../package.json");
-const isWindows = process.platform === "win32";
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
@@ -142,11 +142,11 @@ class CLI {
 	public static run(args: string[] = []): q.Promise<CLI> {
 		const opts = {
 			cwd: __dirname,
-			detached: !isWindows,
-			windowsVerbatimArguments: isWindows
+			detached: !util.isWindows(),
+			windowsVerbatimArguments: util.isWindows()
 		};
 		args = [this.__cliPath].concat(args);
-		if(isWindows) {
+		if(util.isWindows()) {
 			args = args.map((v) => `"${v}"`);
 		}
 		const proc = childProcess.spawn("node", args, opts);
@@ -179,7 +179,7 @@ class CLI {
 
 	public static stopAll() {
 		for (let child of this.__children) {
-			isWindows ? childProcess.execSync(`taskkill /f /t /pid ${child.pid}`) : process.kill(-child.pid, "SIGINT");
+			util.isWindows() ? childProcess.execSync(`taskkill /f /t /pid ${child.pid}`) : process.kill(-child.pid, "SIGINT");
 		}
 	}
 

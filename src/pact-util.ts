@@ -1,16 +1,19 @@
 // tslint:disable:no-string-literal
 import cp = require("child_process");
 import logger from "./logger";
-import pactStandalone from "./pact-standalone";
 import {ChildProcess, SpawnOptions} from "child_process";
+import * as path from "path";
+
 const _ = require("underscore");
 const checkTypes = require("check-types");
-
-const isWindows = process.platform === "win32";
 
 export const DEFAULT_ARG = "DEFAULT";
 
 export class PactUtil {
+	public get cwd():string {
+		return path.resolve(__dirname, "..");
+	}
+
 	public createArguments(args: SpawnArguments, mappings: { [id: string]: string }): string[] {
 		return _.chain(args)
 			.reduce((acc: any, value: any, key: any) => {
@@ -39,15 +42,15 @@ export class PactUtil {
 
 		let file: string;
 		let opts: SpawnOptions = {
-			cwd: pactStandalone.cwd,
-			detached: !isWindows,
+			cwd: this.cwd,
+			detached: !this.isWindows(),
 			env: envVars
 		};
 
 		let cmd: string = [command].concat(this.createArguments(args, argMapping)).join(" ");
 
 		let spawnArgs: string[];
-		if (isWindows) {
+		if (this.isWindows()) {
 			file = "cmd.exe";
 			spawnArgs = ["/s", "/c", cmd];
 			(opts as any).windowsVerbatimArguments = true;
@@ -82,12 +85,16 @@ export class PactUtil {
 			binary.removeAllListeners();
 			// Killing instance, since windows can't send signals, must kill process forcefully
 			try {
-				isWindows ? cp.execSync(`taskkill /f /t /pid ${pid}`) : process.kill(-pid, "SIGINT");
+				this.isWindows() ? cp.execSync(`taskkill /f /t /pid ${pid}`) : process.kill(-pid, "SIGINT");
 			} catch (e) {
 				return false;
 			}
 		}
 		return true;
+	}
+
+	public isWindows(platform: string = process.platform): boolean {
+		return platform === "win32";
 	}
 }
 

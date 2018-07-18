@@ -4,10 +4,11 @@ import * as fs from "fs";
 import * as path from "path";
 import * as chai from "chai";
 import install from "../standalone/install";
+import util from "./pact-util";
 import {PactStandalone, standalone} from "./pact-standalone";
 
 const expect = chai.expect;
-const basePath = path.resolve(__dirname, "..");
+const basePath = util.cwd;
 
 // Needs to stay a function and not an arrow function to access mocha 'this' context
 describe("Pact Standalone", function() {
