@@ -3,12 +3,12 @@
 import serverFactory from "./server";
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
-import fs = require("fs");
-import path = require("path");
+import * as fs from "fs";
+import * as path from "path";
 import q = require("q");
 import _ = require("underscore");
+import * as mkdirp from "mkdirp";
 
-const mkdirp = require("mkdirp");
 const rimraf = require("rimraf");
 
 chai.use(chaiAsPromised);

@@ -151,7 +151,7 @@ export class Verifier {
 			.then((data: string[]): PromiseLike<string> => {
 				const deferred = q.defer<string>();
 				this.options.pactUrls = data;
-				const instance = pactUtil.spawnBinary(pactStandalone.verifierPath, this.options, this.__argMapping);
+				const instance = pactUtil.spawnBinary(pactStandalone.verifierRelativePath, this.options, this.__argMapping);
 				const output: any[] = [];
 				instance.stdout.on("data", (l) => output.push(l));
 				instance.stderr.on("data", (l) => output.push(l));

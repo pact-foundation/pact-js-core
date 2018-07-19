@@ -69,7 +69,7 @@ export class Publisher {
 	public publish(): q.Promise<string[]> {
 		logger.info(`Publishing pacts to broker at: ${this.options.pactBroker}`);
 		const deferred = q.defer<string[]>();
-		const instance = pactUtil.spawnBinary(`${pactStandalone.brokerPath} publish`, this.options, this.__argMapping);
+		const instance = pactUtil.spawnBinary(`${pactStandalone.brokerRelativePath} publish`, this.options, this.__argMapping);
 		const output: any[] = [];
 		instance.stdout.on("data", (l) => output.push(l));
 		instance.stderr.on("data", (l) => output.push(l));

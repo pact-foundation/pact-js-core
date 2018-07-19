@@ -24,7 +24,7 @@ export class Stub extends AbstractService {
 
 		checkTypes.assert.not.emptyArray(options.pactUrls, "Must provide the pactUrls argument");
 
-		super(`${pact.stubPath}`, options, {
+		super(`${pact.stubRelativePath}`, options, {
 			"pactUrls": DEFAULT_ARG,
 			"port": "--port",
 			"host": "--host",

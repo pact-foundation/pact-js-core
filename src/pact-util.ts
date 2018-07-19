@@ -2,6 +2,7 @@
 import cp = require("child_process");
 import logger from "./logger";
 import {ChildProcess, SpawnOptions} from "child_process";
+import * as os from "os";
 import * as path from "path";
 
 const _ = require("underscore");
@@ -10,8 +11,8 @@ const checkTypes = require("check-types");
 export const DEFAULT_ARG = "DEFAULT";
 
 export class PactUtil {
-	public get cwd():string {
-		return path.resolve(__dirname, "..");
+	public get binaryBasePath():string {
+		return path.join(os.tmpdir(), "pact");
 	}
 
 	public createArguments(args: SpawnArguments, mappings: { [id: string]: string }): string[] {
@@ -42,7 +43,7 @@ export class PactUtil {
 
 		let file: string;
 		let opts: SpawnOptions = {
-			cwd: this.cwd,
+			cwd: this.binaryBasePath,
 			detached: !this.isWindows(),
 			env: envVars
 		};

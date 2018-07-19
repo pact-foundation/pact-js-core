@@ -1,5 +1,4 @@
 import * as q from "q";
-import * as path from "path";
 import serverFactory, {Server, ServerOptions} from "./server";
 import stubFactory, {Stub, StubOptions} from "./stub";
 import verifierFactory, {VerifierOptions} from "./verifier";
@@ -8,28 +7,15 @@ import publisherFactory, {PublisherOptions} from "./publisher";
 import util from "./pact-util";
 import logger, {LogLevels} from "./logger";
 import {AbstractService} from "./service";
+import standalone from "./pact-standalone";
 import * as _ from "underscore";
-import * as mkdirp from "mkdirp";
-import * as rimraf from "rimraf";
 
 export class Pact {
 	private __servers: Server[] = [];
 	private __stubs: Stub[] = [];
 
 	constructor() {
-		// Check to see if we hit into Windows Long Path issue
-		if(util.isWindows()) {
-			try {
-				// Trying to trigger windows error by creating path that's over 260 characters long
-				const name = "Jctyo0NXwbPN6Y1o8p2TkicKma2kfqmXwVLw6ypBX47uktBPX9FM9kbPraQXsAUZuT6BvenTbnWczXzuN4js0KB9e7P5cccxvmXPYcFhJnBvPSKGH1FlTqEOsjl8djk3md";
-				const dir = mkdirp.sync(path.resolve(__dirname, name, name));
-				dir && rimraf.sync(dir);
-			} catch {
-				logger.warn("WARNING: Windows Long Paths is not enabled and might cause Pact to crash if the path is too long. " +
-					"To fix this issue, please consult https://github.com/pact-foundation/pact-node#enable-long-paths`");
-			}
-		}
-
+		this.__windowsLongPathCheck();
 		// Listen for Node exiting or someone killing the process
 		// Must remove all the instances of Pact mock service
 		process.once("exit", () => this.removeAll());
@@ -143,6 +129,16 @@ export class Pact {
 			.map((v: string[]) => v.join(" = "))
 			.value()
 			.join(",\n");
+	}
+
+	private __windowsLongPathCheck() {
+		const maxPathLength = 260;
+		// Check to see if we hit the Windows Long Path issue
+		if(util.isWindows() && standalone.verifierRelativePath.length > maxPathLength) {
+			logger.warn("WARNING: The path to the binaries are longer than 260 characters on Windows, " +
+				"which means you might have issues running Pact.  If Pact randomly exits for no reason, " +
+				"please consult https://github.com/pact-foundation/pact-node#long-paths`");
+		}
 	}
 }
 

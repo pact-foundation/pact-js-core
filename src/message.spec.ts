@@ -3,9 +3,8 @@ import path = require("path");
 import chaiAsPromised = require("chai-as-promised");
 import fs = require("fs");
 import messageFactory from "./message";
-
-const mkdirp = require("mkdirp");
-const rimraf = require("rimraf");
+import * as mkdirp from "mkdirp";
+import * as rimraf from "rimraf";
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 

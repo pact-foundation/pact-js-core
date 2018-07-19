@@ -3,8 +3,8 @@ import q = require("q");
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 import pactStandalone from "./pact-standalone";
-import path = require("path");
-const mkdirp = require("mkdirp");
+import * as mkdirp from "mkdirp";
+import * as path from "path";
 const checkTypes = require("check-types");
 
 export class Message {
@@ -71,7 +71,7 @@ export class Message {
 	public createMessage(): q.Promise<any> {
 		logger.info(`Creating message pact`);
 		const deferred = q.defer<any>();
-		const instance = pactUtil.spawnBinary(`${pactStandalone.messagePath}`, this.options, this.__argMapping);
+		const instance = pactUtil.spawnBinary(`${pactStandalone.messageRelativePath}`, this.options, this.__argMapping);
 		const output: any[] = [];
 		instance.stdout.on("data", (l) => output.push(l));
 		instance.stderr.on("data", (l) => output.push(l));

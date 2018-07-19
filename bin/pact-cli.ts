@@ -18,7 +18,7 @@ cli
 	.option("-s, --ssl <boolean>", "Use a self-signed SSL cert to run the service over HTTPS. Default is false (HTTP).", cli.BOOL)
 	.option("-o, --cors <boolean>", "Support browser security in tests by responding to OPTIONS requests and adding CORS headers" +
 		" to mocked responses. Default is false.", cli.BOOL)
-	.option("-d, --pact-dir <directory>", "Directory to which the pacts will be written. Default is cwd.")
+	.option("-d, --pact-dir <directory>", "Directory to which the pacts will be written. Default is binaryBasePath.")
 	.option("-i, --pact-version <n>", "The Pact specification version to use when writing the Pact files. Default is 1.", cli.INT)
 	.option("-w, --pact-file-write-mode <m>", "Controls how pact files are written to disk. One of 'overwrite', 'update', 'merge'", /^overwrite|update|merge$/)
 	.option("--consumer <consumerName>", "Specify consumer name for written Pact files.")

@@ -3,10 +3,9 @@ import {AbstractService} from "./service";
 import {SpawnArguments} from "./pact-util";
 import {deprecate} from "util";
 import pact from "./pact-standalone";
-import path = require("path");
-import fs = require("fs");
-
-const mkdirp = require("mkdirp");
+import * as path from "path";
+import * as fs from "fs";
+import * as mkdirp from "mkdirp";
 const checkTypes = require("check-types");
 
 export class Server extends AbstractService {
@@ -18,7 +17,7 @@ export class Server extends AbstractService {
 
 	constructor(options?: ServerOptions) {
 		options = options || {};
-		options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
+		options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to binaryBasePath
 		options.pactFileWriteMode = options.pactFileWriteMode || "overwrite";
 
 		if (options.spec) {
@@ -80,7 +79,7 @@ export class Server extends AbstractService {
 			opts.logLevel = options.logLevel.toUpperCase();
 		}
 
-		super(`${pact.mockServicePath} service`, opts, {
+		super(`${pact.mockServiceRelativePath} service`, opts, {
 			"port": "--port",
 			"host": "--host",
 			"log": "--log",

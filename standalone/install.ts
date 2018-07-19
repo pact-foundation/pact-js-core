@@ -1,9 +1,9 @@
 import * as http from "http";
 import * as request from "request";
 import util from "../src/pact-util";
-
-const path = require("path");
-const fs = require("fs");
+import * as path from "path";
+import * as fs from "fs";
+import * as mkdirp from "mkdirp";
 const urljoin = require("url-join");
 const decompress = require("decompress");
 const tar = require("tar");
@@ -81,6 +81,27 @@ export function createConfig(): Config {
 			}
 		]
 	};
+}
+
+function setup(platform?: string, arch?: string): Promise<Data> {
+	// Check to see if tmp pact directory exists, create it if not
+	if(!fs.existsSync(util.binaryBasePath)) {
+		mkdirp.sync(util.binaryBasePath);
+	}
+
+	// Get specific entry based on the platform and architecture
+	const entry = getBinaryEntry(platform, arch);
+
+	return Promise.resolve({
+		binaryDownloadPath: join(entry.downloadLocation, entry.binary),
+		checksumDownloadPath: join(PACT_DEFAULT_LOCATION, entry.binaryChecksum),
+		filepath: path.resolve(util.binaryBasePath, entry.binary),
+		checksumFilepath: path.resolve(__dirname, entry.binaryChecksum),
+		isWindows: util.isWindows(platform),
+		platform: entry.platform,
+		arch: entry.arch,
+		platformFolderPath: path.resolve(util.binaryBasePath, entry.folderName)
+	});
 }
 
 function findPackageConfig(location: string, tries: number = 10): PackageConfig {
@@ -182,16 +203,16 @@ function extract(data: Data): Promise<void> {
 		return Promise.reject(`Checksum file missing from standalone directory. Aborting.`);
 	}
 
-	fs.mkdirSync(data.platformFolderPath);
-	console.log(chalk.yellow(`Extracting binary from ${data.filepath}.`));
-
 	// Validate checksum to make sure it's the correct binary
 	const basename = path.basename(data.filepath);
-	return sumchecker("sha1", data.checksumFilepath, __dirname, basename)
+	console.log(chalk.yellow(`Validating checksum on binary for '${basename}'.`));
+	return sumchecker("sha1", data.checksumFilepath, path.dirname(data.filepath), basename)
 		.then(
 			() => console.log(chalk.green(`Checksum passed for '${basename}'.`)),
 			() => Promise.reject(`Checksum rejected for file '${basename}' with checksum ${path.basename(data.checksumFilepath)}`)
 		)
+		.then(() => mkdirp.sync(data.platformFolderPath))
+		.then(() => console.log(chalk.yellow(`Extracting binary from ${data.filepath}.`)))
 		// Extract files into their platform folder
 		.then(() => data.isWindows ?
 			decompress(data.filepath, data.platformFolderPath, {strip: 1}) :
@@ -223,20 +244,6 @@ function extract(data: Data): Promise<void> {
 			);
 		})
 		.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
-}
-
-function setup(platform?: string, arch?: string): Promise<Data> {
-	const entry = getBinaryEntry(platform, arch);
-	return Promise.resolve({
-		binaryDownloadPath: join(entry.downloadLocation, entry.binary),
-		checksumDownloadPath: join(PACT_DEFAULT_LOCATION, entry.binaryChecksum),
-		filepath: path.resolve(__dirname, entry.binary),
-		checksumFilepath: path.resolve(__dirname, entry.binaryChecksum),
-		isWindows: util.isWindows(platform),
-		platform: entry.platform,
-		arch: entry.arch,
-		platformFolderPath: path.resolve(__dirname, entry.folderName)
-	});
 }
 
 function join(...paths: string[]): string {
@@ -328,7 +335,7 @@ export interface Data {
 	platform: string;
 	isWindows: boolean;
 	arch?: string;
-	platformFolderPath?: string;
+	platformFolderPath: string;
 }
 
 export interface BinaryEntry {

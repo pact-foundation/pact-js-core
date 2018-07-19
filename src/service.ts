@@ -1,14 +1,14 @@
 // tslint:disable:no-string-literal
 
-import path = require("path");
-import fs = require("fs");
+import * as path from "path";
+import * as fs from "fs";
 import events = require("events");
 import http = require("request");
 import q = require("q");
 import logger from "./logger";
 import pactUtil, {SpawnArguments} from "./pact-util";
 import {ChildProcess} from "child_process";
-const mkdirp = require("mkdirp");
+import * as mkdirp from "mkdirp";
 const checkTypes = require("check-types");
 
 const CHECKTIME = 500;
