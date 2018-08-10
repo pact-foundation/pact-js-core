@@ -79,18 +79,19 @@ cli
 	.action((args: any, options: any) => pact.publishPacts(options));
 
 cli
-	.command("can-i-deploy", "Check if you can deploy based on a Contract")
-	.option("-p, --pacticipant <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
-	.option("-v, --version <version>", "Version of the consumer, can be any string, but recommended to use a semantic version or git hash.", undefined, undefined, true)
-	.option("-l, --latest <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
-	.option("-t, --to <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
+	.command("can-i-deploy", "Check if pacticipants are safe to deploy together")
+	.option("-a, --pacticipants <pacticipants>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
+	.option("-v, --versions <version>", "Versions of the pacticipants. Must be in the same order as the pacticipants list.", cli.LIST, undefined, true)
+	.option("-l, --latest", "Use the latest pacticipant version", cli.BOOL, undefined)
+	.option("-t, --to <tag>", "Pacticipant tags to check against", cli.LIST)
 	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
 	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
 	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
-	.option("-o, --output <output>", "Pact Broker password.")
-	.option("-vv, --verbose", "Pact Broker password.")
-	.option("--retry-while-unknown <times>", "Pact Broker password.")
-	.option("--retry-interval <seconds>", "Pact Broker password.")
-	.action((args: any, options: any) => pact.publishPacts(options));
+	.option("-o, --output <output>", "json or table.")
+	.option("-v, --verbose", "Verbose output.")
+	.option("--retry-while-unknown <times>",
+		"The number of times to retry while there is an unknown verification result (ie. the provider verification is likely still running).")
+	.option("--retry-interval <seconds>", "The time between retries in seconds. Use in conjuction with --retry-while-unknown.")
+	.action((args: any, options: any) => pact.canDeploy(options));
 
 cli.parse(process.argv);

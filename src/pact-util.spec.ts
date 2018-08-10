@@ -53,7 +53,15 @@ describe("Pact Util Spec", () => {
 			});
 			describe("with multiple elements",() => {
 				it("should wrap its argument values in quotes", () => {
-					const result = pactUtil.createArguments([{pacticipant: "one",},{version: "v1",},{pacticipant: "two",},{version: "v2",}], {version: "--version" ,pacticipant: "--pacticipant",});
+					const result = pactUtil.createArguments(
+						[
+							{pacticipant: "one"},
+							{version: "v1"},
+							{pacticipant: "two"},
+							{version: "v2"}
+						],
+						{version: "--version" ,pacticipant: "--pacticipant",}
+					);
 
 					expect(result).to.be.an("array");
 					expect(result).to.eql(
@@ -64,9 +72,9 @@ describe("Pact Util Spec", () => {
 						"--pacticipant",
 						"'two'",
 						"--version",
-						"'v2'"])
+						"'v2'"]);
 				});
-			})
+			});
 		});
 
 		it("should make DEFAULT values first, everything else after", () => {

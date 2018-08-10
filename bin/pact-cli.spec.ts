@@ -125,6 +125,35 @@ describe("Pact CLI Spec", () => {
 			});
 		});
 	});
+
+	describe("can-i-deploy Command", () => {
+		it("should display help", () => {
+			const p = CLI.runSync(["can-i-deploy", "--help"]).then((cp) => cp.stdout);
+			return q.all([
+				expect(p).to.eventually.contain("USAGE"),
+				expect(p).to.eventually.contain("pact can-i-deploy")
+			]);
+		});
+
+		it("should fail if missing arguments", () => {
+			return expect(CLI.runSync(["can-i-deploy"]).then((cp) => cp.stderr)).to.eventually.contain("Error");
+		});
+
+		context("with broker mock", () => {
+			const PORT = 9123;
+			const brokerBaseUrl = `http://localhost:${PORT}`;
+			let server: http.Server;
+
+			before(() => brokerMock(PORT).then((s) => server = s));
+			after(() => server.close());
+
+			it("should work pointing to fake broker", () => {
+				const p = CLI.runSync(["can-i-deploy", "--pacticipants", "pacticipant1", "--versions", "1.0.0", "--pact-broker", brokerBaseUrl])
+					.then((cp) => cp.stdout);
+				return expect(p).to.eventually.be.fulfilled;
+			});
+		});
+	});
 });
 
 class CLI {
@@ -159,7 +188,7 @@ class CLI {
 		return this.run(args)
 			.tap((cp) => {
 				if ((cp.process as any).exitCode === null) {
-					// console.log("check when exiting");
+					//console.log("check when exiting");
 					const deferred = q.defer<CLI>();
 					cp.process.once("exit", () => deferred.resolve());
 					return deferred.promise;
@@ -188,11 +217,11 @@ class CLI {
 
 	private static commandRunning(c: CLI, amount: number = 0): q.Promise<any> {
 		amount++;
-		const isSet = () => c.stdout.length !== 0 ? q.resolve() : q.reject();
+		const isSet = () => c.stdout.length !== 0 || c.stderr.length !== 0 ? q.resolve() : q.reject();
 		return isSet()
 			.catch(() => {
 				if (amount >= 10) {
-					return q.reject(new Error("stdout never set, command probably didn't run"));
+					return q.reject(new Error("stdout and stderr never set, command probably didn't run"));
 				}
 				return q.delay(1000).then(() => this.commandRunning(c, amount));
 			});
