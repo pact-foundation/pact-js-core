@@ -106,7 +106,7 @@ describe("Pact CLI Spec", () => {
 		});
 
 		it("should fail if missing 'provider-base-url' argument", () => {
-			return expect(CLI.runSync(["verify"]).then((cp) => cp.stderr)).to.eventually.contain("Must provide the providerBaseUrl argument");
+			return expect(CLI.runSync(["publish"]).then((cp) => cp.stderr)).to.eventually.contain("Missing option");
 		});
 
 		context("with broker mock", () => {
@@ -188,11 +188,11 @@ class CLI {
 
 	private static commandRunning(c: CLI, amount: number = 0): q.Promise<any> {
 		amount++;
-		const isSet = () => c.stdout.length !== 0 ? q.resolve() : q.reject();
+		const isSet = () => c.stdout.length !== 0 || c.stderr.length !== 0 ? q.resolve() : q.reject();
 		return isSet()
 			.catch(() => {
 				if (amount >= 10) {
-					return q.reject(new Error("stdout never set, command probably didn't run"));
+					return q.reject(new Error("stdout and stderr never set, command probably didn't run"));
 				}
 				return q.delay(1000).then(() => this.commandRunning(c, amount));
 			});
