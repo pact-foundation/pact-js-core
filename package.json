@@ -93,7 +93,7 @@
     "typescript": "2.7.2"
   },
   "scripts": {
-    "postinstall": "node postinstall.js",
+    "postinstall": "npm run build && npm run download-checksums && node postinstall.js",
     "install:all": "npm run install:osx && npm run install:win && npm run install:linux32 && npm run install:linux64 && npm run install:current",
     "install:current": "cross-env PACT_DO_NOT_TRACK=true node postinstall.js",
     "install:osx": "cross-env PACT_DO_NOT_TRACK=true node postinstall.js darwin",
