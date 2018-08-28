@@ -371,7 +371,7 @@ node ./bin/pact-cli.js message --pact-file-write-mode update --consumer foo --pr
 
 ## Contributing
 
-To develop this project, simply install the dependencies and run `npm run watch` to for continual development, linting and testing when a source file changes.
+To develop this project, simply install the dependencies with `npm install --ignore-scripts`, and run `npm run watch` to for continual development, linting and testing when a source file changes.
 
 ## Testing
 
