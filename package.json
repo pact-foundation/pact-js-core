@@ -45,7 +45,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@types/bunyan": "1.8.2",
+    "@types/bunyan": "1.8.4",
     "@types/mkdirp": "^0.5.2",
     "@types/q": "1.0.7",
     "@types/rimraf": "^2.0.2",
