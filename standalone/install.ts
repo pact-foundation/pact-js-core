@@ -305,11 +305,6 @@ export default (platform?: string, arch?: string) =>
 		.then(() => console.log(chalk.green("Pact Standalone Binary is ready.")))
 		.catch((e: string) => Promise.reject(`Postinstalled Failed Unexpectedly: ${e}`));
 
-// Handle all unhandled promise rejection
-process.on("unhandledRejection", (e: any) => {
-	throw new Error(chalk.red(`Unhandled Promise Rejection: ${e}`));
-});
-
 export interface PackageConfig {
 	binaryLocation?: string;
 	doNotTrack?: boolean;
