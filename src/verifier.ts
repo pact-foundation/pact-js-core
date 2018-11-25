@@ -148,6 +148,11 @@ export class Verifier {
 				}
 				return uris;
 			})
+			.tap((pacts) => {
+				if (_.isEmpty(pacts)) {
+					throw new Error (`Unable to find pacts for given provider '${this.options.provider}' and tags '${this.options.tags}'`);
+				}
+			})
 			.then((data: string[]): PromiseLike<string> => {
 				const deferred = q.defer<string>();
 				this.options.pactUrls = data;
