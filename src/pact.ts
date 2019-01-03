@@ -9,8 +9,8 @@ import util from "./pact-util";
 import logger, {LogLevels} from "./logger";
 import {AbstractService} from "./service";
 import * as _ from "underscore";
-import * as mkdirp from "mkdirp";
-import * as rimraf from "rimraf";
+const mkdirp = require("mkdirp");
+const rimraf = require("rimraf");
 
 export class Pact {
 	private __servers: Server[] = [];
