@@ -179,7 +179,7 @@ function extract(data: Data): Promise<void> {
 
 	// Make sure checksum is available
 	if (!fs.existsSync(data.checksumFilepath)) {
-		return Promise.reject(`Checksum file missing from standalone directory. Aborting.`);
+		throwError(`Checksum file missing from standalone directory. Aborting.`);
 	}
 
 	fs.mkdirSync(data.platformFolderPath);
@@ -190,7 +190,7 @@ function extract(data: Data): Promise<void> {
 	return sumchecker("sha1", data.checksumFilepath, __dirname, basename)
 		.then(
 			() => console.log(chalk.green(`Checksum passed for '${basename}'.`)),
-			() => Promise.reject(`Checksum rejected for file '${basename}' with checksum ${path.basename(data.checksumFilepath)}`)
+			() => throwError(`Checksum rejected for file '${basename}' with checksum ${path.basename(data.checksumFilepath)}`)
 		)
 		// Extract files into their platform folder
 		.then(() => data.isWindows ?
@@ -222,7 +222,7 @@ function extract(data: Data): Promise<void> {
 				"\n\n"
 			);
 		})
-		.catch((e: any) => Promise.reject(`Extraction failed for ${data.filepath}: ${e}`));
+		.catch((e: any) => throwError(`Extraction failed for ${data.filepath}: ${e}`));
 }
 
 function setup(platform?: string, arch?: string): Promise<Data> {
@@ -262,7 +262,11 @@ function downloadFileRetry(url: string, filepath: string, retry: number = 3): Pr
 			})
 			.pipe(fs.createWriteStream(filepath))
 			.on("finish", () => resolve());
-	}).catch((e: string) => retry-- === 0 ? Promise.reject(e) : downloadFileRetry(url, filepath, retry));
+	}).catch((e: string) => retry-- === 0 ? throwError(e) : downloadFileRetry(url, filepath, retry));
+}
+
+function throwError(msg: string): never {
+	throw new Error(chalk.red(`Error while installing binary: ${msg}`));
 }
 
 export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
@@ -273,7 +277,7 @@ export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
 			return value;
 		}
 	}
-	throw new Error(`Cannot find binary for platform '${platform}' with architecture '${arch}'.`);
+	throw throwError(`Cannot find binary for platform '${platform}' with architecture '${arch}'.`);
 }
 
 export function downloadChecksums() {
@@ -288,13 +292,13 @@ export function downloadChecksums() {
 								console.log(chalk.green(`Finished downloading checksum ${path.basename(data.checksumFilepath)}`));
 								return data;
 							},
-							(e: string) => Promise.reject(`Error downloading checksum from ${data.checksumDownloadPath}: ${e}`)
+							(e: string) => throwError(`Error downloading checksum from ${data.checksumDownloadPath}: ${e}`)
 						)
 				)
 		)
 	).then(
 		() => console.log(chalk.green("All checksums downloaded.")),
-		(e: string) => Promise.reject(`Checksum Download Failed Unexpectedly: ${e}`)
+		(e: string) => throwError(`Checksum Download Failed Unexpectedly: ${e}`)
 	);
 }
 
@@ -303,12 +307,7 @@ export default (platform?: string, arch?: string) =>
 		.then((d) => download(d))
 		.then((d) => extract(d))
 		.then(() => console.log(chalk.green("Pact Standalone Binary is ready.")))
-		.catch((e: string) => Promise.reject(`Postinstalled Failed Unexpectedly: ${e}`));
-
-// Handle all unhandled promise rejection
-process.on("unhandledRejection", (e: any) => {
-	throw new Error(chalk.red(`Unhandled Promise Rejection: ${e}`));
-});
+		.catch((e: string) => throwError(`Postinstalled Failed Unexpectedly: ${e}`));
 
 export interface PackageConfig {
 	binaryLocation?: string;
