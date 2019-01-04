@@ -20,7 +20,7 @@ export class CanDeploy {
 	public readonly options: CanDeployOptions;
 	private readonly __argMapping = {
 		"pacticipant": "--pacticipant",
-		"version": "--version",
+		"pacticipantVersion": "--version",
 		"latest": "--latest",
 		"to": "--to",
 		"pactBroker": "--broker-base-url",
