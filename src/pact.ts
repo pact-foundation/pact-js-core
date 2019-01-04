@@ -5,6 +5,7 @@ import stubFactory, {Stub, StubOptions} from "./stub";
 import verifierFactory, {VerifierOptions} from "./verifier";
 import messageFactory, {MessageOptions} from "./message";
 import publisherFactory, {PublisherOptions} from "./publisher";
+import canDeployFactory, {CanDeployOptions} from "./can-deploy";
 import util from "./pact-util";
 import logger, {LogLevels} from "./logger";
 import {AbstractService} from "./service";
@@ -135,6 +136,12 @@ export class Pact {
 	public publishPacts(options: PublisherOptions): q.Promise<any[]> {
 		logger.info("Publishing Pacts to Broker");
 		return publisherFactory(options).publish();
+	}
+
+	// Use can-i-deploy to determine if it is safe to deploy
+	public canDeploy(options: CanDeployOptions): q.Promise<any[]> {
+		logger.info("Checking if it it possible to deploy");
+		return canDeployFactory(options).canDeploy();
 	}
 
 	private __stringifyOptions(obj: ServerOptions): string {

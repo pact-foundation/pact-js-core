@@ -57,7 +57,7 @@ export default (port: number): q.Promise<http.Server> => {
 					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/latest`
 				},
 				"pb:all-pact-versions": {
-					"title": "All versions of this pact",
+					"title": "All version of this pact",
 					"href": `${BROKER_HOST}/pacts/provider/publisher/consumer/consumer/versions`
 				},
 				"pb:latest-untagged-pact-version": {
@@ -123,8 +123,8 @@ export default (port: number): q.Promise<http.Server> => {
 	server.put("/auth/pacts/provider/:provider/consumer/:consumer/version/:version", auth, pactFunction);
 
 	// Tagging
-	server.put("/pacticipants/:consumer/versions/:version/tags/:tag", tagPactFunction);
-	server.put("/auth/pacticipants/:consumer/versions/:version/tags/:tag", tagPactFunction);
+	server.put("/pacticipant/:consumer/version/:version/tags/:tag", tagPactFunction);
+	server.put("/auth/pacticipant/:consumer/version/:version/tags/:tag", tagPactFunction);
 
 	// Get root HAL links
 	server.get("/", returnJson({
@@ -141,7 +141,7 @@ export default (port: number): q.Promise<http.Server> => {
 			},
 			"pb:latest-pact-versions": {
 				"href": `${BROKER_HOST}/pacts/latest`,
-				"title": "Latest pact versions",
+				"title": "Latest pact version",
 				"templated": false
 			},
 			"pb:pacticipants": {
@@ -180,7 +180,7 @@ export default (port: number): q.Promise<http.Server> => {
 		"_links": {
 			"self": {
 				"href": `${BROKER_HOST}/pacts/provider/nolinks/latest/sit4`,
-				"title": "Latest pact versions for the provider nolinks with tag \"sit4\""
+				"title": "Latest pact version for the provider nolinks with tag \"sit4\""
 			},
 			"provider": {
 				"href": `${BROKER_HOST}/pacticipants/nolinks`,
@@ -195,7 +195,7 @@ export default (port: number): q.Promise<http.Server> => {
 		"_links": {
 			"self": {
 				"href": `${BROKER_HOST}/pacts/provider/bobby/latest/sit4`,
-				"title": "Latest pact versions for the provider bobby with tag \"sit4\""
+				"title": "Latest pact version for the provider bobby with tag \"sit4\""
 			},
 			"provider": {
 				"href": `${BROKER_HOST}/pacticipants/bobby`,
@@ -218,10 +218,10 @@ export default (port: number): q.Promise<http.Server> => {
 		"_links": {
 			"self": {
 				"href": "https://test.pact.dius.com.au/pacts/provider/notfound/latest",
-				"title": "Latest pact versions for the provider bobby"
+				"title": "Latest pact version for the provider bobby"
 			},
 			"provider": {
-				"href": "https://test.pact.dius.com.au/pacticipants/bobby",
+				"href": "https://test.pact.dius.com.au/pacticipant/bobby",
 				"title": "bobby"
 			},
 			"pacts": [{

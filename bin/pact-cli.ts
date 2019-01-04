@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import pact from "../src/pact";
-const cli = require("caporal");
+import * as cli from "caporal";
 const pkg = require("../package.json");
 
 cli
@@ -26,6 +26,7 @@ cli
 	.option("--monkeypatch <file>", "Absolute path to a Ruby file that will monkeypatch the underlying Pact mock.")
 	.option("--log-level <level>", "Sets the log level for the mock server.  One of 'debug', 'info', 'warn', 'error'. Defaults to 'debug'.")
 	.action((args: any, options: any) => pact.createServer(options).start());
+
 cli
 	.command("message", "Creates or updates a message pact file")
 	.option("-c, --content <c>", "JSON content (message representation) to add to the contract file.")
@@ -62,10 +63,12 @@ cli
 	.option("-v, --provider-version <version>", "Provider version, required to publish verification result to Broker.")
 	.option("-t, --timeout <milliseconds>", "The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.", cli.INT)
 	.option("-pub, --publish-verification-result", "Publish verification result to Broker.")
-	.option("-c, --custom-provider-header", "Header to add to provider state set up and pact verification requests." +
+	.option("-c, --custom-provider-header <headers>", "Header to add to provider state set up and pact verification requests." +
 		" eg 'Authorization: Basic cGFjdDpwYWN0'.", cli.LIST)
 	.option("--monkeypatch <file>", "Absolute path to a Ruby file that will monkeypatch the underlying Pact mock.")
-	.action((args: any, options: any) => pact.verifyPacts(options));
+	.action((args: any, options: any) => {
+		return pact.verifyPacts(options);
+	});
 
 cli
 	.command("publish", "Publishes Pact Contracts to the broker")
@@ -77,5 +80,21 @@ cli
 	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
 	.option("-t, --tags <tags>", "Comma separated list of tags to attach to the Pact Contracts being published", cli.LIST)
 	.action((args: any, options: any) => pact.publishPacts(options));
+
+cli
+	.command("can-i-deploy", "Check if pacticipant are safe to deploy together")
+	.option("-p, --pacticipant <pacticipant>", "Repeatable list of pacticipant names", cli.REPEATABLE, undefined, true)
+	.option("-v, --pacticipant-version <version>", "Version of the pacticipant. Must be right after the associated pacticipant", cli.REPEATABLE, undefined, true)
+	.option("-l, --latest", "Use the latest pacticipant version", cli.BOOL, undefined)
+	.option("-t, --to <tag>", "Pacticipant tags to check against", cli.LIST)
+	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
+	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
+	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
+	.option("-o, --output <output>", "json or table.")
+	.option("--verbose", "Verbose output.")
+	.option("--retry-while-unknown <times>",
+		"The number of times to retry while there is an unknown verification result (ie. the provider verification is likely still running).")
+	.option("--retry-interval <seconds>", "The time between retries in seconds. Use in conjuction with --retry-while-unknown.")
+	.action((args: any, options: any) => pact.canDeploy(options));
 
 cli.parse(process.argv);

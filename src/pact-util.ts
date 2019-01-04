@@ -10,30 +10,36 @@ const checkTypes = require("check-types");
 export const DEFAULT_ARG = "DEFAULT";
 
 export class PactUtil {
+	private static createArgumentsFromObject(args: SpawnArguments, mappings: { [id: string]: string }): string[] {
+		return _.chain(args)
+		 .reduce((acc: any, value: any, key: any) => {
+			 if (value && mappings[key]) {
+				 let mapping = mappings[key];
+				 let f = acc.push.bind(acc);
+				 if (mapping === DEFAULT_ARG) {
+					 mapping = "";
+					 f = acc.unshift.bind(acc);
+				 }
+				 _.map(checkTypes.array(value) ? value : [value], (v: any) => f([mapping, `'${v}'`]));
+			 }
+			 return acc;
+		 }, [])
+		 .flatten()
+		 .compact()
+		 .value();
+	}
+
+	public createArguments(args: SpawnArguments | SpawnArguments[], mappings: { [id: string]: string }): string[] {
+				return args instanceof Array ?
+					_.chain(args).map((x: SpawnArguments) => PactUtil.createArgumentsFromObject(x,mappings)).flatten().value() :
+					PactUtil.createArgumentsFromObject(args,mappings);
+	}
+
 	public get cwd():string {
 		return path.resolve(__dirname, "..");
 	}
 
-	public createArguments(args: SpawnArguments, mappings: { [id: string]: string }): string[] {
-		return _.chain(args)
-			.reduce((acc: any, value: any, key: any) => {
-				if (value && mappings[key]) {
-					let mapping = mappings[key];
-					let f = acc.push.bind(acc);
-					if (mapping === DEFAULT_ARG) {
-						mapping = "";
-						f = acc.unshift.bind(acc);
-					}
-					_.map(checkTypes.array(value) ? value : [value], (v: any) => f([mapping, `'${v}'`]));
-				}
-				return acc;
-			}, [])
-			.flatten()
-			.compact()
-			.value();
-	}
-
-	public spawnBinary(command: string, args: SpawnArguments = {}, argMapping: { [id: string]: string } = {}): ChildProcess {
+	public spawnBinary(command: string, args: SpawnArguments | SpawnArguments[] = {}, argMapping: { [id: string]: string } = {}): ChildProcess {
 		const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
 		// Remove environment variable if there
 		// This is a hack to prevent some weird Travelling Ruby behaviour with Gems

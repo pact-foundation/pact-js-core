@@ -125,6 +125,35 @@ describe("Pact CLI Spec", () => {
 			});
 		});
 	});
+
+	describe("can-i-deploy Command", () => {
+		it("should display help", () => {
+			const p = CLI.runSync(["can-i-deploy", "--help"]).then((cp) => cp.stdout);
+			return q.all([
+				expect(p).to.eventually.contain("USAGE"),
+				expect(p).to.eventually.contain("pact can-i-deploy")
+			]);
+		});
+
+		it("should fail if missing arguments", () => {
+			return expect(CLI.runSync(["can-i-deploy"]).then((cp) => cp.stderr)).to.eventually.contain("Error");
+		});
+
+		context("with broker mock", () => {
+			const PORT = 9123;
+			const brokerBaseUrl = `http://localhost:${PORT}`;
+			let server: http.Server;
+
+			before(() => brokerMock(PORT).then((s) => server = s));
+			after(() => server.close());
+
+			it("should work pointing to fake broker", () => {
+				const p = CLI.runSync(["can-i-deploy", "--pacticipant", "pacticipant1", "--version", "1.0.0", "--pact-broker", brokerBaseUrl])
+					.then((cp) => cp.stdout);
+				return expect(p).to.eventually.be.fulfilled;
+			});
+		});
+	});
 });
 
 class CLI {
@@ -159,7 +188,6 @@ class CLI {
 		return this.run(args)
 			.tap((cp) => {
 				if ((cp.process as any).exitCode === null) {
-					// console.log("check when exiting");
 					const deferred = q.defer<CLI>();
 					cp.process.once("exit", () => deferred.resolve());
 					return deferred.promise;

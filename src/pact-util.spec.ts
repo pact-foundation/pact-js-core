@@ -8,24 +8,73 @@ chai.use(chaiAsPromised);
 
 describe("Pact Util Spec", () => {
 	describe("createArguments", () => {
-		it("should return an array of all arguments", () => {
-			const result = pactUtil.createArguments({providerBaseUrl: "http://localhost",}, {providerBaseUrl: "--provider-base-url",});
-			expect(result).to.be.an("array").that.includes("--provider-base-url");
-			expect(result.length).to.be.equal(2);
-		});
-
-		it("should wrap its argument values in quotes", () => {
-			const result = pactUtil.createArguments({
-				providerBaseUrl: "http://localhost",
-				pactUrls: ["http://idontexist"]
-			}, {
-				providerBaseUrl: "--provider-base-url",
-				pactUrls: "--pact-urls"
+		describe("when called with an object", () => {
+			it("should return an array of all arguments", () => {
+				const result = pactUtil.createArguments({providerBaseUrl: "http://localhost",}, {providerBaseUrl: "--provider-base-url",});
+				expect(result).to.be.an("array").that.includes("--provider-base-url");
+				expect(result.length).to.be.equal(2);
 			});
-			expect(result).to.include("--provider-base-url");
-			expect(result).to.include("'http://localhost'");
-			expect(result).to.include("--pact-urls");
-			expect(result).to.include("'http://idontexist'");
+
+			it("should wrap its argument values in quotes", () => {
+				const result = pactUtil.createArguments({
+					providerBaseUrl: "http://localhost",
+					pactUrls: ["http://idontexist"]
+				}, {
+					providerBaseUrl: "--provider-base-url",
+					pactUrls: "--pact-urls"
+				});
+				expect(result).to.include("--provider-base-url");
+				expect(result).to.include("'http://localhost'");
+				expect(result).to.include("--pact-urls");
+				expect(result).to.include("'http://idontexist'");
+			});
+		});
+		describe("when called with an array", () => {
+			describe("with one element",() => {
+				it("should return an array of all arguments", () => {
+					const result = pactUtil.createArguments([{providerBaseUrl: "http://localhost",}], {providerBaseUrl: "--provider-base-url",});
+					expect(result).to.be.an("array").that.includes("--provider-base-url");
+					expect(result.length).to.be.equal(2);
+				});
+
+				it("should wrap its argument values in quotes", () => {
+					const result = pactUtil.createArguments([{
+						providerBaseUrl: "http://localhost",
+						pactUrls: ["http://idontexist"]
+					}], {
+						providerBaseUrl: "--provider-base-url",
+						pactUrls: "--pact-urls"
+					});
+					expect(result).to.include("--provider-base-url");
+					expect(result).to.include("'http://localhost'");
+					expect(result).to.include("--pact-urls");
+					expect(result).to.include("'http://idontexist'");
+				});
+			});
+			describe("with multiple elements",() => {
+				it("should wrap its argument values in quotes", () => {
+					const result = pactUtil.createArguments(
+						[
+							{pacticipant: "one"},
+							{version: "v1"},
+							{pacticipant: "two"},
+							{version: "v2"}
+						],
+						{version: "--version" ,pacticipant: "--pacticipant",}
+					);
+
+					expect(result).to.be.an("array");
+					expect(result).to.eql(
+						["--pacticipant",
+						"'one'",
+						"--version",
+						"'v1'",
+						"--pacticipant",
+						"'two'",
+						"--version",
+						"'v2'"]);
+				});
+			});
 		});
 
 		it("should make DEFAULT values first, everything else after", () => {
