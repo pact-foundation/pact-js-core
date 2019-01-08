@@ -2,6 +2,7 @@
 
 import pact from "../src/pact";
 import * as cli from "caporal";
+import * as _ from "underscore";
 const pkg = require("../package.json");
 
 cli
@@ -84,8 +85,8 @@ cli
 cli
 	.command("can-i-deploy", "Check if pacticipant are safe to deploy together")
 	.option("-p, --pacticipant <pacticipant>", "Repeatable list of pacticipant names", cli.REPEATABLE, undefined, true)
-	.option("-v, --pacticipant-version <version>", "Version of the pacticipant. Must be right after the associated pacticipant", cli.REPEATABLE, undefined, true)
-	.option("-l, --latest", "Use the latest pacticipant version", cli.BOOL, undefined)
+	.option("-v, --pacticipant-version <version>", "Repeatable version of the pacticipant. Must follow after the pacticipant", cli.REPEATABLE, undefined, true)
+	.option("-l, --latest", "Use the latest pacticipant version, Must follow after pacticipant", cli.BOOL, undefined)
 	.option("-t, --to <tag>", "Pacticipant tags to check against", cli.LIST)
 	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
 	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
@@ -95,6 +96,10 @@ cli
 	.option("--retry-while-unknown <times>",
 		"The number of times to retry while there is an unknown verification result (ie. the provider verification is likely still running).")
 	.option("--retry-interval <seconds>", "The time between retries in seconds. Use in conjuction with --retry-while-unknown.")
-	.action((args: any, options: any) => pact.canDeploy(options));
+	.action((args: any, options: any) => {
+		options.pacticipant = _.toArray(options.pacticipant);
+		options.pacticipantVersion = _.toArray(options.pacticipantVersion);
+		pact.canDeploy(options);
+	});
 
 cli.parse(process.argv);

@@ -63,9 +63,9 @@ describe("CanDeploy Spec", () => {
 			expect(result).to.eql(
 				[
 					{pacticipant: "one"},
-					{version: "v1"},
+					{pacticipantVersion: "v1"},
 					{pacticipant: "two"},
-					{version:"v2"},
+					{pacticipantVersion:"v2"},
 					{
 						pactBroker: "some broker",
 						pactBrokerUsername: "username",

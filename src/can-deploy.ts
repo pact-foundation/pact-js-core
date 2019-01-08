@@ -11,7 +11,7 @@ export class CanDeploy {
 			return _.flatten(
 				_.zip(
 					_.map(options.pacticipant, (x: string) => ({pacticipant: x})),
-					_.map(options.pacticipantVersion, (x: string) => ({version: x}))
+					_.map(options.pacticipantVersion, (x: string) => ({pacticipantVersion: x}))
 				)
 			)
 				.concat([_.omit(options,"pacticipant","pacticipantVersion")]);
@@ -98,6 +98,8 @@ export interface CanDeployOptions extends SpawnArguments {
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
 	tags?: string[];
+	output?: "json" | "table";
 	verbose?: boolean;
-	timeout?: number;
+	retryWhileUnknown?: number;
+	retryInterval?: number;
 }
