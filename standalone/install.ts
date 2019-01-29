@@ -129,6 +129,7 @@ function download(data: Data): Promise<Data> {
 			const isCI = CIs.some((key) => process.env[key] !== undefined);
 			request.post({
 				url: "https://www.google-analytics.com/collect",
+				proxy: process.env.npm_config_https_proxy || process.env.npm_config_proxy || undefined,
 				form: {
 					v: 1,
 					tid: "UA-117778936-1", // Tracking ID / Property ID.
@@ -248,7 +249,10 @@ function downloadFileRetry(url: string, filepath: string, retry: number = 3): Pr
 		let len = 0;
 		let downloaded = 0;
 		let time = Date.now();
-		request(url)
+		request({
+			url: url,
+			proxy: process.env.npm_config_https_proxy || process.env.npm_config_proxy || undefined
+		})
 			.on("error", (e: string) => reject(e))
 			.on("response", (res: http.IncomingMessage) => len = parseInt(res.headers["content-length"] as string, 10))
 			.on("data", (chunk: any[]) => {
