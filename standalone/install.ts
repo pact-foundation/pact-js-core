@@ -1,5 +1,5 @@
 import * as http from "http";
-import * as request from "request";
+import * as Request from "request";
 import util from "../src/pact-util";
 
 const path = require("path");
@@ -9,6 +9,8 @@ const decompress = require("decompress");
 const tar = require("tar");
 const chalk = require("chalk");
 const sumchecker = require("sumchecker");
+// Sets the request default for all calls through npm environment variables for proxy
+const request = Request.defaults({proxy: process.env.npm_config_https_proxy || process.env.npm_config_proxy || undefined});
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
 export const PACT_STANDALONE_VERSION = "1.63.0";

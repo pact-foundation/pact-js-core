@@ -10,6 +10,7 @@ import providerMock from "../test/integration/provider-mock";
 import brokerMock from "../test/integration/broker-mock";
 import * as http from "http";
 
+const stripAnsi = require("strip-ansi");
 const decamelize = require("decamelize");
 const _ = require("underscore");
 
@@ -288,12 +289,12 @@ class CLI {
 		this.process.stdout.setEncoding("utf8");
 		this.process.stdout.on("data", (d) => {
 			// console.log(d);
-			this.__stdout += d;
+			this.__stdout += stripAnsi(d);
 		});
 		this.process.stderr.setEncoding("utf8");
 		this.process.stderr.on("data", (d) => {
 			// console.log(d);
-			this.__stderr += d;
+			this.__stderr += stripAnsi(d);
 		});
 		this.process.once("exit", (code) => {
 			// console.log("EXITED " + code);
