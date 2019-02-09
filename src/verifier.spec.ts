@@ -180,4 +180,42 @@ describe("Verifier Spec", () => {
 			} as any)).to.not.throw(Error);
 		});
 	});
+
+	context("when pactBrokerBaseUrl is not provided", () => {
+		it("should not fail", () => {
+			expect(() => verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: [path.dirname(currentDir)]
+			})).to.not.throw(Error);
+		});
+	});
+
+	context("when pactBrokerBaseUrl is provided", () => {
+		it("should not fail", () => {
+			expect(() => verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: [path.dirname(currentDir)],
+				pactBrokerBaseUrl: "http://localhost"
+			})).to.not.throw(Error);
+		});
+	});
+
+	context("when consumerVersionTag is not provided", () => {
+		it("should not fail", () => {
+			expect(() => verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: [path.dirname(currentDir)]
+			})).to.not.throw(Error);
+		});
+	});
+
+	context("when consumerVersionTag is provided", () => {
+		it("should not fail", () => {
+			expect(() => verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: [path.dirname(currentDir)],
+				consumerVersionTag: "tag-1"
+			})).to.not.throw(Error);
+		});
+	});
 });

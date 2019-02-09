@@ -21,9 +21,11 @@ export class Verifier {
 	private readonly __argMapping = {
 		"pactUrls": DEFAULT_ARG,
 		"providerBaseUrl": "--provider-base-url",
+		"pactBrokerBaseUrl": "--pact-broker-base-url",
 		"providerStatesSetupUrl": "--provider-states-setup-url",
 		"pactBrokerUsername": "--broker-username",
 		"pactBrokerPassword": "--broker-password",
+		"consumerVersionTag": "--consumer-version-tag",
 		"publishVerificationResult": "--publish-verification-results",
 		"providerVersion": "--provider-app-version",
 		"customProviderHeaders": "--custom-provider-header",
@@ -34,6 +36,8 @@ export class Verifier {
 	constructor(options: VerifierOptions) {
 		options = options || {};
 		options.pactBrokerUrl = options.pactBrokerUrl || "";
+		options.pactBrokerBaseUrl = options.pactBrokerBaseUrl || "";
+		options.consumerVersionTag = options.consumerVersionTag || "";
 		options.tags = options.tags || [];
 		options.pactUrls = options.pactUrls || [];
 		options.provider = options.provider || "";
@@ -82,6 +86,14 @@ export class Verifier {
 
 		if (options.pactBrokerPassword) {
 			checkTypes.assert.string(options.pactBrokerPassword);
+		}
+
+		if (options.pactBrokerBaseUrl) {
+			checkTypes.assert.string(options.pactBrokerBaseUrl);
+		}
+
+		if (options.consumerVersionTag) {
+			checkTypes.assert.string(options.consumerVersionTag);
 		}
 
 		if (options.pactUrls) {
@@ -174,9 +186,11 @@ export interface VerifierOptions extends SpawnArguments {
 	providerBaseUrl: string;
 	provider?: string;
 	pactUrls?: string[];
+	pactBrokerBaseUrl?: string;
 	providerStatesSetupUrl?: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
+	consumerVersionTag?: string;
 	customProviderHeaders?: string[];
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
