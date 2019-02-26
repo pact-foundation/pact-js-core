@@ -4,8 +4,7 @@ import path = require("path");
 import fs = require("fs");
 import chai = require("chai");
 import chaiAsPromised = require("chai-as-promised");
-import canDeployFactory, {CanDeployOptions, CanDeploy} from "./can-deploy";
-import {SpawnArguments} from "./pact-util";
+import canDeployFactory, {CanDeploy, CanDeployOptions} from "./can-deploy";
 import logger from "./logger";
 import brokerMock from "../test/integration/broker-mock";
 import * as http from "http";
@@ -41,35 +40,50 @@ describe("CanDeploy Spec", () => {
 		}
 	});
 
-	describe("convertForSpawnBinary helper function",() => {
-		let result : SpawnArguments[];
+	describe("convertForSpawnBinary helper function", () => {
 
-		beforeEach(() => {
-			result = CanDeploy.convertForSpawnBinary(
-				{
-					pacticipant: ["one","two"],
-					pacticipantVersion: ["v1","v2"],
-					pactBroker: "some broker",
-					pactBrokerUsername: "username",
-					pactBrokerPassword: "password",
+		it("produces an array of SpawnArguments", () => {
+			expect(CanDeploy.convertForSpawnBinary({pactBroker: "some broker"})).to.be.an("array");
+		});
+
+		it("has version and pacticipant in the right order", () => {
+			const result = CanDeploy.convertForSpawnBinary({
+				pacticipant: ["one", "two"],
+				pacticipantVersion: ["v1", "v2"],
+				pactBroker: "some broker",
+				pactBrokerUsername: "username",
+				pactBrokerPassword: "password",
 			});
-		});
 
-		it("produces an array of SpawnArguments", ()=> {
-			expect(result).to.be.an("array");
-		});
-
-		it("has version and pacticipant in the right order", ()=> {
 			expect(result).to.eql(
 				[
 					{pacticipant: "one"},
 					{pacticipantVersion: "v1"},
 					{pacticipant: "two"},
-					{pacticipantVersion:"v2"},
+					{pacticipantVersion: "v2"},
 					{
 						pactBroker: "some broker",
 						pactBrokerUsername: "username",
 						pactBrokerPassword: "password",
+					}
+				]);
+		});
+
+		it("has latest tag and pacticipant in the right order", () => {
+			expect(
+				CanDeploy.convertForSpawnBinary({
+					pacticipant: ["one", "two"],
+					latest: ["v1", "v2"],
+					pactBroker: "some broker",
+				})
+			).to.eql(
+				[
+					{pacticipant: "one"},
+					{latest: "v1"},
+					{pacticipant: "two"},
+					{latest: "v2"},
+					{
+						pactBroker: "some broker"
 					}
 				]);
 		});
@@ -78,8 +92,7 @@ describe("CanDeploy Spec", () => {
 	context("when invalid options are set", () => {
 		it("should fail with an Error when not given pactBroker", () => {
 			expect(() => {
-				canDeployFactory({
-				} as CanDeployOptions);
+				canDeployFactory({} as CanDeployOptions);
 			}).to.throw(Error);
 		});
 
@@ -96,7 +109,7 @@ describe("CanDeploy Spec", () => {
 			expect(() => {
 				canDeployFactory({
 					pactBroker: "http://localhost",
-					pacticipant: ["p1","p2"]
+					pacticipant: ["p1", "p2"]
 				} as CanDeployOptions);
 			}).to.throw(Error);
 		});
@@ -106,7 +119,7 @@ describe("CanDeploy Spec", () => {
 				canDeployFactory({
 					pactBroker: "http://localhost",
 					pacticipantVersion: ["v1"],
-					pacticipant: ["p1","p2"]
+					pacticipant: ["p1", "p2"]
 				});
 			}).to.throw(Error);
 		});
@@ -126,8 +139,8 @@ describe("CanDeploy Spec", () => {
 		it("should return a CanDeploy object when given the correct arguments", () => {
 			const c = canDeployFactory({
 				pactBroker: "http://localhost",
-				pacticipantVersion: ["v1","v2"],
-				pacticipant: ["p1","p2"]
+				pacticipantVersion: ["v1", "v2"],
+				pacticipant: ["p1", "p2"]
 			});
 			expect(c).to.be.ok;
 			expect(c.canDeploy).to.be.a("function");

@@ -2,19 +2,24 @@ import q = require("q");
 import logger from "./logger";
 import pactUtil, {SpawnArguments} from "./pact-util";
 import pactStandalone from "./pact-standalone";
+
 const _ = require("underscore");
 const checkTypes = require("check-types");
 
 export class CanDeploy {
 
 	public static convertForSpawnBinary(options: CanDeployOptions) {
-			return _.flatten(
-				_.zip(
+		return _.flatten(
+			_.zip.apply(_,
+				_.compact([
 					_.map(options.pacticipant, (x: string) => ({pacticipant: x})),
-					_.map(options.pacticipantVersion, (x: string) => ({pacticipantVersion: x}))
-				)
+					_.map(options.pacticipantVersion, (x: string) => ({pacticipantVersion: x})),
+					_.map(options.latest, (x: string) => ({latest: x})),
+					_.map(options.to, (x: string) => ({to: x}))
+				])
 			)
-				.concat([_.omit(options,"pacticipant","pacticipantVersion")]);
+		)
+			.concat([_.omit(options, "pacticipant", "pacticipantVersion", "latest", "to")]);
 	}
 
 	public readonly options: CanDeployOptions;
@@ -36,15 +41,17 @@ export class CanDeploy {
 		options = options || {};
 		// Setting defaults
 		options.timeout = options.timeout || 60000;
-		options.pacticipant = options.pacticipant || [];
-		options.pacticipantVersion = options.pacticipantVersion || [];
+		options.pacticipant = options.pacticipant || options.participant || [];
+		options.pacticipantVersion = options.pacticipantVersion || options.participantVersion || [];
+		options.latest = options.latest || [];
+		options.to = options.to || [];
 
 		checkTypes.assert.nonEmptyString(options.pactBroker, "Must provide the pactBroker argument");
 		checkTypes.assert.arrayLike(options.pacticipant, "Must provide the pacticipant argument");
-		checkTypes.assert.arrayLike(options.pacticipantVersion, "Must provide the version argument");
-		checkTypes.assert.equal(options.pacticipant.length, options.pacticipantVersion.length, "Must provide the same number of pacticipant and version");
+		checkTypes.assert.arrayLike(options.pacticipantVersion, "Must provide the pacticipant version argument");
 		checkTypes.assert.nonEmptyArray(options.pacticipant, "Pacticipant array must not be empty");
-		checkTypes.assert.nonEmptyArray(options.pacticipantVersion, "Version array must not be empty");
+		checkTypes.assert.equal(options.pacticipant.length, options.pacticipantVersion.length + options.latest.length,
+			"Must provide the same number of pacticipant and version");
 
 		if (options.pactBroker) {
 			checkTypes.assert.string(options.pactBroker);
@@ -92,8 +99,10 @@ export class CanDeploy {
 export default (options: CanDeployOptions) => new CanDeploy(options);
 
 export interface CanDeployOptions extends SpawnArguments {
-	pacticipant: string[];
-	pacticipantVersion: string[];
+	pacticipant?: string[];
+	participant?: string[];
+	pacticipantVersion?: string[];
+	participantVersion?: string[];
 	pactBroker: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
@@ -102,4 +111,6 @@ export interface CanDeployOptions extends SpawnArguments {
 	verbose?: boolean;
 	retryWhileUnknown?: number;
 	retryInterval?: number;
+	to?: string[];
+	latest?: string[];
 }

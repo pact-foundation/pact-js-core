@@ -86,7 +86,7 @@ cli
 	.command("can-i-deploy", "Check if pacticipant are safe to deploy together")
 	.option("-p, --pacticipant <pacticipant>", "Repeatable list of pacticipant names", cli.REPEATABLE, undefined, true)
 	.option("-v, --pacticipant-version <version>", "Repeatable version of the pacticipant. Must follow after the pacticipant", cli.REPEATABLE, undefined, true)
-	.option("-l, --latest", "Use the latest pacticipant version, Must follow after pacticipant", cli.BOOL, undefined)
+	.option("-l, --latest [TAG]", "Use the latest version based on a tag or just the pacticipant, Must follow after pacticipant.", cli.REPEATABLE, undefined)
 	.option("-t, --to <tag>", "Pacticipant tags to check against", cli.LIST)
 	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
 	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
@@ -99,6 +99,8 @@ cli
 	.action((args: any, options: any) => {
 		options.pacticipant = _.toArray(options.pacticipant);
 		options.pacticipantVersion = _.toArray(options.pacticipantVersion);
+		options.latest = _.toArray(options.latest);
+		options.to = _.toArray(options.to);
 		pact.canDeploy(options);
 	});
 
