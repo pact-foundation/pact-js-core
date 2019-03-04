@@ -140,7 +140,8 @@ function download(data: Data): Promise<Data> {
 					av: require("../package.json").version, // App version.
 					aid: "pact-node", // App Id.
 					aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
-					cd: `download-node-${data.platform}-${isCI ? "ci" : "user"}`
+					cd: `download-node-${data.platform}-${isCI ? "ci" : "user"}`,
+					aip: true, // Anonymise IP address
 				}
 			}).on("error", () => {
 			}); // Ignore all errors
