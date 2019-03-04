@@ -43,95 +43,93 @@ describe("CanDeploy Spec", () => {
 	describe("convertForSpawnBinary helper function", () => {
 
 		it("produces an array of SpawnArguments", () => {
-			expect(CanDeploy.convertForSpawnBinary({pactBroker: "some broker"})).to.be.an("array");
+			const value = {pactBroker: "some broker"};
+			const result = CanDeploy.convertForSpawnBinary(value);
+			expect(result).to.be.an("array");
+			expect(result.length).to.be.equal(1);
+			expect(result[0]).to.be.deep.equal(value);
 		});
 
-		it("has version and pacticipant in the right order", () => {
+		it("has version and participant in the right order", () => {
 			const result = CanDeploy.convertForSpawnBinary({
-				pacticipant: ["one", "two"],
-				pacticipantVersion: ["v1", "v2"],
+				participantVersion: "v1",
+				participant: "one",
 				pactBroker: "some broker",
 				pactBrokerUsername: "username",
 				pactBrokerPassword: "password",
 			});
 
-			expect(result).to.eql(
-				[
-					{pacticipant: "one"},
-					{pacticipantVersion: "v1"},
-					{pacticipant: "two"},
-					{pacticipantVersion: "v2"},
-					{
-						pactBroker: "some broker",
-						pactBrokerUsername: "username",
-						pactBrokerPassword: "password",
-					}
-				]);
+			expect(result).to.eql([
+				{participant: "one"},
+				{participantVersion: "v1"},
+				{
+					pactBroker: "some broker",
+					pactBrokerUsername: "username",
+					pactBrokerPassword: "password"
+				}
+			]);
 		});
 
-		it("has latest tag and pacticipant in the right order", () => {
-			expect(
-				CanDeploy.convertForSpawnBinary({
-					pacticipant: ["one", "two"],
-					latest: ["v1", "v2"],
-					pactBroker: "some broker",
-				})
-			).to.eql(
-				[
-					{pacticipant: "one"},
-					{latest: "v1"},
-					{pacticipant: "two"},
-					{latest: "v2"},
-					{
-						pactBroker: "some broker"
-					}
-				]);
+		it("has latest tag and participant in the right order", () => {
+			const result = CanDeploy.convertForSpawnBinary({
+				latest: "v2",
+				participant: "two",
+				pactBroker: "some broker",
+			});
+
+			expect(result).to.eql([
+				{participant: "two"},
+				{latest: "v2"},
+				{
+					pactBroker: "some broker"
+				}
+			]);
 		});
 	});
 
 	context("when invalid options are set", () => {
 		it("should fail with an Error when not given pactBroker", () => {
-			expect(() => {
-				canDeployFactory({} as CanDeployOptions);
-			}).to.throw(Error);
+			expect(() => canDeployFactory({} as CanDeployOptions)).to.throw(Error);
 		});
 
-		it("should fail with an Error when not given pacticipant", () => {
-			expect(() => {
-				canDeployFactory({
-					pactBroker: "http://localhost",
-					pacticipantVersion: ["v1"],
-				} as CanDeployOptions);
-			}).to.throw(Error);
+		it("should fail with an Error when not given participant", () => {
+			expect(() => canDeployFactory({
+				pactBroker: "http://localhost",
+				participantVersion: "v1",
+			} as CanDeployOptions)).to.throw(Error);
 		});
 
 		it("should fail with an Error when not given version", () => {
-			expect(() => {
-				canDeployFactory({
-					pactBroker: "http://localhost",
-					pacticipant: ["p1", "p2"]
-				} as CanDeployOptions);
-			}).to.throw(Error);
-		});
-
-		it("should fail with an error when not given equal numbers of version and pacticipant", () => {
-			expect(() => {
-				canDeployFactory({
-					pactBroker: "http://localhost",
-					pacticipantVersion: ["v1"],
-					pacticipant: ["p1", "p2"]
-				});
-			}).to.throw(Error);
+			expect(() => canDeployFactory({
+				pactBroker: "http://localhost",
+				participant: "p1"
+			} as CanDeployOptions)).to.throw(Error);
 		});
 
 		it("should fail with an error when version and paticipants are empty", () => {
-			expect(() => {
-				canDeployFactory({
-					pactBroker: "http://localhost",
-					pacticipantVersion: [],
-					pacticipant: []
-				});
-			}).to.throw(Error);
+			expect(() => canDeployFactory({
+				pactBroker: "http://localhost",
+				participantVersion: undefined,
+				participant: undefined
+			})).to.throw(Error);
+		});
+
+		it("should fail with an error when 'latest' is an empty string", () => {
+			expect(() => canDeployFactory({
+				pactBroker: "http://localhost",
+				participantVersion: "v1",
+				participant: "p1",
+				latest: ""
+			})).to.throw(Error);
+		});
+
+		it("should fail with an error when 'to' is an empty string", () => {
+			expect(() => canDeployFactory({
+				pactBroker: "http://localhost",
+				participantVersion: "v1",
+				participant: "p1",
+				to: ""
+			})).to.throw(Error);
 		});
 	});
 
@@ -139,11 +137,23 @@ describe("CanDeploy Spec", () => {
 		it("should return a CanDeploy object when given the correct arguments", () => {
 			const c = canDeployFactory({
 				pactBroker: "http://localhost",
-				pacticipantVersion: ["v1", "v2"],
-				pacticipant: ["p1", "p2"]
+				participantVersion: "v1",
+				participant: "p1"
 			});
 			expect(c).to.be.ok;
 			expect(c.canDeploy).to.be.a("function");
+		});
+
+		it("should work when using 'latest' with either a boolean or a string", () => {
+			const opts: CanDeployOptions = {
+				pactBroker: "http://localhost",
+				participantVersion: "v1",
+				participant: "p1"
+			};
+			opts.latest = true;
+			expect(canDeployFactory(opts)).to.be.ok;
+			opts.latest = "tag";
+			expect(canDeployFactory(opts)).to.be.ok;
 		});
 	});
 });

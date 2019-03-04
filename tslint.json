@@ -5,7 +5,7 @@
 		"indent": "tabs",
 		"no-console": false,
 		"max-line-length": {
-			"options": 160
+			"options": 200
 		},
 		"trailing-comma": false,
 		"object-literal-sort-keys": false,
@@ -19,9 +19,7 @@
 		"no-var-requires": false,
 		"object-literal-shorthand": false,
 		"no-empty": false,
-		"max-classes-per-file": [
-			false
-		],
+		"max-classes-per-file": false,
 		"prefer-const": false,
 		"no-unused-expression": false,
 		"forin": false,

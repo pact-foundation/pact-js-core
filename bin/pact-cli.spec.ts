@@ -149,7 +149,7 @@ describe("Pact CLI Spec", () => {
 			after(() => server.close());
 
 			it("should work pointing to fake broker", () => {
-				const p = CLI.runSync(["can-i-deploy", "--pacticipant", "pacticipant1", "--version", "1.0.0", "--pact-broker", brokerBaseUrl])
+				const p = CLI.runSync(["can-i-deploy", "--participant", "participant1", "--version", "1.0.0", "--pact-broker", brokerBaseUrl])
 					.then((cp) => cp.stdout);
 				return expect(p).to.eventually.be.fulfilled;
 			});
