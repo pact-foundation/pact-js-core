@@ -2,7 +2,6 @@
 
 import pact from "../src/pact";
 import * as cli from "caporal";
-import * as _ from "underscore";
 const pkg = require("../package.json");
 
 cli
@@ -17,8 +16,7 @@ cli
 	.option("-h, --host <hostname>", "Host on which to bind the service. Default is localhost.")
 	.option("-l, --log <file>", "File to which to log output to.")
 	.option("-s, --ssl <boolean>", "Use a self-signed SSL cert to run the service over HTTPS. Default is false (HTTP).", cli.BOOL)
-	.option("-o, --cors <boolean>", "Support browser security in tests by responding to OPTIONS requests and adding CORS headers" +
-		" to mocked responses. Default is false.", cli.BOOL)
+	.option("-o, --cors <boolean>", "Support browser security in tests by responding to OPTIONS requests and adding CORS headers to mocked responses. Default is false.", cli.BOOL)
 	.option("-d, --pact-dir <directory>", "Directory to which the pacts will be written. Default is cwd.")
 	.option("-i, --pact-version <n>", "The Pact specification version to use when writing the Pact files. Default is 1.", cli.INT)
 	.option("-w, --pact-file-write-mode <m>", "Controls how pact files are written to disk. One of 'overwrite', 'update', 'merge'", /^overwrite|update|merge$/)
@@ -35,8 +33,7 @@ cli
 	.option("-d, --dir <directory>", "Directory to which the pacts will be written.")
 	.option("--consumer <consumerName>", "Specify consumer name for written Pact files.")
 	.option("--provider <providerName>", "Specify provider name for written Pact files.")
-	.option("-s, --spec <n>", "The Pact specification version to use when writing the" +
-	" Pact files. Default is 3.", cli.INT)
+	.option("-s, --spec <n>", "The Pact specification version to use when writing the Pact files. Default is 3.", cli.INT)
 	.action((args: any, options: any) => pact.createMessage(options));
 
 cli
@@ -45,10 +42,8 @@ cli
 	.option("-h, --host <hostname>", "Host on which to bind the service. Default is localhost.")
 	.option("-l, --log <file>", "File to which to log output to.")
 	.option("-s, --ssl <boolean>", "Use a self-signed SSL cert to run the service over HTTPS. Default is false (HTTP).", cli.BOOL)
-	.option("-o, --cors <boolean>", `Support browser security in tests by responding to OPTIONS requests and adding CORS headers
-	to mocked responses. Default is false.`, cli.BOOL)
-	.option("-i, --pact-version <n>", "The Pact specification version to use when writing the" +
-		" Pact files. Default is 1.", cli.INT)
+	.option("-o, --cors <boolean>", "Support browser security in tests by responding to OPTIONS requests and adding CORS headers to mocked responses. Default is false.", cli.BOOL)
+	.option("-i, --pact-version <n>", "The Pact specification version to use when writing the Pact files. Default is 1.", cli.INT)
 	.option("-u, --pact-urls <URLs>", "Comma separated list of local Pact files", cli.LIST)
 	.action((args: any, options: any) => pact.createStub(options).start());
 
@@ -64,18 +59,14 @@ cli
 	.option("-v, --provider-version <version>", "Provider version, required to publish verification result to Broker.")
 	.option("-t, --timeout <milliseconds>", "The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.", cli.INT)
 	.option("-pub, --publish-verification-result", "Publish verification result to Broker.")
-	.option("-c, --custom-provider-header <headers>", "Header to add to provider state set up and pact verification requests." +
-		" eg 'Authorization: Basic cGFjdDpwYWN0'.", cli.LIST)
+	.option("-c, --custom-provider-header <headers>", "Header to add to provider state set up and pact verification requests. eg 'Authorization: Basic cGFjdDpwYWN0'.", cli.LIST)
 	.option("--monkeypatch <file>", "Absolute path to a Ruby file that will monkeypatch the underlying Pact mock.")
-	.action((args: any, options: any) => {
-		return pact.verifyPacts(options);
-	});
+	.action((args: any, options: any) => pact.verifyPacts(options));
 
 cli
 	.command("publish", "Publishes Pact Contracts to the broker")
 	.option("-p, --pact-files-or-dirs <paths>", "Comma separated list of Pact file or directory paths", cli.LIST, undefined, true)
-	.option("-c, --consumer-version <version>", "Version of the consumer, can be any string, but recommended to use a semantic" +
-		" version or git hash.", undefined, undefined, true)
+	.option("-c, --consumer-version <version>", "Version of the consumer, can be any string, but recommended to use a semantic version or git hash.", undefined, undefined, true)
 	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
 	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
 	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
@@ -83,23 +74,20 @@ cli
 	.action((args: any, options: any) => pact.publishPacts(options));
 
 cli
-	.command("can-i-deploy", "Check if pacticipant are safe to deploy together")
-	.option("-p, --pacticipant <pacticipant>", "Repeatable list of pacticipant names", cli.REPEATABLE, undefined, true)
-	.option("-v, --pacticipant-version <version>", "Repeatable version of the pacticipant. Must follow after the pacticipant", cli.REPEATABLE, undefined, true)
-	.option("-l, --latest", "Use the latest pacticipant version, Must follow after pacticipant", cli.BOOL, undefined)
-	.option("-t, --to <tag>", "Pacticipant tags to check against", cli.LIST)
+	.command("can-i-deploy", "Check if participant are safe to deploy together")
+	.option("-p, --participant, --participant <participant>", "The participant name", undefined, undefined, true)
+	.option("-v, --participant-version, --participant-version <version>", "The version of the participant. Must follow after the participant", undefined, undefined, true)
+	.option("-l, --latest [TAG]", "Use the latest version of the participant, or the latest based on the tag. Must follow after participant.", undefined, undefined)
+	.option("-t, --to <tag>", "participant tags to check against", undefined, undefined)
 	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
 	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
 	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
 	.option("-o, --output <output>", "json or table.")
 	.option("--verbose", "Verbose output.")
-	.option("--retry-while-unknown <times>",
-		"The number of times to retry while there is an unknown verification result (ie. the provider verification is likely still running).")
+	.option("--retry-while-unknown <times>", "The number of times to retry while there is an unknown verification result (ie. the provider verification is likely still running).")
 	.option("--retry-interval <seconds>", "The time between retries in seconds. Use in conjuction with --retry-while-unknown.")
 	.action((args: any, options: any) => {
-		options.pacticipant = _.toArray(options.pacticipant);
-		options.pacticipantVersion = _.toArray(options.pacticipantVersion);
-		pact.canDeploy(options);
+		return pact.canDeploy(options);
 	});
 
 cli.parse(process.argv);

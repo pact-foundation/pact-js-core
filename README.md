@@ -297,22 +297,26 @@ var opts = {
 	...
 };
 
-pact.canDeploy(opts).then(function () {
-	// do something
-});
+pact.canDeploy(opts)
+	.then(function () {
+		// Deployment worked
+	})
+	.catch(function() {
+		// Deployment failed
+	});
 ```
 
 **Options**:
 
 | Parameter            | Required? | Type        | Description                                                                         |
 | -------------------- | --------- | ----------- | ----------------------------------------------------------------------------------- |
-| `pacticipant`        | true      | repeatable  | Repeatable list of pacticipant names. Required.                                     |
-| `pacticipantVersion` | true      | repeatable  | Repeatable version of the pacticipant. Must follow after the pacticipant. Required. |
+| `participant`        | true      | string	     | The participant name. Required.                                                     |
+| `participantVersion` | true      | string      | Version of the participant. Must follow after the participant. Required.            |
+| `latest`             | false     | string      | Use the latest participant version, Must follow after participant. Optional         |
+| `to`                 | false     | string      | Which tag are you deploying to, Must follow after participant. Optional             |
 | `pactBroker`         | true      | string      | URL of the Pact Broker to publish pacts to. Required.                               |
-| `latest`             | false     | repeatable  | Use the latest pacticipant version, Must follow after pacticipant. Optional         |
 | `pactBrokerUsername` | false     | string      | Username for Pact Broker basic authentication. Optional                             |
 | `pactBrokerPassword` | false     | string      | Password for Pact Broker basic authentication. Optional,                            |
-| `tags`               | false     | array       | An array of Strings to tag the Pacts being published. Optional                      |
 | `output`             | false     | json,table  | Specify output to show, json or table. Optional                                     |
 | `verbose`            | false     | flag        | Set logging mode to verbose. Optional                                               |
 | `retryWhileUnknown`  | false     | number      | The number of times to retry while there is an unknown verification result. Optional|

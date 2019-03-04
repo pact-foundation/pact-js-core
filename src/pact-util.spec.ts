@@ -55,21 +55,21 @@ describe("Pact Util Spec", () => {
 				it("should wrap its argument values in quotes", () => {
 					const result = pactUtil.createArguments(
 						[
-							{pacticipant: "one"},
+							{participant: "one"},
 							{version: "v1"},
-							{pacticipant: "two"},
+							{participant: "two"},
 							{version: "v2"}
 						],
-						{version: "--version" ,pacticipant: "--pacticipant",}
+						{version: "--version" ,participant: "--participant",}
 					);
 
 					expect(result).to.be.an("array");
 					expect(result).to.eql(
-						["--pacticipant",
+						["--participant",
 						"'one'",
 						"--version",
 						"'v1'",
-						"--pacticipant",
+						"--participant",
 						"'two'",
 						"--version",
 						"'v2'"]);
