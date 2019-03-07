@@ -13,34 +13,36 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
 
 <!-- TOC -->
 
--   [Pact Node](#pact-node)
-    -   [Installation](#installation)
-        -   [Do Not Track](#do-not-track)
-        -   [Pact Download Location](#pact-download-location)
-    -   [Usage](#usage)
-    -   [Documentation](#documentation)
-        -   [Set Log Level](#set-log-level)
-        -   [Mock Servers](#mock-servers)
-            -   [Create Mock Server](#create-mock-server)
-            -   [List Mock Servers](#list-mock-servers)
-            -   [Remove All Mock Servers](#remove-all-mock-servers)
-            -   [Start a Mock Server](#start-a-mock-server)
-            -   [Stop a Mock server](#stop-a-mock-server)
-            -   [Delete a Mock server](#delete-a-mock-server)
-            -   [Check if a Mock server is running](#check-if-a-mock-server-is-running)
-            -   [Mock Server Events](#mock-server-events)
-        -   [Provider Verification](#provider-verification)
-        -   [Pact Broker Publishing](#pact-broker-publishing)
-        -   [Stub Servers](#stub-servers)
-            -   [Create Stub Server](#create-stub-server)
-        -   [Message Pacts](#message-pacts)
-            -   [Create Message Pacts](#create-message-pacts)
-                -   [Example](#example)
-                -   [Example CLI invocation:](#example-cli-invocation)
-    -   [Windows Issues](#windows-issues)
-    -   [Contributing](#contributing)
-    -   [Testing](#testing)
-    -   [Questions?](#questions)
+- [Pact Node](#pact-node)
+    - [Installation](#installation)
+        - [Do Not Track](#do-not-track)
+        - [Pact Download Location](#pact-download-location)
+    - [Usage](#usage)
+    - [Documentation](#documentation)
+        - [Set Log Level](#set-log-level)
+        - [Mock Servers](#mock-servers)
+            - [Create Mock Server](#create-mock-server)
+            - [List Mock Servers](#list-mock-servers)
+            - [Remove All Mock Servers](#remove-all-mock-servers)
+            - [Start a Mock Server](#start-a-mock-server)
+            - [Stop a Mock server](#stop-a-mock-server)
+            - [Delete a Mock server](#delete-a-mock-server)
+            - [Check if a Mock server is running](#check-if-a-mock-server-is-running)
+            - [Mock Server Events](#mock-server-events)
+        - [Provider Verification](#provider-verification)
+        - [Pact Broker Publishing](#pact-broker-publishing)
+        - [Pact Broker Deployment Check](#pact-broker-deployment-check)
+        - [Stub Servers](#stub-servers)
+            - [Create Stub Server](#create-stub-server)
+        - [Message Pacts](#message-pacts)
+            - [Create Message Pacts](#create-message-pacts)
+                - [Example](#example)
+                - [Example CLI invocation:](#example-cli-invocation)
+    - [Windows Issues](#windows-issues)
+        - [Enable Long Paths](#enable-long-paths)
+    - [Contributing](#contributing)
+    - [Testing](#testing)
+    - [Questions?](#questions)
 
 <!-- /TOC -->
 
@@ -251,8 +253,7 @@ pact.verifyPacts({
 | Parameter                   | Required? | Type    | Description                                                                                                |
 | --------------------------- | --------- | ------- | ---------------------------------------------------------------------------------------------------------- |
 | `providerBaseUrl`           | true      | string  | Running API provider host endpoint.                                                                        |
-| `pactBrokerBaseUrl`         | false     | string  | Base URL of the Pact Broker from which to retrieve the pacts.                                                                        |
-| `pactBrokerUrl`             | false     | string  | URL of your Pact Broker to dynamically discover relevent pacts to verify. Required if `pactUrls` not given |
+| `pactBrokerUrl`         | false     | string  | Base URL of the Pact Broker from which to retrieve the pacts. Required if `pactUrls` not given.                                                                        |
 | `provider`                  | false     | string  | Name of the provider if fetching from a Broker                                                             |
 | `tags`                      | false     | array   | Array of tags, used to filter pacts from the Broker                                                        |
 | `consumerVersionTag`        | false     | string  | Retrieve the latest pacts with this consumer version tag                                                        |

@@ -1,6 +1,5 @@
 import path = require("path");
 import url = require("url");
-import brokerFactory, {BrokerOptions} from "./broker";
 import logger from "./logger";
 import pactUtil, {DEFAULT_ARG, SpawnArguments} from "./pact-util";
 import q = require("q");
@@ -21,13 +20,15 @@ export class Verifier {
 	private readonly __argMapping = {
 		"pactUrls": DEFAULT_ARG,
 		"providerBaseUrl": "--provider-base-url",
-		"pactBrokerBaseUrl": "--pact-broker-base-url",
+		"pactBrokerUrl": "--pact-broker-base-url",
 		"providerStatesSetupUrl": "--provider-states-setup-url",
 		"pactBrokerUsername": "--broker-username",
 		"pactBrokerPassword": "--broker-password",
+		"pactBrokerToken": "--broker-token",
 		"consumerVersionTag": "--consumer-version-tag",
 		"publishVerificationResult": "--publish-verification-results",
 		"providerVersion": "--provider-app-version",
+		"provider": "--provider",
 		"customProviderHeaders": "--custom-provider-header",
 		"format": "--format",
 		"out": "--out",
@@ -36,7 +37,6 @@ export class Verifier {
 	constructor(options: VerifierOptions) {
 		options = options || {};
 		options.pactBrokerUrl = options.pactBrokerUrl || "";
-		options.pactBrokerBaseUrl = options.pactBrokerBaseUrl || "";
 		options.consumerVersionTag = options.consumerVersionTag || "";
 		options.tags = options.tags || [];
 		options.pactUrls = options.pactUrls || [];
@@ -69,11 +69,11 @@ export class Verifier {
 		checkTypes.assert.nonEmptyString(options.providerBaseUrl, "Must provide the providerBaseUrl argument");
 
 		if (checkTypes.emptyArray(options.pactUrls) && !options.pactBrokerUrl) {
-			throw new Error("Must provide the pactUrls argument if no brokerUrl provided");
+			throw new Error("Must provide the pactUrls argument if no pactBrokerUrl provided");
 		}
 
-		if ((!options.pactBrokerUrl || _.isEmpty(options.provider)) && checkTypes.emptyArray(options.pactUrls)) {
-			throw new Error("Must provide both provider and brokerUrl or if pactUrls not provided.");
+		if (( !options.pactBrokerUrl || _.isEmpty(options.provider)) && checkTypes.emptyArray(options.pactUrls)) {
+			throw new Error("Must provide both provider and pactBrokerUrl if pactUrls not provided.");
 		}
 
 		if (options.providerStatesSetupUrl) {
@@ -88,8 +88,8 @@ export class Verifier {
 			checkTypes.assert.string(options.pactBrokerPassword);
 		}
 
-		if (options.pactBrokerBaseUrl) {
-			checkTypes.assert.string(options.pactBrokerBaseUrl);
+		if (options.pactBrokerUrl) {
+			checkTypes.assert.string(options.pactBrokerUrl);
 		}
 
 		if (options.consumerVersionTag) {
@@ -146,36 +146,19 @@ export class Verifier {
 
 	public verify(): q.Promise<string> {
 		logger.info("Verifying Pact Files");
-		return q(this.options.pactUrls)
-			// TODO: fix this promise type issue by using regular old es6 promises, remove Q
-			.then((uris): any => {
-				if (!uris || uris.length === 0) {
-					return brokerFactory({
-						brokerUrl: this.options.pactBrokerUrl,
-						provider: this.options.provider,
-						username: this.options.pactBrokerUsername,
-						password: this.options.pactBrokerPassword,
-						tags: this.options.tags
-					} as BrokerOptions).findConsumers();
-				}
-				return uris;
-			})
-			.then((data: string[]): PromiseLike<string> => {
-				const deferred = q.defer<string>();
-				this.options.pactUrls = data;
-				const instance = pactUtil.spawnBinary(pactStandalone.verifierPath, this.options, this.__argMapping);
-				const output: any[] = [];
-				instance.stdout.on("data", (l) => output.push(l));
-				instance.stderr.on("data", (l) => output.push(l));
-				instance.once("close", (code) => {
-					const o = output.join("\n");
-					code === 0 ? deferred.resolve(o) : deferred.reject(new Error(o));
-				});
+		const deferred = q.defer<string>();
+		const instance = pactUtil.spawnBinary(pactStandalone.verifierPath, this.options, this.__argMapping);
+		const output: any[] = [];
+		instance.stdout.on("data", (l) => output.push(l));
+		instance.stderr.on("data", (l) => output.push(l));
+		instance.once("close", (code) => {
+			const o = output.join("\n");
+			code === 0 ? deferred.resolve(o) : deferred.reject(new Error(o));
+		});
 
-				return deferred.promise
-					.timeout(this.options.timeout as number, `Timeout waiting for verification process to complete (PID: ${instance.pid})`)
-					.tap(() => logger.info("Pact Verification succeeded.")) as PromiseLike<string>;
-			});
+		return deferred.promise
+			.timeout(this.options.timeout as number, `Timeout waiting for verification process to complete (PID: ${instance.pid})`)
+			.tap(() => logger.info("Pact Verification succeeded."));
 	}
 }
 
@@ -186,15 +169,15 @@ export interface VerifierOptions extends SpawnArguments {
 	providerBaseUrl: string;
 	provider?: string;
 	pactUrls?: string[];
-	pactBrokerBaseUrl?: string;
+	pactBrokerUrl?: string;
 	providerStatesSetupUrl?: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
+	pactBrokerToken?: string;
 	consumerVersionTag?: string;
 	customProviderHeaders?: string[];
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
-	pactBrokerUrl?: string;
 	tags?: string[];
 	timeout?: number;
 	monkeypatch?: string;
