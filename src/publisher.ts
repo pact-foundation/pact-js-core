@@ -18,6 +18,7 @@ export class Publisher {
 		"pactBroker": "--broker-base-url",
 		"pactBrokerUsername": "--broker-username",
 		"pactBrokerPassword": "--broker-password",
+		"pactBrokerToken": "--broker-token",
 		"tags": "--tag",
 		"consumerVersion": "--consumer-app-version",
 		"verbose": "--verbose"
@@ -98,6 +99,7 @@ export interface PublisherOptions extends SpawnArguments {
 	consumerVersion: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
+	pactBrokerToken?: string;
 	tags?: string[];
 	verbose?: boolean;
 	timeout?: number;

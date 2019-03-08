@@ -16,9 +16,9 @@ export class CanDeploy {
 
 		// Go backwards in the keys as we are going to unshift them into the array
 		keys.reverse().forEach((key) => {
-			const val = options[key];
+			const val: any = options[key];
 			if(options[key] !== undefined) {
-				const obj = {};
+				const obj: any = {};
 				obj[key] = val;
 				args.unshift(obj);
 			}
