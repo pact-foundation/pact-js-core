@@ -251,7 +251,7 @@ function downloadFileRetry(url: string, filepath: string, retry: number = 3): Pr
 		let len = 0;
 		let downloaded = 0;
 		let time = Date.now();
-		request(url)
+		request({ url, headers: { 'User-Agent': 'https://github.com/pact-foundation/pact-node' } })
 			.on("error", (e: string) => reject(e))
 			.on("response", (res: http.IncomingMessage) => len = parseInt(res.headers["content-length"] as string, 10))
 			.on("data", (chunk: any[]) => {
