@@ -116,7 +116,6 @@ export default (port: number): q.Promise<http.Server> => {
 		}
 	}));
 
-	server.put("yolo", returnJson({}));
 	// Pretend to be a Pact Broker (https://github.com/bethesque/pact_broker) for integration tests
 	server.put("/pacts/provider/:provider/consumer/:consumer/version/:version", pactFunction);
 
