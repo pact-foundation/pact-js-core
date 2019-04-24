@@ -128,7 +128,7 @@ export default (port: number): q.Promise<http.Server> => {
 	server.put("/auth/pacticipant/:consumer/version/:version/tags/:tag", tagPactFunction);
 
 	// Matrix
- server.get("/matrix", (req: express.Request, res: express.Response) => {
+	server.get("/matrix", (req: express.Request, res: express.Response) => {
 	if (req.query.q[0].pacticipant === "Foo") {
 		return res.json({
 			"summary": {
@@ -460,7 +460,7 @@ export default (port: number): q.Promise<http.Server> => {
 		}
 	}));
 
- const deferred = q.defer<http.Server>();
- let s = server.listen(port, deferred.makeNodeResolver());
- return deferred.promise.then(() => s);
+	const deferred = q.defer<http.Server>();
+	let s = server.listen(port, deferred.makeNodeResolver());
+	return deferred.promise.then(() => s);
 };
