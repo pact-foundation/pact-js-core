@@ -37,8 +37,7 @@ export class Verifier {
 	constructor(options: VerifierOptions) {
 		options = options || {};
 		options.pactBrokerUrl = options.pactBrokerUrl || "";
-		options.consumerVersionTag = options.consumerVersionTag || "";
-		options.tags = options.tags || [];
+		options.consumerVersionTag = _.toArray(options.consumerVersionTag);
 		options.pactUrls = options.pactUrls || [];
 		options.provider = options.provider || "";
 		options.providerStatesSetupUrl = options.providerStatesSetupUrl || "";
@@ -93,15 +92,11 @@ export class Verifier {
 		}
 
 		if (options.consumerVersionTag) {
-			checkTypes.assert.string(options.consumerVersionTag);
+			checkTypes.assert.array.of.string(options.consumerVersionTag);
 		}
 
 		if (options.pactUrls) {
 			checkTypes.assert.array.of.string(options.pactUrls);
-		}
-
-		if (options.tags) {
-			checkTypes.assert.array.of.string(options.tags);
 		}
 
 		if (options.providerBaseUrl) {
@@ -174,11 +169,10 @@ export interface VerifierOptions extends SpawnArguments {
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
 	pactBrokerToken?: string;
-	consumerVersionTag?: string;
+	consumerVersionTag?: string | string[];
 	customProviderHeaders?: string[];
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
-	tags?: string[];
 	timeout?: number;
 	monkeypatch?: string;
 	format?: "json" | "RspecJunitFormatter";
