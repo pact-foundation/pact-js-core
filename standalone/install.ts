@@ -13,7 +13,7 @@ const sumchecker = require("sumchecker");
 const request = Request.defaults({proxy: process.env.npm_config_https_proxy || process.env.npm_config_proxy || undefined});
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = "1.64.0";
+export const PACT_STANDALONE_VERSION = "1.64.1";
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
 const CONFIG = createConfig();
