@@ -80,6 +80,7 @@ cli
 	.option("-l, --latest [TAG]", "Use the latest version of the participant, or the latest based on the tag. Must follow after participant.", undefined, undefined)
 	.option("-t, --to <tag>", "participant tags to check against", undefined, undefined)
 	.option("-b, --pact-broker <URL>", "URL of the Pact Broker to publish pacts to.", undefined, undefined, true)
+	.option("-token, --pact-broker-token <token>", "Pact Broker API token.")
 	.option("-username, --pact-broker-username <user>", "Pact Broker username.")
 	.option("-password, --pact-broker-password <password>", "Pact Broker password.")
 	.option("-o, --output <output>", "json or table.")

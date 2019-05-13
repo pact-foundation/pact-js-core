@@ -34,6 +34,7 @@ export class CanDeploy {
 		"latest": "--latest",
 		"to": "--to",
 		"pactBroker": "--broker-base-url",
+		"pactBrokerToken": "--broker-token",
 		"pactBrokerUsername": "--broker-username",
 		"pactBrokerPassword": "--broker-password",
 		"output": "--output",
@@ -51,7 +52,8 @@ export class CanDeploy {
 		checkTypes.assert.nonEmptyString(options.participantVersion, "Must provide the participant version argument");
 		checkTypes.assert.nonEmptyString(options.pactBroker, "Must provide the pactBroker argument");
 		options.latest !== undefined && checkTypes.assert.nonEmptyString(options.latest.toString());
-		options.to  !== undefined && checkTypes.assert.nonEmptyString(options.to);
+		options.to !== undefined && checkTypes.assert.nonEmptyString(options.to);
+		options.pactBrokerToken !== undefined && checkTypes.assert.nonEmptyString(options.pactBrokerToken);
 		options.pactBrokerUsername !== undefined && checkTypes.assert.string(options.pactBrokerUsername);
 		options.pactBrokerPassword !== undefined && checkTypes.assert.string(options.pactBrokerPassword);
 
@@ -94,6 +96,7 @@ export interface CanDeployOptions extends SpawnArguments {
 	to?: string;
 	latest?: boolean | string;
 	pactBroker: string;
+	pactBrokerToken?: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
 	output?: "json" | "table";
