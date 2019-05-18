@@ -155,5 +155,58 @@ describe("CanDeploy Spec", () => {
 			opts.latest = "tag";
 			expect(canDeployFactory(opts)).to.be.ok;
 		});
+
 	});
+	context("candeploy function", () => {
+		it("should return success with a table result deployable true", (done)=> {
+			const opts: CanDeployOptions = {
+				pactBroker: `http://localhost:${PORT}`,
+				participantVersion: "4",
+				participant: "Foo"
+			};
+			const ding = canDeployFactory(opts);
+
+			ding.canDeploy().then(done);
+		});
+
+		it("should throw an error with a table result deployable false", ()=> {
+			const opts: CanDeployOptions = {
+				pactBroker: `http://localhost:${PORT}`,
+				participantVersion: "4",
+				participant: "FooFail"
+			};
+			const ding = canDeployFactory(opts);
+
+			return ding.canDeploy()
+			.then(() => expect.fail())
+			.catch((message)=> expect(message).not.be.null);
+		});
+
+		it("should return success with a json result deployable true", (done)=> {
+			const opts: CanDeployOptions = {
+				pactBroker: `http://localhost:${PORT}`,
+				participantVersion: "4",
+				participant: "Foo",
+				output: "json"
+			};
+			const ding = canDeployFactory(opts);
+
+			ding.canDeploy().then(done);
+		});
+
+		it("should throw an error with a json result deployable false", ()=> {
+			const opts: CanDeployOptions = {
+				pactBroker: `http://localhost:${PORT}`,
+				participantVersion: "4",
+				participant: "FooFail",
+				output: "json"
+			};
+			const ding = canDeployFactory(opts);
+
+			return ding.canDeploy()
+			.then(() => expect.fail())
+			.catch((message)=> expect(message).not.be.null);
+		});
+	});
+
 });

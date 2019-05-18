@@ -126,6 +126,73 @@ export default (port: number): q.Promise<http.Server> => {
 	server.put("/pacticipant/:consumer/version/:version/tags/:tag", tagPactFunction);
 	server.put("/auth/pacticipant/:consumer/version/:version/tags/:tag", tagPactFunction);
 
+	// Matrix
+	server.get("/matrix", (req: express.Request, res: express.Response) => {
+	if (req.query.q[0].pacticipant === "Foo") {
+		return res.json({
+			"summary": {
+			  "deployable": true,
+			  "reason": "some text",
+			  "unknown": 1
+			},
+			"matrix": [
+			  {
+				"consumer": {
+				  "name": "Foo",
+				  "version": {
+					"number": "4"
+				  }
+				},
+				"provider": {
+				  "name": "Bar",
+				  "version": {
+					"number": "5"
+				  }
+				},
+				"verificationResult": {
+				  "verifiedAt": "2017-10-10T12:49:04+11:00",
+				  "success": true
+				},
+				"pact": {
+				  "createdAt": "2017-10-10T12:49:04+11:00"
+				}
+			  }
+			]
+		  });
+	} else {
+		return res.json({
+			"summary": {
+			  "deployable": false,
+			  "reason": "some text",
+			  "unknown": 1
+			},
+			"matrix": [
+			  {
+				"consumer": {
+				  "name": "FooFail",
+				  "version": {
+					"number": "4"
+				  }
+				},
+				"provider": {
+				  "name": "Bar",
+				  "version": {
+					"number": "5"
+				  }
+				},
+				"verificationResult": {
+				  "verifiedAt": "2017-10-10T12:49:04+11:00",
+				  "success": false
+				},
+				"pact": {
+				  "createdAt": "2017-10-10T12:49:04+11:00"
+				}
+			  }
+			]
+		  });
+	}
+});
+
 	// Get root HAL links
 	server.get("/", returnJson({
 		"_links": {
