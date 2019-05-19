@@ -37,11 +37,16 @@ export class Verifier {
 	constructor(options: VerifierOptions) {
 		options = options || {};
 		options.pactBrokerUrl = options.pactBrokerUrl || "";
-		options.consumerVersionTag = _.toArray(options.consumerVersionTag);
 		options.pactUrls = options.pactUrls || [];
 		options.provider = options.provider || "";
 		options.providerStatesSetupUrl = options.providerStatesSetupUrl || "";
 		options.timeout = options.timeout || 30000;
+		options.consumerVersionTag = options.consumerVersionTag || [];
+
+		if (options.consumerVersionTag && checkTypes.string(options.consumerVersionTag)) {
+			options.consumerVersionTag = [options.consumerVersionTag as string];
+		}
+		checkTypes.assert.array.of.string(options.consumerVersionTag);
 
 		options.pactUrls = _.chain(options.pactUrls)
 			.map((uri: string) => {
@@ -125,6 +130,10 @@ export class Verifier {
 			checkTypes.assert.string(options.out);
 		}
 
+		if (options.tags) {
+			logger.warn("'tags' has been deprecated as at v8.0.0, please use 'consumerVersionTag' instead");
+		}
+
 		checkTypes.assert.positive(options.timeout);
 
 		if (options.monkeypatch) {
@@ -174,6 +183,7 @@ export interface VerifierOptions extends SpawnArguments {
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
 	timeout?: number;
+	tags?: string[];
 	monkeypatch?: string;
 	format?: "json" | "RspecJunitFormatter";
 	out?: string;
