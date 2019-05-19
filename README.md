@@ -255,8 +255,7 @@ pact.verifyPacts({
 | `providerBaseUrl`           | true      | string  | Running API provider host endpoint.                                                                        |
 | `pactBrokerUrl`         | false     | string  | Base URL of the Pact Broker from which to retrieve the pacts. Required if `pactUrls` not given.                                                                        |
 | `provider`                  | false     | string  | Name of the provider if fetching from a Broker                                                             |
-| `tags`                      | false     | array   | Array of tags, used to filter pacts from the Broker                                                        |
-| `consumerVersionTag`        | false     | string  | Retrieve the latest pacts with this consumer version tag                                                        |
+| `consumerVersionTag`        | false     | string\|array  | Retrieve the latest pacts with given tag(s)                                                        |
 | `pactUrls`                  | false     | array   | Array of local pact file paths or HTTP-based URLs. Required if _not_ using a Pact Broker.                  |
 | `providerStatesSetupUrl`    | false     | string  | URL to send PUT requests to setup a given provider state                                                   |
 | `pactBrokerUsername`        | false     | string  | Username for Pact Broker basic authentication                                                              |

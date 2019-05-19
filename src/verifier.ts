@@ -37,12 +37,16 @@ export class Verifier {
 	constructor(options: VerifierOptions) {
 		options = options || {};
 		options.pactBrokerUrl = options.pactBrokerUrl || "";
-		options.consumerVersionTag = options.consumerVersionTag || "";
-		options.tags = options.tags || [];
 		options.pactUrls = options.pactUrls || [];
 		options.provider = options.provider || "";
 		options.providerStatesSetupUrl = options.providerStatesSetupUrl || "";
 		options.timeout = options.timeout || 30000;
+		options.consumerVersionTag = options.consumerVersionTag || [];
+
+		if (options.consumerVersionTag && checkTypes.string(options.consumerVersionTag)) {
+			options.consumerVersionTag = [options.consumerVersionTag as string];
+		}
+		checkTypes.assert.array.of.string(options.consumerVersionTag);
 
 		options.pactUrls = _.chain(options.pactUrls)
 			.map((uri: string) => {
@@ -93,15 +97,11 @@ export class Verifier {
 		}
 
 		if (options.consumerVersionTag) {
-			checkTypes.assert.string(options.consumerVersionTag);
+			checkTypes.assert.array.of.string(options.consumerVersionTag);
 		}
 
 		if (options.pactUrls) {
 			checkTypes.assert.array.of.string(options.pactUrls);
-		}
-
-		if (options.tags) {
-			checkTypes.assert.array.of.string(options.tags);
 		}
 
 		if (options.providerBaseUrl) {
@@ -128,6 +128,10 @@ export class Verifier {
 
 		if (options.out) {
 			checkTypes.assert.string(options.out);
+		}
+
+		if (options.tags) {
+			logger.warn("'tags' has been deprecated as at v8.0.0, please use 'consumerVersionTag' instead");
 		}
 
 		checkTypes.assert.positive(options.timeout);
@@ -174,12 +178,12 @@ export interface VerifierOptions extends SpawnArguments {
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
 	pactBrokerToken?: string;
-	consumerVersionTag?: string;
+	consumerVersionTag?: string | string[];
 	customProviderHeaders?: string[];
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
-	tags?: string[];
 	timeout?: number;
+	tags?: string[];
 	monkeypatch?: string;
 	format?: "json" | "RspecJunitFormatter";
 	out?: string;

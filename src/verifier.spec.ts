@@ -209,12 +209,24 @@ describe("Verifier Spec", () => {
 		});
 	});
 
-	context("when consumerVersionTag is provided", () => {
+	context("when consumerVersionTag is provided as a string", () => {
+		it("should convert the argument to an array", () => {
+			const v = verifierFactory({
+				providerBaseUrl: "http://localhost",
+				pactUrls: [path.dirname(currentDir)],
+				consumerVersionTag: "tag-1"
+			});
+
+			expect(v.options.consumerVersionTag).to.deep.eq(["tag-1"]);
+		});
+	});
+
+	context("when consumerVersionTag is provided as an array", () => {
 		it("should not fail", () => {
 			expect(() => verifierFactory({
 				providerBaseUrl: "http://localhost",
 				pactUrls: [path.dirname(currentDir)],
-				consumerVersionTag: "tag-1"
+				consumerVersionTag: ["tag-1"]
 			})).to.not.throw(Error);
 		});
 	});
