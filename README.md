@@ -38,6 +38,7 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
             - [Create Message Pacts](#create-message-pacts)
                 - [Example](#example)
                 - [Example CLI invocation:](#example-cli-invocation)
+    - [CLI Tools](#cli-tools)
     - [Windows Issues](#windows-issues)
         - [Enable Long Paths](#enable-long-paths)
     - [Contributing](#contributing)
@@ -399,6 +400,33 @@ node ./bin/pact-cli.js message --pact-file-write-mode update --consumer foo --pr
   }
 }'
 ```
+
+## CLI Tools
+
+This package also comes with the [Pact Standalone Tools](https://github.com/pact-foundation/pact-ruby-standalone/releases) available as linked binaries in the [standard](https://docs.npmjs.com/files/folders#executables) NPM installation directory (e..g. `./node_modules/.bin`).
+
+These are available in circumstances where `pact-node` has not yet implemented a feature or access via JavaScript APIs is not desirable. To run the binaries is as simple as the following:
+
+*Example can-i-deploy check*:
+```sh
+./node_modules/.bin/pact-broker can-i-deploy --pacticipant "Banana Service" --broker-base-url https://test.pact.dius.com.au --latest --broker-username dXfltyFMgNOFZAxr8io9wJ37iUpY42M --broker-password O5AIZWxelWbLvqMd8PkAVycBJh2Psyg1
+
+Computer says no ¯\_(ツ)_/¯
+
+CONSUMER       | C.VERSION | PROVIDER       | P.VERSION | SUCCESS?
+---------------|-----------|----------------|-----------|---------
+Banana Service | 1.0.0     | Fofana Service | 1.0.0     | false
+
+The verification between the latest version of Banana Service (1.0.0) and version 1.0.0 of Fofana Service failed
+```
+
+The following are the binaries currently made available:
+
+* `pact-mock-service`
+* `pact-broker`
+* `pact-stub-service`
+* `pact-message`
+* `pact-provider-verifier`
 
 ## Windows Issues
 

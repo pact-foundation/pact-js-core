@@ -6,7 +6,12 @@
   "homepage": "https://github.com/pact-foundation/pact-node#readme",
   "types": "src/index.d.ts",
   "bin": {
-    "pact": "bin/pact-cli.js"
+    "pact": "bin/pact-cli.js",
+    "pact-broker": "bin/pact-broker.js",
+    "pact-mock-service": "bin/pact-mock-service.js",
+    "pact-stub-service": "bin/pact-stub-service.js",
+    "pact-provider-verifier": "bin/pact-provider-verifier.js",
+    "pact-message": "bin/pact-message.js"
   },
   "os": [
     "darwin",
