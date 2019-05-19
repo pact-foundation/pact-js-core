@@ -72,22 +72,23 @@ export class CanDeploy {
 		instance.stdout.on("data", (l) => output.push(l));
 		instance.stderr.on("data", (l) => output.push(l));
 		instance.once("close", (code) => {
-			const o = output.join("\n");			
-				
+			const o = output.join("\n");
+
 			let success = false;
 			if (this.options.output === "json") {
 				success = JSON.parse(o).summary.deployable;
 			} else {
 				success = /Computer says yes/igm.exec(o) !== null;
-			}	
-			
-			if (code !== 0 || !success) {
-				logger.error(`can-i-deploy did not return success message:\n${o}`);
-				return deferred.reject(new Error(o));
 			}
 
-			logger.info(o);
-			return deferred.resolve();
+			if (code === 0 || success) {
+				logger.info(o);
+				return deferred.resolve();
+			}
+
+			logger.error(`can-i-deploy did not return success message:\n${o}`);
+			return deferred.reject(new Error(o));
+
 		});
 
 		return deferred.promise
