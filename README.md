@@ -260,6 +260,7 @@ pact.verifyPacts({
 | `providerStatesSetupUrl`    | false     | string  | URL to send PUT requests to setup a given provider state                                                   |
 | `pactBrokerUsername`        | false     | string  | Username for Pact Broker basic authentication                                                              |
 | `pactBrokerPassword`        | false     | string  | Password for Pact Broker basic authentication                                                              |
+| `pactBrokerToken`           | false     | string  | Bearer token for Pact Broker authentication                                                              |
 | `publishVerificationResult` | false     | boolean | Publish verification result to Broker (_NOTE_: you should only enable this during CI builds)               |
 | `customProviderHeaders`     | false     | array   | Header(s) to add to provider state set up and pact verification                                            |  | `requests`. eg 'Authorization: Basic cGFjdDpwYWN0'. |
 | `providerVersion`           | false     | string  | Provider version, required to publish verification result to Broker. Optional otherwise.                   |
@@ -286,7 +287,8 @@ pact.publishPacts(opts).then(function () {
 | `pactBroker`         | true      | string | URL of the Pact Broker to publish pacts to. Required.               |
 | `consumerVersion`    | true      | string | A string containing a semver-style version e.g. 1.0.0. Required.    |
 | `pactBrokerUsername` | false     | string | Username for Pact Broker basic authentication. Optional             |
-| `pactBrokerPassword` | false     | string | Password for Pact Broker basic authentication. Optional,            |
+| `pactBrokerPassword` | false     | string | Password for Pact Broker basic authentication. Optional             |
+| `pactBrokerToken`    | false     | string | Bearer token for Pact Broker authentication. Optional               |
 | `tags`               | false     | array  | An array of Strings to tag the Pacts being published. Optional      |
 
 ### Pact Broker Deployment Check
@@ -316,7 +318,8 @@ pact.canDeploy(opts)
 | `to`                 | false     | string      | Which tag are you deploying to, Must follow after participant. Optional             |
 | `pactBroker`         | true      | string      | URL of the Pact Broker to publish pacts to. Required.                               |
 | `pactBrokerUsername` | false     | string      | Username for Pact Broker basic authentication. Optional                             |
-| `pactBrokerPassword` | false     | string      | Password for Pact Broker basic authentication. Optional,                            |
+| `pactBrokerPassword` | false     | string      | Password for Pact Broker basic authentication. Optional                             |
+| `pactBrokerToken`    | false     | string      | Bearer token for Pact Broker authentication. Optional                             |
 | `output`             | false     | json,table  | Specify output to show, json or table. Optional                                     |
 | `verbose`            | false     | flag        | Set logging mode to verbose. Optional                                               |
 | `retryWhileUnknown`  | false     | number      | The number of times to retry while there is an unknown verification result. Optional|
