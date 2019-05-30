@@ -460,6 +460,6 @@ export default (port: number): q.Promise<http.Server> => {
 	}));
 
 	const deferred = q.defer<http.Server>();
-	let s = server.listen(port, deferred.makeNodeResolver());
+	let s = server.listen(port, () => deferred.resolve());
 	return deferred.promise.then(() => s);
 };

@@ -68,6 +68,6 @@ export default (port: number): q.Promise<http.Server> => {
 	server.get("/noauth/pacts/provider/they/consumer/anotherclient/latest", returnJsonFile("./data/get-noauth-provider_they-consumer_anotherclient-latest.json"));
 
 	const deferred = q.defer<http.Server>();
-	let s = server.listen(port, deferred.makeNodeResolver());
+	let s = server.listen(port, () => deferred.resolve());
 	return deferred.promise.then(() => s);
 };
