@@ -30,6 +30,7 @@ export class Verifier {
 		"providerVersion": "--provider-app-version",
 		"provider": "--provider",
 		"customProviderHeaders": "--custom-provider-header",
+		"monkeypatch": "--monkeypatch",
 		"format": "--format",
 		"out": "--out",
 	};
