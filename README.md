@@ -392,21 +392,16 @@ const messageFactory = messageFactory({
 messageFactory.createMessage();
 ```
 
-##### Example CLI invocation:
-
-```sh
-node ./bin/pact-cli.js message --pact-file-write-mode update --consumer foo --provider bar -d /tmp/pacts -c '{
-  "description": "a test mesage",
-  "content": {
-    "name": "Mary"
-  }
-}'
-```
-
 ## CLI Tools
 
 This package also comes with the [Pact Standalone Tools](https://github.com/pact-foundation/pact-ruby-standalone/releases) available as linked binaries in the [standard](https://docs.npmjs.com/files/folders#executables) NPM installation directory (e..g. `./node_modules/.bin`).
 
+This means you may call them direct from scripts in your package json, for example:
+
+```
+"scripts": {
+  "pactPublish": "pact-broker publish ./pacts --consumer-app-version=$\(git describe\) --broker-base-url=$BROKER_BASE_URL --broker-username=$BROKER_USERNAME --broker-password=BROKER_PASSWORD"`
+}
 These are available in circumstances where `pact-node` has not yet implemented a feature or access via JavaScript APIs is not desirable. To run the binaries is as simple as the following:
 
 *Example can-i-deploy check*:
@@ -429,6 +424,7 @@ The following are the binaries currently made available:
 * `pact-stub-service`
 * `pact-message`
 * `pact-provider-verifier`
+* `pact`
 
 ## Windows Issues
 

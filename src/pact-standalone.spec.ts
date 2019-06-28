@@ -32,6 +32,8 @@ describe("Pact Standalone", function() {
 		expect(pact.stubFullPath).to.contain("pact-stub-service");
 		expect(pact.verifierPath).to.contain("pact-provider-verifier");
 		expect(pact.verifierFullPath).to.contain("pact-provider-verifier");
+		expect(pact.pactPath).to.contain("pact");
+		expect(pact.pactFullPath).to.contain("pact");		
 	});
 
 	it("should return the base directory of the project with 'cwd' (where the package.json file is)", () => {
@@ -75,6 +77,14 @@ describe("Pact Standalone", function() {
 			it("provider verifier full path", () => {
 				expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
 			});
+			
+			it("pact relative path", () => {
+				expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be.true;
+			});
+
+			it("pact full path", () => {
+				expect(fs.existsSync(pact.pactFullPath)).to.be.true;
+			});
 		});
 
 		describe("Linux ia32", () => {
@@ -112,6 +122,14 @@ describe("Pact Standalone", function() {
 
 			it("provider verifier full path", () => {
 				expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
+			});
+			
+			it("pact relative path", () => {
+				expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be.true;
+			});
+
+			it("pact full path", () => {
+				expect(fs.existsSync(pact.pactFullPath)).to.be.true;
 			});
 		});
 
@@ -151,6 +169,14 @@ describe("Pact Standalone", function() {
 			it("provider verifier full path", () => {
 				expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
 			});
+			
+			it("pact relative path", () => {
+				expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be.true;
+			});
+
+			it("pact full path", () => {
+				expect(fs.existsSync(pact.pactFullPath)).to.be.true;
+			});
 		});
 
 		describe("Windows", () => {
@@ -167,6 +193,8 @@ describe("Pact Standalone", function() {
 					expect(pact.stubFullPath).to.contain("pact-stub-service.bat");
 					expect(pact.verifierPath).to.contain("pact-provider-verifier.bat");
 					expect(pact.verifierFullPath).to.contain("pact-provider-verifier.bat");
+					expect(pact.pactPath).to.contain("pact.bat");
+					expect(pact.pactFullPath).to.contain("pact.bat");
 				}
 			);
 
@@ -200,6 +228,14 @@ describe("Pact Standalone", function() {
 
 			it("provider verifier full path", () => {
 				expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
+			});
+			
+			it("pact relative path", () => {
+				expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be.true;
+			});
+
+			it("pact full path", () => {
+				expect(fs.existsSync(pact.pactFullPath)).to.be.true;
 			});
 		});
 	});

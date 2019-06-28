@@ -14,6 +14,8 @@ export interface PactStandalone {
 	verifierFullPath: string;
 	messagePath: string;
 	messageFullPath: string;
+	pactPath: string;
+	pactFullPath: string;
 }
 
 export const standalone = (platform?: string, arch?: string): PactStandalone => {
@@ -25,6 +27,7 @@ export const standalone = (platform?: string, arch?: string): PactStandalone => 
 	const verify = binName("pact-provider-verifier");
 	const broker = binName("pact-broker");
 	const stub = binName("pact-stub-service");
+	const pact = binName("pact");
 	const basePath = path.join("standalone", getBinaryEntry(platform, arch).folderName, "bin");
 
 	return {
@@ -37,6 +40,8 @@ export const standalone = (platform?: string, arch?: string): PactStandalone => 
 		mockServiceFullPath: path.resolve(util.cwd, basePath, mock).trim(),
 		stubPath: path.join(basePath, stub),
 		stubFullPath: path.resolve(util.cwd, basePath, stub).trim(),
+		pactPath: path.join(basePath, pact),
+		pactFullPath: path.resolve(util.cwd, basePath, pact).trim(),
 		verifierPath: path.join(basePath, verify),
 		verifierFullPath: path.resolve(util.cwd, basePath, verify).trim()
 	};
