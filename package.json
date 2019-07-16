@@ -6,7 +6,7 @@
   "homepage": "https://github.com/pact-foundation/pact-node#readme",
   "types": "src/index.d.ts",
   "bin": {
-    "pact": "bin/pact-cli.js",
+    "pact": "bin/pact.js",
     "pact-broker": "bin/pact-broker.js",
     "pact-mock-service": "bin/pact-mock-service.js",
     "pact-stub-service": "bin/pact-stub-service.js",
@@ -54,7 +54,6 @@
     "@types/q": "1.0.7",
     "bunyan": "1.8.12",
     "bunyan-prettystream": "0.1.3",
-    "caporal": "1.2.0",
     "chalk": "2.3.1",
     "check-types": "7.3.0",
     "decompress": "4.2.0",
