@@ -201,7 +201,8 @@ function extract(data: Data): Promise<void> {
 			tar.x({
 				file: data.filepath,
 				strip: 1,
-				cwd: data.platformFolderPath,
+                cwd: data.platformFolderPath,
+                preserveOwner: false,
 				Z: true
 			})
 		)
