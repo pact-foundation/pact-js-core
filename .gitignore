@@ -33,9 +33,6 @@ node_modules
 .idea
 *.iml
 
-# npm
-package-lock.json
-
 # packages
 *.zip
 *.tgz
