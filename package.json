@@ -65,7 +65,8 @@
     "tar": "4.4.2",
     "underscore": "1.8.3",
     "unixify": "1.0.0",
-    "url-join": "^4.0.0"
+    "url-join": "^4.0.0",
+    "snyk": "^1.193.2"
   },
   "devDependencies": {
     "@types/chai": "4.1.2",
@@ -110,6 +111,9 @@
     "start": "npm run watch",
     "download-checksums": "node download-checksums.js",
     "prerelease": "npm i && npm t && rm package-lock.json",
-    "release": "standard-version"
-  }
+    "release": "standard-version",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "snyk": true
 }
