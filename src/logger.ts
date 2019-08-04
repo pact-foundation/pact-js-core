@@ -20,10 +20,6 @@ bunyan.prototype.time = (action: string, startTime: number) => {
   );
 };
 
-// @ts-ignore
-bunyan.prototype.logLevelName = (): string =>
-  bunyan.nameFromLevel[this.level()];
-
 export type LogLevels = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
 
 const Logger = new bunyan({
