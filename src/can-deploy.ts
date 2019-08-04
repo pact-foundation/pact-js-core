@@ -124,7 +124,7 @@ export class CanDeploy {
 
 export default (options: CanDeployOptions) => new CanDeploy(options);
 
-export interface CanDeployOptions extends SpawnArguments {
+export interface CanDeployOptions {
   participant?: string;
   participantVersion?: string;
   to?: string;
@@ -137,4 +137,5 @@ export interface CanDeployOptions extends SpawnArguments {
   verbose?: boolean;
   retryWhileUnknown?: number;
   retryInterval?: number;
+  timeout?: number;
 }

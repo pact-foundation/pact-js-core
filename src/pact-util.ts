@@ -127,6 +127,14 @@ export class PactUtil {
   public isWindows(platform: string = process.platform): boolean {
     return platform === 'win32';
   }
+
+  public stringifyArguments(obj: SpawnArguments): string {
+    return _.chain(obj)
+      .pairs()
+      .map((v: string[]) => v.join(' = '))
+      .value()
+      .join(',\n');
+  }
 }
 
 export interface SpawnArguments {

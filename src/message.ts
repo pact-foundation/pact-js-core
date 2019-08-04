@@ -78,15 +78,6 @@ export class Message {
       options.pactFileWriteMode,
     );
 
-    if (
-      (options.pactBrokerUsername && !options.pactBrokerPassword) ||
-      (options.pactBrokerPassword && !options.pactBrokerUsername)
-    ) {
-      throw new Error(
-        'Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.',
-      );
-    }
-
     this.options = options;
   }
 
@@ -95,7 +86,7 @@ export class Message {
     const deferred = q.defer<any>();
     const instance = pactUtil.spawnBinary(
       `${pactStandalone.messagePath}`,
-      this.options,
+      this.options as SpawnArguments,
       this.__argMapping,
     );
     const output: any[] = [];
@@ -118,7 +109,7 @@ export class Message {
 
 export default (options: MessageOptions) => new Message(options);
 
-export interface MessageOptions extends SpawnArguments {
+export interface MessageOptions {
   content?: string;
   dir?: string;
   consumer?: string;

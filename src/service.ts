@@ -183,7 +183,7 @@ export abstract class AbstractService extends events.EventEmitter {
   protected spawnBinary(): ChildProcess {
     return pactUtil.spawnBinary(
       this.__serviceCommand,
-      this.options,
+      this.options as SpawnArguments,
       this.__argMapping,
     );
   }
@@ -279,7 +279,7 @@ export abstract class AbstractService extends events.EventEmitter {
   }
 }
 
-export interface ServiceOptions extends SpawnArguments {
+export interface ServiceOptions {
   port?: number;
   ssl?: boolean;
   cors?: boolean;

@@ -92,7 +92,7 @@ export class Publisher {
     const deferred = q.defer<string[]>();
     const instance = pactUtil.spawnBinary(
       `${pactStandalone.brokerPath} publish`,
-      this.options,
+      { ...this.options } as SpawnArguments,
       this.__argMapping,
     );
     const output: any[] = [];
@@ -119,7 +119,7 @@ export class Publisher {
 
 export default (options: PublisherOptions) => new Publisher(options);
 
-export interface PublisherOptions extends SpawnArguments {
+export interface PublisherOptions {
   pactFilesOrDirs: string[];
   pactBroker: string;
   consumerVersion: string;

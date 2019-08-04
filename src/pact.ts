@@ -6,7 +6,7 @@ import verifierFactory, { VerifierOptions } from './verifier';
 import messageFactory, { MessageOptions } from './message';
 import publisherFactory, { PublisherOptions } from './publisher';
 import canDeployFactory, { CanDeployOptions } from './can-deploy';
-import util from './pact-util';
+import util, { SpawnArguments } from './pact-util';
 import logger, { LogLevels } from './logger';
 import { AbstractService } from './service';
 import * as _ from 'underscore';
@@ -59,16 +59,16 @@ export class Pact {
     let server = serverFactory(options);
     this.__servers.push(server);
     logger.info(
-      `Creating Pact Server with options: \n${this.__stringifyOptions(
-        server.options,
+      `Creating Pact Server with options: \n${util.stringifyArguments(
+        server.options as SpawnArguments,
       )}`,
     );
 
     // Listen to server delete events, to remove from server list
     server.once(AbstractService.Events.DELETE_EVENT, (s: Server) => {
       logger.info(
-        `Deleting Pact Server with options: \n${this.__stringifyOptions(
-          s.options,
+        `Deleting Pact Server with options: \n${util.stringifyArguments(
+          s.options as SpawnArguments,
         )}`,
       );
       this.__servers = _.without(this.__servers, s);
@@ -113,16 +113,16 @@ export class Pact {
     let stub = stubFactory(options);
     this.__stubs.push(stub);
     logger.info(
-      `Creating Pact Stub with options: \n${this.__stringifyOptions(
-        stub.options,
+      `Creating Pact Stub with options: \n${util.stringifyArguments(
+        stub.options as SpawnArguments,
       )}`,
     );
 
     // Listen to stub delete events, to remove from stub list
     stub.once(AbstractService.Events.DELETE_EVENT, (s: Stub) => {
       logger.info(
-        `Deleting Pact Stub with options: \n${this.__stringifyOptions(
-          s.options,
+        `Deleting Pact Stub with options: \n${util.stringifyArguments(
+          s.options as SpawnArguments,
         )}`,
       );
       this.__stubs = _.without(this.__stubs, s);
@@ -178,14 +178,6 @@ export class Pact {
   public canDeploy(options: CanDeployOptions): q.Promise<any[]> {
     logger.info('Checking if it it possible to deploy');
     return canDeployFactory(options).canDeploy();
-  }
-
-  private __stringifyOptions(obj: ServerOptions): string {
-    return _.chain(obj)
-      .pairs()
-      .map((v: string[]) => v.join(' = '))
-      .value()
-      .join(',\n');
   }
 }
 

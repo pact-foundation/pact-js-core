@@ -176,7 +176,7 @@ export class Verifier {
     const deferred = q.defer<string>();
     const instance = pactUtil.spawnBinary(
       pactStandalone.verifierPath,
-      this.options,
+      { ...this.options } as SpawnArguments,
       this.__argMapping,
     );
     const output: any[] = [];
@@ -199,7 +199,7 @@ export class Verifier {
 // Creates a new instance of the pact server with the specified option
 export default (options: VerifierOptions) => new Verifier(options);
 
-export interface VerifierOptions extends SpawnArguments {
+export interface VerifierOptions {
   providerBaseUrl: string;
   provider?: string;
   pactUrls?: string[];
