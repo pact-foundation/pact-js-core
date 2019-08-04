@@ -1,11 +1,11 @@
-import pact from "./pact";
+import pact from './pact';
 module.exports = exports = pact;
 export default pact;
 
-export * from "./verifier";
+export * from './verifier';
 
-export * from "./server";
+export * from './server';
 
-export * from "./publisher";
+export * from './publisher';
 
-export * from "./stub";
+export * from './stub';

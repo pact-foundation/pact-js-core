@@ -86,11 +86,13 @@
     "mocha": "5.0.1",
     "mocha-unfunk-reporter": "0.4.0",
     "nodemon": "^1.18.10",
+    "prettier": "^1.18.2",
     "rewire": "^4.0.1",
     "sinon": "4.4.2",
     "standard-version": "^5.0.1",
     "ts-node": "5.0.0",
     "tslint": "5.9.1",
+    "tslint-config-prettier": "^1.18.0",
     "typescript": "2.7.2"
   },
   "scripts": {
@@ -113,7 +115,15 @@
     "prerelease": "npm i && npm t && rm package-lock.json",
     "release": "standard-version",
     "snyk-protect": "snyk protect",
+    "prettier:base": "prettier --parser typescript --no-editorconfig",
+    "prettier:check": "npm run prettier:base -- --list-different \"src/**/*.{ts,tsx}\"",
+    "prettier:write": "npm run prettier:base -- --write \"src/**/*.{ts,tsx}\"",
     "prepare": "npm run snyk-protect"
+  },
+  "prettier": {
+    "semi": true,
+    "trailingComma": "all",
+    "singleQuote": true
   },
   "snyk": true
 }
