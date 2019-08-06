@@ -30,7 +30,7 @@ export class Verifier {
     publishVerificationResult: '--publish-verification-results',
     providerVersion: '--provider-app-version',
     provider: '--provider',
-    customProviderHeaderu: '--custom-provider-header',
+    customProviderHeaders: '--custom-provider-header',
     monkeypatch: '--monkeypatch',
     format: '--format',
     out: '--out',
