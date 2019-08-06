@@ -86,7 +86,7 @@ export class PactUtil {
     logger.debug(
       `Starting pact binary with '${_.flatten([
         file,
-        args,
+        spawnArgs,
         JSON.stringify(opts),
       ])}'`,
     );
