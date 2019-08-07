@@ -313,7 +313,7 @@ pact.canDeploy(opts)
 
 | Parameter            | Required? | Type        | Description                                                                         |
 | -------------------- | --------- | ----------- | ----------------------------------------------------------------------------------- |
-| `participants`       | true      | string	     | An array of { name: String, tag? string, version? string } objects                  |
+| `pacticipants`       | true      | string	     | An array of { name: String, tag? string, version? string } objects                  |
 | `pactBroker`         | true      | string      | URL of the Pact Broker to publish pacts to. Required.                               |
 | `pactBrokerUsername` | false     | string      | Username for Pact Broker basic authentication. Optional                             |
 | `pactBrokerPassword` | false     | string      | Password for Pact Broker basic authentication. Optional                             |
