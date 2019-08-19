@@ -7,7 +7,6 @@ import messageFactory, { MessageOptions } from './message';
 import publisherFactory, { PublisherOptions } from './publisher';
 import canDeployFactory, { CanDeployOptions } from './can-deploy';
 import pactUtil from './pact-util';
-import argsHelper, { SpawnArguments } from './spawn-arguments';
 import logger, { LogLevels } from './logger';
 import { AbstractService } from './service';
 import * as _ from 'underscore';
@@ -60,17 +59,13 @@ export class Pact {
     let server = serverFactory(options);
     this.__servers.push(server);
     logger.info(
-      `Creating Pact Server with options: \n${argsHelper.stringifySpawnArguments(
-        server.options as SpawnArguments,
-      )}`,
+      `Creating Pact Server with options: \n${JSON.stringify(server.options)}`,
     );
 
     // Listen to server delete events, to remove from server list
     server.once(AbstractService.Events.DELETE_EVENT, (s: Server) => {
       logger.info(
-        `Deleting Pact Server with options: \n${argsHelper.stringifySpawnArguments(
-          s.options as SpawnArguments,
-        )}`,
+        `Deleting Pact Server with options: \n${JSON.stringify(s.options)}`,
       );
       this.__servers = _.without(this.__servers, s);
     });
@@ -114,17 +109,13 @@ export class Pact {
     let stub = stubFactory(options);
     this.__stubs.push(stub);
     logger.info(
-      `Creating Pact Stub with options: \n${argsHelper.stringifySpawnArguments(
-        stub.options as SpawnArguments,
-      )}`,
+      `Creating Pact Stub with options: \n${JSON.stringify(stub.options)}`,
     );
 
     // Listen to stub delete events, to remove from stub list
     stub.once(AbstractService.Events.DELETE_EVENT, (s: Stub) => {
       logger.info(
-        `Deleting Pact Stub with options: \n${argsHelper.stringifySpawnArguments(
-          s.options as SpawnArguments,
-        )}`,
+        `Deleting Pact Stub with options: \n${JSON.stringify(stub.options)}`,
       );
       this.__stubs = _.without(this.__stubs, s);
     });
