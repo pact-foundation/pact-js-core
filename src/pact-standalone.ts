@@ -1,6 +1,6 @@
 import * as path from 'path';
 import { getBinaryEntry } from '../standalone/install';
-import util from './pact-util';
+import pactEnvironment from './pact-environment';
 
 export interface PactStandalone {
   cwd: string;
@@ -25,7 +25,7 @@ export const standalone = (
   platform = platform || process.platform;
   arch = arch || process.arch;
   const binName = (name: string) =>
-    `${name}${util.isWindows(platform) ? '.bat' : ''}`;
+    `${name}${pactEnvironment.isWindows(platform) ? '.bat' : ''}`;
   const mock = binName('pact-mock-service');
   const message = binName('pact-message');
   const verify = binName('pact-provider-verifier');
@@ -39,19 +39,25 @@ export const standalone = (
   );
 
   return {
-    cwd: util.cwd,
+    cwd: pactEnvironment.cwd,
     brokerPath: path.join(basePath, broker),
-    brokerFullPath: path.resolve(util.cwd, basePath, broker).trim(),
+    brokerFullPath: path.resolve(pactEnvironment.cwd, basePath, broker).trim(),
     messagePath: path.join(basePath, message),
-    messageFullPath: path.resolve(util.cwd, basePath, message).trim(),
+    messageFullPath: path
+      .resolve(pactEnvironment.cwd, basePath, message)
+      .trim(),
     mockServicePath: path.join(basePath, mock),
-    mockServiceFullPath: path.resolve(util.cwd, basePath, mock).trim(),
+    mockServiceFullPath: path
+      .resolve(pactEnvironment.cwd, basePath, mock)
+      .trim(),
     stubPath: path.join(basePath, stub),
-    stubFullPath: path.resolve(util.cwd, basePath, stub).trim(),
+    stubFullPath: path.resolve(pactEnvironment.cwd, basePath, stub).trim(),
     pactPath: path.join(basePath, pact),
-    pactFullPath: path.resolve(util.cwd, basePath, pact).trim(),
+    pactFullPath: path.resolve(pactEnvironment.cwd, basePath, pact).trim(),
     verifierPath: path.join(basePath, verify),
-    verifierFullPath: path.resolve(util.cwd, basePath, verify).trim(),
+    verifierFullPath: path
+      .resolve(pactEnvironment.cwd, basePath, verify)
+      .trim(),
   };
 };
 

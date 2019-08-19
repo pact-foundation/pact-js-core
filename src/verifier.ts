@@ -1,8 +1,8 @@
 import path = require('path');
 import url = require('url');
 import logger from './logger';
-import pactUtil from './pact-util';
-import { DEFAULT_ARG, SpawnArguments } from './spawn-arguments';
+import spawn from './spawn/spawn';
+import { DEFAULT_ARG, SpawnArguments } from './spawn/arguments';
 import q = require('q');
 import pactStandalone from './pact-standalone';
 const _ = require('underscore');
@@ -175,7 +175,7 @@ export class Verifier {
   public verify(): q.Promise<string> {
     logger.info('Verifying Pact Files');
     const deferred = q.defer<string>();
-    const instance = pactUtil.spawnBinary(
+    const instance = spawn.spawnBinary(
       pactStandalone.verifierPath,
       { ...this.options } as SpawnArguments,
       this.__argMapping,

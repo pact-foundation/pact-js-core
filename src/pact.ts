@@ -6,7 +6,7 @@ import verifierFactory, { VerifierOptions } from './verifier';
 import messageFactory, { MessageOptions } from './message';
 import publisherFactory, { PublisherOptions } from './publisher';
 import canDeployFactory, { CanDeployOptions } from './can-deploy';
-import pactUtil from './pact-util';
+import pactEnvironment from './pact-environment';
 import logger, { LogLevels } from './logger';
 import { AbstractService } from './service';
 import * as _ from 'underscore';
@@ -19,7 +19,7 @@ export class Pact {
 
   constructor() {
     // Check to see if we hit into Windows Long Path issue
-    if (pactUtil.isWindows()) {
+    if (pactEnvironment.isWindows()) {
       try {
         // Trying to trigger windows error by creating path that's over 260 characters long
         const name =

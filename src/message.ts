@@ -1,8 +1,8 @@
 import fs = require('fs');
 import q = require('q');
 import logger from './logger';
-import pactUtil from './pact-util';
-import { DEFAULT_ARG, SpawnArguments } from './spawn-arguments';
+import spawn from './spawn/spawn';
+import { DEFAULT_ARG, SpawnArguments } from './spawn/arguments';
 import pactStandalone from './pact-standalone';
 import path = require('path');
 const mkdirp = require('mkdirp');
@@ -85,7 +85,7 @@ export class Message {
   public createMessage(): q.Promise<any> {
     logger.info(`Creating message pact`);
     const deferred = q.defer<any>();
-    const instance = pactUtil.spawnBinary(
+    const instance = spawn.spawnBinary(
       `${pactStandalone.messagePath}`,
       this.options as SpawnArguments,
       this.__argMapping,

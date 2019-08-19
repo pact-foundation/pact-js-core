@@ -2,8 +2,8 @@ import q = require('q');
 import path = require('path');
 import fs = require('fs');
 import logger from './logger';
-import pactUtil from './pact-util';
-import { DEFAULT_ARG, SpawnArguments } from './spawn-arguments';
+import spawn from './spawn/spawn';
+import { DEFAULT_ARG, SpawnArguments } from './spawn/arguments';
 import { deprecate } from 'util';
 import pactStandalone from './pact-standalone';
 const checkTypes = require('check-types');
@@ -91,7 +91,7 @@ export class Publisher {
   public publish(): q.Promise<string[]> {
     logger.info(`Publishing pacts to broker at: ${this.options.pactBroker}`);
     const deferred = q.defer<string[]>();
-    const instance = pactUtil.spawnBinary(
+    const instance = spawn.spawnBinary(
       `${pactStandalone.brokerPath} publish`,
       { ...this.options } as SpawnArguments,
       this.__argMapping,

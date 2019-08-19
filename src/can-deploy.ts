@@ -1,7 +1,7 @@
 import q = require('q');
 import logger from './logger';
-import pactUtil from './pact-util';
-import { SpawnArguments } from './spawn-arguments';
+import spawn from './spawn/spawn';
+import { SpawnArguments } from './spawn/arguments';
 import pactStandalone from './pact-standalone';
 import * as _ from 'underscore';
 
@@ -89,7 +89,7 @@ export class CanDeploy {
       `Asking broker at ${this.options.pactBroker} if it is possible to deploy`,
     );
     const deferred = q.defer<string[]>();
-    const instance = pactUtil.spawnBinary(
+    const instance = spawn.spawnBinary(
       `${pactStandalone.brokerPath} can-i-deploy`,
       CanDeploy.convertForSpawnBinary(this.options),
       this.__argMapping,
