@@ -1,8 +1,8 @@
 import fs = require('fs');
 import q = require('q');
 import logger from './logger';
-import spawn from './spawn/spawn';
-import { DEFAULT_ARG, SpawnArguments } from './spawn/arguments';
+import spawn from './spawn';
+import { DEFAULT_ARG, SpawnArguments } from './spawn';
 import pactStandalone from './pact-standalone';
 import path = require('path');
 const mkdirp = require('mkdirp');
