@@ -1,7 +1,6 @@
 import q = require('q');
 import logger from './logger';
 import spawn from './spawn';
-import { SpawnArguments } from './spawn';
 import pactStandalone from './pact-standalone';
 import * as _ from 'underscore';
 
@@ -10,11 +9,11 @@ const checkTypes = require('check-types');
 export class CanDeploy {
   public static convertForSpawnBinary(
     options: CanDeployOptions,
-  ): SpawnArguments[] {
+  ): CanDeployOptions[] {
     // This is the order that the arguments must be in, everything else is afterwards
     const keys = ['participant', 'participantVersion', 'latest', 'to'];
     // Create copy of options, while omitting the arguments specified above
-    const args: SpawnArguments[] = [_.omit(options, keys)];
+    const args: CanDeployOptions[] = [_.omit(options, keys)];
 
     // Go backwards in the keys as we are going to unshift them into the array
     keys.reverse().forEach(key => {

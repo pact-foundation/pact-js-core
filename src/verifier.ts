@@ -2,7 +2,7 @@ import path = require('path');
 import url = require('url');
 import logger from './logger';
 import spawn from './spawn';
-import { DEFAULT_ARG, SpawnArguments } from './spawn';
+import { DEFAULT_ARG } from './spawn';
 import q = require('q');
 import pactStandalone from './pact-standalone';
 const _ = require('underscore');
@@ -177,7 +177,7 @@ export class Verifier {
     const deferred = q.defer<string>();
     const instance = spawn.spawnBinary(
       pactStandalone.verifierPath,
-      { ...this.options } as SpawnArguments,
+      this.options,
       this.__argMapping,
     );
     const output: any[] = [];

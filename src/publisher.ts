@@ -3,7 +3,7 @@ import path = require('path');
 import fs = require('fs');
 import logger from './logger';
 import spawn from './spawn';
-import { DEFAULT_ARG, SpawnArguments } from './spawn';
+import { DEFAULT_ARG } from './spawn';
 import { deprecate } from 'util';
 import pactStandalone from './pact-standalone';
 const checkTypes = require('check-types');
@@ -93,7 +93,7 @@ export class Publisher {
     const deferred = q.defer<string[]>();
     const instance = spawn.spawnBinary(
       `${pactStandalone.brokerPath} publish`,
-      { ...this.options } as SpawnArguments,
+      this.options,
       this.__argMapping,
     );
     const output: any[] = [];

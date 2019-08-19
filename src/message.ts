@@ -2,7 +2,7 @@ import fs = require('fs');
 import q = require('q');
 import logger from './logger';
 import spawn from './spawn';
-import { DEFAULT_ARG, SpawnArguments } from './spawn';
+import { DEFAULT_ARG } from './spawn';
 import pactStandalone from './pact-standalone';
 import path = require('path');
 const mkdirp = require('mkdirp');
@@ -87,7 +87,7 @@ export class Message {
     const deferred = q.defer<any>();
     const instance = spawn.spawnBinary(
       `${pactStandalone.messagePath}`,
-      this.options as SpawnArguments,
+      this.options,
       this.__argMapping,
     );
     const output: any[] = [];

@@ -7,7 +7,6 @@ import http = require('request');
 import q = require('q');
 import logger from './logger';
 import spawn from './spawn';
-import { SpawnArguments } from './spawn';
 import { ChildProcess } from 'child_process';
 const mkdirp = require('mkdirp');
 const checkTypes = require('check-types');
@@ -184,7 +183,7 @@ export abstract class AbstractService extends events.EventEmitter {
   protected spawnBinary(): ChildProcess {
     return spawn.spawnBinary(
       this.__serviceCommand,
-      this.options as SpawnArguments,
+      this.options,
       this.__argMapping,
     );
   }

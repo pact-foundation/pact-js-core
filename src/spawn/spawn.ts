@@ -15,7 +15,7 @@ export class Spawn {
 
   public spawnBinary(
     command: string,
-    args: SpawnArguments | SpawnArguments[] = {},
+    args: SpawnArguments = {},
     argMapping: { [id: string]: string } = {},
   ): ChildProcess {
     const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables

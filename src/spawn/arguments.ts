@@ -1,15 +1,25 @@
 const _ = require('underscore');
 const checkTypes = require('check-types');
 
-export interface SpawnArguments {
-  [id: string]: string | string[] | boolean | number | undefined;
-}
+import { CanDeployOptions } from '../can-deploy';
+import { MessageOptions } from '../message';
+import { PublisherOptions } from '../publisher';
+import { ServiceOptions } from '../service';
+import { VerifierOptions } from '../verifier';
+
+export type SpawnArguments =
+  | CanDeployOptions[]
+  | MessageOptions
+  | PublisherOptions
+  | ServiceOptions
+  | VerifierOptions
+  | {};
 
 export const DEFAULT_ARG = 'DEFAULT';
 
 export class Arguments {
   public fromSpawnArgs(
-    args: SpawnArguments | SpawnArguments[],
+    args: SpawnArguments,
     mappings: { [id: string]: string },
   ): string[] {
     return _.chain(args instanceof Array ? args : [args])
