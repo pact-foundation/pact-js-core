@@ -1,6 +1,7 @@
 import q = require('q');
 import logger from './logger';
-import pactUtil, { SpawnArguments } from './pact-util';
+import pactUtil from './pact-util';
+import { SpawnArguments } from './spawn-arguments';
 import pactStandalone from './pact-standalone';
 import * as _ from 'underscore';
 

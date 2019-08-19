@@ -1,7 +1,8 @@
 import path = require('path');
 import url = require('url');
 import logger from './logger';
-import pactUtil, { DEFAULT_ARG, SpawnArguments } from './pact-util';
+import pactUtil from './pact-util';
+import { DEFAULT_ARG, SpawnArguments } from './spawn-arguments';
 import q = require('q');
 import pactStandalone from './pact-standalone';
 const _ = require('underscore');

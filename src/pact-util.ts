@@ -1,51 +1,13 @@
 // tslint:disable:no-string-literal
 import cp = require('child_process');
 import logger from './logger';
+import argsHelper, { SpawnArguments } from './spawn-arguments';
 import { ChildProcess, SpawnOptions } from 'child_process';
 import * as path from 'path';
 
 const _ = require('underscore');
-const checkTypes = require('check-types');
-
-export const DEFAULT_ARG = 'DEFAULT';
 
 export class PactUtil {
-  private static createArgumentsFromObject(
-    args: SpawnArguments,
-    mappings: { [id: string]: string },
-  ): string[] {
-    return _.chain(args)
-      .reduce((acc: any, value: any, key: any) => {
-        if (value && mappings[key]) {
-          let mapping = mappings[key];
-          let f = acc.push.bind(acc);
-          if (mapping === DEFAULT_ARG) {
-            mapping = '';
-            f = acc.unshift.bind(acc);
-          }
-          _.map(checkTypes.array(value) ? value : [value], (v: any) =>
-            f([mapping, `'${v}'`]),
-          );
-        }
-        return acc;
-      }, [])
-      .flatten()
-      .compact()
-      .value();
-  }
-
-  public createArguments(
-    args: SpawnArguments | SpawnArguments[],
-    mappings: { [id: string]: string },
-  ): string[] {
-    return _.chain(args instanceof Array ? args : [args])
-      .map((x: SpawnArguments) =>
-        PactUtil.createArgumentsFromObject(x, mappings),
-      )
-      .flatten()
-      .value();
-  }
-
   public get cwd(): string {
     return path.resolve(__dirname, '..');
   }
@@ -69,7 +31,7 @@ export class PactUtil {
     };
 
     let cmd: string = [command]
-      .concat(this.createArguments(args, argMapping))
+      .concat(argsHelper.fromSpawnArgs(args, argMapping))
       .join(' ');
 
     let spawnArgs: string[];
@@ -127,18 +89,6 @@ export class PactUtil {
   public isWindows(platform: string = process.platform): boolean {
     return platform === 'win32';
   }
-
-  public stringifyArguments(obj: SpawnArguments): string {
-    return _.chain(obj)
-      .pairs()
-      .map((v: string[]) => v.join(' = '))
-      .value()
-      .join(',\n');
-  }
-}
-
-export interface SpawnArguments {
-  [id: string]: string | string[] | boolean | number | undefined;
 }
 
 export default new PactUtil();

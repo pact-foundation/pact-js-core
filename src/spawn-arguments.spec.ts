@@ -1,16 +1,16 @@
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import pactUtil, { DEFAULT_ARG } from './pact-util';
+import argsHelper, { DEFAULT_ARG } from './spawn-arguments';
 
 const expect = chai.expect;
 
 chai.use(chaiAsPromised);
 
 describe('Pact Util Spec', () => {
-  describe('createArguments', () => {
+  describe('fromSpawnArgs', () => {
     describe('when called with an object', () => {
       it('should return an array of all arguments', () => {
-        const result = pactUtil.createArguments(
+        const result = argsHelper.fromSpawnArgs(
           { providerBaseUrl: 'http://localhost' },
           { providerBaseUrl: '--provider-base-url' },
         );
@@ -21,7 +21,7 @@ describe('Pact Util Spec', () => {
       });
 
       it('should wrap its argument values in quotes', () => {
-        const result = pactUtil.createArguments(
+        const result = argsHelper.fromSpawnArgs(
           {
             providerBaseUrl: 'http://localhost',
             pactUrls: ['http://idontexist'],
@@ -40,7 +40,7 @@ describe('Pact Util Spec', () => {
     describe('when called with an array', () => {
       describe('with one element', () => {
         it('should return an array of all arguments', () => {
-          const result = pactUtil.createArguments(
+          const result = argsHelper.fromSpawnArgs(
             [{ providerBaseUrl: 'http://localhost' }],
             {
               providerBaseUrl: '--provider-base-url',
@@ -53,7 +53,7 @@ describe('Pact Util Spec', () => {
         });
 
         it('should wrap its argument values in quotes', () => {
-          const result = pactUtil.createArguments(
+          const result = argsHelper.fromSpawnArgs(
             [
               {
                 providerBaseUrl: 'http://localhost',
@@ -73,7 +73,7 @@ describe('Pact Util Spec', () => {
       });
       describe('with multiple elements', () => {
         it('should wrap its argument values in quotes', () => {
-          const result = pactUtil.createArguments(
+          const result = argsHelper.fromSpawnArgs(
             [
               { participant: 'one' },
               { version: 'v1' },
@@ -99,7 +99,7 @@ describe('Pact Util Spec', () => {
     });
 
     it('should make DEFAULT values first, everything else after', () => {
-      const result = pactUtil.createArguments(
+      const result = argsHelper.fromSpawnArgs(
         {
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],

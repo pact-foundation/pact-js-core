@@ -6,7 +6,8 @@ import verifierFactory, { VerifierOptions } from './verifier';
 import messageFactory, { MessageOptions } from './message';
 import publisherFactory, { PublisherOptions } from './publisher';
 import canDeployFactory, { CanDeployOptions } from './can-deploy';
-import util, { SpawnArguments } from './pact-util';
+import pactUtil from './pact-util';
+import argsHelper, { SpawnArguments } from './spawn-arguments';
 import logger, { LogLevels } from './logger';
 import { AbstractService } from './service';
 import * as _ from 'underscore';
@@ -19,7 +20,7 @@ export class Pact {
 
   constructor() {
     // Check to see if we hit into Windows Long Path issue
-    if (util.isWindows()) {
+    if (pactUtil.isWindows()) {
       try {
         // Trying to trigger windows error by creating path that's over 260 characters long
         const name =
@@ -59,7 +60,7 @@ export class Pact {
     let server = serverFactory(options);
     this.__servers.push(server);
     logger.info(
-      `Creating Pact Server with options: \n${util.stringifyArguments(
+      `Creating Pact Server with options: \n${argsHelper.stringifySpawnArguments(
         server.options as SpawnArguments,
       )}`,
     );
@@ -67,7 +68,7 @@ export class Pact {
     // Listen to server delete events, to remove from server list
     server.once(AbstractService.Events.DELETE_EVENT, (s: Server) => {
       logger.info(
-        `Deleting Pact Server with options: \n${util.stringifyArguments(
+        `Deleting Pact Server with options: \n${argsHelper.stringifySpawnArguments(
           s.options as SpawnArguments,
         )}`,
       );
@@ -113,7 +114,7 @@ export class Pact {
     let stub = stubFactory(options);
     this.__stubs.push(stub);
     logger.info(
-      `Creating Pact Stub with options: \n${util.stringifyArguments(
+      `Creating Pact Stub with options: \n${argsHelper.stringifySpawnArguments(
         stub.options as SpawnArguments,
       )}`,
     );
@@ -121,7 +122,7 @@ export class Pact {
     // Listen to stub delete events, to remove from stub list
     stub.once(AbstractService.Events.DELETE_EVENT, (s: Stub) => {
       logger.info(
-        `Deleting Pact Stub with options: \n${util.stringifyArguments(
+        `Deleting Pact Stub with options: \n${argsHelper.stringifySpawnArguments(
           s.options as SpawnArguments,
         )}`,
       );

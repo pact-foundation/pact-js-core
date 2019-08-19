@@ -1,5 +1,5 @@
 // tslint:disable:no-string-literal
-import { DEFAULT_ARG } from './pact-util';
+import { DEFAULT_ARG } from './spawn-arguments';
 import { AbstractService } from './service';
 import { deprecate } from 'util';
 
