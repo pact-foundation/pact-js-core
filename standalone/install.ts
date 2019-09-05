@@ -18,7 +18,7 @@ const request = Request.defaults({
 });
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = '1.69.0';
+export const PACT_STANDALONE_VERSION = '1.70.2';
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
 const CONFIG = createConfig();
