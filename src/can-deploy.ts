@@ -87,7 +87,7 @@ export class CanDeploy {
     logger.info(
       `Asking broker at ${this.options.pactBroker} if it is possible to deploy`,
     );
-    const deferred = q.defer<string[]>();
+    const deferred = q.defer<any>();
     const instance = pactUtil.spawnBinary(
       `${pactStandalone.brokerPath} can-i-deploy`,
       CanDeploy.convertForSpawnBinary(this.options),
@@ -97,22 +97,23 @@ export class CanDeploy {
     instance.stdout.on('data', l => output.push(l));
     instance.stderr.on('data', l => output.push(l));
     instance.once('close', code => {
-      const o = output.join('\n');
+      let o: any = output.join('\n');
 
       let success = false;
       if (this.options.output === 'json') {
-        success = JSON.parse(o).summary.deployable;
+        o = JSON.parse(o);
+        success = o.summary.deployable;
       } else {
         success = /Computer says yes/gim.exec(o) !== null;
       }
 
       if (code === 0 || success) {
         logger.info(o);
-        return deferred.resolve();
+        return deferred.resolve(o);
       }
 
       logger.error(`can-i-deploy did not return success message:\n${o}`);
-      return deferred.reject(new Error(o));
+      return deferred.reject(o);
     });
 
     return deferred.promise.timeout(
