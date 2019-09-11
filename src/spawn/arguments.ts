@@ -28,14 +28,6 @@ export class Arguments {
       .value();
   }
 
-  public stringifySpawnArguments(obj: SpawnArguments): string {
-    return _.chain(obj)
-      .pairs()
-      .map((v: string[]) => v.join(' = '))
-      .value()
-      .join(',\n');
-  }
-
   private createArgumentsFromObject(
     args: SpawnArguments,
     mappings: { [id: string]: string },
