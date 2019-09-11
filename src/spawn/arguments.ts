@@ -18,7 +18,7 @@ export type SpawnArguments =
 export const DEFAULT_ARG = 'DEFAULT';
 
 export class Arguments {
-  public fromSpawnArgs(
+  public toArgumentsArray(
     args: SpawnArguments,
     mappings: { [id: string]: string },
   ): string[] {

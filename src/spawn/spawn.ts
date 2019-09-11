@@ -32,7 +32,7 @@ export class Spawn {
     };
 
     let cmd: string = [command]
-      .concat(argsHelper.fromSpawnArgs(args, argMapping))
+      .concat(argsHelper.toArgumentsArray(args, argMapping))
       .join(' ');
 
     let spawnArgs: string[];
