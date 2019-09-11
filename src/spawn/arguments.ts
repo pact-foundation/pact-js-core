@@ -13,7 +13,7 @@ export type SpawnArguments =
   | PublisherOptions
   | ServiceOptions
   | VerifierOptions
-  | {};
+  | {}; // Empty object is allowed to make tests less noisy. We should change this in the future
 
 export const DEFAULT_ARG = 'DEFAULT';
 
