@@ -1,58 +1,21 @@
 // tslint:disable:no-string-literal
 import cp = require('child_process');
-import logger from './logger';
 import { ChildProcess, SpawnOptions } from 'child_process';
 import * as path from 'path';
+import logger from '../logger';
+import pactEnvironment from '../pact-environment';
+import argsHelper, { SpawnArguments } from './arguments';
 
 const _ = require('underscore');
-const checkTypes = require('check-types');
 
-export const DEFAULT_ARG = 'DEFAULT';
-
-export class PactUtil {
-  private static createArgumentsFromObject(
-    args: SpawnArguments,
-    mappings: { [id: string]: string },
-  ): string[] {
-    return _.chain(args)
-      .reduce((acc: any, value: any, key: any) => {
-        if (value && mappings[key]) {
-          let mapping = mappings[key];
-          let f = acc.push.bind(acc);
-          if (mapping === DEFAULT_ARG) {
-            mapping = '';
-            f = acc.unshift.bind(acc);
-          }
-          _.map(checkTypes.array(value) ? value : [value], (v: any) =>
-            f([mapping, `'${v}'`]),
-          );
-        }
-        return acc;
-      }, [])
-      .flatten()
-      .compact()
-      .value();
-  }
-
-  public createArguments(
-    args: SpawnArguments | SpawnArguments[],
-    mappings: { [id: string]: string },
-  ): string[] {
-    return _.chain(args instanceof Array ? args : [args])
-      .map((x: SpawnArguments) =>
-        PactUtil.createArgumentsFromObject(x, mappings),
-      )
-      .flatten()
-      .value();
-  }
-
+export class Spawn {
   public get cwd(): string {
     return path.resolve(__dirname, '..');
   }
 
   public spawnBinary(
     command: string,
-    args: SpawnArguments | SpawnArguments[] = {},
+    args: SpawnArguments = {},
     argMapping: { [id: string]: string } = {},
   ): ChildProcess {
     const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
@@ -63,17 +26,17 @@ export class PactUtil {
 
     let file: string;
     let opts: SpawnOptions = {
-      cwd: this.cwd,
-      detached: !this.isWindows(),
+      cwd: pactEnvironment.cwd,
+      detached: !pactEnvironment.isWindows(),
       env: envVars,
     };
 
     let cmd: string = [command]
-      .concat(this.createArguments(args, argMapping))
+      .concat(argsHelper.toArgumentsArray(args, argMapping))
       .join(' ');
 
     let spawnArgs: string[];
-    if (this.isWindows()) {
+    if (pactEnvironment.isWindows()) {
       file = 'cmd.exe';
       spawnArgs = ['/s', '/c', cmd];
       (opts as any).windowsVerbatimArguments = true;
@@ -114,7 +77,7 @@ export class PactUtil {
       binary.removeAllListeners();
       // Killing instance, since windows can't send signals, must kill process forcefully
       try {
-        this.isWindows()
+        pactEnvironment.isWindows()
           ? cp.execSync(`taskkill /f /t /pid ${pid}`)
           : process.kill(-pid, 'SIGINT');
       } catch (e) {
@@ -123,14 +86,6 @@ export class PactUtil {
     }
     return true;
   }
-
-  public isWindows(platform: string = process.platform): boolean {
-    return platform === 'win32';
-  }
 }
 
-export interface SpawnArguments {
-  [id: string]: string | string[] | boolean | number | undefined;
-}
-
-export default new PactUtil();
+export default new Spawn();
