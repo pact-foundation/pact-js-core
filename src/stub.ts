@@ -1,5 +1,5 @@
 // tslint:disable:no-string-literal
-import { DEFAULT_ARG, SpawnArguments } from './pact-util';
+import { DEFAULT_ARG } from './spawn';
 import { AbstractService } from './service';
 import { deprecate } from 'util';
 
@@ -43,7 +43,7 @@ export class Stub extends AbstractService {
 // Creates a new instance of the pact stub with the specified option
 export default (options?: StubOptions) => new Stub(options);
 
-export interface StubOptions extends SpawnArguments {
+export interface StubOptions {
   pactUrls?: string[];
   port?: number;
   ssl?: boolean;

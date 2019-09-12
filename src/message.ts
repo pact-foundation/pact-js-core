@@ -1,7 +1,8 @@
 import fs = require('fs');
 import q = require('q');
 import logger from './logger';
-import pactUtil, { DEFAULT_ARG, SpawnArguments } from './pact-util';
+import spawn from './spawn';
+import { DEFAULT_ARG } from './spawn';
 import pactStandalone from './pact-standalone';
 import path = require('path');
 const mkdirp = require('mkdirp');
@@ -78,22 +79,13 @@ export class Message {
       options.pactFileWriteMode,
     );
 
-    if (
-      (options.pactBrokerUsername && !options.pactBrokerPassword) ||
-      (options.pactBrokerPassword && !options.pactBrokerUsername)
-    ) {
-      throw new Error(
-        'Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.',
-      );
-    }
-
     this.options = options;
   }
 
   public createMessage(): q.Promise<any> {
     logger.info(`Creating message pact`);
     const deferred = q.defer<any>();
-    const instance = pactUtil.spawnBinary(
+    const instance = spawn.spawnBinary(
       `${pactStandalone.messagePath}`,
       this.options,
       this.__argMapping,
@@ -118,7 +110,7 @@ export class Message {
 
 export default (options: MessageOptions) => new Message(options);
 
-export interface MessageOptions extends SpawnArguments {
+export interface MessageOptions {
   content?: string;
   dir?: string;
   consumer?: string;

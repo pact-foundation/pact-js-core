@@ -6,7 +6,7 @@ import verifierFactory, { VerifierOptions } from './verifier';
 import messageFactory, { MessageOptions } from './message';
 import publisherFactory, { PublisherOptions } from './publisher';
 import canDeployFactory, { CanDeployOptions } from './can-deploy';
-import util from './pact-util';
+import pactEnvironment from './pact-environment';
 import logger, { LogLevels } from './logger';
 import { AbstractService } from './service';
 import * as _ from 'underscore';
@@ -19,7 +19,7 @@ export class Pact {
 
   constructor() {
     // Check to see if we hit into Windows Long Path issue
-    if (util.isWindows()) {
+    if (pactEnvironment.isWindows()) {
       try {
         // Trying to trigger windows error by creating path that's over 260 characters long
         const name =
@@ -59,17 +59,13 @@ export class Pact {
     let server = serverFactory(options);
     this.__servers.push(server);
     logger.info(
-      `Creating Pact Server with options: \n${this.__stringifyOptions(
-        server.options,
-      )}`,
+      `Creating Pact Server with options: \n${JSON.stringify(server.options)}`,
     );
 
     // Listen to server delete events, to remove from server list
     server.once(AbstractService.Events.DELETE_EVENT, (s: Server) => {
       logger.info(
-        `Deleting Pact Server with options: \n${this.__stringifyOptions(
-          s.options,
-        )}`,
+        `Deleting Pact Server with options: \n${JSON.stringify(s.options)}`,
       );
       this.__servers = _.without(this.__servers, s);
     });
@@ -113,17 +109,13 @@ export class Pact {
     let stub = stubFactory(options);
     this.__stubs.push(stub);
     logger.info(
-      `Creating Pact Stub with options: \n${this.__stringifyOptions(
-        stub.options,
-      )}`,
+      `Creating Pact Stub with options: \n${JSON.stringify(stub.options)}`,
     );
 
     // Listen to stub delete events, to remove from stub list
     stub.once(AbstractService.Events.DELETE_EVENT, (s: Stub) => {
       logger.info(
-        `Deleting Pact Stub with options: \n${this.__stringifyOptions(
-          s.options,
-        )}`,
+        `Deleting Pact Stub with options: \n${JSON.stringify(stub.options)}`,
       );
       this.__stubs = _.without(this.__stubs, s);
     });
@@ -178,14 +170,6 @@ export class Pact {
   public canDeploy(options: CanDeployOptions): q.Promise<any[]> {
     logger.info('Checking if it it possible to deploy');
     return canDeployFactory(options).canDeploy();
-  }
-
-  private __stringifyOptions(obj: ServerOptions): string {
-    return _.chain(obj)
-      .pairs()
-      .map((v: string[]) => v.join(' = '))
-      .value()
-      .join(',\n');
   }
 }
 

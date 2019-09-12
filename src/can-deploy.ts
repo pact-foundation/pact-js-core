@@ -1,6 +1,6 @@
 import q = require('q');
 import logger from './logger';
-import pactUtil, { SpawnArguments } from './pact-util';
+import spawn from './spawn';
 import pactStandalone from './pact-standalone';
 import * as _ from 'underscore';
 
@@ -9,11 +9,11 @@ const checkTypes = require('check-types');
 export class CanDeploy {
   public static convertForSpawnBinary(
     options: CanDeployOptions,
-  ): SpawnArguments[] {
+  ): CanDeployOptions[] {
     // This is the order that the arguments must be in, everything else is afterwards
     const keys = ['participant', 'participantVersion', 'latest', 'to'];
     // Create copy of options, while omitting the arguments specified above
-    const args: SpawnArguments[] = [_.omit(options, keys)];
+    const args: CanDeployOptions[] = [_.omit(options, keys)];
 
     // Go backwards in the keys as we are going to unshift them into the array
     keys.reverse().forEach(key => {
@@ -88,7 +88,7 @@ export class CanDeploy {
       `Asking broker at ${this.options.pactBroker} if it is possible to deploy`,
     );
     const deferred = q.defer<any>();
-    const instance = pactUtil.spawnBinary(
+    const instance = spawn.spawnBinary(
       `${pactStandalone.brokerPath} can-i-deploy`,
       CanDeploy.convertForSpawnBinary(this.options),
       this.__argMapping,
@@ -125,7 +125,7 @@ export class CanDeploy {
 
 export default (options: CanDeployOptions) => new CanDeploy(options);
 
-export interface CanDeployOptions extends SpawnArguments {
+export interface CanDeployOptions {
   participant?: string;
   participantVersion?: string;
   to?: string;
@@ -138,4 +138,5 @@ export interface CanDeployOptions extends SpawnArguments {
   verbose?: boolean;
   retryWhileUnknown?: number;
   retryInterval?: number;
+  timeout?: number;
 }
