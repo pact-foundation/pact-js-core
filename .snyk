@@ -6,3 +6,8 @@ patch:
   'npm:extend:20180424':
     - request > extend:
         patched: '2019-07-16T10:43:49.177Z'
+  SNYK-JS-HTTPSPROXYAGENT-469131:
+    - snyk > proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T05:36:40.516Z'
+    - snyk > proxy-agent > pac-proxy-agent > https-proxy-agent:
+        patched: '2019-10-04T05:36:40.516Z'
