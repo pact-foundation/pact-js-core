@@ -10,6 +10,7 @@ describe('Index Spec', () => {
   });
 
   it('Node Require import should work', () => {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const entrypoint = require('./index');
     expect(entrypoint).to.be.ok;
     expect(entrypoint.createServer).to.be.ok;

@@ -8,7 +8,8 @@ import q = require('q');
 import logger from './logger';
 import spawn from './spawn';
 import { ChildProcess } from 'child_process';
-const mkdirp = require('mkdirp');
+import mkdirp = require('mkdirp');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
 
 // Get a reference to the global setTimeout object in case it is mocked by a testing library later
@@ -18,8 +19,14 @@ const CHECKTIME = 500;
 const RETRY_AMOUNT = 60;
 const PROCESS_TIMEOUT = 30000;
 
+interface AbstractServiceEventInterface {
+	START_EVENT: string;
+	STOP_EVENT: string;
+	DELETE_EVENT: string;
+}
+
 export abstract class AbstractService extends events.EventEmitter {
-  public static get Events() {
+  public static get Events(): AbstractServiceEventInterface {
     return {
       START_EVENT: 'start',
       STOP_EVENT: 'stop',
@@ -28,12 +35,14 @@ export abstract class AbstractService extends events.EventEmitter {
   }
 
   public readonly options: ServiceOptions;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected __argMapping: any;
   protected __running: boolean;
   protected __instance: ChildProcess;
   protected __serviceCommand: string;
 
-  constructor(command: string, options: ServiceOptions, argMapping: any) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  protected constructor(command: string, options: ServiceOptions, argMapping: any) {
     super();
 
     // defaults
@@ -130,7 +139,8 @@ export abstract class AbstractService extends events.EventEmitter {
 
     if (!this.options.port) {
       // if port isn't specified, listen for it when pact runs
-      const catchPort = (data: any) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const catchPort = (data: any): void => {
         const match = data.match(/port=([0-9]+)/);
         if (match && match[1]) {
           this.options.port = parseInt(match[1], 10);
@@ -142,7 +152,7 @@ export abstract class AbstractService extends events.EventEmitter {
       this.__instance.stdout.on('data', catchPort);
     }
 
-    this.__instance.stderr.on('data', (data: any) =>
+    this.__instance.stderr.on('data', (data) =>
       logger.error(`Pact Binary Error: ${data}`),
     );
 
@@ -189,11 +199,11 @@ export abstract class AbstractService extends events.EventEmitter {
   }
 
   // Wait for the service to be initialized and ready
-  protected __waitForServiceUp(): q.Promise<any> {
+  protected __waitForServiceUp(): q.Promise<unknown> {
     let amount = 0;
     const deferred = q.defer();
 
-    const retry = () => {
+    const retry = (): void => {
       if (amount >= RETRY_AMOUNT) {
         deferred.reject(
           new Error(
@@ -201,10 +211,11 @@ export abstract class AbstractService extends events.EventEmitter {
           ),
         );
       }
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
       setTimeout(check.bind(this), CHECKTIME);
     };
 
-    const check = () => {
+    const check = (): void => {
       amount++;
       if (this.options.port) {
         this.__call(this.options).then(
@@ -220,11 +231,11 @@ export abstract class AbstractService extends events.EventEmitter {
     return deferred.promise;
   }
 
-  protected __waitForServiceDown(): q.Promise<any> {
+  protected __waitForServiceDown(): q.Promise<unknown> {
     let amount = 0;
     const deferred = q.defer();
 
-    const check = () => {
+    const check = (): void => {
       amount++;
       if (this.options.port) {
         this.__call(this.options).then(
@@ -250,15 +261,15 @@ export abstract class AbstractService extends events.EventEmitter {
     return deferred.promise;
   }
 
-  private __call(options: ServiceOptions): q.Promise<any> {
+  private __call(options: ServiceOptions): q.Promise<unknown> {
     const deferred = q.defer();
-    const config: any = {
+    const config: HTTPConfig = {
       uri: `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
       method: 'GET',
       headers: {
         'X-Pact-Mock-Service': true,
         'Content-Type': 'application/json',
-      },
+      }
     };
 
     if (options.ssl) {
@@ -269,7 +280,7 @@ export abstract class AbstractService extends events.EventEmitter {
       config.agentOptions.agent = false;
     }
 
-    http(config, (err: any, res: any) => {
+    http(config, (err: Error, res) => {
       !err && res.statusCode === 200
         ? deferred.resolve()
         : deferred.reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
@@ -287,4 +298,18 @@ export interface ServiceOptions {
   sslcert?: string;
   sslkey?: string;
   log?: string;
+}
+
+export interface HTTPConfig {
+	uri: string;
+	method: string;
+	headers: {
+		'X-Pact-Mock-Service': boolean;
+		'Content-Type': string;
+	};
+	agentOptions?: {
+		rejectUnauthorized?: boolean;
+		requestCert?: boolean;
+		agent?: boolean;
+	};
 }

@@ -6,6 +6,7 @@ import spawn from './spawn';
 import { DEFAULT_ARG } from './spawn';
 import { deprecate } from 'util';
 import pactStandalone from './pact-standalone';
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
 
 export class Publisher {
@@ -96,7 +97,7 @@ export class Publisher {
       this.options,
       this.__argMapping,
     );
-    const output: any[] = [];
+    const output: Array<string | Buffer> = [];
     instance.stdout.on('data', l => output.push(l));
     instance.stderr.on('data', l => output.push(l));
     instance.once('close', code => {
@@ -118,7 +119,7 @@ export class Publisher {
   }
 }
 
-export default (options: PublisherOptions) => new Publisher(options);
+export default (options: PublisherOptions): Publisher => new Publisher(options);
 
 export interface PublisherOptions {
   pactFilesOrDirs: string[];

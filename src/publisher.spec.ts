@@ -8,9 +8,9 @@ import publisherFactory, { PublisherOptions } from './publisher';
 import logger from './logger';
 import brokerMock from '../test/integration/broker-mock';
 import * as http from 'http';
+import rimraf = require('rimraf');
+import mkdirp = require('mkdirp');
 
-const rimraf = require('rimraf');
-const mkdirp = require('mkdirp');
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 

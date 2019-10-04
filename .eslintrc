@@ -1,0 +1,38 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"extends": [
+		"plugin:@typescript-eslint/recommended"
+	],
+	"parserOptions": {
+		"ecmaVersion": 2018,
+		"sourceType": "module"
+	},
+	"rules": {
+		"curly": 2,
+		"indent": [2, 2],
+		"no-console": 0,
+		"max-len": [
+			2,
+			{
+				"code": 200
+			}
+		],
+		"trailing-comma": 0,
+		"object-literal-sort-keys": 0,
+		"no-reference": 0,
+		"no-trailing-whitespace": 0,
+		"typedef-whitespace": 0,
+		"whitespace": 0,
+		"interface-name": 0,
+		"ordered-imports": 0,
+		"variable-name": 0,
+		"no-var-requires": 0,
+		"object-literal-shorthand": 0,
+		"no-empty": 0,
+		"max-classes-per-file": 0,
+		"prefer-const": 0,
+		"no-unused-expression": 0,
+		"forin": 0,
+		"object-literal-key-quotes": 0
+	}
+}

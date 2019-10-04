@@ -7,14 +7,14 @@ import fs = require('fs');
 import path = require('path');
 import q = require('q');
 import _ = require('underscore');
-
-const mkdirp = require('mkdirp');
-const rimraf = require('rimraf');
+import mkdirp = require('mkdirp');
+import rimraf = require('rimraf');
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 describe('Server Spec', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let server: any;
   const monkeypatchFile: string = path.resolve(
     __dirname,
@@ -98,6 +98,7 @@ describe('Server Spec', () => {
         expect(() =>
           serverFactory({
             pactFileWriteMode: 'notarealoption',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any),
         ).to.throw(Error);
       });
@@ -106,6 +107,7 @@ describe('Server Spec', () => {
         expect(() =>
           serverFactory({
             logLevel: 'nolog',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
           } as any),
         ).to.throw(Error);
       });
@@ -115,7 +117,7 @@ describe('Server Spec', () => {
       it('should start correctly when instance is delayed', () => {
         server = serverFactory();
 
-        const waitForServerUp = (server as any)['__waitForServiceUp'].bind(
+        const waitForServerUp = (server)['__waitForServiceUp'].bind(
           server,
         );
         return q
@@ -275,6 +277,7 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'DEBUG',
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any).start(),
             ).to.eventually.be.fulfilled,
           ]);
@@ -291,6 +294,7 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'INFO',
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any).start(),
             ).to.eventually.be.fulfilled,
           ]);
@@ -307,6 +311,7 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'WARN',
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any).start(),
             ).to.eventually.be.fulfilled,
           ]);
@@ -323,6 +328,7 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'ERROR',
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any).start(),
             ).to.eventually.be.fulfilled,
           ]);
@@ -340,7 +346,7 @@ describe('Server Spec', () => {
       server = serverFactory();
       return server
         .start()
-        .then(() => expect((server as any)['__running']).to.be.true);
+        .then(() => expect((server)['__running']).to.be.true);
     });
   });
 
@@ -362,7 +368,7 @@ describe('Server Spec', () => {
         return server
           .start()
           .then(() => server.stop())
-          .then(() => expect((server as any)['__running']).to.be.false);
+          .then(() => expect((server)['__running']).to.be.false);
       });
     });
   });
@@ -385,7 +391,7 @@ describe('Server Spec', () => {
         return server
           .start()
           .then(() => server.delete())
-          .then(() => expect((server as any)['__running']).to.be.false);
+          .then(() => expect((server)['__running']).to.be.false);
       });
     });
   });

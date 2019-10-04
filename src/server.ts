@@ -4,8 +4,9 @@ import { deprecate } from 'util';
 import pact from './pact-standalone';
 import path = require('path');
 import fs = require('fs');
+import mkdirp = require('mkdirp');
 
-const mkdirp = require('mkdirp');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
 
 export class Server extends AbstractService {
@@ -62,7 +63,7 @@ export class Server extends AbstractService {
     );
 
     if (options.logLevel) {
-      options.logLevel = options.logLevel.toLowerCase() as any;
+      options.logLevel = options.logLevel.toLowerCase() as LogLevel;
       checkTypes.assert.includes(
         ['debug', 'info', 'warn', 'error'],
         options.logLevel,
@@ -80,12 +81,12 @@ export class Server extends AbstractService {
       }
     }
 
-    let opts: any = options;
+    let opts = options;
 
     // Need to uppercase logLevel for ruby
     if (options.logLevel) {
       opts = JSON.parse(JSON.stringify(options));
-      opts.logLevel = options.logLevel.toUpperCase();
+      opts.logLevel = options.logLevel.toUpperCase() as LogLevel;
     }
 
     super(`${pact.mockServicePath} service`, opts, {
@@ -108,7 +109,7 @@ export class Server extends AbstractService {
 }
 
 // Creates a new instance of the pact server with the specified option
-export default (options?: ServerOptions) => new Server(options);
+export default (options?: ServerOptions): Server => new Server(options);
 
 export interface ServerOptions {
   port?: number;
@@ -123,6 +124,8 @@ export interface ServerOptions {
   consumer?: string;
   provider?: string;
   monkeypatch?: string;
-  logLevel?: 'debug' | 'info' | 'warn' | 'error';
+  logLevel?: LogLevel;
   pactFileWriteMode?: 'overwrite' | 'update' | 'merge';
 }
+
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';

@@ -1,16 +1,15 @@
 import express = require('express');
-const basicAuth = require('basic-auth');
+import basicAuth = require('basic-auth');
+
+export function returnJson<T>(json: T): (req: express.Request, res: express.Response) => express.Response {
+  return (req, res): express.Response => res.json(json);
+}
 
 export function returnJsonFile(
   filename: string,
 ): (req: express.Request, res: express.Response) => express.Response {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   return returnJson(require(filename));
-}
-
-export function returnJson(
-  json: any,
-): (req: express.Request, res: express.Response) => express.Response {
-  return (req, res) => res.json(json);
 }
 
 export function auth(
