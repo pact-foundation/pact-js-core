@@ -217,6 +217,6 @@ export interface VerifierOptions {
   timeout?: number;
   tags?: string[];
   monkeypatch?: string;
-  format?: 'json' | 'xml' | 'progress';
+  format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
   out?: string;
 }
