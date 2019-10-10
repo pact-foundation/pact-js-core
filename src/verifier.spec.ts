@@ -181,6 +181,13 @@ describe('Verifier Spec', () => {
           format: 'json',
         } as any),
       ).to.not.throw(Error);
+      expect(() =>
+        verifierFactory({
+          providerBaseUrl: 'http://localhost',
+          pactUrls: ['http://idontexist'],
+          format: 'progress',
+        } as any),
+      ).to.not.throw(Error);
     });
 
     it('should throw an error with anything but a string', () => {
