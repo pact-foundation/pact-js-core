@@ -2,6 +2,7 @@ import q = require('q');
 import logger from './logger';
 import spawn from './spawn';
 import pactStandalone from './pact-standalone';
+import { PACT_NODE_NO_VALUE } from './spawn';
 import * as _ from 'underscore';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -11,29 +12,24 @@ export class CanDeploy {
   public static convertForSpawnBinary(
     options: CanDeployOptions,
   ): CanDeployOptions[] {
-    // This is the order that the arguments must be in, everything else is afterwards
-    const keys = ['participant', 'participantVersion', 'latest', 'to'];
-    // Create copy of options, while omitting the arguments specified above
-    const args: CanDeployOptions[] = [_.omit(options, keys)];
-
-    // Go backwards in the keys as we are going to unshift them into the array
-    keys.reverse().forEach(key => {
-      const val = options[key];
-      if (options[key] !== undefined) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const obj: any = {};
-        obj[key] = val;
-        args.unshift(obj);
-      }
-    });
-
-    return args;
+    return _.flatten(
+      [_.omit(options, 'pacticipants')].concat(
+        options.pacticipants.map(({ name, latest, version }) => [
+          { name },
+          version
+            ? { version }
+            : {
+                latest: latest === true ? PACT_NODE_NO_VALUE : latest,
+              },
+        ]),
+      ),
+    );
   }
 
   public readonly options: CanDeployOptions;
   private readonly __argMapping = {
-    participant: '--pacticipant',
-    participantVersion: '--version',
+    name: '--pacticipant',
+    version: '--version',
     latest: '--latest',
     to: '--to',
     pactBroker: '--broker-base-url',
@@ -51,21 +47,16 @@ export class CanDeploy {
     // Setting defaults
     options.timeout = options.timeout || 60000;
 
-    checkTypes.assert.nonEmptyString(
-      options.participant,
-      'Must provide the participant argument',
+    checkTypes.assert.nonEmptyArray(
+      options.pacticipants,
+      'Must provide at least one pacticipant',
     );
-    checkTypes.assert.nonEmptyString(
-      options.participantVersion,
-      'Must provide the participant version argument',
-    );
+
     checkTypes.assert.nonEmptyString(
       options.pactBroker,
       'Must provide the pactBroker argument',
     );
-    options.latest !== undefined &&
-      checkTypes.assert.nonEmptyString(options.latest.toString());
-    options.to !== undefined && checkTypes.assert.nonEmptyString(options.to);
+
     options.pactBrokerToken !== undefined &&
       checkTypes.assert.nonEmptyString(options.pactBrokerToken);
     options.pactBrokerUsername !== undefined &&
@@ -127,17 +118,21 @@ export class CanDeploy {
 
 export default (options: CanDeployOptions): CanDeploy => new CanDeploy(options);
 
+export interface CanDeployPacticipant {
+  name: string;
+  version?: string;
+  latest?: string | boolean;
+}
+
 export interface CanDeployOptions {
-  participant?: string;
-  participantVersion?: string;
-  to?: string;
-  latest?: boolean | string;
+  pacticipants: CanDeployPacticipant[];
   pactBroker: string;
   pactBrokerToken?: string;
   pactBrokerUsername?: string;
   pactBrokerPassword?: string;
   output?: 'json' | 'table';
   verbose?: boolean;
+  to?: string;
   retryWhileUnknown?: number;
   retryInterval?: number;
   timeout?: number;
