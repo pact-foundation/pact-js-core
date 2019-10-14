@@ -2,6 +2,7 @@ import q = require('q');
 import logger from './logger';
 import spawn from './spawn';
 import pactStandalone from './pact-standalone';
+import { PACT_NODE_NO_VALUE } from './spawn';
 import * as _ from 'underscore';
 
 const checkTypes = require('check-types');
@@ -16,7 +17,9 @@ export class CanDeploy {
           { name },
           version
             ? { version }
-            : { latest: latest === true ? undefined : latest },
+            : {
+                latest: latest === true ? PACT_NODE_NO_VALUE : latest,
+              },
         ]),
       ),
     );

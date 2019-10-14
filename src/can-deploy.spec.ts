@@ -95,22 +95,7 @@ describe('CanDeploy Spec', () => {
           pactBroker: 'some broker',
         },
         { name: 'two' },
-        { latest: undefined },
-      ]);
-    });
-
-    it('understands that no version implies latest', () => {
-      const result = CanDeploy.convertForSpawnBinary({
-        pacticipants: [{ name: 'two' }],
-        pactBroker: 'some broker',
-      });
-
-      expect(result).to.eql([
-        {
-          pactBroker: 'some broker',
-        },
-        { name: 'two' },
-        { latest: undefined },
+        { latest: 'PACT_NODE_NO_VALUE' },
       ]);
     });
   });
@@ -152,14 +137,81 @@ describe('CanDeploy Spec', () => {
       ding.canDeploy().then(done);
     });
 
-    it('should return success with a table result deployable true,', done => {
-      const opts: CanDeployOptions = {
-        pactBroker: `http://localhost:${PORT}`,
-        pacticipants: [{ name: 'Foo', latest: true }],
-      };
-      const ding = canDeployFactory(opts);
+    context('with latest true', () => {
+      it('should return success with a table result deployable true', done => {
+        const opts: CanDeployOptions = {
+          pactBroker: `http://localhost:${PORT}`,
+          pacticipants: [{ name: 'Foo', latest: true }],
+        };
+        const ding = canDeployFactory(opts);
 
-      ding.canDeploy().then(done);
+        ding.canDeploy().then(done);
+      });
+
+      it('should throw an error with a table result deployable false', () => {
+        const opts: CanDeployOptions = {
+          pactBroker: `http://localhost:${PORT}`,
+          pacticipants: [{ name: 'FooFail', latest: true }],
+        };
+        const ding = canDeployFactory(opts);
+
+        return ding
+          .canDeploy()
+          .then(() => expect.fail())
+          .catch(message => expect(message).not.be.null);
+      });
+    });
+
+    context('with latest a string', () => {
+      it('should return success with a table result deployable true', done => {
+        const opts: CanDeployOptions = {
+          pactBroker: `http://localhost:${PORT}`,
+          pacticipants: [{ name: 'Foo', latest: 'tag' }],
+        };
+        const ding = canDeployFactory(opts);
+
+        ding.canDeploy().then(done);
+      });
+
+      it('should throw an error with a table result deployable false', () => {
+        const opts: CanDeployOptions = {
+          pactBroker: `http://localhost:${PORT}`,
+          pacticipants: [{ name: 'FooFail', latest: 'tag' }],
+        };
+        const ding = canDeployFactory(opts);
+
+        return ding
+          .canDeploy()
+          .then(() => expect.fail())
+          .catch(message => expect(message).not.be.null);
+      });
+    });
+
+    context('with latest a string, and a to', () => {
+      it('should return success with a table result deployable true', done => {
+        const opts: CanDeployOptions = {
+          pactBroker: `http://localhost:${PORT}`,
+          pacticipants: [{ name: 'Foo', latest: 'tag' }],
+          to: 'prod',
+        };
+        const ding = canDeployFactory(opts);
+
+        ding.canDeploy().then(done);
+      });
+
+      it('should throw an error with a table result deployable false', () => {
+        const opts: CanDeployOptions = {
+          pactBroker: `http://localhost:${PORT}`,
+          pacticipants: [{ name: 'FooFail', latest: 'tag' }],
+          to: 'prod',
+        };
+        const ding = canDeployFactory(opts);
+
+        return ding
+          .canDeploy()
+          .then(() => expect.fail())
+          .catch(message => expect(message).not.be.null);
+      });
     });
 
     it('should throw an error with a table result deployable false', () => {
