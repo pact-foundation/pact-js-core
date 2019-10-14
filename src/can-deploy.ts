@@ -12,9 +12,11 @@ export class CanDeploy {
   ): CanDeployOptions[] {
     return _.flatten(
       [_.omit(options, 'pacticipants')].concat(
-        options.pacticipants.map(({ name, tag, version }) => [
+        options.pacticipants.map(({ name, latest, version }) => [
           { name },
-          version ? { version } : { latest: tag },
+          version
+            ? { version }
+            : { latest: latest === true ? undefined : latest },
         ]),
       ),
     );
@@ -25,6 +27,7 @@ export class CanDeploy {
     name: '--pacticipant',
     version: '--version',
     latest: '--latest',
+    to: '--to',
     pactBroker: '--broker-base-url',
     pactBrokerToken: '--broker-token',
     pactBrokerUsername: '--broker-username',
@@ -113,7 +116,7 @@ export default (options: CanDeployOptions) => new CanDeploy(options);
 export interface CanDeployPacticipant {
   name: string;
   version?: string;
-  tag?: string;
+  latest?: string | boolean;
 }
 
 export interface CanDeployOptions {
@@ -124,6 +127,7 @@ export interface CanDeployOptions {
   pactBrokerPassword?: string;
   output?: 'json' | 'table';
   verbose?: boolean;
+  to?: string;
   retryWhileUnknown?: number;
   retryInterval?: number;
   timeout?: number;

@@ -71,7 +71,7 @@ describe('CanDeploy Spec', () => {
 
     it('has latest tag and participant in the right order', () => {
       const result = CanDeploy.convertForSpawnBinary({
-        pacticipants: [{ name: 'two', tag: 'SOME_TAG' }],
+        pacticipants: [{ name: 'two', latest: 'SOME_TAG' }],
         pactBroker: 'some broker',
       });
 
@@ -81,6 +81,21 @@ describe('CanDeploy Spec', () => {
         },
         { name: 'two' },
         { latest: 'SOME_TAG' },
+      ]);
+    });
+
+    it("understands 'true' for latest", () => {
+      const result = CanDeploy.convertForSpawnBinary({
+        pacticipants: [{ name: 'two', latest: true }],
+        pactBroker: 'some broker',
+      });
+
+      expect(result).to.eql([
+        {
+          pactBroker: 'some broker',
+        },
+        { name: 'two' },
+        { latest: undefined },
       ]);
     });
 
@@ -131,6 +146,16 @@ describe('CanDeploy Spec', () => {
       const opts: CanDeployOptions = {
         pactBroker: `http://localhost:${PORT}`,
         pacticipants: [{ name: 'Foo', version: '4' }],
+      };
+      const ding = canDeployFactory(opts);
+
+      ding.canDeploy().then(done);
+    });
+
+    it('should return success with a table result deployable true,', done => {
+      const opts: CanDeployOptions = {
+        pactBroker: `http://localhost:${PORT}`,
+        pacticipants: [{ name: 'Foo', latest: true }],
       };
       const ding = canDeployFactory(opts);
 
