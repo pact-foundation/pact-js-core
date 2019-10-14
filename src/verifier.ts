@@ -140,9 +140,10 @@ export class Verifier {
 
     if (options.format) {
       checkTypes.assert.string(options.format);
-      checkTypes.assert.match(options.format, /^(xml|json)$/i);
-      options.format =
-        options.format.toLowerCase() === 'xml' ? 'RspecJunitFormatter' : 'json';
+      checkTypes.assert.match(options.format, /^(xml|json|progress)$/i);
+      if (options.format.toLowerCase() === 'xml') {
+        options.format = 'RspecJunitFormatter';
+      }
     }
 
     if (options.out) {
@@ -215,6 +216,6 @@ export interface VerifierOptions {
   timeout?: number;
   tags?: string[];
   monkeypatch?: string;
-  format?: 'json' | 'RspecJunitFormatter';
+  format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
   out?: string;
 }
