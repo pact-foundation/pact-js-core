@@ -1,6 +1,5 @@
 // tslint:disable:no-string-literal
 import { AbstractService } from './service';
-import { SpawnArguments } from './pact-util';
 import { deprecate } from 'util';
 import pact from './pact-standalone';
 import path = require('path');
@@ -111,7 +110,7 @@ export class Server extends AbstractService {
 // Creates a new instance of the pact server with the specified option
 export default (options?: ServerOptions) => new Server(options);
 
-export interface ServerOptions extends SpawnArguments {
+export interface ServerOptions {
   port?: number;
   ssl?: boolean;
   cors?: boolean;

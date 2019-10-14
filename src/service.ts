@@ -6,7 +6,7 @@ import events = require('events');
 import http = require('request');
 import q = require('q');
 import logger from './logger';
-import pactUtil, { SpawnArguments } from './pact-util';
+import spawn from './spawn';
 import { ChildProcess } from 'child_process';
 const mkdirp = require('mkdirp');
 const checkTypes = require('check-types');
@@ -162,7 +162,7 @@ export abstract class AbstractService extends events.EventEmitter {
   // Stop the instance
   public stop(): q.Promise<AbstractService> {
     const pid = this.__instance ? this.__instance.pid : -1;
-    return q(pactUtil.killBinary(this.__instance))
+    return q(spawn.killBinary(this.__instance))
       .then(() => this.__waitForServiceDown())
       .timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
       .then(() => {
@@ -181,7 +181,7 @@ export abstract class AbstractService extends events.EventEmitter {
 
   // Subclass responsible for spawning the process
   protected spawnBinary(): ChildProcess {
-    return pactUtil.spawnBinary(
+    return spawn.spawnBinary(
       this.__serviceCommand,
       this.options,
       this.__argMapping,
@@ -279,7 +279,7 @@ export abstract class AbstractService extends events.EventEmitter {
   }
 }
 
-export interface ServiceOptions extends SpawnArguments {
+export interface ServiceOptions {
   port?: number;
   ssl?: boolean;
   cors?: boolean;

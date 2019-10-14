@@ -181,6 +181,13 @@ describe('Verifier Spec', () => {
           format: 'json',
         } as any),
       ).to.not.throw(Error);
+      expect(() =>
+        verifierFactory({
+          providerBaseUrl: 'http://localhost',
+          pactUrls: ['http://idontexist'],
+          format: 'progress',
+        } as any),
+      ).to.not.throw(Error);
     });
 
     it('should throw an error with anything but a string', () => {
@@ -214,7 +221,7 @@ describe('Verifier Spec', () => {
     });
   });
 
-  context('when pactBrokerBaseUrl is not provided', () => {
+  context('when pactBrokerUrl is not provided', () => {
     it('should not fail', () => {
       expect(() =>
         verifierFactory({
@@ -225,13 +232,13 @@ describe('Verifier Spec', () => {
     });
   });
 
-  context('when pactBrokerBaseUrl is provided', () => {
+  context('when pactBrokerUrl is provided', () => {
     it('should not fail', () => {
       expect(() =>
         verifierFactory({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
-          pactBrokerBaseUrl: 'http://localhost',
+          pactBrokerUrl: 'http://localhost',
         }),
       ).to.not.throw(Error);
     });

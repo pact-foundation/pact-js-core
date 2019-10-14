@@ -1,6 +1,6 @@
 import q = require('q');
 import logger from './logger';
-import pactUtil, { SpawnArguments } from './pact-util';
+import spawn from './spawn';
 import pactStandalone from './pact-standalone';
 import * as _ from 'underscore';
 
@@ -9,7 +9,7 @@ const checkTypes = require('check-types');
 export class CanDeploy {
   public static convertForSpawnBinary(
     options: CanDeployOptions,
-  ): SpawnArguments[] {
+  ): CanDeployOptions[] {
     return _.flatten(
       [_.omit(options, 'pacticipants')].concat(
         options.pacticipants.map(({ name, tag, version }) => [
@@ -74,7 +74,7 @@ export class CanDeploy {
       `Asking broker at ${this.options.pactBroker} if it is possible to deploy`,
     );
     const deferred = q.defer<string[]>();
-    const instance = pactUtil.spawnBinary(
+    const instance = spawn.spawnBinary(
       `${pactStandalone.brokerPath} can-i-deploy`,
       CanDeploy.convertForSpawnBinary(this.options),
       this.__argMapping,

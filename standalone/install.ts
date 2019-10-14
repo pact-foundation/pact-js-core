@@ -1,6 +1,6 @@
 import * as http from 'http';
 import * as Request from 'request';
-import util from '../src/pact-util';
+import pactEnvironment from '../src/pact-environment';
 
 const path = require('path');
 const fs = require('fs');
@@ -18,7 +18,7 @@ const request = Request.defaults({
 });
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = '1.69.0';
+export const PACT_STANDALONE_VERSION = '1.70.2';
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
 const CONFIG = createConfig();
@@ -263,7 +263,7 @@ function extract(data: Data): Promise<void> {
         const publishPath = path.resolve(
           data.platformFolderPath,
           'bin',
-          `pact-publish${util.isWindows() ? '.bat' : ''}`,
+          `pact-publish${pactEnvironment.isWindows() ? '.bat' : ''}`,
         );
         if (fs.existsSync(publishPath)) {
           fs.unlinkSync(publishPath);
@@ -295,7 +295,7 @@ function setup(platform?: string, arch?: string): Promise<Data> {
     checksumDownloadPath: join(PACT_DEFAULT_LOCATION, entry.binaryChecksum),
     filepath: path.resolve(__dirname, entry.binary),
     checksumFilepath: path.resolve(__dirname, entry.binaryChecksum),
-    isWindows: util.isWindows(platform),
+    isWindows: pactEnvironment.isWindows(platform),
     platform: entry.platform,
     arch: entry.arch,
     platformFolderPath: path.resolve(__dirname, entry.folderName),
