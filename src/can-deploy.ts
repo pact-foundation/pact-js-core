@@ -48,6 +48,9 @@ export class CanDeploy {
     options = options || {};
     // Setting defaults
     options.timeout = options.timeout || 60000;
+    if (!options.output) {
+      options.output = 'json';
+    }
 
     checkTypes.assert.nonEmptyString(
       options.participant,
@@ -97,23 +100,28 @@ export class CanDeploy {
     instance.stdout.on('data', l => output.push(l));
     instance.stderr.on('data', l => output.push(l));
     instance.once('close', code => {
-      let o: any = output.join('\n');
+      const result: any = output.join('\n');
 
-      let success = false;
       if (this.options.output === 'json') {
-        o = JSON.parse(o);
-        success = o.summary.deployable;
-      } else {
-        success = /Computer says yes/gim.exec(o) !== null;
+        try {
+          const parsed = JSON.parse(result);
+          if (code === 0 && parsed.summary.deployable) {
+            return deferred.resolve(parsed);
+          }
+          return deferred.reject(parsed);
+        } catch (e) {
+          logger.error(`can-i-deploy produced non-json output:\n${result}`);
+          return deferred.reject(new Error(result));
+        }
       }
 
-      if (code === 0 || success) {
-        logger.info(o);
-        return deferred.resolve(o);
+      if (code === 0) {
+        logger.info(result);
+        return deferred.resolve(result);
       }
 
-      logger.error(`can-i-deploy did not return success message:\n${o}`);
-      return deferred.reject(o);
+      logger.error(`can-i-deploy did not return success message:\n${result}`);
+      return deferred.reject(result);
     });
 
     return deferred.promise.timeout(
