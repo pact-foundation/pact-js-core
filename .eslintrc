@@ -9,7 +9,7 @@
 	},
 	"rules": {
 		"curly": 2,
-		"indent": [2, 2],
+		"indent": 0,
 		"no-console": 0,
 		"max-len": [
 			2,

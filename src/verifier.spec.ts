@@ -188,7 +188,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'progress',
-        } as any),
+        }),
       ).to.not.throw(Error);
     });
 

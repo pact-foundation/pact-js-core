@@ -20,16 +20,22 @@ export type SpawnArguments =
 export const DEFAULT_ARG = 'DEFAULT';
 export const PACT_NODE_NO_VALUE = 'PACT_NODE_NO_VALUE';
 
-const valFor = (v: any) => (v !== PACT_NODE_NO_VALUE ? [`'${v}'`] : []);
+const valFor = (v: string): Array<string> =>
+  v !== PACT_NODE_NO_VALUE ? [`'${v}'`] : [];
 
-const mapFor = (mapping: string, v: any) =>
+const mapFor = (mapping: string, v: string): Array<string> =>
   mapping === DEFAULT_ARG ? valFor(v) : [mapping].concat(valFor(v));
 
-const convertValue = (mapping: string, v: any) => {
+const convertValue = (
+  mapping: string,
+  v: string | Array<string>,
+): Array<string> => {
   if (v && mapping) {
     return checkTypes.array(v)
-      ? _.flatten(v.map((val: any) => mapFor(mapping, val)))
-      : mapFor(mapping, v);
+      ? _.flatten(
+          (v as Array<string>).map((val: string) => mapFor(mapping, val)),
+        )
+      : mapFor(mapping, <string>v);
   }
   return [];
 };
@@ -51,7 +57,11 @@ export class Arguments {
   ): string[] {
     return _.chain(args)
       .reduce(
-        (acc: any, value: any, key: any) =>
+        (
+          acc: Array<string>,
+          value: string | Array<string>,
+          key: string,
+        ): Array<string> =>
           mappings[key] === DEFAULT_ARG
             ? convertValue(mappings[key], value).concat(acc)
             : acc.concat(convertValue(mappings[key], value)),
