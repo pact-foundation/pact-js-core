@@ -12,6 +12,7 @@ chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 describe('Stub Spec', () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let stub: any;
   const validDefaults = {
     pactUrls: [
@@ -84,7 +85,7 @@ describe('Stub Spec', () => {
       it('should start correctly when instance is delayed', () => {
         stub = stubFactory(validDefaults);
 
-        const waitForStubUp = (stub as any)['__waitForServiceUp'].bind(stub);
+        const waitForStubUp = (stub)['__waitForServiceUp'].bind(stub);
         return q
           .allSettled([
             waitForStubUp(stub.options),
@@ -180,7 +181,7 @@ describe('Stub Spec', () => {
       stub = stubFactory(validDefaults);
       return stub
         .start()
-        .then(() => expect((stub as any)['__running']).to.be.true);
+        .then(() => expect((stub)['__running']).to.be.true);
     });
   });
 
@@ -202,7 +203,7 @@ describe('Stub Spec', () => {
         return stub
           .start()
           .then(() => stub.stop())
-          .then(() => expect((stub as any)['__running']).to.be.false);
+          .then(() => expect((stub)['__running']).to.be.false);
       });
     });
   });
@@ -225,7 +226,7 @@ describe('Stub Spec', () => {
         return stub
           .start()
           .then(() => stub.delete())
-          .then(() => expect((stub as any)['__running']).to.be.false);
+          .then(() => expect((stub)['__running']).to.be.false);
       });
     });
   });

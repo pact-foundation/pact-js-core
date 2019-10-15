@@ -6,7 +6,7 @@ import path = require('path');
 import logger from '../src/logger';
 chai.use(chaiAsPromised);
 
-const rimraf = require('rimraf');
+import rimraf = require('rimraf');
 const expect = chai.expect;
 
 describe('Message Integration Spec', () => {

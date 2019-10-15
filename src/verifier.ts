@@ -5,8 +5,10 @@ import spawn from './spawn';
 import { DEFAULT_ARG } from './spawn';
 import q = require('q');
 import pactStandalone from './pact-standalone';
-const _ = require('underscore');
+import _ = require('underscore');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const unixify = require('unixify');
 
 import fs = require('fs');
@@ -77,12 +79,9 @@ export class Verifier {
       .compact()
       .value();
 
-    checkTypes.assert.nonEmptyString(
-      options.providerBaseUrl,
-      'Must provide the providerBaseUrl argument',
-    );
+    checkTypes.assert.nonEmptyString(options.providerBaseUrl);
 
-    if (checkTypes.emptyArray(options.pactUrls) && !options.pactBrokerUrl) {
+    if (checkTypes.emptyArray(options.pactUrls as string[]) && !options.pactBrokerUrl) {
       throw new Error(
         'Must provide the pactUrls argument if no pactBrokerUrl provided',
       );
@@ -90,7 +89,7 @@ export class Verifier {
 
     if (
       (!options.pactBrokerUrl || _.isEmpty(options.provider)) &&
-      checkTypes.emptyArray(options.pactUrls)
+      checkTypes.emptyArray(options.pactUrls as string[])
     ) {
       throw new Error(
         'Must provide both provider and pactBrokerUrl if pactUrls not provided.',
@@ -157,7 +156,7 @@ export class Verifier {
       );
     }
 
-    checkTypes.assert.positive(options.timeout);
+    checkTypes.assert.positive(options.timeout as number);
 
     if (options.monkeypatch) {
       checkTypes.assert.string(options.monkeypatch);
@@ -181,7 +180,7 @@ export class Verifier {
       this.options,
       this.__argMapping,
     );
-    const output: any[] = [];
+    const output: Array<string | Buffer>  = [];
     instance.stdout.on('data', l => output.push(l));
     instance.stderr.on('data', l => output.push(l));
     instance.once('close', code => {
@@ -199,7 +198,7 @@ export class Verifier {
 }
 
 // Creates a new instance of the pact server with the specified option
-export default (options: VerifierOptions) => new Verifier(options);
+export default (options: VerifierOptions): Verifier => new Verifier(options);
 
 export interface VerifierOptions {
   providerBaseUrl: string;

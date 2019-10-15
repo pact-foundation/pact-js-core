@@ -172,6 +172,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'xml',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any),
       ).to.not.throw(Error);
       expect(() =>
@@ -179,6 +180,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'json',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any),
       ).to.not.throw(Error);
       expect(() =>
@@ -196,6 +198,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 10,
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any),
       ).to.throw(Error);
     });
@@ -206,6 +209,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'jsonformat',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any),
       ).to.throw(Error);
     });
@@ -216,6 +220,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'XML',
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } as any),
       ).to.not.throw(Error);
     });
