@@ -5,7 +5,9 @@ import spawn from './spawn';
 import { DEFAULT_ARG } from './spawn';
 import pactStandalone from './pact-standalone';
 import path = require('path');
-const mkdirp = require('mkdirp');
+import mkdirp = require('mkdirp');
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
 
 export class Message {
@@ -82,15 +84,15 @@ export class Message {
     this.options = options;
   }
 
-  public createMessage(): q.Promise<any> {
+  public createMessage(): q.Promise<unknown> {
     logger.info(`Creating message pact`);
-    const deferred = q.defer<any>();
+    const deferred = q.defer();
     const instance = spawn.spawnBinary(
       `${pactStandalone.messagePath}`,
       this.options,
       this.__argMapping,
     );
-    const output: any[] = [];
+    const output: Array<string | Buffer> = [];
     instance.stdout.on('data', l => output.push(l));
     instance.stderr.on('data', l => output.push(l));
     instance.once('close', code => {
@@ -108,7 +110,7 @@ export class Message {
   }
 }
 
-export default (options: MessageOptions) => new Message(options);
+export default (options: MessageOptions): Message => new Message(options);
 
 export interface MessageOptions {
   content?: string;

@@ -1,14 +1,17 @@
 import * as http from 'http';
 import * as Request from 'request';
 import pactEnvironment from '../src/pact-environment';
+// we have to u se ES6 imports as it's providing correct types for chalk.
+import chalk from 'chalk';
 
-const path = require('path');
-const fs = require('fs');
-const urljoin = require('url-join');
-const decompress = require('decompress');
-const tar = require('tar');
-const chalk = require('chalk');
+import path = require('path');
+import fs = require('fs');
+import urljoin = require('url-join');
+import decompress = require('decompress');
+import tar = require('tar');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const sumchecker = require('sumchecker');
+
 // Sets the request default for all calls through npm environment variables for proxy
 const request = Request.defaults({
   proxy:
@@ -21,44 +24,65 @@ const request = Request.defaults({
 export const PACT_STANDALONE_VERSION = '1.70.2';
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
-const CONFIG = createConfig();
 
-const CIs = [
-  'CI',
-  'CONTINUOUS_INTEGRATION',
-  'ABSTRUSE_BUILD_DIR',
-  'APPVEYOR',
-  'BUDDY_WORKSPACE_URL',
-  'BUILDKITE',
-  'CF_BUILD_URL',
-  'CIRCLECI',
-  'CODEBUILD_BUILD_ARN',
-  'CONCOURSE_URL',
-  'DRONE',
-  'GITLAB_CI',
-  'GO_SERVER_URL',
-  'JENKINS_URL',
-  'PROBO_ENVIRONMENT',
-  'SEMAPHORE',
-  'SHIPPABLE',
-  'TDDIUM',
-  'TEAMCITY_VERSION',
-  'TF_BUILD',
-  'TRAVIS',
-  'WERCKER_ROOT',
-];
+function join(...paths: string[]): string {
+  return HTTP_REGEX.test(paths[0]) ? urljoin(...paths) : path.join(...paths);
+}
+
+function throwError(msg: string): never {
+  throw new Error(chalk.red(`Error while installing binary: ${msg}`));
+}
+
+function getBinaryLocation(
+  location: string,
+  basePath: string,
+): string | undefined {
+  // Check if location is valid and is a string
+  if (!location || location.length === 0) {
+    return undefined;
+  }
+
+  // Check if it's a URL, if not, try to resolve the path to work with either absolute or relative paths
+  return HTTP_REGEX.test(location)
+    ? location
+    : path.resolve(basePath, location);
+}
+
+function findPackageConfig(
+  location: string,
+  tries = 10,
+): PackageConfig {
+  if (tries === 0) {
+    return {};
+  }
+  const packagePath = path.resolve(location, 'package.json');
+  if (fs.existsSync(packagePath)) {
+    const config = require(packagePath).config;
+    if (config && (config.pact_binary_location || config.pact_do_not_track)) {
+      return {
+        binaryLocation: getBinaryLocation(
+          config.pact_binary_location,
+          location,
+        ),
+        doNotTrack: config.pact_do_not_track,
+      };
+    }
+  }
+
+  return findPackageConfig(path.resolve(location, '..'), tries - 1);
+}
 
 export function createConfig(): Config {
   const packageConfig = findPackageConfig(path.resolve(__dirname, '..', '..'));
   const PACT_BINARY_LOCATION =
-    packageConfig.binaryLocation || PACT_DEFAULT_LOCATION;
+		packageConfig.binaryLocation || PACT_DEFAULT_LOCATION;
   const CHECKSUM_SUFFIX = '.checksum';
 
   return {
     doNotTrack:
-      packageConfig.doNotTrack ||
-      process.env.PACT_DO_NOT_TRACK !== undefined ||
-      false,
+			packageConfig.doNotTrack ||
+			process.env.PACT_DO_NOT_TRACK !== undefined ||
+			false,
     binaries: [
       {
         platform: 'win32',
@@ -94,43 +118,70 @@ export function createConfig(): Config {
   };
 }
 
-function findPackageConfig(
-  location: string,
-  tries: number = 10,
-): PackageConfig {
-  if (tries === 0) {
-    return {};
-  }
-  const packagePath = path.resolve(location, 'package.json');
-  if (fs.existsSync(packagePath)) {
-    const config = require(packagePath).config;
-    if (config && (config.pact_binary_location || config.pact_do_not_track)) {
-      return {
-        binaryLocation: getBinaryLocation(
-          config.pact_binary_location,
-          location,
-        ),
-        doNotTrack: config.pact_do_not_track,
-      };
-    }
-  }
+const CONFIG = createConfig();
 
-  return findPackageConfig(path.resolve(location, '..'), tries - 1);
-}
+const CIs = [
+  'CI',
+  'CONTINUOUS_INTEGRATION',
+  'ABSTRUSE_BUILD_DIR',
+  'APPVEYOR',
+  'BUDDY_WORKSPACE_URL',
+  'BUILDKITE',
+  'CF_BUILD_URL',
+  'CIRCLECI',
+  'CODEBUILD_BUILD_ARN',
+  'CONCOURSE_URL',
+  'DRONE',
+  'GITLAB_CI',
+  'GO_SERVER_URL',
+  'JENKINS_URL',
+  'PROBO_ENVIRONMENT',
+  'SEMAPHORE',
+  'SHIPPABLE',
+  'TDDIUM',
+  'TEAMCITY_VERSION',
+  'TF_BUILD',
+  'TRAVIS',
+  'WERCKER_ROOT',
+];
 
-function getBinaryLocation(
-  location: string,
-  basePath: string,
-): string | undefined {
-  // Check if location is valid and is a string
-  if (!location || typeof location !== 'string' || location.length === 0) {
-    return undefined;
-  }
-
-  // Check if it's a URL, if not, try to resolve the path to work with either absolute or relative paths
-  return HTTP_REGEX.test(location)
-    ? location
-    : path.resolve(basePath, location);
+function downloadFileRetry(
+  url: string,
+  filepath: string,
+  retry = 3,
+): Promise<unknown> {
+  return new Promise((resolve: () => void, reject: (e: string) => void): void => {
+    let len = 0;
+    let downloaded = 0;
+    let time = Date.now();
+    request({
+      url,
+      headers: { 'User-Agent': 'https://github.com/pact-foundation/pact-node' },
+    })
+      .on('error', (e: string) => reject(e))
+      .on(
+        'response',
+        (res: http.IncomingMessage) =>
+          (len = parseInt(res.headers['content-length'] as string, 10)),
+      )
+      .on('data', (chunk: string[]) => {
+        downloaded += chunk.length;
+        // Only show download progress every second
+        const now = Date.now();
+        if (now - time > 1000) {
+          time = now;
+          console.log(
+            chalk.gray(
+              `Downloaded ${((100 * downloaded) / len).toFixed(2)}%...`,
+            ),
+          );
+        }
+      })
+      .pipe(fs.createWriteStream(filepath))
+      .on('finish', () => resolve());
+  }).catch((e: string) =>
+    retry-- === 0 ? throwError(e) : downloadFileRetry(url, filepath, retry),
+  );
 }
 
 function download(data: Data): Promise<Data> {
@@ -138,10 +189,10 @@ function download(data: Data): Promise<Data> {
     chalk.gray(`Installing Pact Standalone Binary for ${data.platform}.`),
   );
   return new Promise(
-    (resolve: (f: Data) => void, reject: (e: string) => void) => {
+    (resolve: (f: Data) => void, reject: (e: string) => void): void => {
       if (fs.existsSync(path.resolve(data.filepath))) {
         console.log(chalk.yellow('Binary already downloaded, skipping...'));
-        return resolve(data);
+        resolve(data);
       }
       console.log(
         chalk.yellow(
@@ -221,7 +272,7 @@ function download(data: Data): Promise<Data> {
 
 function extract(data: Data): Promise<void> {
   // If platform folder exists, binary already installed, skip to next step.
-  if (fs.existsSync(data.platformFolderPath)) {
+  if (fs.existsSync(data.platformFolderPath as string)) {
     return Promise.resolve();
   }
 
@@ -230,7 +281,7 @@ function extract(data: Data): Promise<void> {
     throwError(`Checksum file missing from standalone directory. Aborting.`);
   }
 
-  fs.mkdirSync(data.platformFolderPath);
+  fs.mkdirSync(data.platformFolderPath as string);
   console.log(chalk.yellow(`Extracting binary from ${data.filepath}.`));
 
   // Validate checksum to make sure it's the correct binary
@@ -251,17 +302,17 @@ function extract(data: Data): Promise<void> {
         data.isWindows
           ? decompress(data.filepath, data.platformFolderPath, { strip: 1 })
           : tar.x({
-              file: data.filepath,
-              strip: 1,
-              cwd: data.platformFolderPath,
-              preserveOwner: false,
-              Z: true,
-            }),
+            file: data.filepath,
+            strip: 1,
+            cwd: data.platformFolderPath,
+            preserveOwner: false,
+            // Z: true, ## this parameter does not exist in 'tar' types. Probably you needed other parameter here.
+          }),
       )
       .then(() => {
         // Remove pact-publish as it's getting deprecated
         const publishPath = path.resolve(
-          data.platformFolderPath,
+          data.platformFolderPath as string,
           'bin',
           `pact-publish${pactEnvironment.isWindows() ? '.bat' : ''}`,
         );
@@ -282,9 +333,25 @@ function extract(data: Data): Promise<void> {
             '\n\n',
         );
       })
-      .catch((e: any) =>
+      .catch((e: Error) =>
         throwError(`Extraction failed for ${data.filepath}: ${e}`),
       )
+  );
+}
+
+export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
+  platform = platform || process.platform;
+  arch = arch || process.arch;
+  for (let value of CONFIG.binaries) {
+    if (
+      value.platform === platform &&
+			(value.arch ? value.arch === arch : true)
+    ) {
+      return value;
+    }
+  }
+  throw throwError(
+    `Cannot find binary for platform '${platform}' with architecture '${arch}'.`,
   );
 }
 
@@ -302,70 +369,8 @@ function setup(platform?: string, arch?: string): Promise<Data> {
   });
 }
 
-function join(...paths: string[]): string {
-  return HTTP_REGEX.test(paths[0]) ? urljoin(...paths) : path.join(...paths);
-}
-
-function downloadFileRetry(
-  url: string,
-  filepath: string,
-  retry: number = 3,
-): Promise<any> {
-  return new Promise((resolve: () => void, reject: (e: string) => void) => {
-    let len = 0;
-    let downloaded = 0;
-    let time = Date.now();
-    request({
-      url,
-      headers: { 'User-Agent': 'https://github.com/pact-foundation/pact-node' },
-    })
-      .on('error', (e: string) => reject(e))
-      .on(
-        'response',
-        (res: http.IncomingMessage) =>
-          (len = parseInt(res.headers['content-length'] as string, 10)),
-      )
-      .on('data', (chunk: any[]) => {
-        downloaded += chunk.length;
-        // Only show download progress every second
-        const now = Date.now();
-        if (now - time > 1000) {
-          time = now;
-          console.log(
-            chalk.gray(
-              `Downloaded ${((100 * downloaded) / len).toFixed(2)}%...`,
-            ),
-          );
-        }
-      })
-      .pipe(fs.createWriteStream(filepath))
-      .on('finish', () => resolve());
-  }).catch((e: string) =>
-    retry-- === 0 ? throwError(e) : downloadFileRetry(url, filepath, retry),
-  );
-}
-
-function throwError(msg: string): never {
-  throw new Error(chalk.red(`Error while installing binary: ${msg}`));
-}
-
-export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
-  platform = platform || process.platform;
-  arch = arch || process.arch;
-  for (let value of CONFIG.binaries) {
-    if (
-      value.platform === platform &&
-      (value.arch ? value.arch === arch : true)
-    ) {
-      return value;
-    }
-  }
-  throw throwError(
-    `Cannot find binary for platform '${platform}' with architecture '${arch}'.`,
-  );
-}
-
-export function downloadChecksums() {
+// This function is unused, but I'm not touching it.
+export function downloadChecksums(): Promise<void> {
   console.log(chalk.gray(`Downloading All Pact Standalone Binary Checksums.`));
   return Promise.all(
     CONFIG.binaries.map(value =>
@@ -397,7 +402,7 @@ export function downloadChecksums() {
   );
 }
 
-export default (platform?: string, arch?: string) =>
+export default (platform?: string, arch?: string): Promise<void> =>
   setup(platform, arch)
     .then(d => download(d))
     .then(d => extract(d))

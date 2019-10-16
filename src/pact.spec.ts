@@ -11,6 +11,7 @@ describe('Pact Spec', () => {
   afterEach(() => pact.removeAllServers());
 
   describe('Set Log Level', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let originalLogLevel: any;
     // Reset log level after the tests
     before(() => (originalLogLevel = pact.logLevel()));
@@ -131,6 +132,7 @@ describe('Pact Spec', () => {
       });
 
       it('should return an error on non-number', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(() => pact.createServer({ port: '99' } as any)).to.throw(Error);
       });
 
@@ -150,6 +152,7 @@ describe('Pact Spec', () => {
 
     context('when user specifies invalid host', () => {
       it('should return an error on non-string', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(() => pact.createServer({ host: 12 } as any)).to.throw(Error);
       });
     });
@@ -163,18 +166,21 @@ describe('Pact Spec', () => {
 
     context('when user specifies invalid ssl', () => {
       it('should return an error on non-boolean', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(() => pact.createServer({ ssl: 1 } as any)).to.throw(Error);
       });
     });
 
     context('when user specifies invalid cors', () => {
       it('should return an error on non-boolean', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(() => pact.createServer({ cors: 1 } as any)).to.throw(Error);
       });
     });
 
     context('when user specifies invalid spec', () => {
       it('should return an error on non-number', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(() => pact.createServer({ spec: '1' } as any)).to.throw(Error);
       });
 
@@ -193,6 +199,7 @@ describe('Pact Spec', () => {
 
     context('when user specifies invalid consumer name', () => {
       it('should return an error on non-string', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(() => pact.createServer({ consumer: 1234 } as any)).to.throw(
           Error,
         );
@@ -201,6 +208,7 @@ describe('Pact Spec', () => {
 
     context('when user specifies invalid provider name', () => {
       it('should return an error on non-string', () => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(() => pact.createServer({ provider: 2341 } as any)).to.throw(
           Error,
         );

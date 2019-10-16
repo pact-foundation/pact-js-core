@@ -6,6 +6,7 @@ import logger from '../logger';
 import pactEnvironment from '../pact-environment';
 import argsHelper, { SpawnArguments } from './arguments';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const _ = require('underscore');
 
 export class Spawn {
@@ -39,7 +40,7 @@ export class Spawn {
     if (pactEnvironment.isWindows()) {
       file = 'cmd.exe';
       spawnArgs = ['/s', '/c', cmd];
-      (opts as any).windowsVerbatimArguments = true;
+      (opts).windowsVerbatimArguments = true;
     } else {
       cmd = `./${cmd}`;
       file = '/bin/sh';

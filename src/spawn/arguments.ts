@@ -1,4 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const _ = require('underscore');
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
 
 import { CanDeployOptions } from '../can-deploy';
@@ -33,6 +35,7 @@ export class Arguments {
     mappings: { [id: string]: string },
   ): string[] {
     return _.chain(args)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
       .reduce((acc: any, value: any, key: any) => {
         if (value && mappings[key]) {
           let mapping = mappings[key];
@@ -41,6 +44,7 @@ export class Arguments {
             mapping = '';
             f = acc.unshift.bind(acc);
           }
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           _.map(checkTypes.array(value) ? value : [value], (v: any) =>
             f([mapping, `'${v}'`]),
           );

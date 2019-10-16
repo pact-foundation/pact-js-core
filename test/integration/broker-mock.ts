@@ -2,9 +2,9 @@ import q = require('q');
 import express = require('express');
 import * as http from 'http';
 import { auth, returnJson } from './data-utils';
-const cors = require('cors');
-const _ = require('underscore');
-const bodyParser = require('body-parser');
+import cors = require('cors');
+import _ = require('underscore');
+import bodyParser = require('body-parser');
 
 export default (port: number): q.Promise<http.Server> => {
   const BROKER_HOST = `http://localhost:${port}`;
@@ -13,7 +13,7 @@ export default (port: number): q.Promise<http.Server> => {
   server.use(bodyParser.json());
   server.use(bodyParser.urlencoded({ extended: true }));
 
-  function pactFunction(req: express.Request, res: express.Response) {
+  function pactFunction(req: express.Request, res: express.Response): express.Response {
     if (
       _.isEmpty(req.body) ||
       // 2. Is there a consumer, provider and version in the request?
@@ -105,7 +105,7 @@ export default (port: number): q.Promise<http.Server> => {
     });
   }
 
-  function tagPactFunction(req: express.Request, res: express.Response) {
+  function tagPactFunction(req: express.Request, res: express.Response): express.Response {
     if (
       _.isEmpty(req.params.consumer) ||
       _.isEmpty(req.params.version) ||
@@ -367,7 +367,7 @@ export default (port: number): q.Promise<http.Server> => {
       interactions: [
         {
           description: 'Provider state success',
-          provider_state: 'There is a greeting',
+          providerState: 'There is a greeting',
           request: {
             method: 'GET',
             path: '/somestate',
@@ -452,7 +452,7 @@ export default (port: number): q.Promise<http.Server> => {
       interactions: [
         {
           description: 'Provider state success',
-          provider_state: 'There is a greeting',
+          providerState: 'There is a greeting',
           request: {
             method: 'GET',
             path: '/somestate',

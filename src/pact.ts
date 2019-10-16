@@ -13,8 +13,8 @@ import pactEnvironment from './pact-environment';
 import logger, { LogLevels } from './logger';
 import { AbstractService } from './service';
 import * as _ from 'underscore';
-const mkdirp = require('mkdirp');
-const rimraf = require('rimraf');
+import mkdirp = require('mkdirp');
+import rimraf = require('rimraf');
 
 export class Pact {
   private __servers: Server[] = [];
@@ -158,13 +158,13 @@ export class Pact {
   }
 
   // Run the Message Pact creation process
-  public createMessage(options: MessageOptions): q.Promise<string> {
+  public createMessage(options: MessageOptions): q.Promise<unknown> {
     logger.info('Creating Message');
     return messageFactory(options).createMessage();
   }
 
   // Publish Pacts to a Pact Broker
-  public publishPacts(options: PublisherOptions): q.Promise<any[]> {
+  public publishPacts(options: PublisherOptions): q.Promise<string[]> {
     logger.info('Publishing Pacts to Broker');
     return publisherFactory(options).publish();
   }

@@ -4,6 +4,7 @@ import spawn from './spawn';
 import pactStandalone from './pact-standalone';
 import * as _ from 'underscore';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
 
 export class CanDeploy {
@@ -17,8 +18,9 @@ export class CanDeploy {
 
     // Go backwards in the keys as we are going to unshift them into the array
     keys.reverse().forEach(key => {
-      const val: any = options[key];
+      const val = options[key];
       if (options[key] !== undefined) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const obj: any = {};
         obj[key] = val;
         args.unshift(obj);
@@ -131,7 +133,7 @@ export class CanDeploy {
   }
 }
 
-export default (options: CanDeployOptions) => new CanDeploy(options);
+export default (options: CanDeployOptions): CanDeploy => new CanDeploy(options);
 
 export interface CanDeployOptions {
   participant?: string;

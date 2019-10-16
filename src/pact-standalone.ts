@@ -24,7 +24,7 @@ export const standalone = (
 ): PactStandalone => {
   platform = platform || process.platform;
   arch = arch || process.arch;
-  const binName = (name: string) =>
+  const binName = (name: string): string =>
     `${name}${pactEnvironment.isWindows(platform) ? '.bat' : ''}`;
   const mock = binName('pact-mock-service');
   const message = binName('pact-message');
