@@ -9,7 +9,9 @@
 
 # Pact Node
 
-An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consumer) and Verification (Provider) process.
+An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consumer) and Verification (Provider) process, as well as the [Pact CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
+
+***NOTE*: If you are new to Pact and are wanting to get started with contract testing, you almost certainly don't want to use this package. Head over to [Pact JS](https://github.com/pact-foundation/pact-js/) instead.**
 
 <!-- TOC -->
 
