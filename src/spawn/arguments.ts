@@ -18,6 +18,27 @@ export type SpawnArguments =
   | {}; // Empty object is allowed to make tests less noisy. We should change this in the future
 
 export const DEFAULT_ARG = 'DEFAULT';
+export const PACT_NODE_NO_VALUE = 'PACT_NODE_NO_VALUE';
+
+const valFor = (v: string): Array<string> =>
+  v !== PACT_NODE_NO_VALUE ? [`'${v}'`] : [];
+
+const mapFor = (mapping: string, v: string): Array<string> =>
+  mapping === DEFAULT_ARG ? valFor(v) : [mapping].concat(valFor(v));
+
+const convertValue = (
+  mapping: string,
+  v: string | Array<string>,
+): Array<string> => {
+  if (v && mapping) {
+    return checkTypes.array(v)
+      ? _.flatten(
+          (v as Array<string>).map((val: string) => mapFor(mapping, val)),
+        )
+      : mapFor(mapping, <string>v);
+  }
+  return [];
+};
 
 export class Arguments {
   public toArgumentsArray(
@@ -35,22 +56,17 @@ export class Arguments {
     mappings: { [id: string]: string },
   ): string[] {
     return _.chain(args)
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      .reduce((acc: any, value: any, key: any) => {
-        if (value && mappings[key]) {
-          let mapping = mappings[key];
-          let f = acc.push.bind(acc);
-          if (mapping === DEFAULT_ARG) {
-            mapping = '';
-            f = acc.unshift.bind(acc);
-          }
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          _.map(checkTypes.array(value) ? value : [value], (v: any) =>
-            f([mapping, `'${v}'`]),
-          );
-        }
-        return acc;
-      }, [])
+      .reduce(
+        (
+          acc: Array<string>,
+          value: string | Array<string>,
+          key: string,
+        ): Array<string> =>
+          mappings[key] === DEFAULT_ARG
+            ? convertValue(mappings[key], value).concat(acc)
+            : acc.concat(convertValue(mappings[key], value)),
+        [],
+      )
       .flatten()
       .compact()
       .value();
