@@ -50,6 +50,9 @@ export class CanDeploy {
     options = options || {};
     // Setting defaults
     options.timeout = options.timeout || 60000;
+    if (!options.output) {
+      options.output = 'json';
+    }
 
     checkTypes.assert.nonEmptyString(
       options.participant,
@@ -85,37 +88,42 @@ export class CanDeploy {
     this.options = options;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  public canDeploy(): q.Promise<any> {
+  public canDeploy(): q.Promise<CanDeployResponse | string> {
     logger.info(
       `Asking broker at ${this.options.pactBroker} if it is possible to deploy`,
     );
-    const deferred = q.defer<string[]>();
+    const deferred = q.defer<CanDeployResponse | string>();
     const instance = spawn.spawnBinary(
       `${pactStandalone.brokerPath} can-i-deploy`,
       CanDeploy.convertForSpawnBinary(this.options),
       this.__argMapping,
     );
-    const output: Array<string | Buffer>= [];
+    const output: Array<string | Buffer> = [];
     instance.stdout.on('data', l => output.push(l));
     instance.stderr.on('data', l => output.push(l));
     instance.once('close', code => {
-      const o = output.join('\n');
+      const result: string = output.join('\n');
 
-      let success = false;
       if (this.options.output === 'json') {
-        success = JSON.parse(o).summary.deployable;
-      } else {
-        success = /Computer says yes/gim.exec(o) !== null;
+        try {
+          const parsed = JSON.parse(result) as CanDeployResponse;
+          if (code === 0 && parsed.summary.deployable) {
+            return deferred.resolve(parsed);
+          }
+          return deferred.reject(parsed);
+        } catch (e) {
+          logger.error(`can-i-deploy produced non-json output:\n${result}`);
+          return deferred.reject(new Error(result));
+        }
       }
 
-      if (code === 0 || success) {
-        logger.info(o);
-        return deferred.resolve();
+      if (code === 0) {
+        logger.info(result);
+        return deferred.resolve(result);
       }
 
-      logger.error(`can-i-deploy did not return success message:\n${o}`);
-      return deferred.reject(new Error(o));
+      logger.error(`can-i-deploy did not return success message:\n${result}`);
+      return deferred.reject(result);
     });
 
     return deferred.promise.timeout(
@@ -141,4 +149,19 @@ export interface CanDeployOptions {
   retryWhileUnknown?: number;
   retryInterval?: number;
   timeout?: number;
+}
+
+export interface CanDeployPacticipant {
+  name: string;
+  version: { number: string };
+}
+
+export interface CanDeployResponse {
+  summary: { deployable: boolean; reason: string; unknown: number };
+  matrix: Array<{
+    consumer: CanDeployPacticipant;
+    provider: CanDeployPacticipant;
+    verificationResult: { verifiedAt: string; success: boolean };
+    pact: { createdAt: string };
+  }>;
 }

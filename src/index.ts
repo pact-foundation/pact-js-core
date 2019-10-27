@@ -9,3 +9,5 @@ export * from './server';
 export * from './publisher';
 
 export * from './stub';
+
+export * from './can-deploy';
