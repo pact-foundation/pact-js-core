@@ -146,11 +146,6 @@ export interface CanDeployOptions {
   timeout?: number;
 }
 
-export interface CanDeployPacticipant {
-  name: string;
-  version: { number: string };
-}
-
 export interface CanDeployResponse {
   summary: { deployable: boolean; reason: string; unknown: number };
   matrix: Array<{
