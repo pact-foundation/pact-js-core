@@ -9,7 +9,9 @@
 
 # Pact Node
 
-An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consumer) and Verification (Provider) process.
+An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consumer) and Verification (Provider) process, as well as the [Pact CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
+
+***NOTE*: If you are new to Pact and are wanting to get started with contract testing, you almost certainly don't want to use this package. Head over to [Pact JS](https://github.com/pact-foundation/pact-js/) instead.**
 
 <!-- TOC -->
 
@@ -302,11 +304,18 @@ var opts = {
 };
 
 pact.canDeploy(opts)
-	.then(function () {
-		// Deployment worked
+	.then(function (result) {
+		// You can deploy this
+    // If output is not specified or is json, result describes the result of the check.
+    // If outout is 'table', it is the human readable string returned by the check
 	})
-	.catch(function() {
-		// Deployment failed
+	.catch(function(error) {
+		// You can't deploy this
+    // if output is not specified, or is json, error will be an object describing
+    // the result of the check (if the check failed),
+    // if output is 'table', then the error will be a string describing the output from the binary,
+
+    // In both cases, `error` will be an Error object if something went wrong during the check.
 	});
 ```
 
@@ -321,7 +330,7 @@ pact.canDeploy(opts)
 | `pactBrokerUsername` | false     | string      | Username for Pact Broker basic authentication. Optional                             |
 | `pactBrokerPassword` | false     | string      | Password for Pact Broker basic authentication. Optional                             |
 | `pactBrokerToken`    | false     | string      | Bearer token for Pact Broker authentication. Optional                               |
-| `output`             | false     | json,table  | Specify output to show, json or table. Optional                                     |
+| `output`             | false     | json,table  | Specify output to show, json or table. Optional, Defaults to json.                  |
 | `verbose`            | false     | flag        | Set logging mode to verbose. Optional                                               |
 | `retryWhileUnknown`  | false     | number      | The number of times to retry while there is an unknown verification result. Optional|
 | `retryInterval`      | false     | number      | The time between retries in seconds, use with retryWhileUnknown. Optional           |
