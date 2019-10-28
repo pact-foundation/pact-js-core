@@ -194,6 +194,7 @@ function download(data: Data): Promise<Data> {
       if (fs.existsSync(path.resolve(data.filepath))) {
         console.log(chalk.yellow('Binary already downloaded, skipping...'));
         resolve(data);
+        return;
       }
       console.log(
         chalk.yellow(
