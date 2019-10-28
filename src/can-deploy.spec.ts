@@ -134,7 +134,7 @@ describe('CanDeploy Spec', () => {
       };
       const ding = canDeployFactory(opts);
 
-      ding.canDeploy().then((results) => {
+      ding.canDeploy().then(results => {
         expect(results).not.to.be.null;
         done();
       });
@@ -148,7 +148,10 @@ describe('CanDeploy Spec', () => {
         };
         const ding = canDeployFactory(opts);
 
-        ding.canDeploy().then(done);
+        ding.canDeploy().then(results => {
+          expect(results).not.to.be.null;
+          done();
+        });
       });
 
       it('should throw an error with a table result deployable false', () => {
@@ -173,7 +176,10 @@ describe('CanDeploy Spec', () => {
         };
         const ding = canDeployFactory(opts);
 
-        ding.canDeploy().then(done);
+        ding.canDeploy().then(results => {
+          expect(results).not.to.be.null;
+          done();
+        });
       });
 
       it('should throw an error with a table result deployable false', () => {
@@ -199,7 +205,10 @@ describe('CanDeploy Spec', () => {
         };
         const ding = canDeployFactory(opts);
 
-        ding.canDeploy().then(done);
+        ding.canDeploy().then(results => {
+          expect(results).not.to.be.null;
+          done();
+        });
       });
 
       it('should throw an error with a table result deployable false', () => {
@@ -238,7 +247,7 @@ describe('CanDeploy Spec', () => {
       };
       const ding = canDeployFactory(opts);
 
-      ding.canDeploy().then((results) => {
+      ding.canDeploy().then(results => {
         expect(results).not.to.be.null;
         done();
       });
