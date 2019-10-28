@@ -67,7 +67,7 @@ export class Spawn {
       }
     });
 
-    logger.info(`Created '${cmd}' process with PID: ${instance.pid}`);
+    logger.debug(`Created '${cmd}' process with PID: ${instance.pid}`);
     return instance;
   }
 
