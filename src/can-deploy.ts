@@ -2,7 +2,7 @@ import q = require('q');
 import logger from './logger';
 import spawn from './spawn';
 import pactStandalone from './pact-standalone';
-import { PACT_NODE_NO_VALUE, DEFAULT_ARG } from './spawn';
+import { PACT_NODE_NO_VALUE } from './spawn';
 import * as _ from 'underscore';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -38,7 +38,6 @@ export class CanDeploy {
 
   public readonly options: CanDeployOptions;
   private readonly __argMapping = {
-    cliVerb: DEFAULT_ARG,
     name: '--pacticipant',
     version: '--version',
     latest: '--latest',

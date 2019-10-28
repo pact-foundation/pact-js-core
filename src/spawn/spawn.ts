@@ -5,7 +5,7 @@ import { ChildProcess, SpawnOptions } from 'child_process';
 import * as path from 'path';
 import logger from '../logger';
 import pactEnvironment from '../pact-environment';
-import argsHelper, { SpawnArguments } from './arguments';
+import argsHelper, { SpawnArguments, DEFAULT_ARG } from './arguments';
 
 export class Spawn {
   public get cwd(): string {
@@ -29,7 +29,10 @@ export class Spawn {
       env: envVars,
     };
 
-    const spawnArgs: string[] = argsHelper.toArgumentsArray(args, argMapping);
+    const spawnArgs: string[] = argsHelper.toArgumentsArray(args, {
+      cliVerb: DEFAULT_ARG,
+      ...argMapping,
+    });
 
     logger.debug(
       `Starting pact binary '${command}', with arguments [${spawnArgs.join(

@@ -18,7 +18,6 @@ export class Publisher {
   public readonly options: PublisherOptions;
   private readonly __argMapping = {
     pactFilesOrDirs: DEFAULT_ARG,
-    cliVerb: DEFAULT_ARG,
     pactBroker: '--broker-base-url',
     pactBrokerUsername: '--broker-username',
     pactBrokerPassword: '--broker-password',

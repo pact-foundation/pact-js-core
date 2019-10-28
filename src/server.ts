@@ -2,7 +2,6 @@
 import { AbstractService } from './service';
 import { deprecate } from 'util';
 import pact from './pact-standalone';
-import { DEFAULT_ARG } from './spawn';
 import path = require('path');
 import fs = require('fs');
 import mkdirp = require('mkdirp');
@@ -94,7 +93,6 @@ export class Server extends AbstractService {
       pact.mockServicePath,
       opts,
       {
-        cliVerb: DEFAULT_ARG,
         port: '--port',
         host: '--host',
         log: '--log',
