@@ -8,6 +8,16 @@ import * as _ from 'underscore';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
 
+export class CannotDeployError extends Error {
+  output: CanDeployResponse | string;
+
+  constructor(output: CanDeployResponse | string) {
+    super('can-i-deploy result: it is not safe to deploy');
+    this.name = 'CannotDeployError';
+    this.output = output;
+  }
+}
+
 export class CanDeploy {
   public static convertForSpawnBinary(
     options: CanDeployOptions,
@@ -101,7 +111,7 @@ export class CanDeploy {
           if (code === 0 && parsed.summary.deployable) {
             return deferred.resolve(parsed);
           }
-          return deferred.reject(parsed);
+          return deferred.reject(new CannotDeployError(parsed));
         } catch (e) {
           logger.error(`can-i-deploy produced non-json output:\n${result}`);
           return deferred.reject(new Error(result));
@@ -114,7 +124,7 @@ export class CanDeploy {
       }
 
       logger.error(`can-i-deploy did not return success message:\n${result}`);
-      return deferred.reject(result);
+      return deferred.reject(new CannotDeployError(result));
     });
 
     return deferred.promise.timeout(
