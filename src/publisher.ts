@@ -18,6 +18,7 @@ export class Publisher {
   public readonly options: PublisherOptions;
   private readonly __argMapping = {
     pactFilesOrDirs: DEFAULT_ARG,
+    cliVerb: DEFAULT_ARG,
     pactBroker: '--broker-base-url',
     pactBrokerUsername: '--broker-username',
     pactBrokerPassword: '--broker-password',
@@ -93,8 +94,8 @@ export class Publisher {
     logger.info(`Publishing pacts to broker at: ${this.options.pactBroker}`);
     const deferred = q.defer<string[]>();
     const instance = spawn.spawnBinary(
-      `${pactStandalone.brokerPath} publish`,
-      this.options,
+      pactStandalone.brokerPath,
+      [{ cliVerb: 'publish' }, this.options],
       this.__argMapping,
     );
     const output: Array<string | Buffer> = [];

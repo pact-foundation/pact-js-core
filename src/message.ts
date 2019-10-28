@@ -88,7 +88,7 @@ export class Message {
     logger.info(`Creating message pact`);
     const deferred = q.defer();
     const instance = spawn.spawnBinary(
-      `${pactStandalone.messagePath}`,
+      pactStandalone.messagePath,
       this.options,
       this.__argMapping,
     );

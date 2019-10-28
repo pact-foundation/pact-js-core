@@ -2,6 +2,7 @@
 import { AbstractService } from './service';
 import { deprecate } from 'util';
 import pact from './pact-standalone';
+import { DEFAULT_ARG } from './spawn';
 import path = require('path');
 import fs = require('fs');
 import mkdirp = require('mkdirp');
@@ -89,22 +90,28 @@ export class Server extends AbstractService {
       opts.logLevel = options.logLevel.toUpperCase() as LogLevel;
     }
 
-    super(`${pact.mockServicePath} service`, opts, {
-      port: '--port',
-      host: '--host',
-      log: '--log',
-      ssl: '--ssl',
-      sslcert: '--sslcert',
-      sslkey: '--sslkey',
-      cors: '--cors',
-      dir: '--pact_dir',
-      spec: '--pact_specification_version',
-      pactFileWriteMode: '--pact-file-write-mode',
-      consumer: '--consumer',
-      provider: '--provider',
-      monkeypatch: '--monkeypatch',
-      logLevel: '--log-level',
-    });
+    super(
+      pact.mockServicePath,
+      opts,
+      {
+        cliVerb: DEFAULT_ARG,
+        port: '--port',
+        host: '--host',
+        log: '--log',
+        ssl: '--ssl',
+        sslcert: '--sslcert',
+        sslkey: '--sslkey',
+        cors: '--cors',
+        dir: '--pact_dir',
+        spec: '--pact_specification_version',
+        pactFileWriteMode: '--pact-file-write-mode',
+        consumer: '--consumer',
+        provider: '--provider',
+        monkeypatch: '--monkeypatch',
+        logLevel: '--log-level',
+      },
+      { cliVerb: 'service' },
+    );
   }
 }
 

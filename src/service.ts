@@ -6,7 +6,7 @@ import events = require('events');
 import http = require('request');
 import q = require('q');
 import logger from './logger';
-import spawn from './spawn';
+import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import mkdirp = require('mkdirp');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -20,9 +20,9 @@ const RETRY_AMOUNT = 60;
 const PROCESS_TIMEOUT = 30000;
 
 interface AbstractServiceEventInterface {
-	START_EVENT: string;
-	STOP_EVENT: string;
-	DELETE_EVENT: string;
+  START_EVENT: string;
+  STOP_EVENT: string;
+  DELETE_EVENT: string;
 }
 
 export abstract class AbstractService extends events.EventEmitter {
@@ -35,14 +35,21 @@ export abstract class AbstractService extends events.EventEmitter {
   }
 
   public readonly options: ServiceOptions;
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected __argMapping: any;
   protected __running: boolean;
   protected __instance: ChildProcess;
+  protected __cliVerb?: CliVerbOptions;
   protected __serviceCommand: string;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected constructor(command: string, options: ServiceOptions, argMapping: any) {
+  protected constructor(
+    command: string,
+    options: ServiceOptions,
+    argMapping: any,
+    cliVerb?: CliVerbOptions,
+  ) {
     super();
 
     // defaults
@@ -122,6 +129,7 @@ export abstract class AbstractService extends events.EventEmitter {
 
     this.options = options;
     this.__running = false;
+    this.__cliVerb = cliVerb;
     this.__serviceCommand = command;
     this.__argMapping = argMapping;
   }
@@ -152,7 +160,7 @@ export abstract class AbstractService extends events.EventEmitter {
       this.__instance.stdout.on('data', catchPort);
     }
 
-    this.__instance.stderr.on('data', (data) =>
+    this.__instance.stderr.on('data', data =>
       logger.error(`Pact Binary Error: ${data}`),
     );
 
@@ -193,7 +201,7 @@ export abstract class AbstractService extends events.EventEmitter {
   protected spawnBinary(): ChildProcess {
     return spawn.spawnBinary(
       this.__serviceCommand,
-      this.options,
+      this.__cliVerb ? [this.__cliVerb, this.options] : [this.options],
       this.__argMapping,
     );
   }
@@ -269,7 +277,7 @@ export abstract class AbstractService extends events.EventEmitter {
       headers: {
         'X-Pact-Mock-Service': true,
         'Content-Type': 'application/json',
-      }
+      },
     };
 
     if (options.ssl) {
@@ -301,15 +309,15 @@ export interface ServiceOptions {
 }
 
 export interface HTTPConfig {
-	uri: string;
-	method: string;
-	headers: {
-		'X-Pact-Mock-Service': boolean;
-		'Content-Type': string;
-	};
-	agentOptions?: {
-		rejectUnauthorized?: boolean;
-		requestCert?: boolean;
-		agent?: boolean;
-	};
+  uri: string;
+  method: string;
+  headers: {
+    'X-Pact-Mock-Service': boolean;
+    'Content-Type': string;
+  };
+  agentOptions?: {
+    rejectUnauthorized?: boolean;
+    requestCert?: boolean;
+    agent?: boolean;
+  };
 }

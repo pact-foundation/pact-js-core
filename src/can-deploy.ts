@@ -2,7 +2,7 @@ import q = require('q');
 import logger from './logger';
 import spawn from './spawn';
 import pactStandalone from './pact-standalone';
-import { PACT_NODE_NO_VALUE } from './spawn';
+import { PACT_NODE_NO_VALUE, DEFAULT_ARG } from './spawn';
 import * as _ from 'underscore';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -38,6 +38,7 @@ export class CanDeploy {
 
   public readonly options: CanDeployOptions;
   private readonly __argMapping = {
+    cliVerb: DEFAULT_ARG,
     name: '--pacticipant',
     version: '--version',
     latest: '--latest',
@@ -95,8 +96,11 @@ export class CanDeploy {
     );
     const deferred = q.defer<CanDeployResponse | string>();
     const instance = spawn.spawnBinary(
-      `${pactStandalone.brokerPath} can-i-deploy`,
-      CanDeploy.convertForSpawnBinary(this.options),
+      pactStandalone.brokerPath,
+      [
+        { cliVerb: 'can-i-deploy' },
+        ...CanDeploy.convertForSpawnBinary(this.options),
+      ],
       this.__argMapping,
     );
     const output: Array<string | Buffer> = [];

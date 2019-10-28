@@ -81,7 +81,10 @@ export class Verifier {
 
     checkTypes.assert.nonEmptyString(options.providerBaseUrl);
 
-    if (checkTypes.emptyArray(options.pactUrls as string[]) && !options.pactBrokerUrl) {
+    if (
+      checkTypes.emptyArray(options.pactUrls as string[]) &&
+      !options.pactBrokerUrl
+    ) {
       throw new Error(
         'Must provide the pactUrls argument if no pactBrokerUrl provided',
       );
@@ -180,7 +183,7 @@ export class Verifier {
       this.options,
       this.__argMapping,
     );
-    const output: Array<string | Buffer>  = [];
+    const output: Array<string | Buffer> = [];
     instance.stdout.on('data', l => output.push(l));
     instance.stderr.on('data', l => output.push(l));
     instance.once('close', code => {
