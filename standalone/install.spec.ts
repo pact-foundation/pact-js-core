@@ -4,7 +4,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as chai from 'chai';
-import {BinaryEntry, Config} from "./install";
+import { BinaryEntry, Config } from './install';
 
 const expect = chai.expect;
 

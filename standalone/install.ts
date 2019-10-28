@@ -48,10 +48,7 @@ function getBinaryLocation(
     : path.resolve(basePath, location);
 }
 
-function findPackageConfig(
-  location: string,
-  tries = 10,
-): PackageConfig {
+function findPackageConfig(location: string, tries = 10): PackageConfig {
   if (tries === 0) {
     return {};
   }
@@ -75,14 +72,14 @@ function findPackageConfig(
 export function createConfig(): Config {
   const packageConfig = findPackageConfig(path.resolve(__dirname, '..', '..'));
   const PACT_BINARY_LOCATION =
-		packageConfig.binaryLocation || PACT_DEFAULT_LOCATION;
+    packageConfig.binaryLocation || PACT_DEFAULT_LOCATION;
   const CHECKSUM_SUFFIX = '.checksum';
 
   return {
     doNotTrack:
-			packageConfig.doNotTrack ||
-			process.env.PACT_DO_NOT_TRACK !== undefined ||
-			false,
+      packageConfig.doNotTrack ||
+      process.env.PACT_DO_NOT_TRACK !== undefined ||
+      false,
     binaries: [
       {
         platform: 'win32',
@@ -150,36 +147,40 @@ function downloadFileRetry(
   filepath: string,
   retry = 3,
 ): Promise<unknown> {
-  return new Promise((resolve: () => void, reject: (e: string) => void): void => {
-    let len = 0;
-    let downloaded = 0;
-    let time = Date.now();
-    request({
-      url,
-      headers: { 'User-Agent': 'https://github.com/pact-foundation/pact-node' },
-    })
-      .on('error', (e: string) => reject(e))
-      .on(
-        'response',
-        (res: http.IncomingMessage) =>
-          (len = parseInt(res.headers['content-length'] as string, 10)),
-      )
-      .on('data', (chunk: string[]) => {
-        downloaded += chunk.length;
-        // Only show download progress every second
-        const now = Date.now();
-        if (now - time > 1000) {
-          time = now;
-          console.log(
-            chalk.gray(
-              `Downloaded ${((100 * downloaded) / len).toFixed(2)}%...`,
-            ),
-          );
-        }
+  return new Promise(
+    (resolve: () => void, reject: (e: string) => void): void => {
+      let len = 0;
+      let downloaded = 0;
+      let time = Date.now();
+      request({
+        url,
+        headers: {
+          'User-Agent': 'https://github.com/pact-foundation/pact-node',
+        },
       })
-      .pipe(fs.createWriteStream(filepath))
-      .on('finish', () => resolve());
-  }).catch((e: string) =>
+        .on('error', (e: string) => reject(e))
+        .on(
+          'response',
+          (res: http.IncomingMessage) =>
+            (len = parseInt(res.headers['content-length'] as string, 10)),
+        )
+        .on('data', (chunk: string[]) => {
+          downloaded += chunk.length;
+          // Only show download progress every second
+          const now = Date.now();
+          if (now - time > 1000) {
+            time = now;
+            console.log(
+              chalk.gray(
+                `Downloaded ${((100 * downloaded) / len).toFixed(2)}%...`,
+              ),
+            );
+          }
+        })
+        .pipe(fs.createWriteStream(filepath))
+        .on('finish', () => resolve());
+    },
+  ).catch((e: string) =>
     retry-- === 0 ? throwError(e) : downloadFileRetry(url, filepath, retry),
   );
 }
@@ -302,12 +303,12 @@ function extract(data: Data): Promise<void> {
         data.isWindows
           ? decompress(data.filepath, data.platformFolderPath, { strip: 1 })
           : tar.x({
-            file: data.filepath,
-            strip: 1,
-            cwd: data.platformFolderPath,
-            preserveOwner: false,
-            // Z: true, ## this parameter does not exist in 'tar' types. Probably you needed other parameter here.
-          }),
+              file: data.filepath,
+              strip: 1,
+              cwd: data.platformFolderPath,
+              preserveOwner: false,
+              // Z: true, ## this parameter does not exist in 'tar' types. Probably you needed other parameter here.
+            }),
       )
       .then(() => {
         // Remove pact-publish as it's getting deprecated
@@ -345,7 +346,7 @@ export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
   for (let value of CONFIG.binaries) {
     if (
       value.platform === platform &&
-			(value.arch ? value.arch === arch : true)
+      (value.arch ? value.arch === arch : true)
     ) {
       return value;
     }
