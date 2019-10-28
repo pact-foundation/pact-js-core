@@ -7,9 +7,6 @@ import logger from '../logger';
 import pactEnvironment from '../pact-environment';
 import argsHelper, { SpawnArguments } from './arguments';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const _ = require('underscore');
-
 export class Spawn {
   public get cwd(): string {
     return path.resolve(__dirname, '..');
@@ -35,11 +32,9 @@ export class Spawn {
     const spawnArgs: string[] = argsHelper.toArgumentsArray(args, argMapping);
 
     logger.debug(
-      `Starting pact binary with '${_.flatten([
-        command,
-        spawnArgs,
-        JSON.stringify(opts),
-      ])}'`,
+      `Starting pact binary '${command}', with arguments [${spawnArgs.join(
+        ' ',
+      )}], and environment: ${JSON.stringify(opts)}`,
     );
     const instance = spawn(command, spawnArgs, opts);
 
@@ -61,7 +56,7 @@ export class Spawn {
   public killBinary(binary: ChildProcess): boolean {
     if (binary) {
       const pid = binary.pid;
-      logger.info(`Removing Pact with PID: ${pid}`);
+      logger.info(`Removing Pact process with PID: ${pid}`);
       binary.removeAllListeners();
       // Killing instance, since windows can't send signals, must kill process forcefully
       try {
