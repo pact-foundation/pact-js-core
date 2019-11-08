@@ -30,6 +30,7 @@ export class Verifier {
     pactBrokerPassword: '--broker-password',
     pactBrokerToken: '--broker-token',
     consumerVersionTag: '--consumer-version-tag',
+    providerVersionTag: '--provider-version-tag',
     publishVerificationResult: '--publish-verification-results',
     providerVersion: '--provider-app-version',
     provider: '--provider',
@@ -47,6 +48,7 @@ export class Verifier {
     options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
     options.timeout = options.timeout || 30000;
     options.consumerVersionTag = options.consumerVersionTag || [];
+    options.providerVersionTag = options.providerVersionTag || [];
 
     if (
       options.consumerVersionTag &&
@@ -55,6 +57,14 @@ export class Verifier {
       options.consumerVersionTag = [options.consumerVersionTag as string];
     }
     checkTypes.assert.array.of.string(options.consumerVersionTag);
+
+    if (
+      options.providerVersionTag &&
+      checkTypes.string(options.providerVersionTag)
+    ) {
+      options.providerVersionTag = [options.providerVersionTag as string];
+    }
+    checkTypes.assert.array.of.string(options.providerVersionTag);
 
     options.pactUrls = _.chain(options.pactUrls)
       .map((uri: string) => {
@@ -110,10 +120,6 @@ export class Verifier {
 
     if (options.pactBrokerUrl) {
       checkTypes.assert.string(options.pactBrokerUrl);
-    }
-
-    if (options.consumerVersionTag) {
-      checkTypes.assert.array.of.string(options.consumerVersionTag);
     }
 
     if (options.pactUrls) {
@@ -210,6 +216,7 @@ export interface VerifierOptions {
   pactBrokerPassword?: string;
   pactBrokerToken?: string;
   consumerVersionTag?: string | string[];
+  providerVersionTag?: string | string[];
   customProviderHeaders?: string[];
   publishVerificationResult?: boolean;
   providerVersion?: string;

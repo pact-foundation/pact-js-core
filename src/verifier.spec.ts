@@ -283,4 +283,39 @@ describe('Verifier Spec', () => {
       ).to.not.throw(Error);
     });
   });
+
+  context('when providerVersionTag is not provided', () => {
+    it('should not fail', () => {
+      expect(() =>
+        verifierFactory({
+          providerBaseUrl: 'http://localhost',
+          pactUrls: [path.dirname(currentDir)],
+        }),
+      ).to.not.throw(Error);
+    });
+  });
+
+  context('when providerVersionTag is provided as a string', () => {
+    it('should convert the argument to an array', () => {
+      const v = verifierFactory({
+        providerBaseUrl: 'http://localhost',
+        pactUrls: [path.dirname(currentDir)],
+        providerVersionTag: 'tag-1',
+      });
+
+      expect(v.options.providerVersionTag).to.deep.eq(['tag-1']);
+    });
+  });
+
+  context('when providerVersionTag is provided as an array', () => {
+    it('should not fail', () => {
+      expect(() =>
+        verifierFactory({
+          providerBaseUrl: 'http://localhost',
+          pactUrls: [path.dirname(currentDir)],
+          providerVersionTag: ['tag-1'],
+        }),
+      ).to.not.throw(Error);
+    });
+  });
 });
