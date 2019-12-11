@@ -89,22 +89,27 @@ export class Server extends AbstractService {
       opts.logLevel = options.logLevel.toUpperCase() as LogLevel;
     }
 
-    super(`${pact.mockServicePath} service`, opts, {
-      port: '--port',
-      host: '--host',
-      log: '--log',
-      ssl: '--ssl',
-      sslcert: '--sslcert',
-      sslkey: '--sslkey',
-      cors: '--cors',
-      dir: '--pact_dir',
-      spec: '--pact_specification_version',
-      pactFileWriteMode: '--pact-file-write-mode',
-      consumer: '--consumer',
-      provider: '--provider',
-      monkeypatch: '--monkeypatch',
-      logLevel: '--log-level',
-    });
+    super(
+      pact.mockServicePath,
+      opts,
+      {
+        port: '--port',
+        host: '--host',
+        log: '--log',
+        ssl: '--ssl',
+        sslcert: '--sslcert',
+        sslkey: '--sslkey',
+        cors: '--cors',
+        dir: '--pact_dir',
+        spec: '--pact_specification_version',
+        pactFileWriteMode: '--pact-file-write-mode',
+        consumer: '--consumer',
+        provider: '--provider',
+        monkeypatch: '--monkeypatch',
+        logLevel: '--log-level',
+      },
+      { cliVerb: 'service' },
+    );
   }
 }
 

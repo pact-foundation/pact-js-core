@@ -9,19 +9,26 @@ import { PublisherOptions } from '../publisher';
 import { ServiceOptions } from '../service';
 import { VerifierOptions } from '../verifier';
 
-export type SpawnArguments =
-  | CanDeployOptions[]
+export type CliVerbOptions = {
+  cliVerb: string;
+};
+
+export type SpawnArgument =
+  | CanDeployOptions
   | MessageOptions
   | PublisherOptions
   | ServiceOptions
   | VerifierOptions
+  | CliVerbOptions
   | {}; // Empty object is allowed to make tests less noisy. We should change this in the future
+
+export type SpawnArguments = Array<SpawnArgument> | SpawnArgument;
 
 export const DEFAULT_ARG = 'DEFAULT';
 export const PACT_NODE_NO_VALUE = 'PACT_NODE_NO_VALUE';
 
 const valFor = (v: string): Array<string> =>
-  v !== PACT_NODE_NO_VALUE ? [`'${v}'`] : [];
+  v !== PACT_NODE_NO_VALUE ? [v] : [];
 
 const mapFor = (mapping: string, v: string): Array<string> =>
   mapping === DEFAULT_ARG ? valFor(v) : [mapping].concat(valFor(v));

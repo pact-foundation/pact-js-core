@@ -1,13 +1,11 @@
 // tslint:disable:no-string-literal
+import spawn = require('cross-spawn');
 import cp = require('child_process');
 import { ChildProcess, SpawnOptions } from 'child_process';
 import * as path from 'path';
 import logger from '../logger';
 import pactEnvironment from '../pact-environment';
-import argsHelper, { SpawnArguments } from './arguments';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const _ = require('underscore');
+import argsHelper, { SpawnArguments, DEFAULT_ARG } from './arguments';
 
 export class Spawn {
   public get cwd(): string {
@@ -25,36 +23,23 @@ export class Spawn {
     // https://github.com/pact-foundation/pact-mock-service-npm/issues/16
     delete envVars['RUBYGEMS_GEMDEPS'];
 
-    let file: string;
-    let opts: SpawnOptions = {
+    const opts: SpawnOptions = {
       cwd: pactEnvironment.cwd,
       detached: !pactEnvironment.isWindows(),
       env: envVars,
     };
 
-    let cmd: string = [command]
-      .concat(argsHelper.toArgumentsArray(args, argMapping))
-      .join(' ');
-
-    let spawnArgs: string[];
-    if (pactEnvironment.isWindows()) {
-      file = 'cmd.exe';
-      spawnArgs = ['/s', '/c', cmd];
-      (opts).windowsVerbatimArguments = true;
-    } else {
-      cmd = `./${cmd}`;
-      file = '/bin/sh';
-      spawnArgs = ['-c', cmd];
-    }
+    const spawnArgs: string[] = argsHelper.toArgumentsArray(args, {
+      cliVerb: DEFAULT_ARG,
+      ...argMapping,
+    });
 
     logger.debug(
-      `Starting pact binary with '${_.flatten([
-        file,
-        spawnArgs,
-        JSON.stringify(opts),
-      ])}'`,
+      `Starting pact binary '${command}', with arguments [${spawnArgs.join(
+        ' ',
+      )}], and environment: ${JSON.stringify(opts)}`,
     );
-    const instance = cp.spawn(file, spawnArgs, opts);
+    const instance = spawn(command, spawnArgs, opts);
 
     instance.stdout.setEncoding('utf8');
     instance.stderr.setEncoding('utf8');
@@ -67,14 +52,14 @@ export class Spawn {
       }
     });
 
-    logger.debug(`Created '${cmd}' process with PID: ${instance.pid}`);
+    logger.debug(`Created '${command}' process with PID: ${instance.pid}`);
     return instance;
   }
 
   public killBinary(binary: ChildProcess): boolean {
     if (binary) {
       const pid = binary.pid;
-      logger.info(`Removing Pact with PID: ${pid}`);
+      logger.info(`Removing Pact process with PID: ${pid}`);
       binary.removeAllListeners();
       // Killing instance, since windows can't send signals, must kill process forcefully
       try {

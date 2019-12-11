@@ -32,9 +32,9 @@ describe('Pact Util Spec', () => {
           },
         );
         expect(result).to.include('--provider-base-url');
-        expect(result).to.include("'http://localhost'");
+        expect(result).to.include('http://localhost');
         expect(result).to.include('--pact-urls');
-        expect(result).to.include("'http://idontexist'");
+        expect(result).to.include('http://idontexist');
       });
     });
     describe('when called with an array', () => {
@@ -52,7 +52,7 @@ describe('Pact Util Spec', () => {
           expect(result.length).to.be.equal(2);
         });
 
-        it('should wrap its argument values in quotes', () => {
+        it('should produce correct arguments array', () => {
           const result = argsHelper.toArgumentsArray(
             [
               {
@@ -66,13 +66,13 @@ describe('Pact Util Spec', () => {
             },
           );
           expect(result).to.include('--provider-base-url');
-          expect(result).to.include("'http://localhost'");
+          expect(result).to.include('http://localhost');
           expect(result).to.include('--pact-urls');
-          expect(result).to.include("'http://idontexist'");
+          expect(result).to.include('http://idontexist');
         });
       });
       describe('with multiple elements', () => {
-        it('should wrap its argument values in quotes', () => {
+        it('should produce correct arguments array', () => {
           const result = argsHelper.toArgumentsArray(
             [
               { participant: 'one' },
@@ -86,13 +86,13 @@ describe('Pact Util Spec', () => {
           expect(result).to.be.an('array');
           expect(result).to.eql([
             '--participant',
-            "'one'",
+            'one',
             '--version',
-            "'v1'",
+            'v1',
             '--participant',
-            "'two'",
+            'two',
             '--version',
-            "'v2'",
+            'v2',
           ]);
         });
       });
@@ -110,7 +110,7 @@ describe('Pact Util Spec', () => {
         },
       );
       expect(result.length).to.be.equal(3);
-      expect(result[0]).to.be.equal("'http://idontexist'");
+      expect(result[0]).to.be.equal('http://idontexist');
     });
   });
 });

@@ -95,8 +95,11 @@ export class CanDeploy {
     );
     const deferred = q.defer<CanDeployResponse | string>();
     const instance = spawn.spawnBinary(
-      `${pactStandalone.brokerPath} can-i-deploy`,
-      CanDeploy.convertForSpawnBinary(this.options),
+      pactStandalone.brokerPath,
+      [
+        { cliVerb: 'can-i-deploy' },
+        ...CanDeploy.convertForSpawnBinary(this.options),
+      ],
       this.__argMapping,
     );
     const output: Array<string | Buffer> = [];
