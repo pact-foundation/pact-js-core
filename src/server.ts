@@ -58,7 +58,7 @@ export class Server extends AbstractService {
     }
 
     checkTypes.assert.includes(
-      ['overwrite', 'update', 'merge'],
+      ['overwrite', 'update', 'merge', 'none'],
       options.pactFileWriteMode,
     );
 
