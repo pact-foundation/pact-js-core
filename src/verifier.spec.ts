@@ -318,4 +318,29 @@ describe('Verifier Spec', () => {
       ).to.not.throw(Error);
     });
   });
+
+  context('when using a bearer token', () => {
+    context('and specifies a username or password', () => {
+      it('should fail with an error', () => {
+        expect(() =>
+          verifierFactory({
+            providerBaseUrl: 'http://localhost',
+            pactUrls: ['http://idontexist'],
+            pactBrokerToken: "1234",
+            pactBrokerUsername: "username",
+            pactBrokerPassword: "5678",
+          }),
+        ).to.throw(Error);
+      });
+    });
+    it('should not fail', () => {
+      const v = verifierFactory({
+        providerBaseUrl: 'http://localhost',
+        pactUrls: ['http://idontexist'],
+        pactBrokerToken: "1234",
+      })
+
+      expect(v.options.pactBrokerToken).to.eq("1234");
+    });
+  });
 });
