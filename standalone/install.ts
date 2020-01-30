@@ -21,7 +21,7 @@ const request = Request.defaults({
 });
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = '1.73.0';
+export const PACT_STANDALONE_VERSION = '1.77.0';
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
 
@@ -207,7 +207,7 @@ function download(data: Data): Promise<Data> {
         console.log(
           chalk.gray(
             'Please note: we are tracking this download anonymously to gather important usage statistics. ' +
-              "To disable tracking, set 'pact_do_not_track: true' in your package.json 'config' section.",
+            "To disable tracking, set 'pact_do_not_track: true' in your package.json 'config' section.",
           ),
         );
         // Trying to find all environment variables of all possible CI services to get more accurate stats
@@ -229,7 +229,7 @@ function download(data: Data): Promise<Data> {
               aip: true, // Anonymise IP address
             },
           })
-          .on('error', () => {}); // Ignore all errors
+          .on('error', () => { }); // Ignore all errors
       }
 
       // Get archive of release
@@ -304,12 +304,12 @@ function extract(data: Data): Promise<void> {
         data.isWindows
           ? decompress(data.filepath, data.platformFolderPath, { strip: 1 })
           : tar.x({
-              file: data.filepath,
-              strip: 1,
-              cwd: data.platformFolderPath,
-              preserveOwner: false,
-              // Z: true, ## this parameter does not exist in 'tar' types. Probably you needed other parameter here.
-            }),
+            file: data.filepath,
+            strip: 1,
+            cwd: data.platformFolderPath,
+            preserveOwner: false,
+            // Z: true, ## this parameter does not exist in 'tar' types. Probably you needed other parameter here.
+          }),
       )
       .then(() => {
         // Remove pact-publish as it's getting deprecated
@@ -326,13 +326,13 @@ function extract(data: Data): Promise<void> {
       .then(() => {
         console.log(
           '\n\n' +
-            chalk.bgYellow(
-              chalk.black('### If you') +
-                chalk.red(' ❤ ') +
-                chalk.black('Pact and want to support us, please donate here:'),
-            ) +
-            chalk.blue(' http://donate.pact.io/node') +
-            '\n\n',
+          chalk.bgYellow(
+            chalk.black('### If you') +
+            chalk.red(' ❤ ') +
+            chalk.black('Pact and want to support us, please donate here:'),
+          ) +
+          chalk.blue(' http://donate.pact.io/node') +
+          '\n\n',
         );
       })
       .catch((e: Error) =>
