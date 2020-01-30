@@ -121,6 +121,12 @@ export class Verifier {
       checkTypes.assert.string(options.pactBrokerPassword);
     }
 
+    if (options.pactBrokerToken && (options.pactBrokerUsername || options.pactBrokerPassword)) {
+      throw new Error(
+        'Must provide pactBrokerToken or pactBrokerUsername/pactBrokerPassword but not both.',
+      );
+    }
+
     if (options.pactBrokerUrl) {
       checkTypes.assert.string(options.pactBrokerUrl);
     }

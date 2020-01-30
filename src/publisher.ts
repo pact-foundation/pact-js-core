@@ -86,6 +86,12 @@ export class Publisher {
       );
     }
 
+    if (options.pactBrokerToken && (options.pactBrokerUsername || options.pactBrokerPassword)) {
+      throw new Error(
+        'Must provide pactBrokerToken or pactBrokerUsername/pactBrokerPassword but not both.',
+      );
+    }
+
     this.options = options;
   }
 
