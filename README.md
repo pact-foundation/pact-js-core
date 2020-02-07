@@ -16,36 +16,31 @@ An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consume
 <!-- TOC -->
 
 - [Pact Node](#pact-node)
-    - [Installation](#installation)
-        - [Do Not Track](#do-not-track)
-        - [Pact Download Location](#pact-download-location)
-    - [Usage](#usage)
-    - [Documentation](#documentation)
-        - [Set Log Level](#set-log-level)
-        - [Mock Servers](#mock-servers)
-            - [Create Mock Server](#create-mock-server)
-            - [List Mock Servers](#list-mock-servers)
-            - [Remove All Mock Servers](#remove-all-mock-servers)
-            - [Start a Mock Server](#start-a-mock-server)
-            - [Stop a Mock server](#stop-a-mock-server)
-            - [Delete a Mock server](#delete-a-mock-server)
-            - [Check if a Mock server is running](#check-if-a-mock-server-is-running)
-            - [Mock Server Events](#mock-server-events)
-        - [Provider Verification](#provider-verification)
-        - [Pact Broker Publishing](#pact-broker-publishing)
-        - [Pact Broker Deployment Check](#pact-broker-deployment-check)
-        - [Stub Servers](#stub-servers)
-            - [Create Stub Server](#create-stub-server)
-        - [Message Pacts](#message-pacts)
-            - [Create Message Pacts](#create-message-pacts)
-                - [Example](#example)
-                - [Example CLI invocation:](#example-cli-invocation)
-    - [CLI Tools](#cli-tools)
-    - [Windows Issues](#windows-issues)
-        - [Enable Long Paths](#enable-long-paths)
-    - [Contributing](#contributing)
-    - [Testing](#testing)
-    - [Questions?](#questions)
+  - [Installation](#installation)
+    - [Do Not Track](#do-not-track)
+    - [Pact Download Location](#pact-download-location)
+  - [Which Library/Package should I use?](#which-librarypackage-should-i-use)
+  - [Usage](#usage)
+  - [Documentation](#documentation)
+    - [Set Log Level](#set-log-level)
+    - [Mock Servers](#mock-servers)
+      - [Create Mock Server](#create-mock-server)
+      - [List Mock Servers](#list-mock-servers)
+      - [Remove All Mock Servers](#remove-all-mock-servers)
+      - [Start a Mock Server](#start-a-mock-server)
+      - [Stop a Mock server](#stop-a-mock-server)
+      - [Delete a Mock server](#delete-a-mock-server)
+      - [Check if a Mock server is running](#check-if-a-mock-server-is-running)
+      - [Mock Server Events](#mock-server-events)
+    - [Provider Verification](#provider-verification)
+    - [Pact Broker Publishing](#pact-broker-publishing)
+    - [Pact Broker Deployment Check](#pact-broker-deployment-check)
+    - [Stub Servers](#stub-servers)
+      - [Create Stub Server](#create-stub-server)
+    - [Message Pacts](#message-pacts)
+      - [Create Message Pacts](#create-message-pacts)
+        - [Example](#example)
+  - [CLI Tools](#cli-tools)
 
 <!-- /TOC -->
 
@@ -84,6 +79,21 @@ For those that are behind a corporate firewall or are seeing issues where our pa
 ```
 
 It will accept both a local path or an http(s) url. It must point to the directory containing the binary needed as the binary name is appended to the end of the location. For the example given above, Pact will look for the binary at `/home/some-user/Downloads/pact-1.44.0-win32.zip` for a Windows system. However, by using this method, you must use the correct Pact version binary associated with this version of Pact-Node. For extra security measurements, checksum validation has been added to prevent tampering with the binaries.
+
+## Which Library/Package should I use?
+
+TL;DR - you almost always want Pact JS.
+
+| Purpose                   | Library   | Comments                                                                                                            |
+| ------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------- |
+| Synchronous / HTTP APIs   | Pact JS   |                                                                                                                     |
+| Asynchronous APIs         | Pact JS   |                                                                                                                     |
+| Node.js                   | Pact JS   |                                                                                                                     |
+| Browser testing           | Pact Web  | You probably still want Pact JS. See [Using Pact in non-Node environments](https://github.com/pact-foundation/pact-js#using-pact-in-non-node-environments) \* |
+| Isomorphic testing        | Pact Web  | You probably still want Pact JS. See [Using Pact in non-Node environments](https://github.com/pact-foundation/pact-js#using-pact-in-non-node-environments) \* |
+| Publishing to Pact Broker | Pact Node | Included in Pact JS distribution                                                                                    |
+
+\* The "I need to run it in the browser" question comes up occasionally. The question is this - for your JS code to be able to make a call to another API, is this dependent on browser-specific code? In most cases, people use tools like React/Angular which have libraries that work on the server and client side, in which case, these tests don't need to run in a browser and could instead be executed in a Node.js environment.
 
 ## Usage
 
