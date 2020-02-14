@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [10.3.0](https://github.com/pact-foundation/pact-node/compare/v10.2.4...v10.3.0) (2020-02-14)
+
+
+### Features
+
+* add validation to broker token usage to avoid confusion ([2a4afa3](https://github.com/pact-foundation/pact-node/commit/2a4afa3))
+* **upgrade:** update standalone to 1.79.0 ([f33cbb8](https://github.com/pact-foundation/pact-node/commit/f33cbb8))
+
+
+
 ## [10.2.4](https://github.com/pact-foundation/pact-node/compare/v10.2.3...v10.2.4) (2019-12-17)
 
 
