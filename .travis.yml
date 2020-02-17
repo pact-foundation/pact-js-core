@@ -23,6 +23,7 @@ script: npm test
 after_success: npm run download-checksums
 deploy:
 - provider: npm
+  edge: true
   skip_cleanup: true
   email: pact-foundation@googlegroups.com
   api_key:
