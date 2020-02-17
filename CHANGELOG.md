@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.3.1](https://github.com/pact-foundation/pact-node/compare/v10.3.0...v10.3.1) (2020-02-17)
+
+
+### Bug Fixes
+
+* missing api_key issue in travis https://travis-ci.community/t/missing-api-key-when-deploying-to-github-releases/5761/13 ([8f503b8](https://github.com/pact-foundation/pact-node/commit/8f503b8))
+
+
+
 # [10.3.0](https://github.com/pact-foundation/pact-node/compare/v10.2.4...v10.3.0) (2020-02-14)
 
 
