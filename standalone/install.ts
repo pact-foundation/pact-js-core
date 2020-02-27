@@ -228,7 +228,7 @@ function download(data: Data): Promise<Data> {
 							aip: true, // Anonymise IP address
 						},
 					})
-					.on('error', () => {}); // Ignore all errors
+					.on('error', () => { /* Ignore all errors */ });
 			}
 
 			// Get archive of release
