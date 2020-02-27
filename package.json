@@ -57,7 +57,6 @@
     "chalk": "2.3.1",
     "check-types": "7.3.0",
     "cross-spawn": "^7.0.1",
-    "decompress": "4.2.0",
     "mkdirp": "0.5.1",
     "q": "1.5.1",
     "request": "2.87.0",
