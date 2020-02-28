@@ -1,5 +1,7 @@
 import * as http from 'http';
 import * as Request from 'request';
+import unzipper = require('unzipper');
+import tar = require('tar');
 import pactEnvironment from '../src/pact-environment';
 // we have to u se ES6 imports as it's providing correct types for chalk.
 import chalk from 'chalk';
@@ -7,7 +9,6 @@ import chalk from 'chalk';
 import path = require('path');
 import fs = require('fs');
 import urljoin = require('url-join');
-import tar = require('tar');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const sumchecker = require('sumchecker');
 
@@ -228,7 +229,9 @@ function download(data: Data): Promise<Data> {
 							aip: true, // Anonymise IP address
 						},
 					})
-					.on('error', () => { /* Ignore all errors */ });
+					.on('error', () => {
+						/* Ignore all errors */
+					});
 			}
 
 			// Get archive of release
@@ -300,17 +303,25 @@ function extract(data: Data): Promise<void> {
 			)
 			// Extract files into their platform folder
 			.then(() =>
-				tar.x({
-					file: data.filepath,
-					strip: 1,
-					cwd: data.platformFolderPath,
-					preserveOwner: false,
-				}),
+				data.isWindows
+					? fs
+							.createReadStream(data.filepath)
+							.pipe(unzipper.Extract({
+								path: data.platformFolderPath,
+							}))
+							.on('entry', entry => entry.autodrain())
+							.promise()
+					: tar.x({
+							file: data.filepath,
+							cwd: data.platformFolderPath,
+							preserveOwner: false,
+					  }),
 			)
 			.then(() => {
 				// Remove pact-publish as it's getting deprecated
 				const publishPath = path.resolve(
 					data.platformFolderPath as string,
+					'pact',
 					'bin',
 					`pact-publish${pactEnvironment.isWindows() ? '.bat' : ''}`,
 				);

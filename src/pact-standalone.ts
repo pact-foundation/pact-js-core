@@ -35,6 +35,7 @@ export const standalone = (
   const basePath = path.join(
     'standalone',
     getBinaryEntry(platform, arch).folderName,
+    'pact',
     'bin',
   );
 
