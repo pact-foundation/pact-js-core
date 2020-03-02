@@ -43,10 +43,10 @@ export abstract class AbstractService extends events.EventEmitter {
   protected __cliVerb?: CliVerbOptions;
   protected __serviceCommand: string;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   protected constructor(
     command: string,
     options: ServiceOptions,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     argMapping: any,
     cliVerb?: CliVerbOptions,
   ) {

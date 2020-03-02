@@ -42,7 +42,7 @@ const convertValue = (
       ? _.flatten(
           (v as Array<string>).map((val: string) => mapFor(mapping, val)),
         )
-      : mapFor(mapping, <string>v);
+      : mapFor(mapping, v as string);
   }
   return [];
 };
