@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [10.5.0](https://github.com/pact-foundation/pact-node/compare/v10.4.0...v10.5.0) (2020-03-02)
+
+
+### Bug Fixes
+
+* lint errors ([3786e13](https://github.com/pact-foundation/pact-node/commit/3786e1301424efd8abf67480dfe6bca7605c3f20))
+* remove decompress dependency as it is highly vulnerable. Fixes [#208](https://github.com/pact-foundation/pact-node/issues/208) ([6956544](https://github.com/pact-foundation/pact-node/commit/69565441d5eebabba4db205b608b850f50646636))
+* remove extracted binary folders on clean to avoid false positives ([7e8f76b](https://github.com/pact-foundation/pact-node/commit/7e8f76b59b8b375075971db95b7f48486d54d02e))
+* use unzipper for .zip files, tar for tar.gz ([f6d8da0](https://github.com/pact-foundation/pact-node/commit/f6d8da07966a8d262aef5e6f21abafbb1a201e96))
+
+
+### Features
+
+* **upgrade:** update standalone to 1.81.0 ([21a1564](https://github.com/pact-foundation/pact-node/commit/21a1564110726bd9bdf17b734e18eb1fb08223b4))
+
+
+
 # [10.4.0](https://github.com/pact-foundation/pact-node/compare/v10.3.1...v10.4.0) (2020-02-18)
 
 
