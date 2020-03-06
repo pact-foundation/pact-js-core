@@ -4,7 +4,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as chai from 'chai';
-import { BinaryEntry, Config, useStrictSSL } from './install';
+import { BinaryEntry, Config } from './install';
 
 const expect = chai.expect;
 
@@ -18,27 +18,6 @@ describe('Install', () => {
       delete require.cache[key];
     }
   });
-
-  describe('#useStrictSSL', () => {
-    afterEach(() => {
-      delete process.env['npm_config_strict-ssl']
-    })
-    describe('when "strict-ssl" is specified in an NPM configuration', () => {
-      it('returns a true', () => {
-        process.env['npm_config_strict-ssl'] = "true"
-        expect(useStrictSSL()).to.be.true
-      })
-      it('returns a false', () => {
-        process.env['npm_config_strict-ssl'] = "false"
-        expect(useStrictSSL()).to.be.false
-      })
-    })
-    describe('when "strict-ssl" is not specified in any NPM configuration', () => {
-      it('returns true', () => {
-        expect(useStrictSSL()).to.be.true
-      })
-    })
-  })
 
   function createConfig(): Config {
     return require('./install').createConfig();

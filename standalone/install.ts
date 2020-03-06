@@ -144,11 +144,6 @@ const CIs = [
 	'WERCKER_ROOT',
 ];
 
-export function useStrictSSL(): boolean {
-	const prop = config.read()['strict-ssl']
-	return prop === "true" || prop === undefined || prop === ""
-}
-
 function downloadFileRetry(
 	url: string,
 	filepath: string,
@@ -164,7 +159,8 @@ function downloadFileRetry(
 				headers: {
 					'User-Agent': 'https://github.com/pact-foundation/pact-node',
 				},
-				strictSSL: useStrictSSL()
+				strictSSL: config.read()['strict-ssl'],
+				ca: config.read()['cafile'],
 			})
 				.on('error', (e: string) => reject(e))
 				.on(
