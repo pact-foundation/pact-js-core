@@ -58,7 +58,7 @@
     "check-types": "7.3.0",
     "cross-spawn": "^7.0.1",
     "libnpmconfig": "^1.2.1",
-    "mkdirp": "0.5.1",
+    "mkdirp": "1.0.0",
     "q": "1.5.1",
     "request": "2.87.0",
     "rimraf": "2.6.2",
