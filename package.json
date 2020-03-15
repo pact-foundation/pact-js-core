@@ -103,7 +103,6 @@
     "mocha-unfunk-reporter": "0.4.0",
     "nodemon": "^1.18.10",
     "prettier": "^1.18.2",
-    "rewire": "^4.0.1",
     "sinon": "4.4.2",
     "snyk": "^1.230.5",
     "standard-version": "^5.0.1",
