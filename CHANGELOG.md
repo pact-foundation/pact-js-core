@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [10.6.0](https://github.com/pact-foundation/pact-node/compare/v10.5.0...v10.6.0) (2020-03-15)
+
+
+### Bug Fixes
+
+* remove tests, point directly to npm config settings for ca and StrictSSL ([ae36609](https://github.com/pact-foundation/pact-node/commit/ae366098c268339cebf91bc562a611360f0a68b1))
+* set strictSSL on custom downloads from NPM config. Fixes [#211](https://github.com/pact-foundation/pact-node/issues/211) ([d264f0b](https://github.com/pact-foundation/pact-node/commit/d264f0b800209a171b320039e7fa3c2dd621606e))
+
+
+### Features
+
+* **upgrade:** update standalone to 1.82.0 ([92c3af3](https://github.com/pact-foundation/pact-node/commit/92c3af3bb158544ee921a8d0737197c0dd607ba6))
+
+
+
 # [10.5.0](https://github.com/pact-foundation/pact-node/compare/v10.4.0...v10.5.0) (2020-03-02)
 
 
