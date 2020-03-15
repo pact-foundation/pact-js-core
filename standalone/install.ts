@@ -3,12 +3,14 @@ import * as Request from 'request';
 import unzipper = require('unzipper');
 import tar = require('tar');
 import pactEnvironment from '../src/pact-environment';
-// we have to u se ES6 imports as it's providing correct types for chalk.
+// we have to use ES6 imports as it's providing correct types for chalk.
 import chalk from 'chalk';
-
 import path = require('path');
 import fs = require('fs');
 import urljoin = require('url-join');
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const config = require('libnpmconfig')
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const sumchecker = require('sumchecker');
 
@@ -157,6 +159,8 @@ function downloadFileRetry(
 				headers: {
 					'User-Agent': 'https://github.com/pact-foundation/pact-node',
 				},
+				strictSSL: config.read()['strict-ssl'],
+				ca: config.read()['cafile'],
 			})
 				.on('error', (e: string) => reject(e))
 				.on(
