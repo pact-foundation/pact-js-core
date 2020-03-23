@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.7.1](https://github.com/pact-foundation/pact-node/compare/v10.7.0...v10.7.1) (2020-03-23)
+
+
+### Bug Fixes
+
+* **standalone:** Bump version of pact-standalone to 1.82.1 (improved json diff, basic auth config improvements) ([bde0287](https://github.com/pact-foundation/pact-node/commit/bde02875b4fed127b3266917b1d38c51b2173255))
+
+
+
 # [10.7.0](https://github.com/pact-foundation/pact-node/compare/v10.6.0...v10.7.0) (2020-03-23)
 
 
