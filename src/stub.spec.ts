@@ -85,7 +85,7 @@ describe('Stub Spec', () => {
       it('should start correctly when instance is delayed', () => {
         stub = stubFactory(validDefaults);
 
-        const waitForStubUp = (stub)['__waitForServiceUp'].bind(stub);
+        const waitForStubUp = stub['__waitForServiceUp'].bind(stub);
         return q
           .allSettled([
             waitForStubUp(stub.options),
@@ -179,9 +179,7 @@ describe('Stub Spec', () => {
 
     it('should change running state to true', () => {
       stub = stubFactory(validDefaults);
-      return stub
-        .start()
-        .then(() => expect((stub)['__running']).to.be.true);
+      return stub.start().then(() => expect(stub['__running']).to.be.true);
     });
   });
 
@@ -203,7 +201,7 @@ describe('Stub Spec', () => {
         return stub
           .start()
           .then(() => stub.stop())
-          .then(() => expect((stub)['__running']).to.be.false);
+          .then(() => expect(stub['__running']).to.be.false);
       });
     });
   });
@@ -226,7 +224,7 @@ describe('Stub Spec', () => {
         return stub
           .start()
           .then(() => stub.delete())
-          .then(() => expect((stub)['__running']).to.be.false);
+          .then(() => expect(stub['__running']).to.be.false);
       });
     });
   });

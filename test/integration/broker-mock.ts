@@ -13,7 +13,10 @@ export default (port: number): q.Promise<http.Server> => {
   server.use(bodyParser.json());
   server.use(bodyParser.urlencoded({ extended: true }));
 
-  function pactFunction(req: express.Request, res: express.Response): express.Response {
+  function pactFunction(
+    req: express.Request,
+    res: express.Response,
+  ): express.Response {
     if (
       _.isEmpty(req.body) ||
       // 2. Is there a consumer, provider and version in the request?
@@ -105,7 +108,10 @@ export default (port: number): q.Promise<http.Server> => {
     });
   }
 
-  function tagPactFunction(req: express.Request, res: express.Response): express.Response {
+  function tagPactFunction(
+    req: express.Request,
+    res: express.Response,
+  ): express.Response {
     if (
       _.isEmpty(req.params.consumer) ||
       _.isEmpty(req.params.version) ||

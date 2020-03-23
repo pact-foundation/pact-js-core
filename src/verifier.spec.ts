@@ -326,9 +326,9 @@ describe('Verifier Spec', () => {
           verifierFactory({
             providerBaseUrl: 'http://localhost',
             pactUrls: ['http://idontexist'],
-            pactBrokerToken: "1234",
-            pactBrokerUsername: "username",
-            pactBrokerPassword: "5678",
+            pactBrokerToken: '1234',
+            pactBrokerUsername: 'username',
+            pactBrokerPassword: '5678',
           }),
         ).to.throw(Error);
       });
@@ -337,10 +337,10 @@ describe('Verifier Spec', () => {
       const v = verifierFactory({
         providerBaseUrl: 'http://localhost',
         pactUrls: ['http://idontexist'],
-        pactBrokerToken: "1234",
-      })
+        pactBrokerToken: '1234',
+      });
 
-      expect(v.options.pactBrokerToken).to.eq("1234");
+      expect(v.options.pactBrokerToken).to.eq('1234');
     });
   });
 });

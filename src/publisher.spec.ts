@@ -107,27 +107,26 @@ describe('Publish Spec', () => {
   });
 
   context('when a bearer token is provided', () => {
-    context("and specifies a username or password", () => {
+    context('and specifies a username or password', () => {
       it('should fail with an error', () => {
         expect(() =>
           publisherFactory({
             pactBroker: 'http://localhost',
             pactFilesOrDirs: [relativePath],
             consumerVersion: '1.0.0',
-            pactBrokerToken: "1234",
-            pactBrokerUsername: "username",
-            pactBrokerPassword: "5678",
-          })
-        ).to.throw(Error)
+            pactBrokerToken: '1234',
+            pactBrokerUsername: 'username',
+            pactBrokerPassword: '5678',
+          }),
+        ).to.throw(Error);
       });
-
     });
     it('should not fail', () => {
       const p = publisherFactory({
         pactBroker: 'http://localhost',
         pactFilesOrDirs: [pactFile],
         consumerVersion: '1.0.0',
-        pactBrokerToken: "1234"
+        pactBrokerToken: '1234',
       });
       expect(p).to.be.ok;
       expect(p.publish).to.be.a('function');

@@ -117,9 +117,7 @@ describe('Server Spec', () => {
       it('should start correctly when instance is delayed', () => {
         server = serverFactory();
 
-        const waitForServerUp = (server)['__waitForServiceUp'].bind(
-          server,
-        );
+        const waitForServerUp = server['__waitForServiceUp'].bind(server);
         return q
           .allSettled([
             waitForServerUp(server.options),
@@ -344,9 +342,7 @@ describe('Server Spec', () => {
 
     it('should change running state to true', () => {
       server = serverFactory();
-      return server
-        .start()
-        .then(() => expect((server)['__running']).to.be.true);
+      return server.start().then(() => expect(server['__running']).to.be.true);
     });
   });
 
@@ -368,7 +364,7 @@ describe('Server Spec', () => {
         return server
           .start()
           .then(() => server.stop())
-          .then(() => expect((server)['__running']).to.be.false);
+          .then(() => expect(server['__running']).to.be.false);
       });
     });
   });
@@ -391,7 +387,7 @@ describe('Server Spec', () => {
         return server
           .start()
           .then(() => server.delete())
-          .then(() => expect((server)['__running']).to.be.false);
+          .then(() => expect(server['__running']).to.be.false);
       });
     });
   });

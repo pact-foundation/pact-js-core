@@ -1,7 +1,9 @@
 import express = require('express');
 import basicAuth = require('basic-auth');
 
-export function returnJson<T>(json: T): (req: express.Request, res: express.Response) => express.Response {
+export function returnJson<T>(
+  json: T,
+): (req: express.Request, res: express.Response) => express.Response {
   return (req, res): express.Response => res.json(json);
 }
 
