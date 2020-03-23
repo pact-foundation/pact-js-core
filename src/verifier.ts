@@ -35,6 +35,7 @@ export class Verifier {
     providerVersion: '--provider-app-version',
     provider: '--provider',
     customProviderHeaders: '--custom-provider-header',
+    verbose: '--verbose',
     monkeypatch: '--monkeypatch',
     format: '--format',
     out: '--out',
@@ -234,6 +235,7 @@ export interface VerifierOptions {
   providerVersion?: string;
   timeout?: number;
   tags?: string[];
+  verbose?: boolean;
   monkeypatch?: string;
   format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
   out?: string;
