@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [10.7.0](https://github.com/pact-foundation/pact-node/compare/v10.6.0...v10.7.0) (2020-03-23)
+
+
+### Bug Fixes
+
+* **deps:** Update vulnerable dependencies ([3c20366](https://github.com/pact-foundation/pact-node/commit/3c203660e157deb0380535fec870de1500a2da0c))
+
+
+### Features
+
+* **verifier:** Add verbose option to improve debugging during verification ([3f0a5a3](https://github.com/pact-foundation/pact-node/commit/3f0a5a344b0886423d7995605134430f61b52ae4))
+
+
+
 # [10.6.0](https://github.com/pact-foundation/pact-node/compare/v10.5.0...v10.6.0) (2020-03-15)
 
 
