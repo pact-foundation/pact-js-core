@@ -280,7 +280,7 @@ pact.verifyPacts({
 | `providerVersion`           | false     | string  | Provider version, required to publish verification result to Broker. Optional otherwise.                   |
 | `timeout`                   | false     | number  | The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.       |
 | `format`                    | false     | string  | What format the verification results are printed in. Options are `json`, `xml`, `progress` and `RspecJunitFormatter` (which is a synonym for `xml`) |
-| `verbose`            | false     | boolean        | Set logging mode to verbose. |
+| `verbose`            | false     | boolean        | Enables verbose output for underlying pact binary. |
 
 ### Pact Broker Publishing
 
@@ -306,7 +306,7 @@ pact.publishPacts(opts).then(function () {
 | `pactBrokerPassword` | false     | string | Password for Pact Broker basic authentication. Optional             |
 | `pactBrokerToken`    | false     | string | Bearer token for Pact Broker authentication. Optional               |
 | `tags`               | false     | array  | An array of Strings to tag the Pacts being published. Optional      |
-| `verbose`           |  false  | boolean | Set logging mode to verbose. |
+| `verbose`           |  false  | boolean | Enables verbose output for underlying pact binary. |
 
 ### Pact Broker Deployment Check
 
@@ -344,7 +344,7 @@ pact.canDeploy(opts)
 | `pactBrokerPassword` | false     | string      | Password for Pact Broker basic authentication. Optional                             |
 | `pactBrokerToken`    | false     | string      | Bearer token for Pact Broker authentication. Optional                               |
 | `output`             | false     | json,table  | Specify output to show, json or table. Optional, Defaults to json.                  |
-| `verbose`            | false     | flag        | Set logging mode to verbose. Optional                                               |
+| `verbose`            | false     | boolean | Enables verbose output for underlying pact binary.                                          |
 | `retryWhileUnknown`  | false     | number      | The number of times to retry while there is an unknown verification result. Optional|
 | `retryInterval`      | false     | number      | The time between retries in seconds, use with retryWhileUnknown. Optional           |
 | `to`                 | false     | string      | The tag that you want to deploy to (eg, 'prod')                                     |
