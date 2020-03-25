@@ -28,11 +28,10 @@ export const DEFAULT_ARG = 'DEFAULT';
 export const PACT_NODE_NO_VALUE = 'PACT_NODE_NO_VALUE';
 
 const valFor = (v: SpawnArgument): Array<string> => {
-	if (typeof v === 'string') {
-		return v !== PACT_NODE_NO_VALUE ? [v] : [];
-	} else {
+	if (typeof v === 'object') {
 		return [JSON.stringify(v)];
 	}
+	return v !== PACT_NODE_NO_VALUE ? [`${v}`] : [];
 };
 
 const mapFor = (mapping: string, v: string): Array<string> =>

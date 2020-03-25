@@ -279,6 +279,7 @@ pact.verifyPacts({
 | `publishVerificationResult` | false     | boolean | Publish verification result to Broker (_NOTE_: you should only enable this during CI builds)               |
 | `customProviderHeaders`     | false     | array   | Header(s) to add to provider state set up and pact verification                                            |  | `requests`. eg 'Authorization: Basic cGFjdDpwYWN0'. |
 | `providerVersion`           | false     | string  | Provider version, required to publish verification result to Broker. Optional otherwise.                   |
+| `enablePending`                   | false     | boolean  | Enable the [pending pacts](https://docs.pact.io/pact_broker/advanced_topics/pending_pacts) feature.       |
 | `timeout`                   | false     | number  | The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.       |
 | `format`                    | false     | string  | What format the verification results are printed in. Options are `json`, `xml`, `progress` and `RspecJunitFormatter` (which is a synonym for `xml`) |
 | `verbose`            | false     | boolean        | Enables verbose output for underlying pact binary. |
