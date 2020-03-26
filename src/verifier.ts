@@ -31,9 +31,11 @@ export class Verifier {
 		pactBrokerToken: '--broker-token',
 		consumerVersionTag: '--consumer-version-tag',
 		providerVersionTag: '--provider-version-tag',
+		consumerVersionSelector: '--consumer-version-selector',
 		publishVerificationResult: '--publish-verification-results',
 		providerVersion: '--provider-app-version',
 		provider: '--provider',
+		enablePending: '--enable-pending',
 		customProviderHeaders: '--custom-provider-header',
 		verbose: '--verbose',
 		monkeypatch: '--monkeypatch',
@@ -50,6 +52,7 @@ export class Verifier {
 		options.timeout = options.timeout || 30000;
 		options.consumerVersionTag = options.consumerVersionTag || [];
 		options.providerVersionTag = options.providerVersionTag || [];
+		options.consumerVersionSelector = options.consumerVersionSelector || [];
 
 		if (
 			options.consumerVersionTag &&
@@ -169,6 +172,10 @@ export class Verifier {
 			checkTypes.assert.string(options.out);
 		}
 
+		if (options.enablePending !== undefined) {
+			checkTypes.assert.boolean(options.enablePending);
+		}
+
 		if (options.tags) {
 			logger.warn(
 				"'tags' has been deprecated as at v8.0.0, please use 'consumerVersionTag' instead",
@@ -219,6 +226,18 @@ export class Verifier {
 // Creates a new instance of the pact server with the specified option
 export default (options: VerifierOptions): Verifier => new Verifier(options);
 
+// A ConsumerVersionSelector is a way we specify which pacticipants and
+// versions we want to use when configuring verifications.
+//
+// See https://docs.pact.io/selectors for more
+export interface ConsumerVersionSelector {
+	pacticipant?: string;
+	tag?: string;
+	version?: string;
+	latest?: boolean;
+	all?: boolean;
+}
+
 export interface VerifierOptions {
 	providerBaseUrl: string;
 	provider?: string;
@@ -230,9 +249,11 @@ export interface VerifierOptions {
 	pactBrokerToken?: string;
 	consumerVersionTag?: string | string[];
 	providerVersionTag?: string | string[];
+	consumerVersionSelector?: ConsumerVersionSelector[];
 	customProviderHeaders?: string[];
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
+	enablePending?: boolean;
 	timeout?: number;
 	tags?: string[];
 	verbose?: boolean;

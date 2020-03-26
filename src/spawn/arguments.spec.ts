@@ -36,6 +36,31 @@ describe('Pact Util Spec', () => {
 				expect(result).to.include('--pact-urls');
 				expect(result).to.include('http://idontexist');
 			});
+			describe("and the argument's value is also an object", () => {
+				it('should serialise the argument value to a JSON string', () => {
+					const result = argsHelper.toArgumentsArray(
+						{
+							consumerVersionSelectors: [
+								{
+									all: true,
+									tag: 'prod',
+								},
+								{
+									tag: 'bar',
+								},
+							],
+						},
+						{ consumerVersionSelectors: '--consumer-version-selector' },
+					);
+
+					expect(result)
+						.to.be.an('array')
+						.that.includes('--consumer-version-selector')
+						.and.includes('{"all":true,"tag":"prod"}')
+						.and.includes('{"tag":"bar"}');
+					expect(result.length).to.be.equal(4);
+				});
+			});
 		});
 		describe('when called with an array', () => {
 			describe('with one element', () => {
@@ -94,6 +119,37 @@ describe('Pact Util Spec', () => {
 						'--version',
 						'v2',
 					]);
+				});
+			});
+			describe("and an argument's value is an object", () => {
+				it('should serialise the argument value to a JSON string', () => {
+					const result = argsHelper.toArgumentsArray(
+						[
+							{
+								consumerVersionSelectors: [
+									{
+										all: true,
+										tag: 'prod',
+									},
+								],
+							},
+							{
+								consumerVersionSelectors: [
+									{
+										tag: 'foo',
+									},
+								],
+							},
+						],
+						{ consumerVersionSelectors: '--consumer-version-selector' },
+					);
+
+					expect(result)
+						.to.be.an('array')
+						.that.includes('--consumer-version-selector')
+						.and.includes('{"all":true,"tag":"prod"}')
+						.and.includes('{"tag":"foo"}');
+					expect(result.length).to.be.equal(4);
 				});
 			});
 		});
