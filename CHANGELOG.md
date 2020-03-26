@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [10.8.0](https://github.com/pact-foundation/pact-node/compare/v10.7.1...v10.8.0) (2020-03-26)
+
+
+### Features
+
+* add consumer version selectors and pending pacts to verification ([59ab437](https://github.com/pact-foundation/pact-node/commit/59ab437b1155b26b6e25744a9defd507fd80fc70))
+
+
+
 ## [10.7.1](https://github.com/pact-foundation/pact-node/compare/v10.7.0...v10.7.1) (2020-03-23)
 
 
