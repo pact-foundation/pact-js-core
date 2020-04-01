@@ -338,7 +338,7 @@ pact.canDeploy(opts)
 
 | Parameter            | Required? | Type        | Description                                                                         |
 | -------------------- | --------- | ----------- | ----------------------------------------------------------------------------------- |
-| `pacticipants`       | true      | string	     | An array of { name: String, latest? string | boolean, version? string } objects. To |
+| `pacticipants`       | true      | []objects	     | An array of version [selectors](docs.pact.io/selectors) in the form `{ name: String, latest?: string | boolean, version?: string }` |
 |                      |           |             | specify a tag, use the tagname with latest. Specify one of these per pacticipant    |
 |                      |           |             | that you want to deploy                                                             |
 | `pactBroker`         | true      | string      | URL of the Pact Broker to query about deployment. Required.                         |
