@@ -1,7 +1,10 @@
 import path = require('path');
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import verifierFactory, { VerifierOptions } from './verifier';
+import verifierFactory, {
+	VerifierOptions,
+	DeprecatedVerifierOptions,
+} from './verifier';
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -57,7 +60,7 @@ describe('Verifier Spec', () => {
 			expect(() =>
 				verifierFactory({
 					providerStatesSetupUrl: 'http://foo/provider-states/setup',
-				} as VerifierOptions),
+				} as VerifierOptions & DeprecatedVerifierOptions),
 			).to.throw(Error);
 		});
 	});
@@ -249,7 +252,7 @@ describe('Verifier Spec', () => {
 		});
 	});
 
-	context('when consumerVersionTag is not provided', () => {
+	context('when consumerVersionTags is not provided', () => {
 		it('should not fail', () => {
 			expect(() =>
 				verifierFactory({
@@ -260,6 +263,17 @@ describe('Verifier Spec', () => {
 		});
 	});
 
+	context('when consumerVersionTags is provided as a string', () => {
+		it('should convert the argument to an array', () => {
+			const v = verifierFactory({
+				providerBaseUrl: 'http://localhost',
+				pactUrls: [path.dirname(currentDir)],
+				consumerVersionTags: 'tag-1',
+			});
+
+			expect(v.options.consumerVersionTags).to.deep.eq(['tag-1']);
+		});
+	});
 	context('when consumerVersionTag is provided as a string', () => {
 		it('should convert the argument to an array', () => {
 			const v = verifierFactory({
@@ -272,19 +286,35 @@ describe('Verifier Spec', () => {
 		});
 	});
 
-	context('when consumerVersionTag is provided as an array', () => {
+	context('when consumerVersionTags is provided as an array', () => {
 		it('should not fail', () => {
 			expect(() =>
 				verifierFactory({
 					providerBaseUrl: 'http://localhost',
 					pactUrls: [path.dirname(currentDir)],
-					consumerVersionTag: ['tag-1'],
+					consumerVersionTags: ['tag-1'],
 				}),
 			).to.not.throw(Error);
 		});
 	});
 
-	context('when providerVersionTag is not provided', () => {
+	context(
+		'when consumerVersionTags and consumerVersionTag are provided',
+		() => {
+			it('should fail', () => {
+				expect(() => {
+					verifierFactory({
+						providerBaseUrl: 'http://localhost',
+						pactUrls: [path.dirname(currentDir)],
+						consumerVersionTags: ['tag-1'],
+						consumerVersionTag: ['tag-1'],
+					});
+				}).to.throw(Error);
+			});
+		},
+	);
+
+	context('when providerVersionTags is not provided', () => {
 		it('should not fail', () => {
 			expect(() =>
 				verifierFactory({
@@ -292,6 +322,18 @@ describe('Verifier Spec', () => {
 					pactUrls: [path.dirname(currentDir)],
 				}),
 			).to.not.throw(Error);
+		});
+	});
+
+	context('when providerVersionTags is provided as a string', () => {
+		it('should convert the argument to an array', () => {
+			const v = verifierFactory({
+				providerBaseUrl: 'http://localhost',
+				pactUrls: [path.dirname(currentDir)],
+				providerVersionTags: 'tag-1',
+			});
+
+			expect(v.options.providerVersionTags).to.deep.eq(['tag-1']);
 		});
 	});
 
@@ -307,17 +349,33 @@ describe('Verifier Spec', () => {
 		});
 	});
 
-	context('when providerVersionTag is provided as an array', () => {
+	context('when providerVersionTags is provided as an array', () => {
 		it('should not fail', () => {
 			expect(() =>
 				verifierFactory({
 					providerBaseUrl: 'http://localhost',
 					pactUrls: [path.dirname(currentDir)],
-					providerVersionTag: ['tag-1'],
+					providerVersionTags: ['tag-1'],
 				}),
 			).to.not.throw(Error);
 		});
 	});
+
+	context(
+		'when providerVersionTags and providerVersionTag are provided',
+		() => {
+			it('should fail', () => {
+				expect(() => {
+					verifierFactory({
+						providerBaseUrl: 'http://localhost',
+						pactUrls: [path.dirname(currentDir)],
+						providerVersionTags: ['tag-1'],
+						providerVersionTag: ['tag-1'],
+					});
+				}).to.throw(Error);
+			});
+		},
+	);
 
 	context('when using a bearer token', () => {
 		context('and specifies a username or password', () => {

@@ -269,8 +269,8 @@ pact.verifyPacts({
 | `pactBrokerUrl`         | false     | string  | Base URL of the Pact Broker from which to retrieve the pacts. Required if `pactUrls` not given.                                                                        |
 | `provider`                  | false     | string  | Name of the provider if fetching from a Broker                                                             |
 | `consumerVersionSelectors`        | false     | ConsumerVersionSelector\|array  | Use [Selectors](https://docs.pact.io/selectors) to is a way we specify which pacticipants and versions we want to use when configuring verifications.                                                         |
-| `consumerVersionTag`        | false     | string\|array  | Retrieve the latest pacts with given tag(s)                                                        |
-| `providerVersionTag`        | false     | string\|array  |  Tag(s) to apply to the provider application |
+| `consumerVersionTags`        | false     | string\|array  | Retrieve the latest pacts with given tag(s)                                                        |
+| `providerVersionTags`        | false     | string\|array  |  Tag(s) to apply to the provider application |
 | `pactUrls`                  | false     | array   | Array of local pact file paths or HTTP-based URLs. Required if _not_ using a Pact Broker.                  |
 | `providerStatesSetupUrl`    | false     | string  | URL to send PUT requests to setup a given provider state                                                   |
 | `pactBrokerUsername`        | false     | string  | Username for Pact Broker basic authentication                                                              |

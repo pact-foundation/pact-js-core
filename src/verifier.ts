@@ -20,7 +20,7 @@ export class Verifier {
 		'Create function will be removed in future release, please use the default export function or use `new Verifier()`',
 	);
 
-	public readonly options: VerifierOptions;
+	public readonly options: VerifierOptions & DeprecatedVerifierOptions;
 	private readonly __argMapping = {
 		pactUrls: DEFAULT_ARG,
 		providerBaseUrl: '--provider-base-url',
@@ -31,6 +31,8 @@ export class Verifier {
 		pactBrokerToken: '--broker-token',
 		consumerVersionTag: '--consumer-version-tag',
 		providerVersionTag: '--provider-version-tag',
+		consumerVersionTags: '--consumer-version-tag',
+		providerVersionTags: '--provider-version-tag',
 		consumerVersionSelector: '--consumer-version-selector',
 		publishVerificationResult: '--publish-verification-results',
 		providerVersion: '--provider-app-version',
@@ -43,7 +45,7 @@ export class Verifier {
 		out: '--out',
 	};
 
-	constructor(options: VerifierOptions) {
+	constructor(options: VerifierOptions & DeprecatedVerifierOptions) {
 		options = options || {};
 		options.pactBrokerUrl = options.pactBrokerUrl || '';
 		options.pactUrls = options.pactUrls || [];
@@ -52,7 +54,43 @@ export class Verifier {
 		options.timeout = options.timeout || 30000;
 		options.consumerVersionTag = options.consumerVersionTag || [];
 		options.providerVersionTag = options.providerVersionTag || [];
+		options.consumerVersionTags = options.consumerVersionTags || [];
+		options.providerVersionTags = options.providerVersionTags || [];
 		options.consumerVersionSelector = options.consumerVersionSelector || [];
+
+		if (
+			!_.isEmpty(options.consumerVersionTag) &&
+			!_.isEmpty(options.consumerVersionTags)
+		) {
+			throw new Error(
+				"Must not use both 'consumerVersionTags' and 'consumerVersionTag'. Please use 'consumerVersionTags' instead",
+			);
+		}
+
+		if (
+			!_.isEmpty(options.providerVersionTag) &&
+			!_.isEmpty(options.providerVersionTags)
+		) {
+			throw new Error(
+				"Must not use both 'providerVersionTags' and 'providerVersionTag'. Please use 'providerVersionTags' instead",
+			);
+		}
+
+		if (
+			options.consumerVersionTags &&
+			checkTypes.string(options.consumerVersionTags)
+		) {
+			options.consumerVersionTags = [options.consumerVersionTags as string];
+		}
+		checkTypes.assert.array.of.string(options.consumerVersionTags);
+
+		if (
+			options.providerVersionTags &&
+			checkTypes.string(options.providerVersionTags)
+		) {
+			options.providerVersionTags = [options.providerVersionTags as string];
+		}
+		checkTypes.assert.array.of.string(options.providerVersionTags);
 
 		if (
 			options.consumerVersionTag &&
@@ -69,6 +107,15 @@ export class Verifier {
 			options.providerVersionTag = [options.providerVersionTag as string];
 		}
 		checkTypes.assert.array.of.string(options.providerVersionTag);
+
+		if (
+			!_.isEmpty(options.consumerVersionTag) ||
+			!_.isEmpty(options.providerVersionTag)
+		) {
+			logger.warn(
+				"'consumerVersionTag' and 'providerVersionTag' have been deprecated, please use 'consumerVersionTags' or 'providerVersionTags' instead",
+			);
+		}
 
 		options.pactUrls = _.chain(options.pactUrls)
 			.map((uri: string) => {
@@ -178,7 +225,7 @@ export class Verifier {
 
 		if (options.tags) {
 			logger.warn(
-				"'tags' has been deprecated as at v8.0.0, please use 'consumerVersionTag' instead",
+				"'tags' has been deprecated as at v8.0.0, please use 'consumerVersionTags' instead",
 			);
 		}
 
@@ -224,7 +271,9 @@ export class Verifier {
 }
 
 // Creates a new instance of the pact server with the specified option
-export default (options: VerifierOptions): Verifier => new Verifier(options);
+export default (
+	options: VerifierOptions & DeprecatedVerifierOptions,
+): Verifier => new Verifier(options);
 
 // A ConsumerVersionSelector is a way we specify which pacticipants and
 // versions we want to use when configuring verifications.
@@ -243,21 +292,26 @@ export interface VerifierOptions {
 	provider?: string;
 	pactUrls?: string[];
 	pactBrokerUrl?: string;
-	providerStatesSetupUrl?: string;
 	pactBrokerUsername?: string;
 	pactBrokerPassword?: string;
 	pactBrokerToken?: string;
-	consumerVersionTag?: string | string[];
-	providerVersionTag?: string | string[];
+	consumerVersionTags?: string | string[];
+	providerVersionTags?: string | string[];
 	consumerVersionSelector?: ConsumerVersionSelector[];
 	customProviderHeaders?: string[];
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
 	enablePending?: boolean;
 	timeout?: number;
-	tags?: string[];
 	verbose?: boolean;
 	monkeypatch?: string;
 	format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
 	out?: string;
+}
+
+export interface DeprecatedVerifierOptions {
+	consumerVersionTag?: string | string[];
+	providerStatesSetupUrl?: string;
+	providerVersionTag?: string | string[];
+	tags?: string[];
 }
