@@ -156,7 +156,7 @@ function downloadFileRetry(
 			let time = Date.now();
 			let ca = config.read()['cafile'];
 			if (ca) {
-				ca = fs.readFileSync(config.read()['cafile']);
+				ca = fs.readFileSync(ca);
 			}
 			request({
 				url,
