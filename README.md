@@ -9,7 +9,7 @@
 
 # Pact Node
 
-An idiomatic Node wrapper for the [Pact](http://pact.io) [Pact CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
+An idiomatic Node wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
 
 ***NOTE*: If you are new to Pact and are wanting to get started with contract testing, you almost certainly don't want to use this package. Head over to [Pact JS](https://github.com/pact-foundation/pact-js/) instead.**
 
