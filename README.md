@@ -80,6 +80,14 @@ For those that are behind a corporate firewall or are seeing issues where our pa
 
 It will accept both a local path or an http(s) url. It must point to the directory containing the binary needed as the binary name is appended to the end of the location. For the example given above, Pact will look for the binary at `/home/some-user/Downloads/pact-1.44.0-win32.zip` for a Windows system. However, by using this method, you must use the correct Pact version binary associated with this version of Pact-Node. For extra security measurements, checksum validation has been added to prevent tampering with the binaries.
 
+If your environment uses self-signed certificates from an internal Certificate Authority (CA), you can configure this using the standard options in an [npmrc](https://docs.npmjs.com/configuring-npm/npmrc.html) file as per below:
+
+_~/.npmrc_:
+```
+cafile=/etc/ssl/certs/ca-certificates.crt
+strict-ssl=true
+```
+
 ## Which Library/Package should I use?
 
 TL;DR - you almost always want Pact JS.
