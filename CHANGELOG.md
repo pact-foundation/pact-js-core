@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.8.1](https://github.com/pact-foundation/pact-node/compare/v0.0.7...v10.8.1) (2020-04-08)
+
+
+### Bug Fixes
+
+* **standalone:** update standalone to 1.82.2 ([#220](https://github.com/pact-foundation/pact-node/issues/220)) ([ea85d0b](https://github.com/pact-foundation/pact-node/commit/ea85d0b96dc3f489cfc335ad0b7331e8de0494a2)), closes [pact-foundation/pact-ruby-standalone#49](https://github.com/pact-foundation/pact-ruby-standalone/issues/49)
+* correcting the cafile setup for postinstall download ([a07e882](https://github.com/pact-foundation/pact-node/commit/a07e8824d6b5113cbddb4f1767b29020801de407))
+
+
+
 # [10.8.0](https://github.com/pact-foundation/pact-node/compare/v10.7.1...v10.8.0) (2020-03-26)
 
 
