@@ -154,13 +154,17 @@ function downloadFileRetry(
 			let len = 0;
 			let downloaded = 0;
 			let time = Date.now();
+			let ca = config.read()['cafile'];
+			if (ca) {
+				ca = fs.readFileSync(ca);
+			}
 			request({
 				url,
 				headers: {
 					'User-Agent': 'https://github.com/pact-foundation/pact-node',
 				},
 				strictSSL: config.read()['strict-ssl'],
-				ca: config.read()['cafile'],
+				ca,
 			})
 				.on('error', (e: string) => reject(e))
 				.on(
