@@ -1,10 +1,7 @@
 import path = require('path');
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import verifierFactory, {
-	VerifierOptions,
-	DeprecatedVerifierOptions,
-} from './verifier';
+import verifierFactory, { VerifierOptions } from './verifier';
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -60,7 +57,7 @@ describe('Verifier Spec', () => {
 			expect(() =>
 				verifierFactory({
 					providerStatesSetupUrl: 'http://foo/provider-states/setup',
-				} as VerifierOptions & DeprecatedVerifierOptions),
+				} as VerifierOptions),
 			).to.throw(Error);
 		});
 	});

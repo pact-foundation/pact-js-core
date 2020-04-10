@@ -20,7 +20,7 @@ export class Verifier {
 		'Create function will be removed in future release, please use the default export function or use `new Verifier()`',
 	);
 
-	public readonly options: VerifierOptions & DeprecatedVerifierOptions;
+	public readonly options: VerifierOptions;
 	private readonly __argMapping = {
 		pactUrls: DEFAULT_ARG,
 		providerBaseUrl: '--provider-base-url',
@@ -46,7 +46,7 @@ export class Verifier {
 		out: '--out',
 	};
 
-	constructor(options: VerifierOptions & DeprecatedVerifierOptions) {
+	constructor(options: VerifierOptions) {
 		options = options || {};
 		options.pactBrokerUrl = options.pactBrokerUrl || '';
 		options.pactUrls = options.pactUrls || [];
@@ -276,9 +276,7 @@ export class Verifier {
 }
 
 // Creates a new instance of the pact server with the specified option
-export default (
-	options: VerifierOptions & DeprecatedVerifierOptions,
-): Verifier => new Verifier(options);
+export default (options: VerifierOptions): Verifier => new Verifier(options);
 
 // A ConsumerVersionSelector is a way we specify which pacticipants and
 // versions we want to use when configuring verifications.
@@ -292,7 +290,7 @@ export interface ConsumerVersionSelector {
 	all?: boolean;
 }
 
-export interface VerifierOptions {
+interface CurrentVerifierOptions {
 	providerBaseUrl: string;
 	provider?: string;
 	pactUrls?: string[];
@@ -315,9 +313,12 @@ export interface VerifierOptions {
 	out?: string;
 }
 
-export interface DeprecatedVerifierOptions {
+interface DeprecatedVerifierOptions {
 	consumerVersionTag?: string | string[];
 	providerStatesSetupUrl?: string;
 	providerVersionTag?: string | string[];
 	tags?: string[];
 }
+
+export type VerifierOptions = CurrentVerifierOptions &
+	DeprecatedVerifierOptions;
