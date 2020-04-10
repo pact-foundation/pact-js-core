@@ -9,7 +9,7 @@
 
 # Pact Node
 
-An idiomatic Node interface for the [Pact](http://pact.io) mock service (Consumer) and Verification (Provider) process, as well as the [Pact CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
+An idiomatic Node wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
 
 ***NOTE*: If you are new to Pact and are wanting to get started with contract testing, you almost certainly don't want to use this package. Head over to [Pact JS](https://github.com/pact-foundation/pact-js/) instead.**
 
@@ -79,6 +79,14 @@ For those that are behind a corporate firewall or are seeing issues where our pa
 ```
 
 It will accept both a local path or an http(s) url. It must point to the directory containing the binary needed as the binary name is appended to the end of the location. For the example given above, Pact will look for the binary at `/home/some-user/Downloads/pact-1.44.0-win32.zip` for a Windows system. However, by using this method, you must use the correct Pact version binary associated with this version of Pact-Node. For extra security measurements, checksum validation has been added to prevent tampering with the binaries.
+
+If your environment uses self-signed certificates from an internal Certificate Authority (CA), you can configure this using the standard options in an [npmrc](https://docs.npmjs.com/configuring-npm/npmrc.html) file as per below:
+
+_~/.npmrc_:
+```
+cafile=/etc/ssl/certs/ca-certificates.crt
+strict-ssl=true
+```
 
 ## Which Library/Package should I use?
 
@@ -271,6 +279,7 @@ pact.verifyPacts({
 | `consumerVersionSelectors`        | false     | ConsumerVersionSelector\|array  | Use [Selectors](https://docs.pact.io/selectors) to is a way we specify which pacticipants and versions we want to use when configuring verifications.                                                         |
 | `consumerVersionTags`        | false     | string\|array  | Retrieve the latest pacts with given tag(s)                                                        |
 | `providerVersionTags`        | false     | string\|array  |  Tag(s) to apply to the provider application |
+| `includeWipPactsSince`      | false     | string  | Includes pact marked as WIP since this date. String in the format %Y-%m-%d or %Y-%m-%dT%H:%M:%S.000%:z |
 | `pactUrls`                  | false     | array   | Array of local pact file paths or HTTP-based URLs. Required if _not_ using a Pact Broker.                  |
 | `providerStatesSetupUrl`    | false     | string  | URL to send PUT requests to setup a given provider state                                                   |
 | `pactBrokerUsername`        | false     | string  | Username for Pact Broker basic authentication                                                              |

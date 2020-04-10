@@ -40,6 +40,7 @@ export class Verifier {
 		enablePending: '--enable-pending',
 		customProviderHeaders: '--custom-provider-header',
 		verbose: '--verbose',
+		includeWipPactsSince: '--include-wip-pacts-since',
 		monkeypatch: '--monkeypatch',
 		format: '--format',
 		out: '--out',
@@ -115,6 +116,9 @@ export class Verifier {
 			logger.warn(
 				"'consumerVersionTag' and 'providerVersionTag' have been deprecated, please use 'consumerVersionTags' or 'providerVersionTags' instead",
 			);
+
+		if (options.includeWipPactsSince !== undefined) {
+			checkTypes.assert.nonEmptyString(options.includeWipPactsSince);
 		}
 
 		options.pactUrls = _.chain(options.pactUrls)
@@ -304,6 +308,7 @@ export interface VerifierOptions {
 	enablePending?: boolean;
 	timeout?: number;
 	verbose?: boolean;
+	includeWipPactsSince?: string;
 	monkeypatch?: string;
 	format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
 	out?: string;

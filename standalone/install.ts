@@ -23,7 +23,7 @@ const request = Request.defaults({
 });
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = '1.82.1';
+export const PACT_STANDALONE_VERSION = '1.82.3';
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
 
@@ -154,13 +154,17 @@ function downloadFileRetry(
 			let len = 0;
 			let downloaded = 0;
 			let time = Date.now();
+			let ca = config.read()['cafile'];
+			if (ca) {
+				ca = fs.readFileSync(ca);
+			}
 			request({
 				url,
 				headers: {
 					'User-Agent': 'https://github.com/pact-foundation/pact-node',
 				},
 				strictSSL: config.read()['strict-ssl'],
-				ca: config.read()['cafile'],
+				ca,
 			})
 				.on('error', (e: string) => reject(e))
 				.on(
