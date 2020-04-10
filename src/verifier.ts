@@ -38,6 +38,7 @@ export class Verifier {
 		enablePending: '--enable-pending',
 		customProviderHeaders: '--custom-provider-header',
 		verbose: '--verbose',
+		includeWipPactsSince: '--include-wip-pacts-since',
 		monkeypatch: '--monkeypatch',
 		format: '--format',
 		out: '--out',
@@ -69,6 +70,10 @@ export class Verifier {
 			options.providerVersionTag = [options.providerVersionTag as string];
 		}
 		checkTypes.assert.array.of.string(options.providerVersionTag);
+
+		if (options.includeWipPactsSince !== undefined) {
+			checkTypes.assert.nonEmptyString(options.includeWipPactsSince);
+		}
 
 		options.pactUrls = _.chain(options.pactUrls)
 			.map((uri: string) => {
@@ -257,6 +262,7 @@ export interface VerifierOptions {
 	timeout?: number;
 	tags?: string[];
 	verbose?: boolean;
+	includeWipPactsSince?: string;
 	monkeypatch?: string;
 	format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
 	out?: string;

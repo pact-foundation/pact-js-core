@@ -279,6 +279,7 @@ pact.verifyPacts({
 | `consumerVersionSelectors`        | false     | ConsumerVersionSelector\|array  | Use [Selectors](https://docs.pact.io/selectors) to is a way we specify which pacticipants and versions we want to use when configuring verifications.                                                         |
 | `consumerVersionTag`        | false     | string\|array  | Retrieve the latest pacts with given tag(s)                                                        |
 | `providerVersionTag`        | false     | string\|array  |  Tag(s) to apply to the provider application |
+| `includeWipPactsSince`      | false     | string  | Includes pact marked as WIP since this date. String in the format %Y-%m-%d or %Y-%m-%dT%H:%M:%S.000%:z |
 | `pactUrls`                  | false     | array   | Array of local pact file paths or HTTP-based URLs. Required if _not_ using a Pact Broker.                  |
 | `providerStatesSetupUrl`    | false     | string  | URL to send PUT requests to setup a given provider state                                                   |
 | `pactBrokerUsername`        | false     | string  | Username for Pact Broker basic authentication                                                              |

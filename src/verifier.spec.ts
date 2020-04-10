@@ -165,6 +165,28 @@ describe('Verifier Spec', () => {
 		});
 	});
 
+	context('when using includeWipPactsSince', () => {
+		it('should accept a non-empty string', () => {
+			const verifier = verifierFactory({
+				providerBaseUrl: 'http://localhost',
+				pactUrls: ['http://idontexist'],
+				includeWipPactsSince: 'thisshouldactuallybeadate',
+			});
+			expect(verifier).to.be.a('object');
+			expect(verifier).to.respondTo('verify');
+		});
+
+		it('should not accept an empty string', () => {
+			expect(() =>
+				verifierFactory({
+					providerBaseUrl: 'http://localhost',
+					pactUrls: ['http://idontexist'],
+					includeWipPactsSince: '',
+				}),
+			).to.throw(Error);
+		});
+	});
+
 	context('when an using format option', () => {
 		it("should work with either 'json' or 'xml'", () => {
 			expect(() =>
