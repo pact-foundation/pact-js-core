@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+# [10.9.0](https://github.com/pact-foundation/pact-node/compare/v10.8.1...v10.9.0) (2020-04-10)
+
+
+### Bug Fixes
+
+* **standalone:** update standalone to 1.82.3 ([#223](https://github.com/pact-foundation/pact-node/issues/223)) ([70fac35](https://github.com/pact-foundation/pact-node/commit/70fac353007e0ebc7b622415cd66bfe25e9c2d2f))
+
+
+### Features
+
+* **verifier:** Add support for includeWipPactsSince ([c691162](https://github.com/pact-foundation/pact-node/commit/c6911620695435b5e47c22bc0d526ca559e5a356))
+* deprecate consumerVersionTag and providerVersionTag. Fixes [#218](https://github.com/pact-foundation/pact-node/issues/218) ([3e932bd](https://github.com/pact-foundation/pact-node/commit/3e932bd7c80a468a68dff21d7e4457732b5af234))
+
+
+
 ## [10.8.1](https://github.com/pact-foundation/pact-node/compare/v0.0.7...v10.8.1) (2020-04-08)
 
 
