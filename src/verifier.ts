@@ -116,6 +116,7 @@ export class Verifier {
 			logger.warn(
 				"'consumerVersionTag' and 'providerVersionTag' have been deprecated, please use 'consumerVersionTags' or 'providerVersionTags' instead",
 			);
+		}
 
 		if (options.includeWipPactsSince !== undefined) {
 			checkTypes.assert.nonEmptyString(options.includeWipPactsSince);
