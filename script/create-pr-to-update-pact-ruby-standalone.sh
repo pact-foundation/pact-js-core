@@ -20,6 +20,6 @@ git add standalone/install.ts
 git commit -m "${TYPE}: update standalone to ${STANDALONE_VERSION}"
 git push --set-upstream origin ${BRANCH_NAME}
 
-hub pull-request --browse --message "#{TYPE}: update standalone to ${STANDALONE_VERSION}"
+hub pull-request --browse --message "${TYPE}: update standalone to ${STANDALONE_VERSION}"
 
 git checkout master
