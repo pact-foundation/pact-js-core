@@ -33,7 +33,7 @@ export class Verifier {
 		providerVersionTag: '--provider-version-tag',
 		consumerVersionTags: '--consumer-version-tag',
 		providerVersionTags: '--provider-version-tag',
-		consumerVersionSelector: '--consumer-version-selector',
+		consumerVersionSelectors: '--consumer-version-selector',
 		publishVerificationResult: '--publish-verification-results',
 		providerVersion: '--provider-app-version',
 		provider: '--provider',
@@ -57,7 +57,7 @@ export class Verifier {
 		options.providerVersionTag = options.providerVersionTag || [];
 		options.consumerVersionTags = options.consumerVersionTags || [];
 		options.providerVersionTags = options.providerVersionTags || [];
-		options.consumerVersionSelector = options.consumerVersionSelector || [];
+		options.consumerVersionSelectors = options.consumerVersionSelectors || [];
 
 		if (
 			!_.isEmpty(options.consumerVersionTag) &&
@@ -300,7 +300,7 @@ interface CurrentVerifierOptions {
 	pactBrokerToken?: string;
 	consumerVersionTags?: string | string[];
 	providerVersionTags?: string | string[];
-	consumerVersionSelector?: ConsumerVersionSelector[];
+	consumerVersionSelectors?: ConsumerVersionSelector[];
 	customProviderHeaders?: string[];
 	publishVerificationResult?: boolean;
 	providerVersion?: string;
