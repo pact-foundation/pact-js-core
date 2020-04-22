@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.9.1](https://github.com/pact-foundation/pact-node/compare/v10.9.0...v10.9.1) (2020-04-22)
+
+
+### Bug Fixes
+
+* consumerVersionSelector -> consumerVersionSelectors ([dab9507](https://github.com/pact-foundation/pact-node/commit/dab9507aae9acf00296933e5e0938e9a07cbbbf9))
+
+
+
 # [10.9.0](https://github.com/pact-foundation/pact-node/compare/v10.8.1...v10.9.0) (2020-04-10)
 
 
