@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.9.4](https://github.com/pact-foundation/pact-node/compare/v10.9.3...v10.9.4) (2020-05-04)
+
+
+### Bug Fixes
+
+* **options:** Stop validating values for logLevel, pactFileWriteMode and format. This means we'll immediately pick up changes to those options without needing to modify pact-node ([1319a86](https://github.com/pact-foundation/pact-node/commit/1319a86d87d4ffd60a58146150f62a96f4ef9f35))
+
+
+
 ## [10.9.3](https://github.com/pact-foundation/pact-node/compare/v10.9.2...v10.9.3) (2020-05-02)
 
 
