@@ -76,11 +76,6 @@ export class Message {
 			checkTypes.assert.string(options.provider);
 		}
 
-		checkTypes.assert.includes(
-			['overwrite', 'update', 'merge'],
-			options.pactFileWriteMode,
-		);
-
 		this.options = options;
 	}
 

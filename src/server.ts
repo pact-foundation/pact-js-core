@@ -57,17 +57,8 @@ export class Server extends AbstractService {
 			checkTypes.assert.string(options.provider);
 		}
 
-		checkTypes.assert.includes(
-			['overwrite', 'update', 'merge'],
-			options.pactFileWriteMode,
-		);
-
 		if (options.logLevel) {
 			options.logLevel = options.logLevel.toLowerCase() as LogLevel;
-			checkTypes.assert.includes(
-				['debug', 'info', 'warn', 'error'],
-				options.logLevel,
-			);
 		}
 
 		if (options.monkeypatch) {

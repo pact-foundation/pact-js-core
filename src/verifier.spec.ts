@@ -225,17 +225,6 @@ describe('Verifier Spec', () => {
 			).to.throw(Error);
 		});
 
-		it('should throw an error with the wrong string', () => {
-			expect(() =>
-				verifierFactory({
-					providerBaseUrl: 'http://localhost',
-					pactUrls: ['http://idontexist'],
-					format: 'jsonformat',
-					// eslint-disable-next-line @typescript-eslint/no-explicit-any
-				} as any),
-			).to.throw(Error);
-		});
-
 		it('should work with a case insensitive string', () => {
 			expect(() =>
 				verifierFactory({

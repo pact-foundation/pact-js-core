@@ -214,7 +214,6 @@ export class Verifier {
 
 		if (options.format) {
 			checkTypes.assert.string(options.format);
-			checkTypes.assert.match(options.format, /^(xml|json|progress)$/i);
 			if (options.format.toLowerCase() === 'xml') {
 				options.format = 'RspecJunitFormatter';
 			}

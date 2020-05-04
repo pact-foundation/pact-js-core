@@ -93,24 +93,6 @@ describe('Server Spec', () => {
 					}),
 				).to.throw(Error);
 			});
-
-			it('should fail if incorrect pactFileWriteMode provided', () => {
-				expect(() =>
-					serverFactory({
-						pactFileWriteMode: 'notarealoption',
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					} as any),
-				).to.throw(Error);
-			});
-
-			it('should fail if incorrect logLevel provided', () => {
-				expect(() =>
-					serverFactory({
-						logLevel: 'nolog',
-						// eslint-disable-next-line @typescript-eslint/no-explicit-any
-					} as any),
-				).to.throw(Error);
-			});
 		});
 
 		context('when valid options are set', () => {
