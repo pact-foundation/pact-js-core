@@ -1,5 +1,3 @@
-// tslint:disable:no-string-literal
-
 import serverFactory from './server';
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');

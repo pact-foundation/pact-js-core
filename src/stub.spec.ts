@@ -1,5 +1,3 @@
-// tslint:disable:no-string-literal
-
 import stubFactory from './stub';
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');

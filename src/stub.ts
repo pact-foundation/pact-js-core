@@ -1,4 +1,3 @@
-// tslint:disable:no-string-literal
 import { DEFAULT_ARG } from './spawn';
 import { AbstractService } from './service';
 import { deprecate } from 'util';

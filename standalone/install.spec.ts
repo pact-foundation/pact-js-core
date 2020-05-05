@@ -1,6 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 /* global describe:true, before:true, after:true, it:true, global:true, process:true */
-/* tslint:disable:no-string-literal */
 import * as fs from 'fs';
 import * as path from 'path';
 import * as chai from 'chai';

@@ -1,4 +1,3 @@
-// tslint:disable:no-string-literal
 import * as path from 'path';
 
 export class PactEnvironment {

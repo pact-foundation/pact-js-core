@@ -1,4 +1,3 @@
-// tslint:disable:no-string-literal
 import { AbstractService } from './service';
 import { deprecate } from 'util';
 import pact from './pact-standalone';

@@ -1,4 +1,3 @@
-// tslint:disable:no-string-literal
 import spawn = require('cross-spawn');
 import cp = require('child_process');
 import { ChildProcess, SpawnOptions } from 'child_process';
