@@ -60,7 +60,7 @@
     "libnpmconfig": "^1.2.1",
     "mkdirp": "1.0.0",
     "q": "1.5.1",
-    "request": "2.87.0",
+    "request": "2.88.0",
     "rimraf": "2.6.2",
     "sumchecker": "^2.0.2",
     "tar": "4.4.2",
