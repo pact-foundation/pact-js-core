@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.9.7](https://github.com/pact-foundation/pact-node/compare/v10.9.6...v10.9.7) (2020-07-17)
+
+
+### Bug Fixes
+
+* **deps:** update package and package-lock to fix vulnerabilties ([6566680](https://github.com/pact-foundation/pact-node/commit/65666805766e9ae71377351dcbb62b5098e0191c))
+
 ### [10.9.6](https://github.com/pact-foundation/pact-node/compare/v10.9.5...v10.9.6) (2020-06-29)
 
 
