@@ -65,7 +65,7 @@ In order to get better statistics as to who is using Pact, we have an anonymous 
 
 ### Pact Download Location
 
-For those that are behind a corporate firewall or are seeing issues where our package downloadss binaries during installation, you can download the binaries directly from our [github releases](https://github.com/pact-foundation/pact-ruby-standalone/releases), and specify the location where you want Pact to get the binaries from using the 'config' section in your package.json file:
+For those that are behind a corporate firewall or are seeing issues where our package downloads binaries during installation, you can download the binaries directly from our [github releases](https://github.com/pact-foundation/pact-ruby-standalone/releases), and specify the location where you want Pact to get the binaries from using the 'config' section in your package.json file:
 
 ```json
 {
