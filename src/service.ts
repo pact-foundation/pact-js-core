@@ -304,7 +304,10 @@ export interface ServiceOptions {
 	sslcert?: string;
 	sslkey?: string;
 	log?: string;
+	logLevel?: LogLevel;
 }
+
+export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface HTTPConfig {
 	uri: string;

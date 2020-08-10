@@ -162,6 +162,7 @@ var server = pact.createServer({
 | `port`              | false     | number                             | Port number that the server runs on, defaults to random available port                                                               |
 | `host`              | false     | string                             | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
 | `log`               | false     | string                             | File to log output on relative to current working directory, defaults to none                                                        |
+| `logLevel`		  | false     | LogLevel (string)				   | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
 | `ssl`               | false     | boolean                            | Create a self-signed SSL cert to run the server over HTTPS , defaults to `false`                                                     |
 | `sslcert`           | false     | string                             | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option, defaults to none                    |
 | `sslkey`            | false     | string                             | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this, defaults to none                  |
@@ -292,6 +293,9 @@ pact.verifyPacts({
 | `timeout`                   | false     | number  | The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.       |
 | `format`                    | false     | string  | What format the verification results are printed in. Options are `json`, `xml`, `progress` and `RspecJunitFormatter` (which is a synonym for `xml`) |
 | `verbose`            | false     | boolean        | Enables verbose output for underlying pact binary. |
+| `logDir`   | false  | string   | Directory to output the pact.log file to
+| `logLevel`    | false     | LogLevel (string)          | Log level. One of "DEBUG", "ERROR", "WARN", "INFO" |
+
 
 ### Pact Broker Publishing
 
@@ -383,6 +387,7 @@ var server = pact.createStub({
 | port      | false     | number  | Port number that the server runs on, defaults to random available port                                                               |
 | host      | false     | string  | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
 | log       | false     | string  | File to log output on relative to current working directory, defaults to none                                                        |
+| logLevel		  | false     | LogLevel (string)				   | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
 | ssl       | false     | boolean | Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'                                                     |
 | sslcert   | false     | string  | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults false                      | to none |
 | sslkey    | false     | string  | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this option false. Defaults to none     |

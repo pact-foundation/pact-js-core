@@ -1,5 +1,5 @@
 import { DEFAULT_ARG } from './spawn';
-import { AbstractService } from './service';
+import { AbstractService, LogLevel } from './service';
 import { deprecate } from 'util';
 
 import pact from './pact-standalone';
@@ -29,6 +29,7 @@ export class Stub extends AbstractService {
 			port: '--port',
 			host: '--host',
 			log: '--log',
+			logLevel: '--log-level',
 			ssl: '--ssl',
 			sslcert: '--sslcert',
 			sslkey: '--sslkey',
@@ -49,4 +50,5 @@ export interface StubOptions {
 	sslcert?: string;
 	sslkey?: string;
 	log?: string;
+	logLevel?: LogLevel;
 }

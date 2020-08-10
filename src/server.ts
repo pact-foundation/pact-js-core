@@ -1,4 +1,4 @@
-import { AbstractService } from './service';
+import { AbstractService, LogLevel } from './service';
 import { deprecate } from 'util';
 import pact from './pact-standalone';
 import path = require('path');
@@ -122,5 +122,3 @@ export interface ServerOptions {
 	logLevel?: LogLevel;
 	pactFileWriteMode?: 'overwrite' | 'update' | 'merge';
 }
-
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';

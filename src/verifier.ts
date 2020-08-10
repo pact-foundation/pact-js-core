@@ -13,6 +13,7 @@ const unixify = require('unixify');
 
 import fs = require('fs');
 import { deprecate } from 'util';
+import { LogLevel } from './service';
 
 export class Verifier {
 	public static create = deprecate(
@@ -44,6 +45,8 @@ export class Verifier {
 		monkeypatch: '--monkeypatch',
 		format: '--format',
 		out: '--out',
+		logDir: '--log-dir',
+		logLevel: '--log-level',
 	};
 
 	constructor(options: VerifierOptions) {
@@ -310,6 +313,8 @@ interface CurrentVerifierOptions {
 	monkeypatch?: string;
 	format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
 	out?: string;
+	logDir?: string;
+	logLevel?: LogLevel;
 }
 
 interface DeprecatedVerifierOptions {
