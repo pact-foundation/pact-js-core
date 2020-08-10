@@ -35,6 +35,7 @@ export class Stub extends AbstractService {
 			sslkey: '--sslkey',
 			cors: '--cors',
 		});
+		this.options = options;
 	}
 }
 

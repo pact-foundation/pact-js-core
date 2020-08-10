@@ -37,7 +37,7 @@ export abstract class AbstractService extends events.EventEmitter {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	protected __argMapping: any;
 	protected __running: boolean;
-	protected __instance: ChildProcess;
+	protected __instance: ChildProcess | undefined;
 	protected __cliVerb?: CliVerbOptions;
 	protected __serviceCommand: string;
 
@@ -150,7 +150,11 @@ export abstract class AbstractService extends events.EventEmitter {
 				const match = data.match(/port=([0-9]+)/);
 				if (match && match[1]) {
 					this.options.port = parseInt(match[1], 10);
-					this.__instance.stdout.removeListener('data', catchPort);
+					if (this.__instance) {
+						// __instance will never be undefined here because we just
+						// read the port number from it
+						this.__instance.stdout.removeListener('data', catchPort);
+					}
 					logger.info(`Pact running on port ${this.options.port}`);
 				}
 			};

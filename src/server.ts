@@ -16,8 +16,7 @@ export class Server extends AbstractService {
 
 	public readonly options: ServerOptions;
 
-	constructor(options?: ServerOptions) {
-		options = options || {};
+	constructor(options: ServerOptions = {}) {
 		options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
 		options.pactFileWriteMode = options.pactFileWriteMode || 'overwrite';
 
@@ -100,6 +99,7 @@ export class Server extends AbstractService {
 			},
 			{ cliVerb: 'service' },
 		);
+		this.options = options;
 	}
 }
 

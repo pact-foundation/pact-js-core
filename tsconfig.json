@@ -9,10 +9,7 @@
 		],
 		"removeComments": true,
 		"noLib": false,
-		"emitDecoratorMetadata": true,
-		"experimentalDecorators": true,
 		"sourceMap": true,
-		"listFiles": true,
 		"isolatedModules": false,
 		"moduleResolution": "node",
 		"suppressImplicitAnyIndexErrors": true,
@@ -21,6 +18,7 @@
 		"noImplicitAny": true,
 		"noImplicitThis": true,
 		"strictNullChecks": true,
+		"strict": true,
 		"noUnusedLocals": true
 	},
 	"include": [

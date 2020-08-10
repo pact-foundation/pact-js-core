@@ -55,7 +55,7 @@ export class Spawn {
 		return instance;
 	}
 
-	public killBinary(binary: ChildProcess): boolean {
+	public killBinary(binary?: ChildProcess): boolean {
 		if (binary) {
 			const pid = binary.pid;
 			logger.info(`Removing Pact process with PID: ${pid}`);
