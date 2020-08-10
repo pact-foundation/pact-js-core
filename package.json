@@ -102,7 +102,7 @@
     "express": "4.16.2",
     "mocha": "^7.1.1",
     "mocha-unfunk-reporter": "0.4.0",
-    "nodemon": "^2.0.2",
+    "nodemon": "^2.0.4",
     "prettier": "^1.18.2",
     "sinon": "4.4.2",
     "snyk": "^1.230.5",
