@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.10.0](https://github.com/pact-foundation/pact-node/compare/v10.9.7...v10.10.0) (2020-08-10)
+
+
+### Features
+
+* **logging:** Add logLevel to Stub options, and add logDir and logLevel to Verifier options ([acc0579](https://github.com/pact-foundation/pact-node/commit/acc057927e14a80dfa74554614f9a6d1fa29a005))
+
+
+### Bug Fixes
+
+* **deps:** Update vulnerable dependencies ([239c7a7](https://github.com/pact-foundation/pact-node/commit/239c7a73c3d04289c038bbef70b3d47a1db34d56))
+* package.json & package-lock.json to reduce vulnerabilities ([70aa0f0](https://github.com/pact-foundation/pact-node/commit/70aa0f0ec8d2c861b1457cc31eb533e5259ba907))
+* update standalone to 1.86.0 ([524a7dd](https://github.com/pact-foundation/pact-node/commit/524a7ddb3716e2e76b598e250131531a675899ad))
+
 ### [10.9.7](https://github.com/pact-foundation/pact-node/compare/v10.9.6...v10.9.7) (2020-07-17)
 
 
