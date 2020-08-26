@@ -2,6 +2,7 @@ import serverFactory from './server';
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 import fs = require('fs');
+import util = require('util');
 import path = require('path');
 import q = require('q');
 import _ = require('underscore');
@@ -39,9 +40,13 @@ describe('Server Spec', () => {
 		mkdirp.sync(absolutePath);
 	});
 
-	afterEach(() => {
+	afterEach(async () => {
+		if (server) {
+			await server.stop();
+		}
+
 		if (fs.existsSync(absolutePath)) {
-			rimraf.sync(absolutePath);
+			await util.promisify(rimraf)(absolutePath);
 		}
 	});
 

@@ -98,7 +98,7 @@ describe('Pact Spec', () => {
 					dir: dirPath,
 					ssl: true,
 					cors: true,
-					log: 'log.txt',
+					log: './log/log.txt',
 					spec: 1,
 					consumer: 'consumerName',
 					provider: 'providerName',
