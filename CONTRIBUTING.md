@@ -13,10 +13,21 @@ Please provide the following information with your issue to enable us to respond
 
 ### Commit messages
 
-Pact Node has recently migrated to the [Conventional Changelog](https://github.com/bcoe/conventional-changelog-standard/blob/master/convention.md)
+Pact Node uses the [Conventional Changelog](https://github.com/bcoe/conventional-changelog-standard/blob/master/convention.md)
 commit message conventions to simplify automation process. Please ensure you follow the guidelines.
 
-Take a look at the git history (`git log`) to get the gist of it.
+Should your change include something that should be listed in the release
+notes, please use `feat` or `fix` commits with a good commit message. Your
+commit message will automatically be included in the release notes.
+
+If you are committing something that shouldn't be listed in the release
+notes, please use a different type (even if it is technically a fix). We
+usually use one of `chore`, `style`, `refactor`, or `test` as appropriate.
+
+You can take a look at the git history (`git log`) to get the gist of it. 
+If you have questions, feel free to reach out in `#pact-node` in our [slack
+community](https://pact-foundation.slack.com/).
+
 
 ## Pull requests
 
