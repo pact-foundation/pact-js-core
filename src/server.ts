@@ -74,7 +74,6 @@ export class Server extends AbstractService {
 
 		// Need to uppercase logLevel for ruby
 		if (options.logLevel) {
-			opts = JSON.parse(JSON.stringify(options));
 			opts.logLevel = options.logLevel.toUpperCase() as LogLevel;
 		}
 
