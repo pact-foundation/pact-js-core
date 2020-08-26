@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.10.1](https://github.com/pact-foundation/pact-node/compare/v10.10.0...v10.10.1) (2020-08-26)
+
+
+### Bug Fixes
+
+* **server:** remove force-clone of options ([1a7a6e0](https://github.com/pact-foundation/pact-node/commit/1a7a6e02448ef7c0fb445658ff47a3ca445018f6))
+
 ## [10.10.0](https://github.com/pact-foundation/pact-node/compare/v10.9.7...v10.10.0) (2020-08-10)
 
 
