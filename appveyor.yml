@@ -20,9 +20,6 @@ platform:
 install:
   # Install Node
   - ps: Install-Product node $env:nodejs_version $env:platform
-  # Fix for stupid windows/appveyor bug with NPM
-  - npm install -g npm@5.10.0 --force
-  - npm cache clean --force
   # Output useful info for debugging.
   - node --version
   - npm --version
