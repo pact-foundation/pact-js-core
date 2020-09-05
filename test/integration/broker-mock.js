@@ -1,0 +1,463 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var q = require("q");
+var express = require("express");
+var data_utils_1 = require("./data-utils");
+var cors = require("cors");
+var _ = require("underscore");
+var bodyParser = require("body-parser");
+exports.default = (function (port) {
+    var BROKER_HOST = "http://localhost:" + port;
+    var server = express();
+    server.use(cors());
+    server.use(bodyParser.json());
+    server.use(bodyParser.urlencoded({ extended: true }));
+    function pactFunction(req, res) {
+        if (_.isEmpty(req.body) ||
+            _.isEmpty(req.params.consumer) ||
+            _.isEmpty(req.params.provider) ||
+            _.isEmpty(req.params.version)) {
+            return res.sendStatus(400);
+        }
+        return res.status(201).json({
+            consumer: { name: 'consumer' },
+            provider: { name: 'publisher' },
+            interactions: [
+                {
+                    description: 'Greeting',
+                    request: { method: 'GET', path: '/' },
+                    response: { status: 200, headers: {}, body: { greeting: 'Hello' } },
+                },
+            ],
+            metadata: { pactSpecificationVersion: '2.0.0' },
+            createdAt: '2017-11-06T13:06:48+00:00',
+            _links: {
+                self: {
+                    title: 'Pact',
+                    name: 'Pact between consumer (v1.0.0) and publisher',
+                    href: BROKER_HOST + "/pacts/provider/publisher/consumer/consumer/version/1.0.0",
+                },
+                'pb:consumer': {
+                    title: 'Consumer',
+                    name: 'consumer',
+                    href: BROKER_HOST + "/pacticipants/consumer",
+                },
+                'pb:consumer-version': {
+                    title: 'Consumer version',
+                    name: '1.0.0',
+                    href: BROKER_HOST + "/pacticipants/consumer/versions/1.0.0",
+                },
+                'pb:provider': {
+                    title: 'Provider',
+                    name: 'publisher',
+                    href: BROKER_HOST + "/pacticipants/publisher",
+                },
+                'pb:latest-pact-version': {
+                    title: 'Latest version of this pact',
+                    href: BROKER_HOST + "/pacts/provider/publisher/consumer/consumer/latest",
+                },
+                'pb:all-pact-versions': {
+                    title: 'All version of this pact',
+                    href: BROKER_HOST + "/pacts/provider/publisher/consumer/consumer/versions",
+                },
+                'pb:latest-untagged-pact-version': {
+                    title: 'Latest untagged version of this pact',
+                    href: BROKER_HOST + "/pacts/provider/publisher/consumer/consumer/latest-untagged",
+                },
+                'pb:latest-tagged-pact-version': {
+                    title: 'Latest tagged version of this pact',
+                    href: BROKER_HOST + "/pacts/provider/publisher/consumer/consumer/latest/{tag}",
+                    templated: true,
+                },
+                'pb:previous-distinct': {
+                    title: 'Previous distinct version of this pact',
+                    href: BROKER_HOST + "/pacts/provider/publisher/consumer/consumer/version/1.0.0/previous-distinct",
+                },
+                'pb:diff-previous-distinct': {
+                    title: 'Diff with previous distinct version of this pact',
+                    href: BROKER_HOST + "/pacts/provider/publisher/consumer/consumer/version/1.0.0/diff/previous-distinct",
+                },
+                'pb:pact-webhooks': {
+                    title: 'Webhooks for the pact between consumer and publisher',
+                    href: BROKER_HOST + "/webhooks/provider/publisher/consumer/consumer",
+                },
+                'pb:tag-prod-version': {
+                    title: "PUT to this resource to tag this consumer version as 'production'",
+                    href: BROKER_HOST + "/pacticipants/consumer/versions/1.0.0/tags/prod",
+                },
+                'pb:tag-version': {
+                    title: 'PUT to this resource to tag this consumer version',
+                    href: BROKER_HOST + "/pacticipants/consumer/versions/1.0.0/tags/{tag}",
+                },
+                'pb:publish-verification-results': {
+                    title: 'Publish verification results',
+                    href: BROKER_HOST + "/pacts/provider/publisher/consumer/consumer/pact-version/7c36fc0ded24117ec189db3f54fadffc23a56d68/verification-results",
+                },
+                curies: [
+                    { name: 'pb', href: BROKER_HOST + "/doc/{rel}", templated: true },
+                ],
+            },
+        });
+    }
+    function tagPactFunction(req, res) {
+        if (_.isEmpty(req.params.consumer) ||
+            _.isEmpty(req.params.version) ||
+            _.isEmpty(req.params.tag)) {
+            return res.sendStatus(400);
+        }
+        return res.sendStatus(201);
+    }
+    server.get('/somebrokenpact', data_utils_1.returnJson({}));
+    server.get('/somepact', data_utils_1.returnJson({
+        consumer: {
+            name: 'anotherclient',
+        },
+        provider: {
+            name: 'they',
+        },
+    }));
+    server.put('/pacts/provider/:provider/consumer/:consumer/version/:version', pactFunction);
+    server.put('/auth/pacts/provider/:provider/consumer/:consumer/version/:version', data_utils_1.auth, pactFunction);
+    server.put('/pacticipant/:consumer/version/:version/tags/:tag', tagPactFunction);
+    server.put('/auth/pacticipant/:consumer/version/:version/tags/:tag', tagPactFunction);
+    server.get('/matrix', function (req, res) {
+        if (req.query.q[0].pacticipant === 'Foo') {
+            return res.json({
+                summary: {
+                    deployable: true,
+                    reason: 'some text',
+                    unknown: 1,
+                },
+                matrix: [
+                    {
+                        consumer: {
+                            name: 'Foo',
+                            version: {
+                                number: '4',
+                            },
+                        },
+                        provider: {
+                            name: 'Bar',
+                            version: {
+                                number: '5',
+                            },
+                        },
+                        verificationResult: {
+                            verifiedAt: '2017-10-10T12:49:04+11:00',
+                            success: true,
+                        },
+                        pact: {
+                            createdAt: '2017-10-10T12:49:04+11:00',
+                        },
+                    },
+                ],
+            });
+        }
+        else {
+            return res.json({
+                summary: {
+                    deployable: false,
+                    reason: 'some text',
+                    unknown: 1,
+                },
+                matrix: [
+                    {
+                        consumer: {
+                            name: 'FooFail',
+                            version: {
+                                number: '4',
+                            },
+                        },
+                        provider: {
+                            name: 'Bar',
+                            version: {
+                                number: '5',
+                            },
+                        },
+                        verificationResult: {
+                            verifiedAt: '2017-10-10T12:49:04+11:00',
+                            success: false,
+                        },
+                        pact: {
+                            createdAt: '2017-10-10T12:49:04+11:00',
+                        },
+                    },
+                ],
+            });
+        }
+    });
+    server.get('/', data_utils_1.returnJson({
+        _links: {
+            self: {
+                href: BROKER_HOST,
+                title: 'Index',
+                templated: false,
+            },
+            'pb:publish-pact': {
+                href: BROKER_HOST + "/pacts/provider/{provider}/consumer/{consumer}/version/{consumerApplicationVersion}",
+                title: 'Publish a pact',
+                templated: true,
+            },
+            'pb:latest-pact-versions': {
+                href: BROKER_HOST + "/pacts/latest",
+                title: 'Latest pact version',
+                templated: false,
+            },
+            'pb:pacticipants': {
+                href: BROKER_HOST + "/pacticipants",
+                title: 'Pacticipants',
+                templated: false,
+            },
+            'pb:latest-provider-pacts': {
+                href: BROKER_HOST + "/pacts/provider/{provider}/latest",
+                title: 'Latest pacts by provider',
+                templated: true,
+            },
+            'pb:latest-provider-pacts-with-tag': {
+                href: BROKER_HOST + "/pacts/provider/{provider}/latest/{tag}",
+                title: 'Latest pacts by provider with a specified tag',
+                templated: true,
+            },
+            'pb:webhooks': {
+                href: BROKER_HOST + "/webhooks",
+                title: 'Webhooks',
+                templated: false,
+            },
+            curies: [
+                {
+                    name: 'pb',
+                    href: BROKER_HOST + "/doc/{rel}",
+                    templated: true,
+                },
+            ],
+        },
+    }));
+    server.get('/pacts/provider/notfound/latest', function (req, res) { return res.sendStatus(404); });
+    server.get('/pacts/provider/nolinks/latest', data_utils_1.returnJson({
+        _links: {
+            self: {
+                href: BROKER_HOST + "/pacts/provider/nolinks/latest/sit4",
+                title: 'Latest pact version for the provider nolinks with tag "sit4"',
+            },
+            provider: {
+                href: BROKER_HOST + "/pacticipants/nolinks",
+                title: 'bobby',
+            },
+            pacts: [],
+        },
+    }));
+    server.get('/pacts/provider/:provider/latest', data_utils_1.returnJson({
+        _links: {
+            self: {
+                href: BROKER_HOST + "/pacts/provider/bobby/latest/sit4",
+                title: 'Latest pact version for the provider bobby with tag "sit4"',
+            },
+            provider: {
+                href: BROKER_HOST + "/pacticipants/bobby",
+                title: 'bobby',
+            },
+            pacts: [
+                {
+                    href: BROKER_HOST + "/pacts/provider/bobby/consumer/billy/version/1.0.0",
+                    title: 'Pact between billy (v1.0.0) and bobby',
+                    name: 'billy',
+                },
+                {
+                    href: BROKER_HOST + "/pacts/provider/bobby/consumer/someotherguy/version/1.0.0",
+                    title: 'Pact between someotherguy (v1.0.0) and bobby',
+                    name: 'someotherguy',
+                },
+            ],
+        },
+    }));
+    server.get('/pacts/provider/:provider/latest/:tag', data_utils_1.returnJson({
+        _links: {
+            self: {
+                href: 'https://test.pact.dius.com.au/pacts/provider/notfound/latest',
+                title: 'Latest pact version for the provider bobby',
+            },
+            provider: {
+                href: 'https://test.pact.dius.com.au/pacticipant/bobby',
+                title: 'bobby',
+            },
+            pacts: [
+                {
+                    href: 'https://test.pact.dius.com.au/pacts/provider/bobby/consumer/billy/version/1.0.0',
+                    title: 'Pact between billy (v1.0.0) and bobby',
+                    name: 'billy',
+                },
+                {
+                    href: 'https://test.pact.dius.com.au/pacts/provider/bobby/consumer/someotherguy/version/1.0.0',
+                    title: 'Pact between someotherguy (v1.0.0) and bobby',
+                    name: 'someotherguy',
+                },
+            ],
+        },
+    }));
+    server.get('/noauth/pacts/provider/they/consumer/me/latest', data_utils_1.returnJson({
+        consumer: {
+            name: 'me',
+        },
+        provider: {
+            name: 'they',
+        },
+        interactions: [
+            {
+                description: 'Provider state success',
+                providerState: 'There is a greeting',
+                request: {
+                    method: 'GET',
+                    path: '/somestate',
+                },
+                response: {
+                    status: 200,
+                    headers: {},
+                    body: {
+                        greeting: 'State data!',
+                    },
+                },
+            },
+        ],
+        metadata: {
+            pactSpecificationVersion: '2.0.0',
+        },
+        updatedAt: '2016-05-15T00:09:33+00:00',
+        createdAt: '2016-05-15T00:09:06+00:00',
+        _links: {
+            self: {
+                title: 'Pact',
+                name: 'Pact between me (v1.0.0) and they',
+                href: BROKER_HOST + "/pacts/provider/they/consumer/me/version/1.0.0",
+            },
+            'pb:consumer': {
+                title: 'Consumer',
+                name: 'me',
+                href: BROKER_HOST + "/pacticipants/me",
+            },
+            'pb:provider': {
+                title: 'Provider',
+                name: 'they',
+                href: BROKER_HOST + "/pacticipants/they",
+            },
+            'pb:latest-pact-version': {
+                title: 'Pact',
+                name: 'Latest version of this pact',
+                href: BROKER_HOST + "/pacts/provider/they/consumer/me/latest",
+            },
+            'pb:previous-distinct': {
+                title: 'Pact',
+                name: 'Previous distinct version of this pact',
+                href: BROKER_HOST + "/pacts/provider/they/consumer/me/version/1.0.0/previous-distinct",
+            },
+            'pb:diff-previous-distinct': {
+                title: 'Diff',
+                name: 'Diff with previous distinct version of this pact',
+                href: BROKER_HOST + "/pacts/provider/they/consumer/me/version/1.0.0/diff/previous-distinct",
+            },
+            'pb:pact-webhooks': {
+                title: 'Webhooks for the pact between me and they',
+                href: BROKER_HOST + "/webhooks/provider/they/consumer/me",
+            },
+            'pb:tag-prod-version': {
+                title: 'Tag this version as "production"',
+                href: BROKER_HOST + "/pacticipants/me/versions/1.0.0/tags/prod",
+            },
+            'pb:tag-version': {
+                title: 'Tag version',
+                href: BROKER_HOST + "/pacticipants/me/versions/1.0.0/tags/{tag}",
+            },
+            curies: [
+                {
+                    name: 'pb',
+                    href: BROKER_HOST + "/doc/{rel}",
+                    templated: true,
+                },
+            ],
+        },
+    }));
+    server.get('/noauth/pacts/provider/they/consumer/anotherclient/latest', data_utils_1.returnJson({
+        consumer: {
+            name: 'anotherclient',
+        },
+        provider: {
+            name: 'they',
+        },
+        interactions: [
+            {
+                description: 'Provider state success',
+                providerState: 'There is a greeting',
+                request: {
+                    method: 'GET',
+                    path: '/somestate',
+                },
+                response: {
+                    status: 200,
+                    headers: {},
+                    body: {
+                        greeting: 'State data!',
+                    },
+                },
+            },
+        ],
+        metadata: {
+            pactSpecificationVersion: '2.0.0',
+        },
+        updatedAt: '2016-05-15T00:09:33+00:00',
+        createdAt: '2016-05-15T00:09:06+00:00',
+        _links: {
+            self: {
+                title: 'Pact',
+                name: 'Pact between me (v1.0.0) and they',
+                href: BROKER_HOST + "/pacts/provider/they/consumer/me/version/1.0.0",
+            },
+            'pb:consumer': {
+                title: 'Consumer',
+                name: 'anotherclient',
+                href: BROKER_HOST + "/pacticipants/me",
+            },
+            'pb:provider': {
+                title: 'Provider',
+                name: 'they',
+                href: BROKER_HOST + "/pacticipants/they",
+            },
+            'pb:latest-pact-version': {
+                title: 'Pact',
+                name: 'Latest version of this pact',
+                href: BROKER_HOST + "/pacts/provider/they/consumer/me/latest",
+            },
+            'pb:previous-distinct': {
+                title: 'Pact',
+                name: 'Previous distinct version of this pact',
+                href: BROKER_HOST + "/pacts/provider/they/consumer/me/version/1.0.0/previous-distinct",
+            },
+            'pb:diff-previous-distinct': {
+                title: 'Diff',
+                name: 'Diff with previous distinct version of this pact',
+                href: BROKER_HOST + "/pacts/provider/they/consumer/me/version/1.0.0/diff/previous-distinct",
+            },
+            'pb:pact-webhooks': {
+                title: 'Webhooks for the pact between me and they',
+                href: BROKER_HOST + "/webhooks/provider/they/consumer/me",
+            },
+            'pb:tag-prod-version': {
+                title: 'Tag this version as "production"',
+                href: BROKER_HOST + "/pacticipants/me/versions/1.0.0/tags/prod",
+            },
+            'pb:tag-version': {
+                title: 'Tag version',
+                href: BROKER_HOST + "/pacticipants/me/versions/1.0.0/tags/{tag}",
+            },
+            curies: [
+                {
+                    name: 'pb',
+                    href: BROKER_HOST + "/doc/{rel}",
+                    templated: true,
+                },
+            ],
+        },
+    }));
+    var deferred = q.defer();
+    var s = server.listen(port, function () { return deferred.resolve(); });
+    return deferred.promise.then(function () { return s; });
+});
+//# sourceMappingURL=broker-mock.js.map

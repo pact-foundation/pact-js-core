@@ -1,14 +1,15 @@
-import * as pino from 'pino';
-import fs = require('fs');
-import path = require('path');
+import pino = require('../vendor/pino');
+import SonicBoom = require('sonic-boom');
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
 let level = (process.env.LOGLEVEL || 'info').toLowerCase();
-let destination = pino.destination(1);
 
-const init = (): pino.Logger =>
+export type Logger = pino.Logger;
+export type LogDest = SonicBoom;
+
+export const create = (destination?: pino.DestinationStream): Logger =>
 	pino(
 		{
 			level,
@@ -17,36 +18,13 @@ const init = (): pino.Logger =>
 				translateTime: true,
 			},
 		},
-		destination,
+		destination || pino.destination(1),
 	);
 
-let logger: pino.Logger = init();
-
-export const setLogPath = (logPath: string): void => {
-	const resolvedPath = path.resolve(logPath);
-
-	const updateDestination = (): void => {
-		destination = pino.destination(resolvedPath);
-		logger = init();
-	};
-
-	if (!fs.existsSync(resolvedPath)) {
-		fs.writeFile(resolvedPath, '', err => {
-			if (err) {
-				logger.error(
-					{ path: logPath, err },
-					`could not set logger destination`,
-				);
-			} else {
-				updateDestination();
-			}
-		});
-	} else {
-		updateDestination();
-	}
-};
+let logger: pino.Logger = create();
 
 export const setLogLevel = (
+	logger: Logger,
 	wantedLevel?: pino.Level | number,
 ): number | void => {
 	if (wantedLevel) {
@@ -59,13 +37,8 @@ export const setLogLevel = (
 	return logger.levels.values[logger.level];
 };
 
-export const endDestination = (): void => {
-	if (destination) {
-		destination.end();
-	}
-};
-
-process.on('exit', endDestination);
+export const createDestination = (path: string): LogDest =>
+	pino.destination(path);
 
 export type LogLevels = pino.Level;
 

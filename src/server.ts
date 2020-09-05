@@ -4,7 +4,6 @@ import pact from './pact-standalone';
 import path = require('path');
 import fs = require('fs');
 import mkdirp = require('mkdirp');
-import { setLogPath } from './logger';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
@@ -38,7 +37,6 @@ export class Server extends AbstractService {
 
 		if (options.log) {
 			options.log = path.resolve(options.log);
-			setLogPath(options.log);
 		}
 
 		if (options.sslcert) {

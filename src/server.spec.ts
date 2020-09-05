@@ -11,6 +11,7 @@ import rimraf = require('rimraf');
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
+const rm = util.promisify(rimraf);
 
 describe('Server Spec', () => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -20,19 +21,8 @@ describe('Server Spec', () => {
 		'../test/monkeypatch.rb',
 	);
 
-	afterEach(() => (server ? server.delete() : null));
-
 	let absolutePath: string;
 	let relativePath: string;
-
-	const relativeSSLCertPath = 'test/ssl/server.crt';
-	const absoluteSSLCertPath = path.resolve(
-		__dirname,
-		'..',
-		relativeSSLCertPath,
-	);
-	const relativeSSLKeyPath = 'test/ssl/server.key';
-	const absoluteSSLKeyPath = path.resolve(__dirname, '..', relativeSSLKeyPath);
 
 	beforeEach(() => {
 		relativePath = `.tmp/${Math.floor(Math.random() * 1000)}`;
@@ -42,13 +32,22 @@ describe('Server Spec', () => {
 
 	afterEach(async () => {
 		if (server) {
-			await server.stop();
+			server.delete();
 		}
 
 		if (fs.existsSync(absolutePath)) {
-			await util.promisify(rimraf)(absolutePath);
+			await rm(absolutePath);
 		}
 	});
+
+	const relativeSSLCertPath = 'test/ssl/server.crt';
+	const absoluteSSLCertPath = path.resolve(
+		__dirname,
+		'..',
+		relativeSSLCertPath,
+	);
+	const relativeSSLKeyPath = 'test/ssl/server.key';
+	const absoluteSSLKeyPath = path.resolve(__dirname, '..', relativeSSLKeyPath);
 
 	describe('Start server', () => {
 		context('when no options are set', () => {
@@ -177,7 +176,12 @@ describe('Server Spec', () => {
 				const logPath = path.resolve(absolutePath, 'log.txt');
 				server = serverFactory({ log: logPath });
 				expect(server.options.log).to.equal(logPath);
+
 				return expect(server.start()).to.eventually.be.fulfilled;
+
+				// return expect(server.start()).to.eventually.be.fulfilled.then(
+				// 	() => void rm(logPath),
+				// );
 			});
 
 			it('should start correctly with consumer name', () => {
