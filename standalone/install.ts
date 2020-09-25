@@ -7,6 +7,7 @@ import pactEnvironment from '../src/pact-environment';
 import chalk from 'chalk';
 import path = require('path');
 import fs = require('fs');
+import process = require('process');
 import urljoin = require('url-join');
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -156,7 +157,7 @@ function downloadFileRetry(
 			let time = Date.now();
 			let ca = config.read()['cafile'];
 			if (ca) {
-				ca = fs.readFileSync(ca);
+				ca = fs.readFileSync(process.env.INIT_CWD ? path.resolve(process.env.INIT_CWD, ca) : ca);
 			}
 			request({
 				url,
