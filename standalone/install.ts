@@ -164,7 +164,9 @@ function downloadFileRetry(
 					'User-Agent': 'https://github.com/pact-foundation/pact-node',
 				},
 				strictSSL: config.read()['strict-ssl'],
-				ca,
+				agentOptions: {
+					ca: ca,
+				},
 			})
 				.on('error', (e: string) => reject(e))
 				.on(
