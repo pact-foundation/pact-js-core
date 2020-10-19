@@ -104,7 +104,7 @@ describe('Install', () => {
 			process.env = { ...OLD_ENV };
 		});
 
-		it.only('Should not download it', () => {
+		it('Should not download it', () => {
 			expect(install('Linux', 'x86')).to.be.fulfilled;
 		});
 	});
