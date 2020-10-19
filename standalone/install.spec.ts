@@ -3,7 +3,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as chai from 'chai';
-import { BinaryEntry, Config } from './install';
+import install, { BinaryEntry, Config } from './install';
 
 const expect = chai.expect;
 
@@ -90,6 +90,22 @@ describe('Install', () => {
 			process.env.PACT_DO_NOT_TRACK = `${doNotTrack}`;
 			const config = createConfig();
 			expect(config.doNotTrack).to.be.equal(doNotTrack);
+		});
+	});
+
+	describe('When skips install', () => {
+		let OLD_ENV = { ...process.env };
+
+		beforeEach(() => {
+			process.env.PACT_SKIP_BINARY_INSTALL = 'true';
+		});
+
+		afterEach(() => {
+			process.env = { ...OLD_ENV };
+		});
+
+		it.only('Should not download it', () => {
+			expect(install('Linux', 'x86')).to.be.fulfilled;
 		});
 	});
 });
