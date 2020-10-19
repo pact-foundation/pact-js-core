@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.10.2](https://github.com/pact-foundation/pact-node/compare/v10.10.1...v10.10.2) (2020-10-19)
+
+
+### Bug Fixes
+
+* Correct the config for using custom ca file ([e83c895](https://github.com/pact-foundation/pact-node/commit/e83c8958a34d46d63403fe56402fd5b8d4d6a3c0))
+* spelling in error message. ([c40170d](https://github.com/pact-foundation/pact-node/commit/c40170d39e3ad92749276c158cfa33e32b0be4a9))
+* update standalone to 1.88.3 ([6e1c80b](https://github.com/pact-foundation/pact-node/commit/6e1c80b1316c5a79d18bdc497bb764bab7775fb9))
+
 ### [10.10.1](https://github.com/pact-foundation/pact-node/compare/v10.10.0...v10.10.1) (2020-08-26)
 
 
