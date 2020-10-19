@@ -207,7 +207,7 @@ export class Verifier {
 
 		if (options.publishVerificationResult && !options.providerVersion) {
 			throw new Error(
-				'Must provide both or none of publishVerificationResults and providerVersion.',
+				'Must provide both or none of publishVerificationResult and providerVersion.',
 			);
 		}
 
