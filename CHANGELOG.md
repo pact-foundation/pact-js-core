@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.11.0](https://github.com/pact-foundation/pact-node/compare/v10.10.2...v10.11.0) (2020-10-22)
+
+
+### Features
+
+* **install:** Binary install can be skipped by setting PACT_SKIP_BINARY_INSTALL=true ([4d6b194](https://github.com/pact-foundation/pact-node/commit/4d6b1945a58efa2b56b9b39dd3214e29c1637228))
+
 ### [10.10.2](https://github.com/pact-foundation/pact-node/compare/v10.10.1...v10.10.2) (2020-10-19)
 
 
