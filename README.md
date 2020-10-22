@@ -92,7 +92,7 @@ strict-ssl=true
 ### Skip Pact binary downloading
 
 You can also force Pact to skip the installation of the binary during `npm install` by
-setting `PACT_SKIP_BINARY_INSTALL=true`.This feature is useful if you want to speed up 
+setting `PACT_SKIP_BINARY_INSTALL=true`. This feature is useful if you want to speed up 
 builds that don't need Pact and don't want to modify your projects dependencies. 
 
 Note that pact-node will not be functional without the binary.
