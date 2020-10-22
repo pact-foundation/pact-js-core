@@ -423,14 +423,23 @@ export function downloadChecksums(): Promise<void> {
 	);
 }
 
-export default (platform?: string, arch?: string): Promise<void> =>
-	setup(platform, arch)
+export default (platform?: string, arch?: string): Promise<void> => {
+	if (process.env.PACT_SKIP_BINARY_INSTALL) {
+		console.log(
+			chalk.yellow(
+				"Skipping binary installation. Env var 'PACT_SKIP_BINARY_INSTALL' was found.",
+			),
+		);
+		return Promise.resolve();
+	}
+	return setup(platform, arch)
 		.then(d => download(d))
 		.then(d => extract(d))
 		.then(() => console.log(chalk.green('Pact Standalone Binary is ready.')))
 		.catch((e: string) =>
 			throwError(`Postinstalled Failed Unexpectedly: ${e}`),
 		);
+};
 
 export interface PackageConfig {
 	binaryLocation?: string;

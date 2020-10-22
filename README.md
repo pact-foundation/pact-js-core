@@ -19,6 +19,7 @@ An idiomatic Node wrapper for the [Pact](http://pact.io) [CLI Tools](https://git
   - [Installation](#installation)
     - [Do Not Track](#do-not-track)
     - [Pact Download Location](#pact-download-location)
+    - [Skip Pact binary downloading](#skip-pact-binary-downloading)
   - [Which Library/Package should I use?](#which-librarypackage-should-i-use)
   - [Usage](#usage)
   - [Documentation](#documentation)
@@ -86,6 +87,16 @@ _~/.npmrc_:
 ```
 cafile=/etc/ssl/certs/ca-certificates.crt
 strict-ssl=true
+```
+
+### Skip Pact binary downloading
+
+You can also force Pact to skip the installation of the binary application by
+setting `PACT_SKIP_BINARY_INSTALL=true`. This could be useful if you want to prevent
+Pact from downloading the Pact binary at the time of `npm install`.
+
+```bash
+PACT_SKIP_BINARY_INSTALL=true npm install
 ```
 
 ## Which Library/Package should I use?
