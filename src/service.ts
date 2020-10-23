@@ -219,7 +219,7 @@ export abstract class AbstractService extends events.EventEmitter {
 
 			if (dest) {
 				console.log('>>>>>>>>>>>>>>>>>>>>. has dest', dest);
-				// this.__logDest.end();
+				dest.end();
 			} else {
 				console.log('>>>>>>>>>>>>>>>>>>>> no dest!!!!', dest);
 			}
