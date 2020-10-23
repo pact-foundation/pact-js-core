@@ -32,7 +32,7 @@ describe('Server Spec', () => {
 
 	afterEach(async () => {
 		if (server) {
-			server.delete();
+			await server.delete();
 		}
 
 		if (fs.existsSync(absolutePath)) {
