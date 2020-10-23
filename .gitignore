@@ -42,7 +42,9 @@ node_modules
 src/**/**.d.ts
 test/**/**.d.ts
 bin/**/**.d.ts
-src/**/*.js
+*.js
+!vendor/**/*.js
+
 *.js.map
 !postinstall.js
 !download-checksums.js
