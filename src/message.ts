@@ -82,9 +82,11 @@ export class Message {
 	public createMessage(): q.Promise<unknown> {
 		logger.info(`Creating message pact`);
 		const deferred = q.defer();
+		const { pactFileWriteMode, ...restOptions } = this.options;
+
 		const instance = spawn.spawnBinary(
 			pactStandalone.messagePath,
-			this.options,
+			[{ pactFileWriteMode }, restOptions],
 			this.__argMapping,
 		);
 		const output: Array<string | Buffer> = [];
