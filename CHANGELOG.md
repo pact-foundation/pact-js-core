@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.11.1](https://github.com/pact-foundation/pact-node/compare/v10.11.0...v10.11.1) (2021-01-04)
+
+
+### Bug Fixes
+
+* **message:** Fixed an issue where message pacts could not be created on some platforms ([a092ed9](https://github.com/pact-foundation/pact-node/commit/a092ed904b43c132c00efd6c5e371faef9ea6e97))
+
 ## [10.11.0](https://github.com/pact-foundation/pact-node/compare/v10.10.2...v10.11.0) (2020-10-22)
 
 
