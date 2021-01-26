@@ -1,0 +1,14 @@
+name: Update
+
+on:
+  repository_dispatch:
+    types:
+      - pact-ruby-standalone-released
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+
+    - run: script/create-pr-to-update-pact-ruby-standalone.sh ${{ github.event.client_payload.version }}
