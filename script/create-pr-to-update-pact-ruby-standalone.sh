@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 : "${1?Please supply the pact-ruby-standalone version to upgrade to}"
 
 STANDALONE_VERSION=$1
