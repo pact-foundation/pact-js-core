@@ -1,4 +1,4 @@
-#!/usr/bin/env bash -e
+#!/usr/bin/env sh -e
 
 : "${1?Please supply the pact-ruby-standalone version to upgrade to}"
 
