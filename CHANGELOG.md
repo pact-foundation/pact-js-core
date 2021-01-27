@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.11.2](https://github.com/pact-foundation/pact-node/compare/v10.11.1...v10.11.2) (2021-01-27)
+
+
+### Fixes and Improvements
+
+* **message:** Change the way pact-message is invoked which should avoid some issues in Windows environments ([92185b0](https://github.com/pact-foundation/pact-node/commit/92185b06db955c3e194317cffde8e27954b7ac9f))
+* update standalone to 1.88.33 ([d42e348](https://github.com/pact-foundation/pact-node/commit/d42e3487d58b5f37a71d2d8b0692669af1035ff5))
+
 ### [10.11.1](https://github.com/pact-foundation/pact-node/compare/v10.11.0...v10.11.1) (2021-01-04)
 
 
