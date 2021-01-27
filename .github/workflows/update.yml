@@ -11,4 +11,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - run: |
+      git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+      git config --global user.name "${GITHUB_ACTOR}"
+
     - run: script/create-pr-to-update-pact-ruby-standalone.sh ${{ github.event.client_payload.version }}
