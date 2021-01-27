@@ -6,4 +6,4 @@
 echo "Reducing permissions on github actions' folders to avoid ruby warnings"
 sudo chmod 755 /home/runner
 sudo chmod 755 -R /usr/share
-sudo chmod 755 -R /opt/hostedtoolcache
+sudo chmod 755 -R /opt
