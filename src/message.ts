@@ -13,7 +13,6 @@ const checkTypes = require('check-types');
 export class Message {
 	public readonly options: MessageOptions;
 	private readonly __argMapping = {
-		content: DEFAULT_ARG,
 		pactFileWriteMode: DEFAULT_ARG,
 		dir: '--pact_dir',
 		consumer: '--consumer',
@@ -82,7 +81,7 @@ export class Message {
 	public createMessage(): q.Promise<unknown> {
 		logger.info(`Creating message pact`);
 		const deferred = q.defer();
-		const { pactFileWriteMode, ...restOptions } = this.options;
+		const { pactFileWriteMode, content, ...restOptions } = this.options;
 
 		const instance = spawn.spawnBinary(
 			pactStandalone.messagePath,
@@ -92,6 +91,7 @@ export class Message {
 		const output: Array<string | Buffer> = [];
 		instance.stdout.on('data', l => output.push(l));
 		instance.stderr.on('data', l => output.push(l));
+		instance.stdin.write(content);
 		instance.once('close', code => {
 			const o = output.join('\n');
 			logger.info(o);
@@ -102,6 +102,8 @@ export class Message {
 				return deferred.reject(o);
 			}
 		});
+
+		instance.stdin.end();
 
 		return deferred.promise;
 	}
