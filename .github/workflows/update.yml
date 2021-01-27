@@ -25,3 +25,5 @@ jobs:
         chmod 600 $HOME/.netrc
 
     - run: script/create-pr-to-update-pact-ruby-standalone.sh ${{ github.event.client_payload.version }}
+      env:
+        GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
