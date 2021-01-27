@@ -14,6 +14,7 @@ jobs:
     - run: |
         git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
         git config --global user.name "${GITHUB_ACTOR}"
+        git config pull.ff only
         cat <<-EOF >$HOME/.netrc
               machine github.com
               login $GITHUB_ACTOR
