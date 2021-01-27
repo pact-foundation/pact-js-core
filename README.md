@@ -1,6 +1,6 @@
 <img src="https://raw.githubusercontent.com/pact-foundation/pact-logo/master/media/logo-black.png" width="200">
 
-[![Build Status](https://travis-ci.org/pact-foundation/pact-node.svg?branch=master)](https://travis-ci.org/pact-foundation/pact-node)
+![Build and test](https://github.com/pact-foundation/pact-node/workflows/Build%20and%20test/badge.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/pact-foundation/pact-node/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pact-foundation/pact-node?targetFile=package.json)
 [![npm](https://img.shields.io/npm/v/@pact-foundation/pact-node.svg)](https://www.npmjs.com/package/@pact-foundation/pact-node)
 [![license](https://img.shields.io/github/license/pact-foundation/pact-node.svg)](https://github.com/pact-foundation/pact-node/blob/master/LICENSE)
