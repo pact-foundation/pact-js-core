@@ -1,29 +1,78 @@
-<img src="https://raw.githubusercontent.com/pact-foundation/pact-logo/master/media/logo-black.png" width="200">
+<img src="https://raw.githubusercontent.com/pact-foundation/pact-logo/master/media/logo-black.png" width="200"># Releasing
 
-## Publishing via Travis (recommended)
+We use Github Actions for releases.
 
-Make your changes in a new branch, when merged into master:
+## How a release works
 
-        $ npm run release
-        $ # review workspace and commits - if all looks good...
-        $ git push --follow-tags
+Releases trigger when the repository recieves the custom repository_dispatch event
+`release-triggered`.
 
-Travis CI will do the rest.
+This triggers the `publish.yml` workflow, which in turn
+triggers the `release.sh` script in `scripts/ci`.
+The workflow will also create a github release with an appropriate changelog.
+
+Having the release triggered by a custom event is useful for automating
+releases in the future (eg for version bumps in pact dependencies).
+
+### Release.sh
+
+This script is not intended to be run locally. Note that it modifies your git
+settings.
+
+The script will:
+
+- Modify git authorship settings
+- Confirm that there would be changes in the changelog after release
+- Run Lint
+- Run Build
+- Run Test
+- Commit an appropriate version bump, changelog and tag
+- Package and publish to npm
+- Push the new commit and tag back to the main branch.
+
+Should you need to modify the script locally, you will find it uses some
+dependencies in `scripts/ci/lib`.
+
+## Kicking off a release
+
+You must be able to create a github access token with `repo` scope to the
+pact-node repository.
+
+- Set an environment variable `GITHUB_ACCESS_TOKEN_FOR_PF_RELEASES` to this token.
+- Make sure master contains the code you want to release
+- Run `scripts/trigger-release.sh`
+
+Then wait for github to do its magic. It will release the current head of master.
+
+Note that the release script refuses to publish anything that wouldn't
+produce a changelog. Please make sure your commits follow the guidelines in
+`CONTRIBUTING.md`
+
+## If the release fails
+
+The publish is the second to last step, so if the release fails, you don't
+need to do any rollbacks.
+
+However, there is a potential for the push to fail _after_ a publish if there
+are new commits to master since the release started. This is unlikely with
+the current commit frequency, but could still happen. Check the logs to
+determine if npm has a version that doesn't exist in the master branch.
+
+If this has happened, you will need to manually put the release commit in.
+
+```
+npm run release # This tags, commits and updates the changelog only
+```
+
+Depending on the nature of the new commits to master after the release, you
+may need to rebase them on top of the tagged release commit and force push.
 
 ## Releasing Pact Node Manually
 
 If any changes needs to be released, let it be dependencies or code, you must have access to push directly to master on the pact-node repo, then follow these steps:
 
- - Run `npm test` first to make sure all tests pass, just in case.
- - Update the package.json version number using Semantic Versioning rules:
-   - Bug fixes and other minor changes: Patch release, increment the last number, e.g. 1.0.1.
-   - New features which don't break existing features: Minor release, increment the middle number, e.g. 1.1.0.
-   - Changes which break backwards compatibility: Major release, increment the first number, e.g. 2.0.0.
- - Commit the package.json changes (It should just be the version that changed)
- - Tag the commit with the name number as the version that was just changed using `git tag -a <version> -m "Releasing <insert what's being released>"`
+ - Run `npm ci --ignore-scripts` to confirm that the dependencies are appropriately configured.
+ - Run `npm test` first to make sure all tests pass. This will also build and download the appropriate checksums.
+ - Run `npm run release` to generate the changelog and create a tagged commit
+ - Run `npm publish --access public --tag latest` to publish to npm.
  - Push the commit and the tag to the origin using `git push --follow-tags`
- - Sit back and [watch TravisCI build and release pact-node to npm](https://travis-ci.org/pact-foundation/pact-node).
-
-## Updating Dependencies
-
-If dependencies need to be updated please do so carefully and test everything thoroughly.  For stability sake, do not use `~` or `^` within the package.json file unless it is for a repository that Pact Foundation can control.  _All other dependencies must have an exact version number_.
