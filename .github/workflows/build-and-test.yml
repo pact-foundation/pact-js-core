@@ -19,10 +19,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: |
-          sudo chmod 755 /home/runner
-          sudo chmod 755 -R /usr/share
-          sudo chmod 755 -R /opt/hostedtoolcache/node
-          script/ci/build-and-test.sh
+      - run: script/ci/build-and-test.sh
         env:
           NODE_VERSION: ${{ matrix.node-version }}
