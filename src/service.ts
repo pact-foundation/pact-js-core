@@ -3,7 +3,7 @@ import fs = require('fs');
 import events = require('events');
 import http = require('request');
 import q = require('q');
-import logger /*, { setLogLevel }*/ from './logger';
+import logger,  { setLogLevel } from './logger';
 import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import mkdirp = require('mkdirp');
@@ -52,7 +52,7 @@ export abstract class AbstractService extends events.EventEmitter {
 
 		// Set logger first
 		if (options.logLevel) {
-			//	setLogLevel(options.logLevel);
+			setLogLevel(options.logLevel);
 			// Pact-node's logger supports fatal and trace,
 			// but the ruby binary doesn't. So we map those.
 			if ((options.logLevel as string) === 'fatal') {
