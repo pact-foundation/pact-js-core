@@ -10,7 +10,7 @@ import canDeployFactory, {
 	CanDeployResponse,
 } from './can-deploy';
 import pactEnvironment from './pact-environment';
-import logger, { LogLevels } from './logger';
+import logger, { LogLevels, setLogLevel /* endDestination */ } from './logger';
 import { AbstractService } from './service';
 import * as _ from 'underscore';
 import mkdirp = require('mkdirp');
@@ -44,7 +44,7 @@ export class Pact {
 	}
 
 	public logLevel(level?: LogLevels): number | void {
-		return level ? logger.level(level) : logger.level();
+		return setLogLevel(logger, level);
 	}
 
 	// Creates server with specified options
@@ -149,6 +149,7 @@ export class Pact {
 		return q.all<AbstractService>(
 			_.flatten([this.removeAllStubs(), this.removeAllServers()]),
 		);
+		// .tap(endDestination);
 	}
 
 	// Run the Pact Verification process

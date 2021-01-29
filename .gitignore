@@ -39,8 +39,12 @@ node_modules
 *.tar.gz
 
 # Ignore compiled files
-*.d.ts
+src/**/**.d.ts
+test/**/**.d.ts
+bin/**/**.d.ts
 *.js
+!vendor/**/*.js
+
 *.js.map
 !postinstall.js
 !download-checksums.js

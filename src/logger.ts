@@ -1,40 +1,45 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const bunyan = require('bunyan');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const PrettyStream = require('bunyan-prettystream');
+import pino = require('../vendor/pino');
+import SonicBoom = require('sonic-boom');
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
-const prettyStdOut = new PrettyStream();
-prettyStdOut.pipe(process.stdout);
+let level = (process.env.LOGLEVEL || 'info').toLowerCase();
 
-// TODO: replace bunyan with something that actually works with typescript
-// Extend bunyan
-bunyan.prototype.time = (action: string, startTime: number): void => {
-	let time = Date.now() - startTime;
-	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-	// @ts-ignore
-	this.info(
+export type Logger = pino.Logger;
+export type LogDest = SonicBoom;
+
+export const create = (destination?: pino.DestinationStream): Logger =>
+	pino(
 		{
-			duration: time,
-			action: action,
-			type: 'TIMER',
+			level,
+			prettyPrint: {
+				messageFormat: `pact@${pkg.version} -- {msg}`,
+				translateTime: true,
+			},
 		},
-		`TIMER: ${action} completed in ${time} milliseconds`,
+		destination || pino.destination(1),
 	);
+
+let logger: pino.Logger = create();
+
+export const setLogLevel = (
+	logger: Logger,
+	wantedLevel?: pino.Level | number,
+): number | void => {
+	if (wantedLevel) {
+		logger.level =
+			typeof wantedLevel === 'string'
+				? wantedLevel.toLowerCase()
+				: logger.levels.labels[wantedLevel];
+	}
+
+	return logger.levels.values[logger.level];
 };
 
-export type LogLevels = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
+export const createDestination = (path: string): LogDest =>
+	pino.destination(path);
 
-const Logger = new bunyan({
-	name: `pact-node@${pkg.version}`,
-	streams: [
-		{
-			level: (process.env.LOGLEVEL || 'info') as LogLevels,
-			stream: prettyStdOut,
-			type: 'raw',
-		},
-	],
-});
+export type LogLevels = pino.Level;
 
-export default Logger;
+export default logger;
