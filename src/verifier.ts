@@ -1,6 +1,6 @@
 import path = require('path');
 import url = require('url');
-import logger from './logger';
+import logger, { verboseIsImplied } from './logger';
 import spawn from './spawn';
 import { DEFAULT_ARG } from './spawn';
 import q = require('q');
@@ -220,6 +220,10 @@ export class Verifier {
 			if (options.format.toLowerCase() === 'xml') {
 				options.format = 'RspecJunitFormatter';
 			}
+		}
+
+		if (options.verbose === undefined && verboseIsImplied()) {
+			options.verbose = true;
 		}
 
 		if (options.out) {

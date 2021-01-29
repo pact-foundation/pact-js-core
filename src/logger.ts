@@ -1,40 +1,37 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const bunyan = require('bunyan');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const PrettyStream = require('bunyan-prettystream');
+import pino = require('pino');
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
-const prettyStdOut = new PrettyStream();
-prettyStdOut.pipe(process.stdout);
+export type Logger = pino.Logger;
+export type LogLevels = pino.Level;
 
-// TODO: replace bunyan with something that actually works with typescript
-// Extend bunyan
-bunyan.prototype.time = (action: string, startTime: number): void => {
-	let time = Date.now() - startTime;
-	// eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-	// @ts-ignore
-	this.info(
-		{
-			duration: time,
-			action: action,
-			type: 'TIMER',
+const DEFAULT_LEVEL: LogLevels = (process.env.LOGLEVEL || 'info') as LogLevels;
+
+const createLogger = (level: LogLevels = DEFAULT_LEVEL): Logger =>
+	pino({
+		level: level.toLowerCase(),
+		prettyPrint: {
+			messageFormat: `pact@${pkg.version}: {msg}`,
+			translateTime: true,
 		},
-		`TIMER: ${action} completed in ${time} milliseconds`,
-	);
+	});
+
+const logger: pino.Logger = createLogger();
+
+export const setLogLevel = (
+	wantedLevel?: pino.Level | number,
+): number | void => {
+	if (wantedLevel) {
+		logger.level =
+			typeof wantedLevel === 'string'
+				? wantedLevel.toLowerCase()
+				: logger.levels.labels[wantedLevel];
+	}
+	return logger.levels.values[logger.level];
 };
 
-export type LogLevels = 'trace' | 'debug' | 'info' | 'warn' | 'error' | 'fatal';
+export const verboseIsImplied = (): boolean =>
+	logger.level === 'trace' || logger.level === 'debug';
 
-const Logger = new bunyan({
-	name: `pact-node@${pkg.version}`,
-	streams: [
-		{
-			level: (process.env.LOGLEVEL || 'info') as LogLevels,
-			stream: prettyStdOut,
-			type: 'raw',
-		},
-	],
-});
-
-export default Logger;
+export default logger;

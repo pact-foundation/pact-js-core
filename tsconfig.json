@@ -1,12 +1,8 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
-		"target": "es5",
-		"lib": [
-			"es5",
-			"dom",
-			"es2015.promise"
-		],
+		"target": "es6",
+		"lib": ["es6", "dom"],
 		"removeComments": true,
 		"noLib": false,
 		"sourceMap": true,
@@ -21,11 +17,7 @@
 		"strict": true,
 		"noUnusedLocals": true
 	},
-	"include": [
-		"**/*.ts"
-	],
-	"exclude": [
-		"node_modules"
-	],
+	"include": ["**/*.ts"],
+	"exclude": ["node_modules"],
 	"compileOnSave": false
 }

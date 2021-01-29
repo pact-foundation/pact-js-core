@@ -70,16 +70,9 @@ export class Server extends AbstractService {
 			}
 		}
 
-		let opts = options;
-
-		// Need to uppercase logLevel for ruby
-		if (options.logLevel) {
-			opts.logLevel = options.logLevel.toUpperCase() as LogLevel;
-		}
-
 		super(
 			pact.mockServicePath,
-			opts,
+			options,
 			{
 				port: '--port',
 				host: '--host',

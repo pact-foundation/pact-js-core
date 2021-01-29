@@ -2,6 +2,7 @@ import serverFactory from './server';
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 import fs = require('fs');
+import util = require('util');
 import path = require('path');
 import q = require('q');
 import _ = require('underscore');
@@ -10,6 +11,7 @@ import rimraf = require('rimraf');
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
+const rm = util.promisify(rimraf);
 
 describe('Server Spec', () => {
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,10 +21,24 @@ describe('Server Spec', () => {
 		'../test/monkeypatch.rb',
 	);
 
-	afterEach(() => (server ? server.delete() : null));
-
 	let absolutePath: string;
 	let relativePath: string;
+
+	beforeEach(() => {
+		relativePath = `.tmp/${Math.floor(Math.random() * 1000)}`;
+		absolutePath = path.resolve(__dirname, '..', relativePath);
+		mkdirp.sync(absolutePath);
+	});
+
+	afterEach(async () => {
+		if (server) {
+			await server.delete();
+		}
+
+		if (fs.existsSync(absolutePath)) {
+			await rm(absolutePath);
+		}
+	});
 
 	const relativeSSLCertPath = 'test/ssl/server.crt';
 	const absoluteSSLCertPath = path.resolve(
@@ -32,18 +48,6 @@ describe('Server Spec', () => {
 	);
 	const relativeSSLKeyPath = 'test/ssl/server.key';
 	const absoluteSSLKeyPath = path.resolve(__dirname, '..', relativeSSLKeyPath);
-
-	beforeEach(() => {
-		relativePath = `.tmp/${Math.floor(Math.random() * 1000)}`;
-		absolutePath = path.resolve(__dirname, '..', relativePath);
-		mkdirp.sync(absolutePath);
-	});
-
-	afterEach(() => {
-		if (fs.existsSync(absolutePath)) {
-			rimraf.sync(absolutePath);
-		}
-	});
 
 	describe('Start server', () => {
 		context('when no options are set', () => {
@@ -172,7 +176,12 @@ describe('Server Spec', () => {
 				const logPath = path.resolve(absolutePath, 'log.txt');
 				server = serverFactory({ log: logPath });
 				expect(server.options.log).to.equal(logPath);
+
 				return expect(server.start()).to.eventually.be.fulfilled;
+
+				// return expect(server.start()).to.eventually.be.fulfilled.then(
+				// 	() => void rm(logPath),
+				// );
 			});
 
 			it('should start correctly with consumer name', () => {

@@ -3,7 +3,7 @@ import fs = require('fs');
 import events = require('events');
 import http = require('request');
 import q = require('q');
-import logger from './logger';
+import logger, { setLogLevel } from './logger';
 import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import mkdirp = require('mkdirp');
@@ -50,6 +50,20 @@ export abstract class AbstractService extends events.EventEmitter {
 	) {
 		super();
 
+		// Set logger first
+		if (options.logLevel) {
+			setLogLevel(options.logLevel);
+			// Pact-node's logger supports fatal and trace,
+			// but the ruby binary doesn't. So we map those.
+			if ((options.logLevel as string) === 'fatal') {
+				options.logLevel = 'error';
+			} else if ((options.logLevel as string) === 'trace') {
+				options.logLevel = 'debug';
+			}
+
+			// Then need to uppercase log level for ruby
+			options.logLevel = options.logLevel.toUpperCase() as LogLevel;
+		}
 		// defaults
 		options.ssl = options.ssl || false;
 		options.cors = options.cors || false;
@@ -194,9 +208,11 @@ export abstract class AbstractService extends events.EventEmitter {
 
 	// Deletes this instance and emit an event
 	public delete(): q.Promise<AbstractService> {
-		return this.stop().tap(() =>
-			this.emit(AbstractService.Events.DELETE_EVENT, this),
-		);
+		return this.stop().then(() => {
+			this.emit(AbstractService.Events.DELETE_EVENT, this);
+
+			return this;
+		});
 	}
 
 	// Subclass responsible for spawning the process
@@ -311,6 +327,7 @@ export interface ServiceOptions {
 	logLevel?: LogLevel;
 }
 
+// This is the pact binary's log level, which is a subset of the log levels for pact-node
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface HTTPConfig {
