@@ -42,6 +42,7 @@ node_modules
 src/**/**.d.ts
 test/**/**.d.ts
 bin/**/**.d.ts
+**/*.d.ts
 *.js
 !vendor/**/*.js
 
