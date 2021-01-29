@@ -3,12 +3,7 @@ import fs = require('fs');
 import events = require('events');
 import http = require('request');
 import q = require('q');
-import defaultLogger, {
-	createDestination,
-	create as createLogger,
-	Logger,
-	LogDest,
-} from './logger';
+import logger /*, { setLogLevel }*/ from './logger';
 import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import mkdirp = require('mkdirp');
@@ -46,9 +41,6 @@ export abstract class AbstractService extends events.EventEmitter {
 	protected __cliVerb?: CliVerbOptions;
 	protected __serviceCommand: string;
 
-	private __logger: Logger = defaultLogger;
-	private __logDest?: LogDest;
-
 	protected constructor(
 		command: string,
 		options: ServiceOptions,
@@ -58,14 +50,20 @@ export abstract class AbstractService extends events.EventEmitter {
 	) {
 		super();
 
-		if (options.log) {
-			this.__logDest = createDestination(
-				path.join(path.dirname(options.log), 'testy-loggy.log'),
-			);
+		// Set logger first
+		if (options.logLevel) {
+			//	setLogLevel(options.logLevel);
+			// Pact-node's logger supports fatal and trace,
+			// but the ruby binary doesn't. So we map those.
+			if ((options.logLevel as string) === 'fatal') {
+				options.logLevel = 'error';
+			} else if ((options.logLevel as string) === 'trace') {
+				options.logLevel = 'debug';
+			}
 
-			this.__logger = createLogger(this.__logDest);
+			// Then need to uppercase log level for ruby
+			options.logLevel = options.logLevel.toUpperCase() as LogLevel;
 		}
-
 		// defaults
 		options.ssl = options.ssl || false;
 		options.cors = options.cors || false;
@@ -79,7 +77,7 @@ export abstract class AbstractService extends events.EventEmitter {
 			checkTypes.assert.inRange(options.port, 0, 65535);
 
 			if (checkTypes.not.inRange(options.port, 1024, 49151)) {
-				this.__logger.warn(
+				logger.warn(
 					'Like a Boss, you used a port outside of the recommended range (1024 to 49151); I too like to live dangerously.',
 				);
 			}
@@ -150,7 +148,7 @@ export abstract class AbstractService extends events.EventEmitter {
 
 	public start(): q.Promise<AbstractService> {
 		if (this.__instance && this.__instance.connected) {
-			this.__logger.warn(
+			logger.warn(
 				`You already have a process running with PID: ${this.__instance.pid}`,
 			);
 			return q.resolve(this);
@@ -171,7 +169,7 @@ export abstract class AbstractService extends events.EventEmitter {
 						// read the port number from it
 						this.__instance.stdout.removeListener('data', catchPort);
 					}
-					this.__logger.info(`Pact running on port ${this.options.port}`);
+					logger.info(`Pact running on port ${this.options.port}`);
 				}
 			};
 
@@ -179,7 +177,7 @@ export abstract class AbstractService extends events.EventEmitter {
 		}
 
 		this.__instance.stderr.on('data', data =>
-			this.__logger.error(`Pact Binary Error: ${data}`),
+			logger.error(`Pact Binary Error: ${data}`),
 		);
 
 		// check service is available
@@ -210,21 +208,8 @@ export abstract class AbstractService extends events.EventEmitter {
 
 	// Deletes this instance and emit an event
 	public delete(): q.Promise<AbstractService> {
-		const dest = this.__logDest;
-
-		console.log('!!!!!!!!!!!!!!!!!!!!!!!!!', dest);
-
 		return this.stop().then(() => {
 			this.emit(AbstractService.Events.DELETE_EVENT, this);
-
-			if (dest) {
-				console.log('>>>>>>>>>>>>>>>>>>>>. has dest', dest);
-				dest.end();
-			} else {
-				console.log('>>>>>>>>>>>>>>>>>>>> no dest!!!!', dest);
-			}
-
-			this.__logger = defaultLogger;
 
 			return this;
 		});
@@ -342,6 +327,7 @@ export interface ServiceOptions {
 	logLevel?: LogLevel;
 }
 
+// This is the pact binary's log level, which is a subset of the log levels for pact-node
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface HTTPConfig {
