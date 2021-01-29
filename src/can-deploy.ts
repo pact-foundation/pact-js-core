@@ -1,5 +1,5 @@
 import q = require('q');
-import logger from './logger';
+import logger, { verboseIsImplied } from './logger';
 import spawn from './spawn';
 import pactStandalone from './pact-standalone';
 import { PACT_NODE_NO_VALUE } from './spawn';
@@ -76,6 +76,10 @@ export class CanDeploy {
 			checkTypes.assert.string(options.pactBrokerUsername);
 		options.pactBrokerPassword !== undefined &&
 			checkTypes.assert.string(options.pactBrokerPassword);
+
+		if (options.verbose === undefined && verboseIsImplied()) {
+			options.verbose = true;
+		}
 
 		if (
 			(options.pactBrokerUsername && !options.pactBrokerPassword) ||

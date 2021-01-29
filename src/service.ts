@@ -3,7 +3,7 @@ import fs = require('fs');
 import events = require('events');
 import http = require('request');
 import q = require('q');
-import logger,  { setLogLevel } from './logger';
+import logger, { setLogLevel } from './logger';
 import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import mkdirp = require('mkdirp');

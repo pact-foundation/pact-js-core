@@ -31,4 +31,7 @@ export const setLogLevel = (
 	return logger.levels.values[logger.level];
 };
 
+export const verboseIsImplied = (): boolean =>
+	logger.level === 'trace' || logger.level === 'debug';
+
 export default logger;

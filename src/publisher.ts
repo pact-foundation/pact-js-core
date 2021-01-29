@@ -1,7 +1,7 @@
 import q = require('q');
 import path = require('path');
 import fs = require('fs');
-import logger from './logger';
+import logger, { verboseIsImplied } from './logger';
 import spawn from './spawn';
 import { DEFAULT_ARG } from './spawn';
 import { deprecate } from 'util';
@@ -75,6 +75,10 @@ export class Publisher {
 
 		if (options.pactBrokerPassword) {
 			checkTypes.assert.string(options.pactBrokerPassword);
+		}
+
+		if (options.verbose === undefined && verboseIsImplied()) {
+			options.verbose = true;
 		}
 
 		if (
