@@ -1,4 +1,4 @@
-import pino = require('../vendor/pino');
+import pino = require('pino');
 import SonicBoom = require('sonic-boom');
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires

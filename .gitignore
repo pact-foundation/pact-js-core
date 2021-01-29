@@ -44,7 +44,6 @@ test/**/**.d.ts
 bin/**/**.d.ts
 **/*.d.ts
 *.js
-!vendor/**/*.js
 
 *.js.map
 !postinstall.js

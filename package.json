@@ -62,6 +62,7 @@
     "flatstr": "^1.0.12",
     "libnpmconfig": "^1.2.1",
     "mkdirp": "1.0.0",
+    "pino": "^6.11.0",
     "pino-pretty": "^4.1.0",
     "pino-std-serializers": "^2.5.0",
     "q": "1.5.1",
