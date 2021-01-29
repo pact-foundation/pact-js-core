@@ -36,8 +36,9 @@ export class Spawn {
 		logger.debug(
 			`Starting pact binary '${command}', with arguments [${spawnArgs.join(
 				' ',
-			)}], and environment: ${JSON.stringify(opts)}`,
+			)}]`,
 		);
+		logger.trace(`Environment: ${JSON.stringify(opts)}`);
 		const instance = spawn(command, spawnArgs, opts);
 
 		instance.stdout.setEncoding('utf8');
