@@ -114,7 +114,24 @@ export class CanDeploy {
 
 			if (this.options.output === 'json') {
 				try {
-					const parsed = JSON.parse(result) as CanDeployResponse;
+					const startIndex = output.findIndex((l: string | Buffer) =>
+						l.toString().startsWith('{'),
+					);
+					if (startIndex === -1) {
+						logger.error(`can-i-deploy produced no json output:\n${result}`);
+						return deferred.reject(new Error(result));
+					}
+					if (startIndex !== 0) {
+						logger.warn(
+							`can-i-deploy produced additional output: \n${output.slice(
+								0,
+								startIndex,
+							)}`,
+						);
+					}
+					const jsonPart = output.slice(startIndex).join('\n');
+
+					const parsed = JSON.parse(jsonPart) as CanDeployResponse;
 					if (code === 0 && parsed.summary.deployable) {
 						return deferred.resolve(parsed);
 					}
