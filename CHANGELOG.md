@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.11.5](https://github.com/pact-foundation/pact-node/compare/v10.11.4...v10.11.5) (2021-02-01)
+
+
+### Fixes and Improvements
+
+* update standalone to 1.88.36 ([22e8414](https://github.com/pact-foundation/pact-node/commit/22e8414dc5604f2a8b2c221a04fa6cd8d481f2ff))
+* **can-i-deploy:** Can-i-deploy now prints a warning instead of failing if additional output is produced alongside the json ([364afb2](https://github.com/pact-foundation/pact-node/commit/364afb2cdb9ffab6e3dd6312c3854439c172c3cb))
+* **logger:** Imply verbose mode when log level is debug or trace ([814d4fb](https://github.com/pact-foundation/pact-node/commit/814d4fbe83e598748057c1b5f40b3bef60b86434))
+* **logger:** Now pact-node and ruby use the same logLevel if specified ([513a60d](https://github.com/pact-foundation/pact-node/commit/513a60d00ec8dce8176a592941923b41e1938853))
+* **logging:** Only log entire environment when log level is trace, not debug ([c3b9f5f](https://github.com/pact-foundation/pact-node/commit/c3b9f5fa84b80ccaeb49345b857346b8095f07b1))
+
 ### [10.11.4](https://github.com/pact-foundation/pact-node/compare/v10.11.3...v10.11.4) (2021-01-28)
 
 
