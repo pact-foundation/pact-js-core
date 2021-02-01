@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.11.6](https://github.com/pact-foundation/pact-node/compare/v10.11.5...v10.11.6) (2021-02-01)
+
+
+### Fixes and Improvements
+
+* **types:** Correctly export logger type (in the future we should use our own type) ([a4f766f](https://github.com/pact-foundation/pact-node/commit/a4f766f21a296baf737fb46c8e6c40a70652cdb8))
+
 ### [10.11.5](https://github.com/pact-foundation/pact-node/compare/v10.11.4...v10.11.5) (2021-02-01)
 
 
