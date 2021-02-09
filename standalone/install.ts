@@ -150,7 +150,10 @@ function downloadFileRetry(
 	retry = 3,
 ): Promise<unknown> {
 	return new Promise(
-		(resolve: () => void, reject: (e: string) => void): void => {
+		(
+			resolve: (unused?: unknown) => void,
+			reject: (e: string) => void,
+		): void => {
 			let len = 0;
 			let downloaded = 0;
 			let time = Date.now();
@@ -188,7 +191,7 @@ function downloadFileRetry(
 					}
 				})
 				.pipe(fs.createWriteStream(filepath))
-				.on('finish', () => resolve());
+				.on('finish', resolve);
 		},
 	).catch((e: string) =>
 		retry-- === 0 ? throwError(e) : downloadFileRetry(url, filepath, retry),
