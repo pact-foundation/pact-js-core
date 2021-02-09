@@ -9,7 +9,7 @@ const expect = chai.expect;
 
 // Needs to stay a function and not an arrow function to access mocha 'this' context
 describe('Install', () => {
-	const packageBasePath: string = path.resolve(__dirname, '../..');
+	const packageBasePath: string = path.resolve(__dirname, '__fixtures__');
 	const packagePath: string = path.resolve(packageBasePath, 'package.json');
 	beforeEach(() => {
 		// Clear require cache
@@ -18,8 +18,8 @@ describe('Install', () => {
 		}
 	});
 
-	function createConfig(): Config {
-		return require('./install').createConfig();
+	function createConfig(at: string): Config {
+		return require('./install').createConfig(at);
 	}
 
 	describe('Package.json Configuration', () => {
@@ -43,12 +43,17 @@ describe('Install', () => {
 
 		describe('Binary Location', () => {
 			function setBinaryLocation(location: string, expectation?: string): void {
-				packageConfig.config = {
-					// eslint-disable-next-line @typescript-eslint/camelcase
-					pact_binary_location: location,
-				};
-				fs.writeFileSync(packagePath, JSON.stringify(packageConfig));
-				const config = createConfig();
+				fs.writeFileSync(
+					packagePath,
+					JSON.stringify({
+						...packageConfig,
+						config: {
+							// eslint-disable-next-line @typescript-eslint/camelcase
+							pact_binary_location: location,
+						},
+					}),
+				);
+				const config = createConfig(packageBasePath);
 				config.binaries.forEach((entry: BinaryEntry) => {
 					expect(entry.downloadLocation).to.be.equal(expectation || location);
 				});
@@ -74,12 +79,15 @@ describe('Install', () => {
 
 		it("Should be able to set 'do not track' from package.json config", () => {
 			const doNotTrack = true;
-			packageConfig.config = {
-				// eslint-disable-next-line @typescript-eslint/camelcase
-				pact_do_not_track: doNotTrack,
-			};
-			fs.writeFileSync(packagePath, JSON.stringify(packageConfig));
-			const config = createConfig();
+			fs.writeFileSync(
+				packagePath,
+				JSON.stringify({
+					...packageConfig,
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					config: { pact_do_not_track: doNotTrack },
+				}),
+			);
+			const config = createConfig(packageBasePath);
 			expect(config.doNotTrack).to.be.equal(doNotTrack);
 		});
 	});
@@ -88,7 +96,7 @@ describe('Install', () => {
 		it("Should be able to set 'do not track' from environment variable 'PACT_DO_NOT_TRACK'", () => {
 			const doNotTrack = true;
 			process.env.PACT_DO_NOT_TRACK = `${doNotTrack}`;
-			const config = createConfig();
+			const config = createConfig(packageBasePath);
 			expect(config.doNotTrack).to.be.equal(doNotTrack);
 		});
 	});

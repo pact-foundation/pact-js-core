@@ -35,16 +35,20 @@ function throwError(msg: string): never {
 	throw new Error(chalk.red(`Error while installing binary: ${msg}`));
 }
 
-function getBinaryLocation(location: string): string | undefined {
+function getBinaryLocation(
+	location: string,
+	basePath: string,
+): string | undefined {
 	// Check if location is valid and is a string
 	if (!location || location.length === 0) {
 		return undefined;
 	}
 
 	// Check if it's a URL, if not, try to resolve the path to work with either absolute or relative paths
-	return HTTP_REGEX.test(location) ? location : path.resolve(location);
+	return HTTP_REGEX.test(location)
+		? location
+		: path.resolve(basePath, location);
 }
-
 function findPackageConfig(location: string, tries = 10): PackageConfig {
 	if (tries === 0) {
 		return {};
@@ -54,7 +58,10 @@ function findPackageConfig(location: string, tries = 10): PackageConfig {
 		const config = require(packagePath).config;
 		if (config && (config.pact_binary_location || config.pact_do_not_track)) {
 			return {
-				binaryLocation: getBinaryLocation(config.pact_binary_location),
+				binaryLocation: getBinaryLocation(
+					config.pact_binary_location,
+					location,
+				),
 				doNotTrack: config.pact_do_not_track,
 			};
 		}
@@ -63,8 +70,8 @@ function findPackageConfig(location: string, tries = 10): PackageConfig {
 	return findPackageConfig(path.resolve(location, '..'), tries - 1);
 }
 
-export function createConfig(): Config {
-	const packageConfig = findPackageConfig(process.cwd());
+export function createConfig(location: string = process.cwd()): Config {
+	const packageConfig = findPackageConfig(location);
 	const PACT_BINARY_LOCATION =
 		packageConfig.binaryLocation || PACT_DEFAULT_LOCATION;
 	const CHECKSUM_SUFFIX = '.checksum';
