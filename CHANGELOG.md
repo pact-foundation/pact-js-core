@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.11.8](https://github.com/pact-foundation/pact-node/compare/v10.11.7...v10.11.8) (2021-02-09)
+
+
+### Fixes and Improvements
+
+* **install:** Use the current working directory instead of the installed directory when finding package.json (Fixes [#234](https://github.com/pact-foundation/pact-node/issues/234)) ([30c41dc](https://github.com/pact-foundation/pact-node/commit/30c41dc422e466b67ecf79ba31408f1caca999df))
+
 ### [10.11.7](https://github.com/pact-foundation/pact-node/compare/v10.11.6...v10.11.7) (2021-02-02)
 
 
