@@ -4,7 +4,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as chai from 'chai';
 import install, { BinaryEntry, Config } from './install';
+import chaiAsPromised = require('chai-as-promised');
 
+chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 // Needs to stay a function and not an arrow function to access mocha 'this' context
@@ -113,7 +115,7 @@ describe('Install', () => {
 		});
 
 		it('Should not download it', () => {
-			expect(install('Linux', 'x86')).to.be.fulfilled;
+			return expect(install('Linux', 'x86')).to.be.fulfilled;
 		});
 	});
 });
