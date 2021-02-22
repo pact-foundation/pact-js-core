@@ -64,3 +64,13 @@ log
 reports
 tmp
 .tmp
+
+# jest config
+!jest.config.js
+
+# mocha config
+!.mocharc.js
+!ts-node.js
+
+# jest mocks
+!__mocks__
