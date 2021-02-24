@@ -1,0 +1,7 @@
+{
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"types": ["mocha", "jest", "node"]
+	},
+	"include": ["*.jest.spec.ts", "**/*.jest.spec.ts"]
+}

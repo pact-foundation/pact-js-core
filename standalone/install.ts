@@ -205,7 +205,7 @@ function download(data: Data): Promise<Data> {
 		(resolve: (f: Data) => void, reject: (e: string) => void): void => {
 			if (fs.existsSync(path.resolve(data.filepath))) {
 				console.log(chalk.yellow('Binary already downloaded, skipping...'));
-				resolve(data);
+				resolve({ ...data, binaryAlreadyDownloaded: true });
 				return;
 			}
 			console.log(
@@ -286,10 +286,10 @@ function download(data: Data): Promise<Data> {
 	);
 }
 
-function extract(data: Data): Promise<void> {
+function extract(data: Data): Promise<Data> {
 	// If platform folder exists, binary already installed, skip to next step.
 	if (fs.existsSync(data.platformFolderPath as string)) {
-		return Promise.resolve();
+		return Promise.resolve({ ...data, binaryAlreadyInstalled: true });
 	}
 
 	// Make sure checksum is available
@@ -355,6 +355,7 @@ function extract(data: Data): Promise<void> {
 						chalk.blue(' http://donate.pact.io/node') +
 						'\n\n',
 				);
+				return Promise.resolve(data);
 			})
 			.catch((e: Error) =>
 				throwError(`Extraction failed for ${data.filepath}: ${e}`),
@@ -425,19 +426,24 @@ export function downloadChecksums(): Promise<void> {
 	);
 }
 
-export default (platform?: string, arch?: string): Promise<void> => {
-	if (process.env.PACT_SKIP_BINARY_INSTALL) {
+export default (platform?: string, arch?: string): Promise<Data> => {
+	if (process.env.PACT_SKIP_BINARY_INSTALL === 'true') {
 		console.log(
 			chalk.yellow(
 				"Skipping binary installation. Env var 'PACT_SKIP_BINARY_INSTALL' was found.",
 			),
 		);
-		return Promise.resolve();
+		return Promise.resolve({
+			binaryInstallSkipped: true,
+		} as Data);
 	}
 	return setup(platform, arch)
-		.then(d => download(d))
-		.then(d => extract(d))
-		.then(() => console.log(chalk.green('Pact Standalone Binary is ready.')))
+		.then(download)
+		.then(extract)
+		.then(d => {
+			console.log(chalk.green('Pact Standalone Binary is ready.'));
+			return { ...d, binaryInstallSkipped: false };
+		})
 		.catch((e: string) =>
 			throwError(`Postinstalled Failed Unexpectedly: ${e}`),
 		);
@@ -462,6 +468,9 @@ export interface Data {
 	isWindows: boolean;
 	arch?: string;
 	platformFolderPath?: string;
+	binaryInstallSkipped?: boolean;
+	binaryAlreadyDownloaded?: boolean;
+	binaryAlreadyInstalled?: boolean;
 }
 
 export interface BinaryEntry {

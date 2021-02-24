@@ -13,11 +13,12 @@
 		"noImplicitReturns": true,
 		"noImplicitAny": true,
 		"noImplicitThis": true,
+		"skipLibCheck": true,
 		"strictNullChecks": true,
 		"strict": true,
 		"noUnusedLocals": true
 	},
 	"include": ["**/*.ts"],
-	"exclude": ["node_modules"],
+	"exclude": ["node_modules", "**/*.spec.ts", "**/__mocks__"],
 	"compileOnSave": false
 }
