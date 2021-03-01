@@ -19,15 +19,15 @@ _This checklist is optional, but studies show that people who have followed it c
 
 Before making a feature request, I have: 
 
-- [ ] [Searched the issues to check that this feature hasn't been requested before](https://github.com/pact-foundation/pact-node/issues?q=is%3Aissue)
+- [ ] [Searched the issues to check that this feature hasn't been requested before](https://github.com/pact-foundation/pact-js-core/issues?q=is%3Aissue)
 - [ ] Checked the documentation to see if it is possible to do what I want already 
 
 ### Feature description
 
-_Please describe what you would like Pact-node to do_
+_Please describe what you would like Pact-js-core to do_
 
 ### Use case
 
 _What is the use case that motivates this feature request?_
 
-_Please describe *why* you would like Pact-node to have this feature._
+_Please describe *why* you would like Pact-js-core to have this feature._

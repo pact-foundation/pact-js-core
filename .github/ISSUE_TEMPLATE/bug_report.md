@@ -1,6 +1,6 @@
 ---
 name: Bug report
-about: Report a bug with pact-node
+about: Report a bug with pact-js-core
 title: ''
 labels: bug
 assignees: ''

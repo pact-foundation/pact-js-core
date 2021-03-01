@@ -163,7 +163,7 @@ function downloadFileRetry(
 			request({
 				url,
 				headers: {
-					'User-Agent': 'https://github.com/pact-foundation/pact-node',
+					'User-Agent': 'https://github.com/pact-foundation/pact-js-core',
 				},
 				strictSSL: config.read()['strict-ssl'],
 				agentOptions: {
@@ -235,7 +235,7 @@ function download(data: Data): Promise<Data> {
 							t: 'screenview', // Screenview hit type.
 							an: 'pact-install', // App name.
 							av: require('../package.json').version, // App version.
-							aid: 'pact-node', // App Id.
+							aid: 'pact-node', // App Id - pact-node for historical reasons
 							aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
 							cd: `download-node-${data.platform}-${isCI ? 'ci' : 'user'}`,
 							aip: true, // Anonymise IP address

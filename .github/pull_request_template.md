@@ -2,7 +2,7 @@ _Please read and then remove this section_
 
 Thank you for making a pull request!
 
-Pact-node is built and maintained by developers like you, and we appreciate contributions very much. You are awesome!
+Pact-js-core is built and maintained by developers like you, and we appreciate contributions very much. You are awesome!
 
 Our changelog is automatically built from our commit history, using conventional changelog. This means we'd like to take care that:
 

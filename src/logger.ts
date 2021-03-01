@@ -12,7 +12,7 @@ const createLogger = (level: LogLevels = DEFAULT_LEVEL): Logger =>
 	pino({
 		level: level.toLowerCase(),
 		prettyPrint: {
-			messageFormat: `pact-node@${pkg.version}: {msg}`,
+			messageFormat: `pact-core@${pkg.version}: {msg}`,
 			translateTime: true,
 		},
 	});
