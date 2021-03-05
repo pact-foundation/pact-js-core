@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.12.0](https://github.com/pact-foundation/pact-js-core/compare/v10.11.11...v10.12.0) (2021-03-05)
+
+
+### Features
+
+* **package-name:** Pact-node renamed to pact-core ([700ad09](https://github.com/pact-foundation/pact-js-core/commit/700ad099cebafdb5189e4cb8c09ed0131f24afc4))
+
 ### [10.11.11](https://github.com/pact-foundation/pact-node/compare/v10.11.10...v10.11.11) (2021-02-28)
 
 
