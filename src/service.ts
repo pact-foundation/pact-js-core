@@ -53,7 +53,7 @@ export abstract class AbstractService extends events.EventEmitter {
 		// Set logger first
 		if (options.logLevel) {
 			setLogLevel(options.logLevel);
-			// Pact-node's logger supports fatal and trace,
+			// Pact-js-core's logger supports fatal and trace,
 			// but the ruby binary doesn't. So we map those.
 			if ((options.logLevel as string) === 'fatal') {
 				options.logLevel = 'error';
@@ -327,7 +327,7 @@ export interface ServiceOptions {
 	logLevel?: LogLevel;
 }
 
-// This is the pact binary's log level, which is a subset of the log levels for pact-node
+// This is the pact binary's log level, which is a subset of the log levels for pact-core
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface HTTPConfig {

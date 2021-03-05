@@ -1,9 +1,9 @@
 {
-  "name": "@pact-foundation/pact-node",
+  "name": "@pact-foundation/pact-core",
   "version": "10.11.11",
-  "description": "A wrapper for the Ruby version of Pact to work within Node",
+  "description": "Core of @pact-foundation/pact. You almost certainly don't want to depend on this directly.",
   "main": "src/index.js",
-  "homepage": "https://github.com/pact-foundation/pact-node#readme",
+  "homepage": "https://github.com/pact-foundation/pact-js-core#readme",
   "types": "src/index.d.ts",
   "bin": {
     "pact": "bin/pact.js",
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/pact-foundation/pact-node.git"
+    "url": "git://github.com/pact-foundation/pact-js-core.git"
   },
   "keywords": [
     "pact",
@@ -44,7 +44,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pact-foundation/pact-node/issues"
+    "url": "https://github.com/pact-foundation/pact-js-core/issues"
   },
   "publishConfig": {
     "access": "public"
