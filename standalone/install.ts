@@ -381,6 +381,7 @@ export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
 
 function setup(platform?: string, arch?: string): Promise<Data> {
 	const entry = getBinaryEntry(platform, arch);
+
 	return Promise.resolve({
 		binaryDownloadPath: join(entry.downloadLocation, entry.binary),
 		checksumDownloadPath: join(PACT_DEFAULT_LOCATION, entry.binaryChecksum),
@@ -426,6 +427,36 @@ export function downloadChecksums(): Promise<void> {
 	);
 }
 
+
+export function downloadChecksum(data: Data): Promise<Data> {
+	console.log(
+		chalk.gray(`Downloading checksum for ${data.platform}.`),
+	);
+	return new Promise(
+		(resolve: (f: Data) => void, reject: (e: string) => void): void => {
+			if (fs.existsSync(path.resolve(data.checksumFilepath))) {
+				console.log(chalk.yellow('Checksum file already downloaded, skipping...'));
+				resolve({ ...data, binaryAlreadyDownloaded: true });
+				return;
+			} else {
+				downloadFileRetry(data.checksumDownloadPath, data.checksumFilepath).then(
+					() => {
+						console.log(
+							chalk.green(`Finished downloading checksum to ${data.checksumFilepath}`),
+						);
+						resolve(data);
+					},
+					(e: string) =>
+						reject(
+							`Error downloading binary from ${data.checksumDownloadPath}: ${e}`,
+						),
+				);	
+			}
+		},
+	);
+
+}
+
 export default (platform?: string, arch?: string): Promise<Data> => {
 	if (process.env.PACT_SKIP_BINARY_INSTALL === 'true') {
 		console.log(
@@ -439,6 +470,7 @@ export default (platform?: string, arch?: string): Promise<Data> => {
 	}
 	return setup(platform, arch)
 		.then(download)
+		.then(downloadChecksum)
 		.then(extract)
 		.then(d => {
 			console.log(chalk.green('Pact Standalone Binary is ready.'));
