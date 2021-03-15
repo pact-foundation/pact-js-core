@@ -427,22 +427,26 @@ export function downloadChecksums(): Promise<void> {
 	);
 }
 
-
 export function downloadChecksum(data: Data): Promise<Data> {
-	console.log(
-		chalk.gray(`Downloading checksum for ${data.platform}.`),
-	);
+	console.log(chalk.gray(`Downloading checksum for ${data.platform}.`));
 	return new Promise(
 		(resolve: (f: Data) => void, reject: (e: string) => void): void => {
 			if (fs.existsSync(path.resolve(data.checksumFilepath))) {
-				console.log(chalk.yellow('Checksum file already downloaded, skipping...'));
+				console.log(
+					chalk.yellow('Checksum file already downloaded, skipping...'),
+				);
 				resolve({ ...data, binaryAlreadyDownloaded: true });
 				return;
 			} else {
-				downloadFileRetry(data.checksumDownloadPath, data.checksumFilepath).then(
+				downloadFileRetry(
+					data.checksumDownloadPath,
+					data.checksumFilepath,
+				).then(
 					() => {
 						console.log(
-							chalk.green(`Finished downloading checksum to ${data.checksumFilepath}`),
+							chalk.green(
+								`Finished downloading checksum to ${data.checksumFilepath}`,
+							),
 						);
 						resolve(data);
 					},
@@ -450,11 +454,10 @@ export function downloadChecksum(data: Data): Promise<Data> {
 						reject(
 							`Error downloading binary from ${data.checksumDownloadPath}: ${e}`,
 						),
-				);	
+				);
 			}
 		},
 	);
-
 }
 
 export default (platform?: string, arch?: string): Promise<Data> => {
