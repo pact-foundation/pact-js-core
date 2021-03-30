@@ -65,7 +65,7 @@
     "rimraf": "2.6.2",
     "sumchecker": "^2.0.2",
     "tar": "4.4.2",
-    "underscore": "1.8.3",
+    "underscore": "1.12.1",
     "unixify": "1.0.0",
     "unzipper": "^0.10.10",
     "url-join": "^4.0.0"
