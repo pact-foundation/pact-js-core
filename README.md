@@ -1,23 +1,21 @@
 <img src="https://raw.githubusercontent.com/pact-foundation/pact-logo/master/media/logo-black.png" width="200">
 
-![Build and test](https://github.com/pact-foundation/pact-js-core/workflows/Build%20and%20test/badge.svg)
-[![Known Vulnerabilities](https://snyk.io/test/github/pact-foundation/pact-js-core/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pact-foundation/pact-js-core?targetFile=package.json)
-[![npm](https://img.shields.io/npm/v/@pact-foundation/pact-core.svg)](https://www.npmjs.com/package/@pact-foundation/pact-core)
-[![license](https://img.shields.io/github/license/pact-foundation/pact-js-core.svg)](https://github.com/pact-foundation/pact-js-core/blob/master/LICENSE)
-[![dependencies](https://img.shields.io/david/pact-foundation/pact-js-core.svg)](https://www.npmjs.com/package/@pact-foundation/pact-core)
+[![Build and test](https://github.com/pact-foundation/pact-node/workflows/Build%20and%20test/badge.svg)
+[![Known Vulnerabilities](https://snyk.io/test/github/pact-foundation/pact-node/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pact-foundation/pact-node?targetFile=package.json)
+[![npm](https://img.shields.io/npm/v/@pact-foundation/pact-node.svg)](https://www.npmjs.com/package/@pact-foundation/pact-node)
+[![license](https://img.shields.io/github/license/pact-foundation/pact-node.svg)](https://github.com/pact-foundation/pact-node/blob/master/LICENSE)
+[![dependencies](https://img.shields.io/david/pact-foundation/pact-node.svg)](https://www.npmjs.com/package/@pact-foundation/pact-node)
 [![slack](http://slack.pact.io/badge.svg)](http://slack.pact.io)
 
-# Pact-JS Core
+# Pact Node
 
-**This is the core of pact-js. Unless you are wanting to develop tools for the pact ecosystem, you almost certainly want to install [`@pact-foundation/pact`](https://github.com/pact-foundation/pact-js/) instead**.
+An idiomatic Node wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
 
-A wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
-
-***If you are new to Pact and are wanting to get started with contract testing, you almost certainly don't want to use this package. Head over to [Pact JS](https://github.com/pact-foundation/pact-js/) instead.**
+***NOTE*: If you are new to Pact and are wanting to get started with contract testing, you almost certainly don't want to use this package. Head over to [Pact JS](https://github.com/pact-foundation/pact-js/) instead.**
 
 <!-- TOC -->
 
-- [Pact Core](#pact-js-core)
+- [Pact Node](#pact-node)
   - [Installation](#installation)
     - [Do Not Track](#do-not-track)
     - [Pact Download Location](#pact-download-location)
@@ -49,7 +47,7 @@ A wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-fou
 
 ## Installation
 
-`npm install @pact-foundation/pact-core --save-dev`
+`npm install @pact-foundation/pact-node --save`
 
 ### Do Not Track
 
@@ -81,7 +79,7 @@ For those that are behind a corporate firewall or are seeing issues where our pa
 }
 ```
 
-It will accept both a local path or an http(s) url. It must point to the directory containing the binary needed as the binary name is appended to the end of the location. For the example given above, Pact will look for the binary at `/home/some-user/Downloads/pact-1.44.0-win32.zip` for a Windows system. However, by using this method, you must use the correct Pact version binary associated with this version of Pact-Core. For extra security measurements, checksum validation has been added to prevent tampering with the binaries.
+It will accept both a local path or an http(s) url. It must point to the directory containing the binary needed as the binary name is appended to the end of the location. For the example given above, Pact will look for the binary at `/home/some-user/Downloads/pact-1.44.0-win32.zip` for a Windows system. However, by using this method, you must use the correct Pact version binary associated with this version of Pact-Node. For extra security measurements, checksum validation has been added to prevent tampering with the binaries.
 
 If your environment uses self-signed certificates from an internal Certificate Authority (CA), you can configure this using the standard options in an [npmrc](https://docs.npmjs.com/configuring-npm/npmrc.html) file as per below:
 
@@ -97,7 +95,7 @@ You can also force Pact to skip the installation of the binary during `npm insta
 setting `PACT_SKIP_BINARY_INSTALL=true`. This feature is useful if you want to speed up 
 builds that don't need Pact and don't want to modify your projects dependencies. 
 
-Note that pact-core will not be functional without the binary.
+Note that pact-node will not be functional without the binary.
 
 ```bash
 PACT_SKIP_BINARY_INSTALL=true npm install
@@ -123,7 +121,7 @@ TL;DR - you almost always want Pact JS.
 Simply require the library and call the create function to start the mock service
 
 ```js
-var pact = require("@pact-foundation/pact-core");
+var pact = require("@pact-foundation/pact-node");
 var server = pact.createServer({ port: 9999 });
 server.start().then(function() {
 	// Do your testing/development here
@@ -133,7 +131,7 @@ server.start().then(function() {
 Or if you're using Typescript instead of plain old Javascript
 
 ```ts
-import pact from "@pact-foundation/pact-core";
+import pact from "@pact-foundation/pact-node";
 const server = pact.createServer({ port: 9999 });
 server.start().then(() => {
 	// Do your testing/development here
@@ -153,7 +151,7 @@ To see the list commands possible with the CLI, simply ask for help `$# pact --h
 ### Set Log Level
 
 ```js
-var pact = require("@pact-foundation/pact-core");
+var pact = require("@pact-foundation/pact-node");
 pact.logLevel("debug");
 ```
 
@@ -164,7 +162,7 @@ Mock servers are used by Pact to record interactions and create pact contracts.
 #### Create Mock Server
 
 ```js
-var pact = require('@pact-foundation/pact-core');
+var pact = require('@pact-foundation/pact-node');
 var server = pact.createServer({
 	...
 });
@@ -195,7 +193,7 @@ var server = pact.createServer({
 If you ever need to see which servers are currently created.
 
 ```js
-var pact = require("@pact-foundation/pact-core");
+var pact = require("@pact-foundation/pact-node");
 var servers = pact.listServers();
 console.log(JSON.stringify(servers));
 ```
@@ -205,7 +203,7 @@ console.log(JSON.stringify(servers));
 Remove all servers once you're done with them in one fell swoop.
 
 ```js
-var pact = require("@pact-foundation/pact-core");
+var pact = require("@pact-foundation/pact-node");
 pact.removeAllServers();
 ```
 
@@ -214,7 +212,7 @@ pact.removeAllServers();
 Start the current server.
 
 ```js
-var pact = require("@pact-foundation/pact-core");
+var pact = require("@pact-foundation/pact-node");
 pact.createServer()
 	.start()
 	.then(function() {
@@ -227,7 +225,7 @@ pact.createServer()
 Stop the current server.
 
 ```js
-var pact = require("@pact-foundation/pact-core");
+var pact = require("@pact-foundation/pact-node");
 pact.createServer()
 	.stop()
 	.then(function() {
@@ -240,7 +238,7 @@ pact.createServer()
 Stop the current server and deletes it from the list.
 
 ```js
-var pact = require("@pact-foundation/pact-core");
+var pact = require("@pact-foundation/pact-node");
 pact.createServer()
 	.delete()
 	.then(function() {
@@ -251,7 +249,7 @@ pact.createServer()
 #### Check if a Mock server is running
 
 ```js
-var pact = require("@pact-foundation/pact-core");
+var pact = require("@pact-foundation/pact-node");
 pact.createServer().running;
 ```
 
@@ -260,7 +258,7 @@ pact.createServer().running;
 There's 3 different events available, 'start', 'stop' and 'delete'. They can be listened to the same way as an [EventEmitter](https://nodejs.org/api/events.html).
 
 ```js
-var pact = require("@pact-foundation/pact-core");
+var pact = require("@pact-foundation/pact-node");
 var server = pact.createServer();
 server.on("start", function() {
 	console.log("started");
@@ -278,7 +276,7 @@ server.on("delete", function() {
 Read more about [Verify Pacts](https://github.com/realestate-com-au/pact/wiki/Verifying-pacts).
 
 ```js
-var pact = require('@pact-foundation/pact-core');
+var pact = require('@pact-foundation/pact-node');
 
 pact.verifyPacts({
 	...
@@ -315,7 +313,7 @@ pact.verifyPacts({
 ### Pact Broker Publishing
 
 ```js
-var pact = require('@pact-foundation/pact-core');
+var pact = require('@pact-foundation/pact-node');
 var opts = {
 	...
 };
@@ -341,7 +339,7 @@ pact.publishPacts(opts).then(function () {
 ### Pact Broker Deployment Check
 
 ```js
-var pact = require('@pact-foundation/pact-core');
+var pact = require('@pact-foundation/pact-node');
 var opts = {
 	...
 };
@@ -388,7 +386,7 @@ The interface is comparable to the Mock Server API.
 #### Create Stub Server
 
 ```js
-var pact = require('@pact-foundation/pact-core');
+var pact = require('@pact-foundation/pact-node');
 var server = pact.createStub({
 	...
 });
@@ -413,7 +411,7 @@ var server = pact.createStub({
 #### Create Message Pacts
 
 ```js
-var pact = require('@pact-foundation/pact-core');
+var pact = require('@pact-foundation/pact-node');
 var message = pact.createMessage({
 	...
 });
@@ -456,7 +454,7 @@ This means you may call them direct from scripts in your package json, for examp
 "scripts": {
   "pactPublish": "pact-broker publish ./pacts --consumer-app-version=$\(git describe\) --broker-base-url=$BROKER_BASE_URL --broker-username=$BROKER_USERNAME --broker-password=BROKER_PASSWORD"`
 }
-These are available in circumstances where `pact-core` has not yet implemented a feature or access via JavaScript APIs is not desirable. To run the binaries is as simple as the following:
+These are available in circumstances where `pact-node` has not yet implemented a feature or access via JavaScript APIs is not desirable. To run the binaries is as simple as the following:
 
 *Example can-i-deploy check*:
 ```sh
@@ -484,7 +482,7 @@ The following are the binaries currently made available:
 
 ### Enable Long Paths
 
-[Windows has a default path length limit of 260](https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file#maximum-path-length-limitation) causing issues with projects that are nested deep inside several directory and with how npm handles node_modules directory structures.  To fix this issue, please enable Windows Long Paths in the registry by running `regedit.exe`, find the key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled` and change the value from `0` to `1`, then reboot your computer.  Pact should now work as it should, if not, please [raise an issue on github](https://github.com/pact-foundation/pact-js-core/issues).
+[Windows has a default path length limit of 260](https://docs.microsoft.com/en-us/windows/desktop/fileio/naming-a-file#maximum-path-length-limitation) causing issues with projects that are nested deep inside several directory and with how npm handles node_modules directory structures.  To fix this issue, please enable Windows Long Paths in the registry by running `regedit.exe`, find the key `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\FileSystem\LongPathsEnabled` and change the value from `0` to `1`, then reboot your computer.  Pact should now work as it should, if not, please [raise an issue on github](https://github.com/pact-foundation/pact-node/issues).
 
 ## Contributing
 

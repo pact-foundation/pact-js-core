@@ -13,8 +13,8 @@ Please provide the following information with your issue to enable us to respond
 
 ## I want to contribute code but don't know where to start
 
-If you're not sure where to start, look for the [help wanted](https://github.com/pact-foundation/pact-core/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
-label in our issue tracker. If you have an idea that you think would be great, come and chat to us on [slack] in the `#pact-js` channel, or open a feature request issue.
+If you're not sure where to start, look for the [help wanted](https://github.com/pact-foundation/pact-node/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22)
+label in our issue tracker. If you have an idea that you think would be great, come and chat to us on [slack] in the `#pact-node` channel, or open a feature request issue.
 
 ## I'm ready to contribute code
 
@@ -26,7 +26,7 @@ Pact Node uses the [Conventional Changelog](https://github.com/bcoe/conventional
 commit message conventions to simplify automation process. Please ensure you follow the guidelines.
 
 You can take a look at the git history (`git log`) to get the gist of it. 
-If you have questions, feel free to reach out in `#pact-js` in our [slack
+If you have questions, feel free to reach out in `#pact-node` in our [slack
 community](https://pact-foundation.slack.com/).
 
 #### Release notes

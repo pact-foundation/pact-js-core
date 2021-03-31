@@ -1,9 +1,9 @@
 {
-  "name": "@pact-foundation/pact-core",
   "version": "10.12.2",
+  "name": "@pact-foundation/pact-node",
   "description": "Core of @pact-foundation/pact. You almost certainly don't want to depend on this directly.",
   "main": "src/index.js",
-  "homepage": "https://github.com/pact-foundation/pact-js-core#readme",
+  "homepage": "https://github.com/pact-foundation/pact-node#readme",
   "types": "src/index.d.ts",
   "bin": {
     "pact": "bin/pact.js",
@@ -27,7 +27,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/pact-foundation/pact-js-core.git"
+    "url": "git://github.com/pact-foundation/pact-node.git"
   },
   "keywords": [
     "pact",
@@ -44,7 +44,7 @@
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/pact-foundation/pact-js-core/issues"
+    "url": "https://github.com/pact-foundation/pact-node/issues"
   },
   "publishConfig": {
     "access": "public"
