@@ -22,7 +22,7 @@ describe('CanDeploy Spec', () => {
     brokerMock(PORT).then(s => {
       logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
-    }),
+    })
   );
 
   after(() => server.close());
@@ -108,7 +108,7 @@ describe('CanDeploy Spec', () => {
         canDeployFactory({
           pactBroker: 'http://localhost',
           pacticipants: [],
-        }),
+        })
       ).to.throw(Error);
     });
   });

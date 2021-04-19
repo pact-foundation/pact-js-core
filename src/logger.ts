@@ -20,7 +20,7 @@ const createLogger = (level: LogLevels = DEFAULT_LEVEL): Logger =>
 const logger: pino.Logger = createLogger();
 
 export const setLogLevel = (
-  wantedLevel?: pino.Level | number,
+  wantedLevel?: pino.Level | number
 ): number | void => {
   if (wantedLevel) {
     logger.level =

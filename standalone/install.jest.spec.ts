@@ -5,7 +5,7 @@ import { FS } from './__mocks__/fs';
 
 jest.mock('fs');
 jest.mock('sumchecker', () =>
-  jest.fn().mockImplementation(() => Promise.resolve()),
+  jest.fn().mockImplementation(() => Promise.resolve())
 );
 jest.mock('libnpmconfig', () => ({
   read: (): jest.Mock => jest.fn(),
@@ -53,7 +53,7 @@ describe('Install', () => {
         const config = createConfig(packageBasePath);
         config.binaries.forEach((entry: BinaryEntry) => {
           expect(entry.downloadLocation).toEqual(
-            path.resolve(pact_binary_location),
+            path.resolve(pact_binary_location)
           );
         });
       });
@@ -66,7 +66,7 @@ describe('Install', () => {
         const config = createConfig(packageBasePath);
         config.binaries.forEach((entry: BinaryEntry) => {
           expect(entry.downloadLocation).toEqual(
-            path.resolve(packageBasePath, pact_binary_location),
+            path.resolve(packageBasePath, pact_binary_location)
           );
         });
       });

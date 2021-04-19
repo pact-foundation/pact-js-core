@@ -12,7 +12,7 @@ describe('Pact Util Spec', () => {
       it('should return an array of all arguments', () => {
         const result = argsHelper.toArgumentsArray(
           { providerBaseUrl: 'http://localhost' },
-          { providerBaseUrl: '--provider-base-url' },
+          { providerBaseUrl: '--provider-base-url' }
         );
         expect(result)
           .to.be.an('array')
@@ -29,7 +29,7 @@ describe('Pact Util Spec', () => {
           {
             providerBaseUrl: '--provider-base-url',
             pactUrls: '--pact-urls',
-          },
+          }
         );
         expect(result).to.include('--provider-base-url');
         expect(result).to.include('http://localhost');
@@ -50,7 +50,7 @@ describe('Pact Util Spec', () => {
                 },
               ],
             },
-            { consumerVersionSelectors: '--consumer-version-selector' },
+            { consumerVersionSelectors: '--consumer-version-selector' }
           );
 
           expect(result)
@@ -69,7 +69,7 @@ describe('Pact Util Spec', () => {
             [{ providerBaseUrl: 'http://localhost' }],
             {
               providerBaseUrl: '--provider-base-url',
-            },
+            }
           );
           expect(result)
             .to.be.an('array')
@@ -88,7 +88,7 @@ describe('Pact Util Spec', () => {
             {
               providerBaseUrl: '--provider-base-url',
               pactUrls: '--pact-urls',
-            },
+            }
           );
           expect(result).to.include('--provider-base-url');
           expect(result).to.include('http://localhost');
@@ -105,7 +105,7 @@ describe('Pact Util Spec', () => {
               { participant: 'two' },
               { version: 'v2' },
             ],
-            { version: '--version', participant: '--participant' },
+            { version: '--version', participant: '--participant' }
           );
 
           expect(result).to.be.an('array');
@@ -141,7 +141,7 @@ describe('Pact Util Spec', () => {
                 ],
               },
             ],
-            { consumerVersionSelectors: '--consumer-version-selector' },
+            { consumerVersionSelectors: '--consumer-version-selector' }
           );
 
           expect(result)
@@ -163,7 +163,7 @@ describe('Pact Util Spec', () => {
         {
           providerBaseUrl: '--provider-base-url',
           pactUrls: DEFAULT_ARG,
-        },
+        }
       );
       expect(result.length).to.be.equal(3);
       expect(result[0]).to.be.equal('http://idontexist');

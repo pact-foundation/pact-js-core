@@ -12,7 +12,7 @@ export default (port: number): q.Promise<http.Server> => {
   server.use(
     bodyParser.urlencoded({
       extended: true,
-    }),
+    })
   );
 
   let stateData = '';
@@ -26,7 +26,7 @@ export default (port: number): q.Promise<http.Server> => {
     returnJson({
       me: ['There is a greeting'],
       anotherclient: ['There is a greeting'],
-    }),
+    })
   );
 
   server.post(
@@ -36,7 +36,7 @@ export default (port: number): q.Promise<http.Server> => {
       return res.json({
         greeting: stateData,
       });
-    },
+    }
   );
 
   server.get('/somestate', (req: express.Request, res: express.Response) => {
@@ -72,37 +72,37 @@ export default (port: number): q.Promise<http.Server> => {
           } else {
             console.log('Sent:', fileName);
           }
-        },
+        }
       );
-    },
+    }
   );
 
   // Verification result
   server.post(
     '/pacts/provider/:provider/consumer/:consumer/pact-version/:version/verification-results',
-    returnJsonFile('./data/get-provider_they-consumer_me-latest.json'),
+    returnJsonFile('./data/get-provider_they-consumer_me-latest.json')
   );
   server.get(
     '/pacts/provider/they/consumer/me/latest',
     auth,
-    returnJsonFile('./data/get-provider_they-consumer_me-latest.json'),
+    returnJsonFile('./data/get-provider_they-consumer_me-latest.json')
   );
   server.get(
     '/pacts/provider/they/consumer/anotherclient/latest',
     auth,
     returnJsonFile(
-      './data/get-provider_they-consumer_anotherclient-latest.json',
-    ),
+      './data/get-provider_they-consumer_anotherclient-latest.json'
+    )
   );
   server.get(
     '/noauth/pacts/provider/they/consumer/me/latest',
-    returnJsonFile('./data/get-noauth-provider_they-consumer_me-latest.json'),
+    returnJsonFile('./data/get-noauth-provider_they-consumer_me-latest.json')
   );
   server.get(
     '/noauth/pacts/provider/they/consumer/anotherclient/latest',
     returnJsonFile(
-      './data/get-noauth-provider_they-consumer_anotherclient-latest.json',
-    ),
+      './data/get-noauth-provider_they-consumer_anotherclient-latest.json'
+    )
   );
 
   const deferred = q.defer<http.Server>();

@@ -37,7 +37,7 @@ function throwError(msg: string): never {
 
 function getBinaryLocation(
   location: string,
-  basePath: string,
+  basePath: string
 ): string | undefined {
   // Check if location is valid and is a string
   if (!location || location.length === 0) {
@@ -60,7 +60,7 @@ function findPackageConfig(location: string, tries = 10): PackageConfig {
       return {
         binaryLocation: getBinaryLocation(
           config.pact_binary_location,
-          location,
+          location
         ),
         doNotTrack: config.pact_do_not_track,
       };
@@ -146,12 +146,12 @@ const CIs = [
 function downloadFileRetry(
   url: string,
   filepath: string,
-  retry = 3,
+  retry = 3
 ): Promise<unknown> {
   return new Promise(
     (
       resolve: (unused?: unknown) => void,
-      reject: (e: string) => void,
+      reject: (e: string) => void
     ): void => {
       let len = 0;
       let downloaded = 0;
@@ -174,7 +174,7 @@ function downloadFileRetry(
         .on(
           'response',
           (res: http.IncomingMessage) =>
-            (len = parseInt(res.headers['content-length'] as string, 10)),
+            (len = parseInt(res.headers['content-length'] as string, 10))
         )
         .on('data', (chunk: string[]) => {
           downloaded += chunk.length;
@@ -184,22 +184,22 @@ function downloadFileRetry(
             time = now;
             console.log(
               chalk.gray(
-                `Downloaded ${((100 * downloaded) / len).toFixed(2)}%...`,
-              ),
+                `Downloaded ${((100 * downloaded) / len).toFixed(2)}%...`
+              )
             );
           }
         })
         .pipe(fs.createWriteStream(filepath))
         .on('finish', resolve);
-    },
+    }
   ).catch((e: string) =>
-    retry-- === 0 ? throwError(e) : downloadFileRetry(url, filepath, retry),
+    retry-- === 0 ? throwError(e) : downloadFileRetry(url, filepath, retry)
   );
 }
 
 function download(data: Data): Promise<Data> {
   console.log(
-    chalk.gray(`Installing Pact Standalone Binary for ${data.platform}.`),
+    chalk.gray(`Installing Pact Standalone Binary for ${data.platform}.`)
   );
   return new Promise(
     (resolve: (f: Data) => void, reject: (e: string) => void): void => {
@@ -210,8 +210,8 @@ function download(data: Data): Promise<Data> {
       }
       console.log(
         chalk.yellow(
-          `Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.binaryDownloadPath}`,
-        ),
+          `Downloading Pact Standalone Binary v${PACT_STANDALONE_VERSION} for platform ${data.platform} from ${data.binaryDownloadPath}`
+        )
       );
 
       // Track downloads through Google Analytics unless testing or don't want to be tracked
@@ -219,8 +219,8 @@ function download(data: Data): Promise<Data> {
         console.log(
           chalk.gray(
             'Please note: we are tracking this download anonymously to gather important usage statistics. ' +
-              "To disable tracking, set 'pact_do_not_track: true' in your package.json 'config' section.",
-          ),
+              "To disable tracking, set 'pact_do_not_track: true' in your package.json 'config' section."
+          )
         );
         // Trying to find all environment variables of all possible CI services to get more accurate stats
         // but it's still not 100% since not all systems have unique environment variables for their CI server
@@ -252,37 +252,37 @@ function download(data: Data): Promise<Data> {
         downloadFileRetry(data.binaryDownloadPath, data.filepath).then(
           () => {
             console.log(
-              chalk.green(`Finished downloading binary to ${data.filepath}`),
+              chalk.green(`Finished downloading binary to ${data.filepath}`)
             );
             resolve(data);
           },
           (e: string) =>
             reject(
-              `Error downloading binary from ${data.binaryDownloadPath}: ${e}`,
-            ),
+              `Error downloading binary from ${data.binaryDownloadPath}: ${e}`
+            )
         );
       } else if (fs.existsSync(data.binaryDownloadPath)) {
         // Or else it might be a local file, try to copy it over to the correct directory
         fs.createReadStream(data.binaryDownloadPath)
           .on('error', (e: string) =>
             reject(
-              `Error reading the file at '${data.binaryDownloadPath}': ${e}`,
-            ),
+              `Error reading the file at '${data.binaryDownloadPath}': ${e}`
+            )
           )
           .pipe(
             fs
               .createWriteStream(data.filepath)
               .on('error', (e: string) =>
-                reject(`Error writing the file to '${data.filepath}': ${e}`),
+                reject(`Error writing the file to '${data.filepath}': ${e}`)
               )
-              .on('close', () => resolve(data)),
+              .on('close', () => resolve(data))
           );
       } else {
         reject(
-          `Could not get binary from '${data.binaryDownloadPath}' as it's not a URL and does not exist at the path specified.`,
+          `Could not get binary from '${data.binaryDownloadPath}' as it's not a URL and does not exist at the path specified.`
         );
       }
-    },
+    }
   );
 }
 
@@ -309,9 +309,9 @@ function extract(data: Data): Promise<Data> {
         () =>
           throwError(
             `Checksum rejected for file '${basename}' with checksum ${path.basename(
-              data.checksumFilepath,
-            )}`,
-          ),
+              data.checksumFilepath
+            )}`
+          )
       )
       // Extract files into their platform folder
       .then(() =>
@@ -321,7 +321,7 @@ function extract(data: Data): Promise<Data> {
               .pipe(
                 unzipper.Extract({
                   path: data.platformFolderPath,
-                }),
+                })
               )
               .on('entry', entry => entry.autodrain())
               .promise()
@@ -329,7 +329,7 @@ function extract(data: Data): Promise<Data> {
               file: data.filepath,
               cwd: data.platformFolderPath,
               preserveOwner: false,
-            }),
+            })
       )
       .then(() => {
         // Remove pact-publish as it's getting deprecated
@@ -337,7 +337,7 @@ function extract(data: Data): Promise<Data> {
           data.platformFolderPath as string,
           'pact',
           'bin',
-          `pact-publish${pactEnvironment.isWindows() ? '.bat' : ''}`,
+          `pact-publish${pactEnvironment.isWindows() ? '.bat' : ''}`
         );
         if (fs.existsSync(publishPath)) {
           fs.unlinkSync(publishPath);
@@ -350,15 +350,15 @@ function extract(data: Data): Promise<Data> {
             chalk.bgYellow(
               chalk.black('### If you') +
                 chalk.red(' ❤ ') +
-                chalk.black('Pact and want to support us, please donate here:'),
+                chalk.black('Pact and want to support us, please donate here:')
             ) +
             chalk.blue(' http://donate.pact.io/node') +
-            '\n\n',
+            '\n\n'
         );
         return Promise.resolve(data);
       })
       .catch((e: Error) =>
-        throwError(`Extraction failed for ${data.filepath}: ${e}`),
+        throwError(`Extraction failed for ${data.filepath}: ${e}`)
       )
   );
 }
@@ -375,7 +375,7 @@ export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
     }
   }
   throw throwError(
-    `Cannot find binary for platform '${platform}' with architecture '${arch}'.`,
+    `Cannot find binary for platform '${platform}' with architecture '${arch}'.`
   );
 }
 
@@ -401,28 +401,28 @@ export function downloadChecksums(): Promise<void> {
       setup(value.platform, value.arch).then((data: Data) =>
         downloadFileRetry(
           data.checksumDownloadPath,
-          data.checksumFilepath,
+          data.checksumFilepath
         ).then(
           () => {
             console.log(
               chalk.green(
                 `Finished downloading checksum ${path.basename(
-                  data.checksumFilepath,
-                )}`,
-              ),
+                  data.checksumFilepath
+                )}`
+              )
             );
             return data;
           },
           (e: string) =>
             throwError(
-              `Error downloading checksum from ${data.checksumDownloadPath}: ${e}`,
-            ),
-        ),
-      ),
-    ),
+              `Error downloading checksum from ${data.checksumDownloadPath}: ${e}`
+            )
+        )
+      )
+    )
   ).then(
     () => console.log(chalk.green('All checksums downloaded.')),
-    (e: string) => throwError(`Checksum Download Failed Unexpectedly: ${e}`),
+    (e: string) => throwError(`Checksum Download Failed Unexpectedly: ${e}`)
   );
 }
 
@@ -430,8 +430,8 @@ export default (platform?: string, arch?: string): Promise<Data> => {
   if (process.env.PACT_SKIP_BINARY_INSTALL === 'true') {
     console.log(
       chalk.yellow(
-        "Skipping binary installation. Env var 'PACT_SKIP_BINARY_INSTALL' was found.",
-      ),
+        "Skipping binary installation. Env var 'PACT_SKIP_BINARY_INSTALL' was found."
+      )
     );
     return Promise.resolve({
       binaryInstallSkipped: true,
@@ -445,7 +445,7 @@ export default (platform?: string, arch?: string): Promise<Data> => {
       return { ...d, binaryInstallSkipped: false };
     })
     .catch((e: string) =>
-      throwError(`Postinstalled Failed Unexpectedly: ${e}`),
+      throwError(`Postinstalled Failed Unexpectedly: ${e}`)
     );
 };
 

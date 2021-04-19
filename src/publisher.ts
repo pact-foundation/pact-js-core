@@ -12,7 +12,7 @@ const checkTypes = require('check-types');
 export class Publisher {
   public static create = deprecate(
     (options: PublisherOptions) => new Publisher(options),
-    'Create function will be removed in future release, please use the default export function or use `new Publisher()`',
+    'Create function will be removed in future release, please use the default export function or use `new Publisher()`'
   );
 
   public readonly options: PublisherOptions;
@@ -35,19 +35,19 @@ export class Publisher {
 
     checkTypes.assert.nonEmptyString(
       options.pactBroker,
-      'Must provide the pactBroker argument',
+      'Must provide the pactBroker argument'
     );
     checkTypes.assert.nonEmptyString(
       options.consumerVersion,
-      'Must provide the consumerVersion argument',
+      'Must provide the consumerVersion argument'
     );
     checkTypes.assert.arrayLike(
       options.pactFilesOrDirs,
-      'Must provide the pactFilesOrDirs argument',
+      'Must provide the pactFilesOrDirs argument'
     );
     checkTypes.assert.nonEmptyArray(
       options.pactFilesOrDirs,
-      'Must provide the pactFilesOrDirs argument with an array',
+      'Must provide the pactFilesOrDirs argument with an array'
     );
 
     if (options.pactFilesOrDirs) {
@@ -58,7 +58,7 @@ export class Publisher {
         const newPath = path.resolve(v);
         if (!fs.existsSync(newPath)) {
           throw new Error(
-            `Path '${v}' given in pactFilesOrDirs does not exists.`,
+            `Path '${v}' given in pactFilesOrDirs does not exists.`
           );
         }
         return newPath;
@@ -86,7 +86,7 @@ export class Publisher {
       (options.pactBrokerPassword && !options.pactBrokerUsername)
     ) {
       throw new Error(
-        'Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.',
+        'Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.'
       );
     }
 
@@ -95,7 +95,7 @@ export class Publisher {
       (options.pactBrokerUsername || options.pactBrokerPassword)
     ) {
       throw new Error(
-        'Must provide pactBrokerToken or pactBrokerUsername/pactBrokerPassword but not both.',
+        'Must provide pactBrokerToken or pactBrokerUsername/pactBrokerPassword but not both.'
       );
     }
 
@@ -108,7 +108,7 @@ export class Publisher {
     const instance = spawn.spawnBinary(
       pactStandalone.brokerPath,
       [{ cliVerb: 'publish' }, this.options],
-      this.__argMapping,
+      this.__argMapping
     );
     const output: Array<string | Buffer> = [];
     instance.stdout.on('data', l => output.push(l));
@@ -127,7 +127,7 @@ export class Publisher {
 
     return deferred.promise.timeout(
       this.options.timeout as number,
-      `Timeout waiting for verification process to complete (PID: ${instance.pid})`,
+      `Timeout waiting for verification process to complete (PID: ${instance.pid})`
     );
   }
 }

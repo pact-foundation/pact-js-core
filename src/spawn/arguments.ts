@@ -39,12 +39,12 @@ const mapFor = (mapping: string, v: string): Array<string> =>
 
 const convertValue = (
   mapping: string,
-  v: SpawnArgument | Array<SpawnArgument>,
+  v: SpawnArgument | Array<SpawnArgument>
 ): Array<string> => {
   if (v && mapping) {
     return checkTypes.array(v)
       ? _.flatten(
-          (v as Array<string>).map((val: string) => mapFor(mapping, val)),
+          (v as Array<string>).map((val: string) => mapFor(mapping, val))
         )
       : mapFor(mapping, v as string);
   }
@@ -54,7 +54,7 @@ const convertValue = (
 export class Arguments {
   public toArgumentsArray(
     args: SpawnArguments,
-    mappings: { [id: string]: string },
+    mappings: { [id: string]: string }
   ): string[] {
     return _.chain(args instanceof Array ? args : [args])
       .map((x: SpawnArguments) => this.createArgumentsFromObject(x, mappings))
@@ -64,19 +64,19 @@ export class Arguments {
 
   private createArgumentsFromObject(
     args: SpawnArguments,
-    mappings: { [id: string]: string },
+    mappings: { [id: string]: string }
   ): string[] {
     return _.chain(args)
       .reduce(
         (
           acc: Array<string>,
           value: SpawnArguments | Array<SpawnArguments>,
-          key: string,
+          key: string
         ): Array<string> =>
           mappings[key] === DEFAULT_ARG
             ? convertValue(mappings[key], value).concat(acc)
             : acc.concat(convertValue(mappings[key], value)),
-        [],
+        []
       )
       .flatten()
       .compact()

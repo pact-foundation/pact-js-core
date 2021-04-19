@@ -32,7 +32,7 @@ export class Pact {
       } catch {
         logger.warn(
           'WARNING: Windows Long Paths is not enabled and might cause Pact to crash if the path is too long. ' +
-            'To fix this issue, please consult https://github.com/pact-foundation/pact-js-core#enable-long-paths`',
+            'To fix this issue, please consult https://github.com/pact-foundation/pact-js-core#enable-long-paths`'
         );
       }
     }
@@ -62,13 +62,13 @@ export class Pact {
     let server = serverFactory(options);
     this.__servers.push(server);
     logger.info(
-      `Creating Pact Server with options: \n${JSON.stringify(server.options)}`,
+      `Creating Pact Server with options: \n${JSON.stringify(server.options)}`
     );
 
     // Listen to server delete events, to remove from server list
     server.once(AbstractService.Events.DELETE_EVENT, (s: Server) => {
       logger.info(
-        `Deleting Pact Server with options: \n${JSON.stringify(s.options)}`,
+        `Deleting Pact Server with options: \n${JSON.stringify(s.options)}`
       );
       this.__servers = _.without(this.__servers, s);
     });
@@ -92,8 +92,8 @@ export class Pact {
     return q.all<Server>(
       _.map(
         this.__servers,
-        (server: Server) => server.delete() as PromiseLike<Server>,
-      ),
+        (server: Server) => server.delete() as PromiseLike<Server>
+      )
     );
   }
 
@@ -112,13 +112,13 @@ export class Pact {
     let stub = stubFactory(options);
     this.__stubs.push(stub);
     logger.info(
-      `Creating Pact Stub with options: \n${JSON.stringify(stub.options)}`,
+      `Creating Pact Stub with options: \n${JSON.stringify(stub.options)}`
     );
 
     // Listen to stub delete events, to remove from stub list
     stub.once(AbstractService.Events.DELETE_EVENT, (s: Stub) => {
       logger.info(
-        `Deleting Pact Stub with options: \n${JSON.stringify(stub.options)}`,
+        `Deleting Pact Stub with options: \n${JSON.stringify(stub.options)}`
       );
       this.__stubs = _.without(this.__stubs, s);
     });
@@ -140,14 +140,14 @@ export class Pact {
 
     logger.info('Removing all Pact stubs.');
     return q.all<Stub>(
-      _.map(this.__stubs, (stub: Stub) => stub.delete() as PromiseLike<Stub>),
+      _.map(this.__stubs, (stub: Stub) => stub.delete() as PromiseLike<Stub>)
     );
   }
 
   // Remove all the servers and stubs
   public removeAll(): q.Promise<AbstractService[]> {
     return q.all<AbstractService>(
-      _.flatten([this.removeAllStubs(), this.removeAllServers()]),
+      _.flatten([this.removeAllStubs(), this.removeAllServers()])
     );
     // .tap(endDestination);
   }
@@ -172,7 +172,7 @@ export class Pact {
 
   // Use can-i-deploy to determine if it is safe to deploy
   public canDeploy(
-    options: CanDeployOptions,
+    options: CanDeployOptions
   ): q.Promise<CanDeployResponse | string> {
     logger.info('Checking if it it possible to deploy');
     return canDeployFactory(options).canDeploy();

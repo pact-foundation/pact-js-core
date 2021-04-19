@@ -11,7 +11,7 @@ const checkTypes = require('check-types');
 export class Server extends AbstractService {
   public static create = deprecate(
     (options?: ServerOptions) => new Server(options),
-    'Create function will be removed in future release, please use the default export function or use `new Server()`',
+    'Create function will be removed in future release, please use the default export function or use `new Server()`'
   );
 
   public readonly options: ServerOptions;
@@ -65,7 +65,7 @@ export class Server extends AbstractService {
         fs.statSync(path.normalize(options.monkeypatch)).isFile();
       } catch (e) {
         throw new Error(
-          `Monkeypatch ruby file not found at path: ${options.monkeypatch}`,
+          `Monkeypatch ruby file not found at path: ${options.monkeypatch}`
         );
       }
     }
@@ -89,7 +89,7 @@ export class Server extends AbstractService {
         monkeypatch: '--monkeypatch',
         logLevel: '--log-level',
       },
-      { cliVerb: 'service' },
+      { cliVerb: 'service' }
     );
     this.options = options;
   }

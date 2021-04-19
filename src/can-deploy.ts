@@ -20,7 +20,7 @@ export class CannotDeployError extends Error {
 
 export class CanDeploy {
   public static convertForSpawnBinary(
-    options: CanDeployOptions,
+    options: CanDeployOptions
   ): CanDeployOptions[] {
     return _.flatten(
       [_.omit(options, 'pacticipants')].concat(
@@ -31,8 +31,8 @@ export class CanDeploy {
             : {
                 latest: latest === true ? PACT_NODE_NO_VALUE : latest,
               },
-        ]),
-      ),
+        ])
+      )
     );
   }
 
@@ -62,12 +62,12 @@ export class CanDeploy {
 
     checkTypes.assert.nonEmptyArray(
       options.pacticipants,
-      'Must provide at least one pacticipant',
+      'Must provide at least one pacticipant'
     );
 
     checkTypes.assert.nonEmptyString(
       options.pactBroker,
-      'Must provide the pactBroker argument',
+      'Must provide the pactBroker argument'
     );
 
     options.pactBrokerToken !== undefined &&
@@ -86,7 +86,7 @@ export class CanDeploy {
       (options.pactBrokerPassword && !options.pactBrokerUsername)
     ) {
       throw new Error(
-        'Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.',
+        'Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.'
       );
     }
 
@@ -95,7 +95,7 @@ export class CanDeploy {
 
   public canDeploy(): q.Promise<CanDeployResponse | string> {
     logger.info(
-      `Asking broker at ${this.options.pactBroker} if it is possible to deploy`,
+      `Asking broker at ${this.options.pactBroker} if it is possible to deploy`
     );
     const deferred = q.defer<CanDeployResponse | string>();
     const instance = spawn.spawnBinary(
@@ -104,7 +104,7 @@ export class CanDeploy {
         { cliVerb: 'can-i-deploy' },
         ...CanDeploy.convertForSpawnBinary(this.options),
       ],
-      this.__argMapping,
+      this.__argMapping
     );
     const output: Array<string | Buffer> = [];
     instance.stdout.on('data', l => output.push(l));
@@ -115,7 +115,7 @@ export class CanDeploy {
       if (this.options.output === 'json') {
         try {
           const startIndex = output.findIndex((l: string | Buffer) =>
-            l.toString().startsWith('{'),
+            l.toString().startsWith('{')
           );
           if (startIndex === -1) {
             logger.error(`can-i-deploy produced no json output:\n${result}`);
@@ -125,8 +125,8 @@ export class CanDeploy {
             logger.warn(
               `can-i-deploy produced additional output: \n${output.slice(
                 0,
-                startIndex,
-              )}`,
+                startIndex
+              )}`
             );
           }
           const jsonPart = output.slice(startIndex).join('\n');
@@ -153,7 +153,7 @@ export class CanDeploy {
 
     return deferred.promise.timeout(
       this.options.timeout as number,
-      `Timeout waiting for verification process to complete (PID: ${instance.pid})`,
+      `Timeout waiting for verification process to complete (PID: ${instance.pid})`
     );
   }
 }

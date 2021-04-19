@@ -9,7 +9,7 @@ const checkTypes = require('check-types');
 export class Stub extends AbstractService {
   public static create = deprecate(
     (options?: StubOptions) => new Stub(options),
-    'Create function will be removed in future release, please use the default export function or use `new Stub()`',
+    'Create function will be removed in future release, please use the default export function or use `new Stub()`'
   );
 
   public readonly options: StubOptions;

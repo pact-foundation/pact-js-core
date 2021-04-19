@@ -20,7 +20,7 @@ export interface PactStandalone {
 
 export const standalone = (
   platform?: string,
-  arch?: string,
+  arch?: string
 ): PactStandalone => {
   platform = platform || process.platform;
   arch = arch || process.arch;
@@ -36,7 +36,7 @@ export const standalone = (
     'standalone',
     getBinaryEntry(platform, arch).folderName,
     'pact',
-    'bin',
+    'bin'
   );
 
   return {

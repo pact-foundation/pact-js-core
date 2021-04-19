@@ -14,7 +14,7 @@ export class Spawn {
   public spawnBinary(
     command: string,
     args: SpawnArguments = {},
-    argMapping: { [id: string]: string } = {},
+    argMapping: { [id: string]: string } = {}
   ): ChildProcess {
     const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
     // Remove environment variable if there
@@ -35,8 +35,8 @@ export class Spawn {
 
     logger.debug(
       `Starting pact binary '${command}', with arguments [${spawnArgs.join(
-        ' ',
-      )}]`,
+        ' '
+      )}]`
     );
     logger.trace(`Environment: ${JSON.stringify(opts)}`);
     const instance = spawn(command, spawnArgs, opts);

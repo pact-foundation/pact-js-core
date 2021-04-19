@@ -46,7 +46,7 @@ export abstract class AbstractService extends events.EventEmitter {
     options: ServiceOptions,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     argMapping: any,
-    cliVerb?: CliVerbOptions,
+    cliVerb?: CliVerbOptions
   ) {
     super();
 
@@ -78,7 +78,7 @@ export abstract class AbstractService extends events.EventEmitter {
 
       if (checkTypes.not.inRange(options.port, 1024, 49151)) {
         logger.warn(
-          'Like a Boss, you used a port outside of the recommended range (1024 to 49151); I too like to live dangerously.',
+          'Like a Boss, you used a port outside of the recommended range (1024 to 49151); I too like to live dangerously.'
         );
       }
     }
@@ -92,7 +92,7 @@ export abstract class AbstractService extends events.EventEmitter {
       (!options.sslcert && options.sslkey)
     ) {
       throw new Error(
-        'Custom ssl certificate and key must be specified together.',
+        'Custom ssl certificate and key must be specified together.'
       );
     }
 
@@ -102,7 +102,7 @@ export abstract class AbstractService extends events.EventEmitter {
         fs.statSync(path.normalize(options.sslcert)).isFile();
       } catch (e) {
         throw new Error(
-          `Custom ssl certificate not found at path: ${options.sslcert}`,
+          `Custom ssl certificate not found at path: ${options.sslcert}`
         );
       }
     }
@@ -149,7 +149,7 @@ export abstract class AbstractService extends events.EventEmitter {
   public start(): q.Promise<AbstractService> {
     if (this.__instance && this.__instance.connected) {
       logger.warn(
-        `You already have a process running with PID: ${this.__instance.pid}`,
+        `You already have a process running with PID: ${this.__instance.pid}`
       );
       return q.resolve(this);
     }
@@ -177,14 +177,14 @@ export abstract class AbstractService extends events.EventEmitter {
     }
 
     this.__instance.stderr.on('data', data =>
-      logger.error(`Pact Binary Error: ${data}`),
+      logger.error(`Pact Binary Error: ${data}`)
     );
 
     // check service is available
     return this.__waitForServiceUp()
       .timeout(
         PROCESS_TIMEOUT,
-        `Couldn't start Pact with PID: ${this.__instance.pid}`,
+        `Couldn't start Pact with PID: ${this.__instance.pid}`
       )
       .then(() => {
         this.__running = true;
@@ -220,7 +220,7 @@ export abstract class AbstractService extends events.EventEmitter {
     return spawn.spawnBinary(
       this.__serviceCommand,
       this.__cliVerb ? [this.__cliVerb, this.options] : [this.options],
-      this.__argMapping,
+      this.__argMapping
     );
   }
 
@@ -233,8 +233,8 @@ export abstract class AbstractService extends events.EventEmitter {
       if (amount >= RETRY_AMOUNT) {
         deferred.reject(
           new Error(
-            'Pact startup failed; tried calling service 10 times with no result.',
-          ),
+            'Pact startup failed; tried calling service 10 times with no result.'
+          )
         );
       }
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
@@ -246,7 +246,7 @@ export abstract class AbstractService extends events.EventEmitter {
       if (this.options.port) {
         this.__call(this.options).then(
           () => deferred.resolve(),
-          retry.bind(this),
+          retry.bind(this)
         );
       } else {
         retry();
@@ -269,14 +269,14 @@ export abstract class AbstractService extends events.EventEmitter {
             if (amount >= RETRY_AMOUNT) {
               deferred.reject(
                 new Error(
-                  'Pact stop failed; tried calling service 10 times with no result.',
-                ),
+                  'Pact stop failed; tried calling service 10 times with no result.'
+                )
               );
               return;
             }
             setTimeout(check, CHECKTIME);
           },
-          () => deferred.resolve(),
+          () => deferred.resolve()
         );
       } else {
         deferred.resolve();

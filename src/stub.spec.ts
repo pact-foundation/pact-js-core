@@ -28,7 +28,7 @@ describe('Stub Spec', () => {
             ssl: true,
             sslcert: 'does/not/exist',
             sslkey: path.resolve(__dirname, '../test/ssl/server.key'),
-          }),
+          })
         ).to.throw(Error);
       });
 
@@ -38,7 +38,7 @@ describe('Stub Spec', () => {
             ssl: true,
             sslcert: path.resolve(__dirname, '../test/ssl/server.crt'),
             sslkey: 'does/not/exist',
-          }),
+          })
         ).to.throw(Error);
       });
 
@@ -47,7 +47,7 @@ describe('Stub Spec', () => {
           stubFactory({
             ssl: true,
             sslcert: path.resolve(__dirname, '../test/ssl/server.crt'),
-          }),
+          })
         ).to.throw(Error);
       });
 
@@ -56,7 +56,7 @@ describe('Stub Spec', () => {
           stubFactory({
             ssl: true,
             sslkey: path.resolve(__dirname, '../test/ssl/server.key'),
-          }),
+          })
         ).to.throw(Error);
       });
     });
@@ -68,8 +68,8 @@ describe('Stub Spec', () => {
         () =>
           (dirPath = path.resolve(
             __dirname,
-            `../.tmp/${Math.floor(Math.random() * 1000)}`,
-          )),
+            `../.tmp/${Math.floor(Math.random() * 1000)}`
+          ))
       );
 
       afterEach(() => {
@@ -92,7 +92,7 @@ describe('Stub Spec', () => {
           .then(
             results =>
               expect(_.reduce(results, (m, r) => m && r.state === 'fulfilled'))
-                .to.be.true,
+                .to.be.true
           );
       });
 
@@ -106,7 +106,7 @@ describe('Stub Spec', () => {
           pactUrls: [
             path.resolve(
               __dirname,
-              '../test/integration/me-they-weird path-success.json',
+              '../test/integration/me-they-weird path-success.json'
             ),
           ],
         });

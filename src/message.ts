@@ -27,19 +27,19 @@ export class Message {
 
     checkTypes.assert.nonEmptyString(
       options.consumer,
-      'Must provide the consumer name',
+      'Must provide the consumer name'
     );
     checkTypes.assert.nonEmptyString(
       options.provider,
-      'Must provide the provider name',
+      'Must provide the provider name'
     );
     checkTypes.assert.nonEmptyString(
       options.content,
-      'Must provide message content',
+      'Must provide message content'
     );
     checkTypes.assert.nonEmptyString(
       options.dir,
-      'Must provide pact output dir',
+      'Must provide pact output dir'
     );
 
     if (options.spec) {
@@ -62,7 +62,7 @@ export class Message {
         JSON.parse(options.content);
       } catch (e) {
         throw new Error(
-          'Unable to parse message content to JSON, invalid json supplied',
+          'Unable to parse message content to JSON, invalid json supplied'
         );
       }
     }
@@ -86,7 +86,7 @@ export class Message {
     const instance = spawn.spawnBinary(
       pactStandalone.messagePath,
       [{ pactFileWriteMode }, restOptions],
-      this.__argMapping,
+      this.__argMapping
     );
     const output: Array<string | Buffer> = [];
     instance.stdout.on('data', l => output.push(l));

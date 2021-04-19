@@ -20,7 +20,7 @@ describe('Verifier Integration Spec', () => {
     providerMock(PORT).then(s => {
       console.log(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
-    }),
+    })
   );
 
   after(() => server.close());
@@ -34,10 +34,10 @@ describe('Verifier Integration Spec', () => {
             pactUrls: [
               path.resolve(
                 __dirname,
-                'integration/me-they-weird path-success.json',
+                'integration/me-they-weird path-success.json'
               ),
             ],
-          }).verify(),
+          }).verify()
         ).to.eventually.be.fulfilled);
     });
 
@@ -49,7 +49,7 @@ describe('Verifier Integration Spec', () => {
             pactUrls: [
               path.resolve(__dirname, 'integration/me-they-success.json'),
             ],
-          }).verify(),
+          }).verify()
         ).to.eventually.be.fulfilled);
     });
 
@@ -62,7 +62,7 @@ describe('Verifier Integration Spec', () => {
               path.resolve(__dirname, 'integration/me-they-states.json'),
             ],
             providerStatesSetupUrl: providerStatesSetupUrl,
-          }).verify(),
+          }).verify()
         ).to.eventually.be.fulfilled);
     });
 
@@ -74,7 +74,7 @@ describe('Verifier Integration Spec', () => {
             pactUrls: [
               path.resolve(__dirname, 'integration/me-they-post-success.json'),
             ],
-          }).verify(),
+          }).verify()
         ).to.eventually.be.fulfilled);
     });
 
@@ -86,10 +86,10 @@ describe('Verifier Integration Spec', () => {
             pactUrls: [
               path.resolve(
                 __dirname,
-                'integration/me-they-post-regex-success.json',
+                'integration/me-they-post-regex-success.json'
               ),
             ],
-          }).verify(),
+          }).verify()
         ).to.eventually.be.fulfilled);
     });
 
@@ -102,7 +102,7 @@ describe('Verifier Integration Spec', () => {
               path.resolve(__dirname, 'integration/me-they-success.json'),
             ],
             monkeypatch: monkeypatchFile,
-          }).verify(),
+          }).verify()
         ).to.eventually.be.fulfilled);
     });
   });
@@ -113,7 +113,7 @@ describe('Verifier Integration Spec', () => {
         verifierFactory({
           providerBaseUrl: providerBaseUrl,
           pactUrls: [path.resolve(__dirname, 'integration/me-they-fail.json')],
-        }).verify(),
+        }).verify()
       ).to.eventually.be.rejected);
   });
 
@@ -124,7 +124,7 @@ describe('Verifier Integration Spec', () => {
           providerBaseUrl: providerBaseUrl,
           pactUrls: [path.resolve(__dirname, 'integration/me-they-multi.json')],
           providerStatesSetupUrl: providerStatesSetupUrl,
-        }).verify(),
+        }).verify()
       ).to.eventually.be.fulfilled);
   });
 
@@ -139,7 +139,7 @@ describe('Verifier Integration Spec', () => {
               path.resolve(__dirname, 'integration/me-they-multi.json'),
             ],
             providerStatesSetupUrl: providerStatesSetupUrl,
-          }).verify(),
+          }).verify()
         ).to.eventually.be.fulfilled);
     });
 
@@ -154,7 +154,7 @@ describe('Verifier Integration Spec', () => {
                 `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/anotherclient/latest`,
               ],
               providerStatesSetupUrl: providerStatesSetupUrl,
-            }).verify(),
+            }).verify()
           ).to.eventually.be.fulfilled);
       });
 
@@ -171,7 +171,7 @@ describe('Verifier Integration Spec', () => {
                 providerStatesSetupUrl: providerStatesSetupUrl,
                 pactBrokerUsername: 'foo',
                 pactBrokerPassword: 'bar',
-              }).verify(),
+              }).verify()
             ).to.eventually.be.fulfilled);
         });
 
@@ -187,7 +187,7 @@ describe('Verifier Integration Spec', () => {
                 providerStatesSetupUrl: providerStatesSetupUrl,
                 pactBrokerUsername: 'foo',
                 pactBrokerPassword: 'baaoeur',
-              }).verify(),
+              }).verify()
             ).to.eventually.be.rejected);
 
           it('should return the verifier error output in the returned promise', () =>
@@ -201,7 +201,7 @@ describe('Verifier Integration Spec', () => {
                 providerStatesSetupUrl: providerStatesSetupUrl,
                 pactBrokerUsername: 'foo',
                 pactBrokerPassword: 'baaoeur',
-              }).verify(),
+              }).verify()
             ).to.eventually.be.rejected);
         });
       });
@@ -217,13 +217,13 @@ describe('Verifier Integration Spec', () => {
             pactUrls: [
               path.resolve(
                 __dirname,
-                'integration/publish-verification-example weird path-success.json',
+                'integration/publish-verification-example weird path-success.json'
               ),
             ],
             providerStatesSetupUrl: providerStatesSetupUrl,
             publishVerificationResult: true,
             providerVersion: '1.0.0',
-          }).verify(),
+          }).verify()
         ).to.eventually.be.fulfilled);
     });
 
@@ -237,15 +237,15 @@ describe('Verifier Integration Spec', () => {
               pactUrls: [
                 path.resolve(
                   __dirname,
-                  'integration/publish-verification-example-success.json',
+                  'integration/publish-verification-example-success.json'
                 ),
               ],
               providerStatesSetupUrl: providerStatesSetupUrl,
               publishVerificationResult: true,
               providerVersion: '1.0.0',
-            }).verify(),
+            }).verify()
           ).to.eventually.be.fulfilled);
-      },
+      }
     );
 
     context(
@@ -258,15 +258,15 @@ describe('Verifier Integration Spec', () => {
               pactUrls: [
                 path.resolve(
                   __dirname,
-                  'integration/publish-verification-example-fail.json',
+                  'integration/publish-verification-example-fail.json'
                 ),
               ],
               providerStatesSetupUrl: providerStatesSetupUrl,
               publishVerificationResult: true,
               providerVersion: '1.0.0',
-            }).verify(),
+            }).verify()
           ).to.eventually.be.fulfilled);
-      },
+      }
     );
   });
 });

@@ -32,7 +32,7 @@ describe('Message Spec', () => {
         messageFactory({
           consumer: 'a-consumer',
           dir: absolutePath,
-        }),
+        })
       ).to.throw(Error);
     });
 
@@ -42,7 +42,7 @@ describe('Message Spec', () => {
           provider: 'a-provider',
           dir: absolutePath,
           content: validJSON,
-        }),
+        })
       ).to.throw(Error);
     });
 
@@ -52,7 +52,7 @@ describe('Message Spec', () => {
           consumer: 'a-provider',
           dir: absolutePath,
           content: validJSON,
-        }),
+        })
       ).to.throw(Error);
     });
 
@@ -63,7 +63,7 @@ describe('Message Spec', () => {
           provider: 'a-provider',
           dir: absolutePath,
           content: `{ "unparseable" }`,
-        }),
+        })
       ).to.throw(Error);
     });
 
@@ -72,7 +72,7 @@ describe('Message Spec', () => {
         messageFactory({
           consumer: 'a-consumer',
           content: validJSON,
-        }),
+        })
       ).to.throw(Error);
     });
   });
@@ -120,7 +120,7 @@ describe('Message Spec', () => {
           provider: 'a-provider',
           dir: dir,
           content: validJSON,
-        }).options.dir,
+        }).options.dir
       ).to.equal(path.resolve(__dirname, '..', dir));
     });
 
@@ -135,8 +135,7 @@ describe('Message Spec', () => {
         .createMessage()
         .then(
           () =>
-            expect(fs.existsSync(path.resolve(__dirname, '..', dir))).to.be
-              .true,
+            expect(fs.existsSync(path.resolve(__dirname, '..', dir))).to.be.true
         );
     });
   });

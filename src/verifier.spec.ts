@@ -17,7 +17,7 @@ describe('Verifier Spec', () => {
           verifierFactory({
             providerBaseUrl: 'http://localhost',
             provider: 'someprovider',
-          }),
+          })
         ).to.throw(Error);
       });
     });
@@ -28,7 +28,7 @@ describe('Verifier Spec', () => {
           verifierFactory({
             providerBaseUrl: 'http://localhost',
             pactBrokerUrl: 'http://foo.com',
-          }),
+          })
         ).to.throw(Error);
       });
     });
@@ -57,7 +57,7 @@ describe('Verifier Spec', () => {
       expect(() =>
         verifierFactory({
           providerStatesSetupUrl: 'http://foo/provider-states/setup',
-        } as VerifierOptions),
+        } as VerifierOptions)
       ).to.throw(Error);
     });
   });
@@ -68,7 +68,7 @@ describe('Verifier Spec', () => {
         verifierFactory({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['test.json'],
-        }),
+        })
       ).to.throw(Error);
     });
   });
@@ -103,7 +103,7 @@ describe('Verifier Spec', () => {
         verifierFactory({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
-        }),
+        })
       ).to.not.throw(Error);
     });
   });
@@ -114,7 +114,7 @@ describe('Verifier Spec', () => {
         verifierFactory({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
-        }),
+        })
       ).to.not.throw(Error);
     });
   });
@@ -130,11 +130,11 @@ describe('Verifier Spec', () => {
               pactUrls: ['http://idontexist'],
               publishVerificationResult: true,
               providerVersion: '1.0.0',
-            }),
+            })
           ).to.not.throw(Error);
         });
       });
-    },
+    }
   );
 
   context(
@@ -147,11 +147,11 @@ describe('Verifier Spec', () => {
               providerBaseUrl: 'http://localhost',
               pactUrls: ['http://idontexist'],
               publishVerificationResult: true,
-            }),
+            })
           ).to.throw(Error);
         });
       });
-    },
+    }
   );
 
   context('when given the correct arguments', () => {
@@ -182,7 +182,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           includeWipPactsSince: '',
-        }),
+        })
       ).to.throw(Error);
     });
   });
@@ -195,7 +195,7 @@ describe('Verifier Spec', () => {
           pactUrls: ['http://idontexist'],
           format: 'xml',
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any),
+        } as any)
       ).to.not.throw(Error);
       expect(() =>
         verifierFactory({
@@ -203,14 +203,14 @@ describe('Verifier Spec', () => {
           pactUrls: ['http://idontexist'],
           format: 'json',
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any),
+        } as any)
       ).to.not.throw(Error);
       expect(() =>
         verifierFactory({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'progress',
-        }),
+        })
       ).to.not.throw(Error);
     });
 
@@ -221,7 +221,7 @@ describe('Verifier Spec', () => {
           pactUrls: ['http://idontexist'],
           format: 10,
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any),
+        } as any)
       ).to.throw(Error);
     });
 
@@ -232,7 +232,7 @@ describe('Verifier Spec', () => {
           pactUrls: ['http://idontexist'],
           format: 'XML',
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any),
+        } as any)
       ).to.not.throw(Error);
     });
   });
@@ -243,7 +243,7 @@ describe('Verifier Spec', () => {
         verifierFactory({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
-        }),
+        })
       ).to.not.throw(Error);
     });
   });
@@ -255,7 +255,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           pactBrokerUrl: 'http://localhost',
-        }),
+        })
       ).to.not.throw(Error);
     });
   });
@@ -266,7 +266,7 @@ describe('Verifier Spec', () => {
         verifierFactory({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
-        }),
+        })
       ).to.not.throw(Error);
     });
   });
@@ -301,7 +301,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           consumerVersionTags: ['tag-1'],
-        }),
+        })
       ).to.not.throw(Error);
     });
   });
@@ -319,7 +319,7 @@ describe('Verifier Spec', () => {
           });
         }).to.throw(Error);
       });
-    },
+    }
   );
 
   context('when providerVersionTags is not provided', () => {
@@ -328,7 +328,7 @@ describe('Verifier Spec', () => {
         verifierFactory({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
-        }),
+        })
       ).to.not.throw(Error);
     });
   });
@@ -364,7 +364,7 @@ describe('Verifier Spec', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           providerVersionTags: ['tag-1'],
-        }),
+        })
       ).to.not.throw(Error);
     });
   });
@@ -382,7 +382,7 @@ describe('Verifier Spec', () => {
           });
         }).to.throw(Error);
       });
-    },
+    }
   );
 
   context('when using a bearer token', () => {
@@ -395,7 +395,7 @@ describe('Verifier Spec', () => {
             pactBrokerToken: '1234',
             pactBrokerUsername: 'username',
             pactBrokerPassword: '5678',
-          }),
+          })
         ).to.throw(Error);
       });
     });

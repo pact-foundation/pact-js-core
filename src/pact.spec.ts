@@ -54,15 +54,15 @@ describe('Pact Spec', () => {
     let dirPath: string;
     const monkeypatchFile: string = path.resolve(
       __dirname,
-      '../test/monkeypatch.rb',
+      '../test/monkeypatch.rb'
     );
 
     beforeEach(
       () =>
         (dirPath = path.resolve(
           __dirname,
-          `../.tmp/${Math.floor(Math.random() * 1000)}`,
-        )),
+          `../.tmp/${Math.floor(Math.random() * 1000)}`
+        ))
     );
 
     afterEach(() => {
@@ -201,7 +201,7 @@ describe('Pact Spec', () => {
       it('should return an error on non-string', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(() => pact.createServer({ consumer: 1234 } as any)).to.throw(
-          Error,
+          Error
         );
       });
     });
@@ -210,7 +210,7 @@ describe('Pact Spec', () => {
       it('should return an error on non-string', () => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         expect(() => pact.createServer({ provider: 2341 } as any)).to.throw(
-          Error,
+          Error
         );
       });
     });
@@ -264,7 +264,7 @@ describe('Pact Spec', () => {
             .removeAllServers()
             .then(() => expect(pact.listServers()).to.be.empty);
         });
-      },
+      }
     );
   });
 });

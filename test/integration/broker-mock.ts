@@ -15,7 +15,7 @@ export default (port: number): q.Promise<http.Server> => {
 
   function pactFunction(
     req: express.Request,
-    res: express.Response,
+    res: express.Response
   ): express.Response {
     if (
       _.isEmpty(req.body) ||
@@ -110,7 +110,7 @@ export default (port: number): q.Promise<http.Server> => {
 
   function tagPactFunction(
     req: express.Request,
-    res: express.Response,
+    res: express.Response
   ): express.Response {
     if (
       _.isEmpty(req.params.consumer) ||
@@ -133,30 +133,30 @@ export default (port: number): q.Promise<http.Server> => {
       provider: {
         name: 'they',
       },
-    }),
+    })
   );
 
   // Pretend to be a Pact Broker (https://github.com/bethesque/pact_broker) for integration tests
   server.put(
     '/pacts/provider/:provider/consumer/:consumer/version/:version',
-    pactFunction,
+    pactFunction
   );
 
   // Authenticated calls...
   server.put(
     '/auth/pacts/provider/:provider/consumer/:consumer/version/:version',
     auth,
-    pactFunction,
+    pactFunction
   );
 
   // Tagging
   server.put(
     '/pacticipant/:consumer/version/:version/tags/:tag',
-    tagPactFunction,
+    tagPactFunction
   );
   server.put(
     '/auth/pacticipant/:consumer/version/:version/tags/:tag',
-    tagPactFunction,
+    tagPactFunction
   );
 
   // Matrix
@@ -274,13 +274,13 @@ export default (port: number): q.Promise<http.Server> => {
           },
         ],
       },
-    }),
+    })
   );
 
   // Get pacts by Provider "notfound"
   server.get(
     '/pacts/provider/notfound/latest',
-    (req: express.Request, res: express.Response) => res.sendStatus(404),
+    (req: express.Request, res: express.Response) => res.sendStatus(404)
   );
 
   // Get pacts by Provider "nolinks"
@@ -298,7 +298,7 @@ export default (port: number): q.Promise<http.Server> => {
         },
         pacts: [],
       },
-    }),
+    })
   );
 
   // Get pacts by Provider (all)
@@ -327,7 +327,7 @@ export default (port: number): q.Promise<http.Server> => {
           },
         ],
       },
-    }),
+    })
   );
 
   // Get pacts by Provider and Tag
@@ -358,7 +358,7 @@ export default (port: number): q.Promise<http.Server> => {
           },
         ],
       },
-    }),
+    })
   );
 
   server.get(
@@ -443,7 +443,7 @@ export default (port: number): q.Promise<http.Server> => {
           },
         ],
       },
-    }),
+    })
   );
 
   server.get(
@@ -528,7 +528,7 @@ export default (port: number): q.Promise<http.Server> => {
           },
         ],
       },
-    }),
+    })
   );
 
   const deferred = q.defer<http.Server>();

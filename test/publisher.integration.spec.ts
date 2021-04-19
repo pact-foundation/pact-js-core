@@ -19,7 +19,7 @@ describe('Publish Spec', () => {
     brokerMock(PORT).then(s => {
       logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
-    }),
+    })
   );
 
   after(() => server.close());
@@ -33,7 +33,7 @@ describe('Publish Spec', () => {
             pactFilesOrDirs: [
               path.resolve(
                 __dirname,
-                'integration/publish/publish-success.json',
+                'integration/publish/publish-success.json'
               ),
             ],
             consumerVersion: '1.0.0',
@@ -50,7 +50,7 @@ describe('Publish Spec', () => {
             pactFilesOrDirs: [
               path.resolve(
                 __dirname,
-                'integration/publish/publish-success.json',
+                'integration/publish/publish-success.json'
               ),
             ],
             consumerVersion: '1.0.0',
@@ -87,7 +87,7 @@ describe('Publish Spec', () => {
             pactFilesOrDirs: [
               path.resolve(
                 __dirname,
-                'integration/publish/publish-success.json',
+                'integration/publish/publish-success.json'
               ),
             ],
             consumerVersion: '1.0.0',
@@ -108,7 +108,7 @@ describe('Publish Spec', () => {
             pactFilesOrDirs: [
               path.resolve(
                 __dirname,
-                'integration/publish/publish-success.json',
+                'integration/publish/publish-success.json'
               ),
             ],
             consumerVersion: '1.0.0',
@@ -163,7 +163,7 @@ describe('Publish Spec', () => {
           pactFilesOrDirs: [
             path.resolve(
               __dirname,
-              'integration/publish/pactDirTestsWithOtherStuff',
+              'integration/publish/pactDirTestsWithOtherStuff'
             ),
           ],
           consumerVersion: '1.0.0',

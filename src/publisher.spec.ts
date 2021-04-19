@@ -16,7 +16,7 @@ describe('Publish Spec', () => {
   const PORT = Math.floor(Math.random() * 999) + 9000;
   const pactFile = path.resolve(
     __dirname,
-    '../test/integration/me-they-success.json',
+    '../test/integration/me-they-success.json'
   );
   let server: http.Server;
   let absolutePath: string;
@@ -26,7 +26,7 @@ describe('Publish Spec', () => {
     brokerMock(PORT).then(s => {
       logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
-    }),
+    })
   );
 
   after(() => server.close());
@@ -89,7 +89,7 @@ describe('Publish Spec', () => {
           pactBroker: 'http://localhost',
           pactFilesOrDirs: [relativePath],
           consumerVersion: '1.0.0',
-        }).options.pactFilesOrDirs[0],
+        }).options.pactFilesOrDirs[0]
       ).to.be.equal(path.resolve(__dirname, '..', relativePath));
     });
 
@@ -115,7 +115,7 @@ describe('Publish Spec', () => {
             pactBrokerToken: '1234',
             pactBrokerUsername: 'username',
             pactBrokerPassword: '5678',
-          }),
+          })
         ).to.throw(Error);
       });
     });

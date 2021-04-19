@@ -18,7 +18,7 @@ import { LogLevel } from './service';
 export class Verifier {
   public static create = deprecate(
     (options: VerifierOptions) => new Verifier(options),
-    'Create function will be removed in future release, please use the default export function or use `new Verifier()`',
+    'Create function will be removed in future release, please use the default export function or use `new Verifier()`'
   );
 
   public readonly options: VerifierOptions;
@@ -67,7 +67,7 @@ export class Verifier {
       !_.isEmpty(options.consumerVersionTags)
     ) {
       throw new Error(
-        "Must not use both 'consumerVersionTags' and 'consumerVersionTag'. Please use 'consumerVersionTags' instead",
+        "Must not use both 'consumerVersionTags' and 'consumerVersionTag'. Please use 'consumerVersionTags' instead"
       );
     }
 
@@ -76,7 +76,7 @@ export class Verifier {
       !_.isEmpty(options.providerVersionTags)
     ) {
       throw new Error(
-        "Must not use both 'providerVersionTags' and 'providerVersionTag'. Please use 'providerVersionTags' instead",
+        "Must not use both 'providerVersionTags' and 'providerVersionTag'. Please use 'providerVersionTags' instead"
       );
     }
 
@@ -117,7 +117,7 @@ export class Verifier {
       !_.isEmpty(options.providerVersionTag)
     ) {
       logger.warn(
-        "'consumerVersionTag' and 'providerVersionTag' have been deprecated, please use 'consumerVersionTags' or 'providerVersionTags' instead",
+        "'consumerVersionTag' and 'providerVersionTag' have been deprecated, please use 'consumerVersionTags' or 'providerVersionTags' instead"
       );
     }
 
@@ -155,7 +155,7 @@ export class Verifier {
       !options.pactBrokerUrl
     ) {
       throw new Error(
-        'Must provide the pactUrls argument if no pactBrokerUrl provided',
+        'Must provide the pactUrls argument if no pactBrokerUrl provided'
       );
     }
 
@@ -164,7 +164,7 @@ export class Verifier {
       checkTypes.emptyArray(options.pactUrls as string[])
     ) {
       throw new Error(
-        'Must provide both provider and pactBrokerUrl if pactUrls not provided.',
+        'Must provide both provider and pactBrokerUrl if pactUrls not provided.'
       );
     }
 
@@ -185,7 +185,7 @@ export class Verifier {
       (options.pactBrokerUsername || options.pactBrokerPassword)
     ) {
       throw new Error(
-        'Must provide pactBrokerToken or pactBrokerUsername/pactBrokerPassword but not both.',
+        'Must provide pactBrokerToken or pactBrokerUsername/pactBrokerPassword but not both.'
       );
     }
 
@@ -207,7 +207,7 @@ export class Verifier {
 
     if (options.publishVerificationResult && !options.providerVersion) {
       throw new Error(
-        'Must provide both or none of publishVerificationResult and providerVersion.',
+        'Must provide both or none of publishVerificationResult and providerVersion.'
       );
     }
 
@@ -236,7 +236,7 @@ export class Verifier {
 
     if (options.tags) {
       logger.warn(
-        "'tags' has been deprecated as at v8.0.0, please use 'consumerVersionTags' instead",
+        "'tags' has been deprecated as at v8.0.0, please use 'consumerVersionTags' instead"
       );
     }
 
@@ -248,7 +248,7 @@ export class Verifier {
         fs.statSync(path.normalize(options.monkeypatch)).isFile();
       } catch (e) {
         throw new Error(
-          `Monkeypatch ruby file not found at path: ${options.monkeypatch}`,
+          `Monkeypatch ruby file not found at path: ${options.monkeypatch}`
         );
       }
     }
@@ -262,7 +262,7 @@ export class Verifier {
     const instance = spawn.spawnBinary(
       pactStandalone.verifierPath,
       this.options,
-      this.__argMapping,
+      this.__argMapping
     );
     const output: Array<string | Buffer> = [];
     instance.stdout.on('data', l => output.push(l));
@@ -275,7 +275,7 @@ export class Verifier {
     return deferred.promise
       .timeout(
         this.options.timeout as number,
-        `Timeout waiting for verification process to complete (PID: ${instance.pid})`,
+        `Timeout waiting for verification process to complete (PID: ${instance.pid})`
       )
       .tap(() => logger.info('Pact Verification succeeded.'));
   }

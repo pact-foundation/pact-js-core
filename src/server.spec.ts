@@ -18,7 +18,7 @@ describe('Server Spec', () => {
   let server: any;
   const monkeypatchFile: string = path.resolve(
     __dirname,
-    '../test/monkeypatch.rb',
+    '../test/monkeypatch.rb'
   );
 
   let absolutePath: string;
@@ -44,7 +44,7 @@ describe('Server Spec', () => {
   const absoluteSSLCertPath = path.resolve(
     __dirname,
     '..',
-    relativeSSLCertPath,
+    relativeSSLCertPath
   );
   const relativeSSLKeyPath = 'test/ssl/server.key';
   const absoluteSSLKeyPath = path.resolve(__dirname, '..', relativeSSLKeyPath);
@@ -64,7 +64,7 @@ describe('Server Spec', () => {
             ssl: true,
             sslcert: 'does/not/exist',
             sslkey: absoluteSSLKeyPath,
-          }),
+          })
         ).to.throw(Error);
       });
 
@@ -74,7 +74,7 @@ describe('Server Spec', () => {
             ssl: true,
             sslcert: absoluteSSLCertPath,
             sslkey: 'does/not/exist',
-          }),
+          })
         ).to.throw(Error);
       });
 
@@ -83,7 +83,7 @@ describe('Server Spec', () => {
           serverFactory({
             ssl: true,
             sslcert: absoluteSSLCertPath,
-          }),
+          })
         ).to.throw(Error);
       });
 
@@ -92,7 +92,7 @@ describe('Server Spec', () => {
           serverFactory({
             ssl: true,
             sslkey: absoluteSSLKeyPath,
-          }),
+          })
         ).to.throw(Error);
       });
     });
@@ -110,7 +110,7 @@ describe('Server Spec', () => {
           .then(
             results =>
               expect(_.reduce(results, (m, r) => m && r.state === 'fulfilled'))
-                .to.be.true,
+                .to.be.true
           );
       });
 
@@ -234,21 +234,21 @@ describe('Server Spec', () => {
           expect(
             serverFactory({
               pactFileWriteMode: 'overwrite',
-            }).start(),
+            }).start()
           ).to.eventually.be.fulfilled);
 
         it("should start correctly with 'merge'", () =>
           expect(
             serverFactory({
               pactFileWriteMode: 'merge',
-            }).start(),
+            }).start()
           ).to.eventually.be.fulfilled);
 
         it("should start correctly with 'update'", () =>
           expect(
             serverFactory({
               pactFileWriteMode: 'update',
-            }).start(),
+            }).start()
           ).to.eventually.be.fulfilled);
       });
 
@@ -258,14 +258,14 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'debug',
-              }).start(),
+              }).start()
             ).to.eventually.be.fulfilled,
 
             expect(
               serverFactory({
                 logLevel: 'DEBUG',
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              } as any).start(),
+              } as any).start()
             ).to.eventually.be.fulfilled,
           ]);
         });
@@ -275,14 +275,14 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'info',
-              }).start(),
+              }).start()
             ).to.eventually.be.fulfilled,
 
             expect(
               serverFactory({
                 logLevel: 'INFO',
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              } as any).start(),
+              } as any).start()
             ).to.eventually.be.fulfilled,
           ]);
         });
@@ -292,14 +292,14 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'warn',
-              }).start(),
+              }).start()
             ).to.eventually.be.fulfilled,
 
             expect(
               serverFactory({
                 logLevel: 'WARN',
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              } as any).start(),
+              } as any).start()
             ).to.eventually.be.fulfilled,
           ]);
         });
@@ -309,14 +309,14 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'error',
-              }).start(),
+              }).start()
             ).to.eventually.be.fulfilled,
 
             expect(
               serverFactory({
                 logLevel: 'ERROR',
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              } as any).start(),
+              } as any).start()
             ).to.eventually.be.fulfilled,
           ]);
         });

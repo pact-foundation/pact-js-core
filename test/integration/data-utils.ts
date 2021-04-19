@@ -2,13 +2,13 @@ import express = require('express');
 import basicAuth = require('basic-auth');
 
 export function returnJson<T>(
-  json: T,
+  json: T
 ): (req: express.Request, res: express.Response) => express.Response {
   return (req, res): express.Response => res.json(json);
 }
 
 export function returnJsonFile(
-  filename: string,
+  filename: string
 ): (req: express.Request, res: express.Response) => express.Response {
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   return returnJson(require(filename));
@@ -17,7 +17,7 @@ export function returnJsonFile(
 export function auth(
   req: express.Request,
   res: express.Response,
-  next: express.NextFunction,
+  next: express.NextFunction
 ): express.Response {
   const user = basicAuth(req);
   if (user && user.name === 'foo' && user.pass === 'bar') {
