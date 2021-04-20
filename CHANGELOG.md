@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.12.2](https://github.com/pact-foundation/pact-js-core/compare/v10.12.1...v10.12.2) (2021-04-20)
+
+
+### Fixes and Improvements
+
+* update standalone to 1.88.46 ([e9f2b43](https://github.com/pact-foundation/pact-js-core/commit/e9f2b431b1118396c27814daaa0cfd4f538ea138))
+* update standalone to 1.88.47 ([5626f3b](https://github.com/pact-foundation/pact-js-core/commit/5626f3bcb92ce3c7141373232e4ec3701d8ae2d8))
+* update standalone to 1.88.48 ([14e31cf](https://github.com/pact-foundation/pact-js-core/commit/14e31cf812fd7f11fe84e130bcff4c50d0ff64de))
+* update standalone to 1.88.49 ([cb088ce](https://github.com/pact-foundation/pact-js-core/commit/cb088ce64d670ce5babadfec53d561e00d9ad8ff))
+
 ### [10.12.1](https://github.com/pact-foundation/pact-js-core/compare/v10.12.0...v10.12.1) (2021-03-31)
 
 
