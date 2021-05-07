@@ -42,7 +42,7 @@ describe('Pact Util Spec', () => {
             {
               consumerVersionSelectors: [
                 {
-                  all: true,
+                  latest: true,
                   tag: 'prod',
                 },
                 {
@@ -56,7 +56,7 @@ describe('Pact Util Spec', () => {
           expect(result)
             .to.be.an('array')
             .that.includes('--consumer-version-selector')
-            .and.includes('{"all":true,"tag":"prod"}')
+            .and.includes('{"latest":true,"tag":"prod"}')
             .and.includes('{"tag":"bar"}');
           expect(result.length).to.be.equal(4);
         });
@@ -128,7 +128,7 @@ describe('Pact Util Spec', () => {
               {
                 consumerVersionSelectors: [
                   {
-                    all: true,
+                    latest: true,
                     tag: 'prod',
                   },
                 ],
@@ -147,7 +147,7 @@ describe('Pact Util Spec', () => {
           expect(result)
             .to.be.an('array')
             .that.includes('--consumer-version-selector')
-            .and.includes('{"all":true,"tag":"prod"}')
+            .and.includes('{"latest":true,"tag":"prod"}')
             .and.includes('{"tag":"foo"}');
           expect(result.length).to.be.equal(4);
         });
