@@ -12,15 +12,9 @@ const checkTypes = require('check-types');
 const unixify = require('unixify');
 
 import fs = require('fs');
-import { deprecate } from 'util';
 import { LogLevel } from './service';
 
 export class Verifier {
-  public static create = deprecate(
-    (options: VerifierOptions) => new Verifier(options),
-    'Create function will be removed in future release, please use the default export function or use `new Verifier()`'
-  );
-
   public readonly options: VerifierOptions;
   private readonly __argMapping = {
     pactUrls: DEFAULT_ARG,
@@ -56,29 +50,9 @@ export class Verifier {
     options.provider = options.provider || '';
     options.providerStatesSetupUrl = options.providerStatesSetupUrl || '';
     options.timeout = options.timeout || 30000;
-    options.consumerVersionTag = options.consumerVersionTag || [];
-    options.providerVersionTag = options.providerVersionTag || [];
     options.consumerVersionTags = options.consumerVersionTags || [];
     options.providerVersionTags = options.providerVersionTags || [];
     options.consumerVersionSelectors = options.consumerVersionSelectors || [];
-
-    if (
-      !_.isEmpty(options.consumerVersionTag) &&
-      !_.isEmpty(options.consumerVersionTags)
-    ) {
-      throw new Error(
-        "Must not use both 'consumerVersionTags' and 'consumerVersionTag'. Please use 'consumerVersionTags' instead"
-      );
-    }
-
-    if (
-      !_.isEmpty(options.providerVersionTag) &&
-      !_.isEmpty(options.providerVersionTags)
-    ) {
-      throw new Error(
-        "Must not use both 'providerVersionTags' and 'providerVersionTag'. Please use 'providerVersionTags' instead"
-      );
-    }
 
     if (
       options.consumerVersionTags &&
@@ -95,31 +69,6 @@ export class Verifier {
       options.providerVersionTags = [options.providerVersionTags as string];
     }
     checkTypes.assert.array.of.string(options.providerVersionTags);
-
-    if (
-      options.consumerVersionTag &&
-      checkTypes.string(options.consumerVersionTag)
-    ) {
-      options.consumerVersionTag = [options.consumerVersionTag as string];
-    }
-    checkTypes.assert.array.of.string(options.consumerVersionTag);
-
-    if (
-      options.providerVersionTag &&
-      checkTypes.string(options.providerVersionTag)
-    ) {
-      options.providerVersionTag = [options.providerVersionTag as string];
-    }
-    checkTypes.assert.array.of.string(options.providerVersionTag);
-
-    if (
-      !_.isEmpty(options.consumerVersionTag) ||
-      !_.isEmpty(options.providerVersionTag)
-    ) {
-      logger.warn(
-        "'consumerVersionTag' and 'providerVersionTag' have been deprecated, please use 'consumerVersionTags' or 'providerVersionTags' instead"
-      );
-    }
 
     if (options.includeWipPactsSince !== undefined) {
       checkTypes.assert.nonEmptyString(options.includeWipPactsSince);
@@ -234,12 +183,6 @@ export class Verifier {
       checkTypes.assert.boolean(options.enablePending);
     }
 
-    if (options.tags) {
-      logger.warn(
-        "'tags' has been deprecated as at v8.0.0, please use 'consumerVersionTags' instead"
-      );
-    }
-
     checkTypes.assert.positive(options.timeout as number);
 
     if (options.monkeypatch) {
@@ -317,15 +260,8 @@ interface CurrentVerifierOptions {
   format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
   out?: string;
   logDir?: string;
+  providerStatesSetupUrl?: string;
   logLevel?: LogLevel;
 }
 
-interface DeprecatedVerifierOptions {
-  consumerVersionTag?: string | string[];
-  providerStatesSetupUrl?: string;
-  providerVersionTag?: string | string[];
-  tags?: string[];
-}
-
-export type VerifierOptions = CurrentVerifierOptions &
-  DeprecatedVerifierOptions;
+export type VerifierOptions = CurrentVerifierOptions;

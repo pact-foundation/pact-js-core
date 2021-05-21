@@ -4,17 +4,11 @@ import fs = require('fs');
 import logger, { verboseIsImplied } from './logger';
 import spawn from './spawn';
 import { DEFAULT_ARG } from './spawn';
-import { deprecate } from 'util';
 import pactStandalone from './pact-standalone';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
 
 export class Publisher {
-  public static create = deprecate(
-    (options: PublisherOptions) => new Publisher(options),
-    'Create function will be removed in future release, please use the default export function or use `new Publisher()`'
-  );
-
   public readonly options: PublisherOptions;
   private readonly __argMapping = {
     pactFilesOrDirs: DEFAULT_ARG,

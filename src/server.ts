@@ -1,5 +1,4 @@
 import { AbstractService, LogLevel } from './service';
-import { deprecate } from 'util';
 import pact from './pact-standalone';
 import path = require('path');
 import fs = require('fs');
@@ -9,11 +8,6 @@ import mkdirp = require('mkdirp');
 const checkTypes = require('check-types');
 
 export class Server extends AbstractService {
-  public static create = deprecate(
-    (options?: ServerOptions) => new Server(options),
-    'Create function will be removed in future release, please use the default export function or use `new Server()`'
-  );
-
   public readonly options: ServerOptions;
 
   constructor(options: ServerOptions = {}) {
