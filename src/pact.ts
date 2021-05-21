@@ -1,4 +1,3 @@
-import * as q from 'q';
 import * as path from 'path';
 import serverFactory, { Server, ServerOptions } from './server';
 import stubFactory, { Stub, StubOptions } from './stub';
@@ -83,17 +82,14 @@ export class Pact {
 
   // Remove all the servers that have been created
   // Return promise of all others
-  public removeAllServers(): q.Promise<Server[]> {
+  public removeAllServers(): Promise<Server[]> {
     if (this.__servers.length === 0) {
-      return q(this.__servers);
+      return Promise.resolve(this.__servers);
     }
 
     logger.info('Removing all Pact servers.');
-    return q.all<Server>(
-      _.map(
-        this.__servers,
-        (server: Server) => server.delete() as PromiseLike<Server>
-      )
+    return Promise.all<Server>(
+      _.map(this.__servers, (server: Server) => server.delete())
     );
   }
 
@@ -133,39 +129,39 @@ export class Pact {
 
   // Remove all the stubs that have been created
   // Return promise of all others
-  public removeAllStubs(): q.Promise<Stub[]> {
+  public removeAllStubs(): Promise<Stub[]> {
     if (this.__stubs.length === 0) {
-      return q(this.__stubs);
+      return Promise.resolve(this.__stubs);
     }
 
     logger.info('Removing all Pact stubs.');
-    return q.all<Stub>(
-      _.map(this.__stubs, (stub: Stub) => stub.delete() as PromiseLike<Stub>)
+    return Promise.all<Stub>(
+      _.map(this.__stubs, (stub: Stub) => stub.delete())
     );
   }
 
   // Remove all the servers and stubs
-  public removeAll(): q.Promise<AbstractService[]> {
-    return q.all<AbstractService>(
+  public removeAll(): Promise<AbstractService[]> {
+    return Promise.all<AbstractService>(
       _.flatten([this.removeAllStubs(), this.removeAllServers()])
     );
     // .tap(endDestination);
   }
 
   // Run the Pact Verification process
-  public verifyPacts(options: VerifierOptions): q.Promise<string> {
+  public verifyPacts(options: VerifierOptions): Promise<string> {
     logger.info('Verifying Pacts.');
     return verifierFactory(options).verify();
   }
 
   // Run the Message Pact creation process
-  public createMessage(options: MessageOptions): q.Promise<unknown> {
+  public createMessage(options: MessageOptions): Promise<unknown> {
     logger.info('Creating Message');
     return messageFactory(options).createMessage();
   }
 
   // Publish Pacts to a Pact Broker
-  public publishPacts(options: PublisherOptions): q.Promise<string[]> {
+  public publishPacts(options: PublisherOptions): Promise<string[]> {
     logger.info('Publishing Pacts to Broker');
     return publisherFactory(options).publish();
   }
@@ -173,7 +169,7 @@ export class Pact {
   // Use can-i-deploy to determine if it is safe to deploy
   public canDeploy(
     options: CanDeployOptions
-  ): q.Promise<CanDeployResponse | string> {
+  ): Promise<CanDeployResponse | string> {
     logger.info('Checking if it it possible to deploy');
     return canDeployFactory(options).canDeploy();
   }

@@ -3,8 +3,9 @@ import url = require('url');
 import logger, { verboseIsImplied } from './logger';
 import spawn from './spawn';
 import { DEFAULT_ARG } from './spawn';
-import q = require('q');
 import pactStandalone from './pact-standalone';
+import { timeout, TimeoutError } from 'promise-timeout';
+
 import _ = require('underscore');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
@@ -199,28 +200,31 @@ export class Verifier {
     this.options = options;
   }
 
-  public verify(): q.Promise<string> {
+  public verify(): Promise<string> {
     logger.info('Verifying Pact Files');
-    const deferred = q.defer<string>();
-    const instance = spawn.spawnBinary(
-      pactStandalone.verifierPath,
-      this.options,
-      this.__argMapping
-    );
-    const output: Array<string | Buffer> = [];
-    instance.stdout.on('data', l => output.push(l));
-    instance.stderr.on('data', l => output.push(l));
-    instance.once('close', code => {
-      const o = output.join('\n');
-      code === 0 ? deferred.resolve(o) : deferred.reject(new Error(o));
-    });
 
-    return deferred.promise
-      .timeout(
-        this.options.timeout as number,
-        `Timeout waiting for verification process to complete (PID: ${instance.pid})`
-      )
-      .tap(() => logger.info('Pact Verification succeeded.'));
+    return timeout(
+      new Promise<string>((resolve, reject) => {
+        const instance = spawn.spawnBinary(
+          pactStandalone.verifierPath,
+          this.options,
+          this.__argMapping
+        );
+        const output: Array<string | Buffer> = [];
+        instance.stdout.on('data', l => output.push(l));
+        instance.stderr.on('data', l => output.push(l));
+        instance.once('close', code => {
+          const o = output.join('\n');
+          code === 0 ? resolve(o) : reject(new Error(o));
+        });
+      }),
+      this.options.timeout as number
+    ).catch((err: Error) => {
+      if (err instanceof TimeoutError) {
+        throw new Error(`Timeout waiting for verification process to complete`);
+      }
+      throw err;
+    });
   }
 }
 

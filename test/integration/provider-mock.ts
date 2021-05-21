@@ -1,11 +1,10 @@
 import express = require('express');
-import q = require('q');
 import * as http from 'http';
 import { returnJson, returnJsonFile, auth } from './data-utils';
 import cors = require('cors');
 import bodyParser = require('body-parser');
 
-export default (port: number): q.Promise<http.Server> => {
+export default (port: number): Promise<http.Server> => {
   const server: express.Express = express();
   server.use(cors());
   server.use(bodyParser.json());
@@ -105,7 +104,8 @@ export default (port: number): q.Promise<http.Server> => {
     )
   );
 
-  const deferred = q.defer<http.Server>();
-  let s = server.listen(port, () => deferred.resolve());
-  return deferred.promise.then(() => s);
+  let s: http.Server;
+  return new Promise<void>(resolve => {
+    s = server.listen(port, () => resolve());
+  }).then(() => s);
 };

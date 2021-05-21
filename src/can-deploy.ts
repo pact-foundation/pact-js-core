@@ -1,7 +1,7 @@
-import q = require('q');
 import logger, { verboseIsImplied } from './logger';
 import spawn from './spawn';
 import pactStandalone from './pact-standalone';
+import { timeout, TimeoutError } from 'promise-timeout';
 import { PACT_NODE_NO_VALUE } from './spawn';
 import * as _ from 'underscore';
 
@@ -93,67 +93,80 @@ export class CanDeploy {
     this.options = options;
   }
 
-  public canDeploy(): q.Promise<CanDeployResponse | string> {
+  public canDeploy(): Promise<CanDeployResponse | string> {
     logger.info(
       `Asking broker at ${this.options.pactBroker} if it is possible to deploy`
     );
-    const deferred = q.defer<CanDeployResponse | string>();
-    const instance = spawn.spawnBinary(
-      pactStandalone.brokerPath,
-      [
-        { cliVerb: 'can-i-deploy' },
-        ...CanDeploy.convertForSpawnBinary(this.options),
-      ],
-      this.__argMapping
-    );
-    const output: Array<string | Buffer> = [];
-    instance.stdout.on('data', l => output.push(l));
-    instance.stderr.on('data', l => output.push(l));
-    instance.once('close', code => {
-      const result: string = output.join('\n');
+    const canDeployPromise = new Promise<CanDeployResponse | string>(
+      (resolve, reject) => {
+        const instance = spawn.spawnBinary(
+          pactStandalone.brokerPath,
+          [
+            { cliVerb: 'can-i-deploy' },
+            ...CanDeploy.convertForSpawnBinary(this.options),
+          ],
+          this.__argMapping
+        );
+        const output: Array<string | Buffer> = [];
+        instance.stdout.on('data', l => output.push(l));
+        instance.stderr.on('data', l => output.push(l));
+        instance.once('close', code => {
+          const result: string = output.join('\n');
 
-      if (this.options.output === 'json') {
-        try {
-          const startIndex = output.findIndex((l: string | Buffer) =>
-            l.toString().startsWith('{')
+          if (this.options.output === 'json') {
+            try {
+              const startIndex = output.findIndex((l: string | Buffer) =>
+                l.toString().startsWith('{')
+              );
+              if (startIndex === -1) {
+                logger.error(
+                  `can-i-deploy produced no json output:\n${result}`
+                );
+                return reject(new Error(result));
+              }
+              if (startIndex !== 0) {
+                logger.warn(
+                  `can-i-deploy produced additional output: \n${output.slice(
+                    0,
+                    startIndex
+                  )}`
+                );
+              }
+              const jsonPart = output.slice(startIndex).join('\n');
+
+              const parsed = JSON.parse(jsonPart) as CanDeployResponse;
+              if (code === 0 && parsed.summary.deployable) {
+                return resolve(parsed);
+              }
+              return reject(new CannotDeployError(parsed));
+            } catch (e) {
+              logger.error(`can-i-deploy produced non-json output:\n${result}`);
+              return reject(new Error(result));
+            }
+          }
+
+          if (code === 0) {
+            logger.info(result);
+            return resolve(result);
+          }
+
+          logger.error(
+            `can-i-deploy did not return success message:\n${result}`
           );
-          if (startIndex === -1) {
-            logger.error(`can-i-deploy produced no json output:\n${result}`);
-            return deferred.reject(new Error(result));
-          }
-          if (startIndex !== 0) {
-            logger.warn(
-              `can-i-deploy produced additional output: \n${output.slice(
-                0,
-                startIndex
-              )}`
-            );
-          }
-          const jsonPart = output.slice(startIndex).join('\n');
+          return reject(new CannotDeployError(result));
+        });
+      }
+    );
 
-          const parsed = JSON.parse(jsonPart) as CanDeployResponse;
-          if (code === 0 && parsed.summary.deployable) {
-            return deferred.resolve(parsed);
-          }
-          return deferred.reject(new CannotDeployError(parsed));
-        } catch (e) {
-          logger.error(`can-i-deploy produced non-json output:\n${result}`);
-          return deferred.reject(new Error(result));
+    return timeout(canDeployPromise, this.options.timeout as number).catch(
+      (err: Error) => {
+        if (err instanceof TimeoutError) {
+          throw new Error(
+            `Timeout waiting for publication process to complete`
+          );
         }
+        throw err;
       }
-
-      if (code === 0) {
-        logger.info(result);
-        return deferred.resolve(result);
-      }
-
-      logger.error(`can-i-deploy did not return success message:\n${result}`);
-      return deferred.reject(new CannotDeployError(result));
-    });
-
-    return deferred.promise.timeout(
-      this.options.timeout as number,
-      `Timeout waiting for verification process to complete (PID: ${instance.pid})`
     );
   }
 }

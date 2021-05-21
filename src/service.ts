@@ -2,10 +2,10 @@ import path = require('path');
 import fs = require('fs');
 import events = require('events');
 import http = require('request');
-import q = require('q');
 import logger, { setLogLevel } from './logger';
 import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
+import { timeout, TimeoutError } from 'promise-timeout';
 import mkdirp = require('mkdirp');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const checkTypes = require('check-types');
@@ -146,12 +146,12 @@ export abstract class AbstractService extends events.EventEmitter {
     this.__argMapping = argMapping;
   }
 
-  public start(): q.Promise<AbstractService> {
+  public start(): Promise<AbstractService> {
     if (this.__instance && this.__instance.connected) {
       logger.warn(
         `You already have a process running with PID: ${this.__instance.pid}`
       );
-      return q.resolve(this);
+      return Promise.resolve(this);
     }
 
     this.__instance = this.spawnBinary();
@@ -181,24 +181,39 @@ export abstract class AbstractService extends events.EventEmitter {
     );
 
     // check service is available
-    return this.__waitForServiceUp()
-      .timeout(
-        PROCESS_TIMEOUT,
-        `Couldn't start Pact with PID: ${this.__instance.pid}`
-      )
+    return timeout(this.__waitForServiceUp(), PROCESS_TIMEOUT)
       .then(() => {
         this.__running = true;
         this.emit(AbstractService.Events.START_EVENT, this);
         return this;
+      })
+      .catch((err: Error) => {
+        if (err instanceof TimeoutError) {
+          throw new Error(
+            `Couldn't start Pact with PID: ${
+              this.__instance ? this.__instance.pid : 'No Instance'
+            }`
+          );
+        }
+        throw err;
       });
   }
 
   // Stop the instance
-  public stop(): q.Promise<AbstractService> {
+  public stop(): Promise<AbstractService> {
     const pid = this.__instance ? this.__instance.pid : -1;
-    return q(spawn.killBinary(this.__instance))
-      .then(() => this.__waitForServiceDown())
-      .timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
+    return timeout(
+      Promise.resolve(this.__instance)
+        .then(spawn.killBinary)
+        .then(() => this.__waitForServiceDown()),
+      PROCESS_TIMEOUT
+    )
+      .catch((err: Error) => {
+        if (err instanceof TimeoutError) {
+          throw new Error(`Couldn't stop Pact with PID '${pid}'`);
+        }
+        throw err;
+      })
       .then(() => {
         this.__running = false;
         this.emit(AbstractService.Events.STOP_EVENT, this);
@@ -207,7 +222,7 @@ export abstract class AbstractService extends events.EventEmitter {
   }
 
   // Deletes this instance and emit an event
-  public delete(): q.Promise<AbstractService> {
+  public delete(): Promise<AbstractService> {
     return this.stop().then(() => {
       this.emit(AbstractService.Events.DELETE_EVENT, this);
 
@@ -225,94 +240,92 @@ export abstract class AbstractService extends events.EventEmitter {
   }
 
   // Wait for the service to be initialized and ready
-  protected __waitForServiceUp(): q.Promise<unknown> {
+  protected __waitForServiceUp(): Promise<unknown> {
     let amount = 0;
-    const deferred = q.defer();
 
-    const retry = (): void => {
-      if (amount >= RETRY_AMOUNT) {
-        deferred.reject(
-          new Error(
-            'Pact startup failed; tried calling service 10 times with no result.'
-          )
-        );
-      }
-      // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      setTimeout(check.bind(this), CHECKTIME);
-    };
+    const waitPromise = new Promise<void>((resolve, reject) => {
+      const retry = (): void => {
+        if (amount >= RETRY_AMOUNT) {
+          reject(
+            new Error(
+              'Pact startup failed; tried calling service 10 times with no result.'
+            )
+          );
+        }
+        // eslint-disable-next-line @typescript-eslint/no-use-before-define
+        setTimeout(check.bind(this), CHECKTIME);
+      };
 
-    const check = (): void => {
-      amount++;
-      if (this.options.port) {
-        this.__call(this.options).then(
-          () => deferred.resolve(),
-          retry.bind(this)
-        );
-      } else {
-        retry();
-      }
-    };
+      const check = (): void => {
+        amount++;
+        if (this.options.port) {
+          this.__call(this.options).then(() => resolve(), retry.bind(this));
+        } else {
+          retry();
+        }
+      };
 
-    check(); // Check first time, start polling
-    return deferred.promise;
+      check(); // Check first time, start polling
+    });
+    return waitPromise;
   }
 
-  protected __waitForServiceDown(): q.Promise<unknown> {
+  protected __waitForServiceDown(): Promise<unknown> {
     let amount = 0;
-    const deferred = q.defer();
 
-    const check = (): void => {
-      amount++;
-      if (this.options.port) {
-        this.__call(this.options).then(
-          () => {
-            if (amount >= RETRY_AMOUNT) {
-              deferred.reject(
-                new Error(
-                  'Pact stop failed; tried calling service 10 times with no result.'
-                )
-              );
-              return;
-            }
-            setTimeout(check, CHECKTIME);
-          },
-          () => deferred.resolve()
-        );
-      } else {
-        deferred.resolve();
-      }
-    };
-
-    check(); // Check first time, start polling
-    return deferred.promise;
-  }
-
-  private __call(options: ServiceOptions): q.Promise<unknown> {
-    const deferred = q.defer();
-    const config: HTTPConfig = {
-      uri: `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
-      method: 'GET',
-      headers: {
-        'X-Pact-Mock-Service': true,
-        'Content-Type': 'application/json',
-      },
-    };
-
-    if (options.ssl) {
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-      config.agentOptions = {};
-      config.agentOptions.rejectUnauthorized = false;
-      config.agentOptions.requestCert = false;
-      config.agentOptions.agent = false;
-    }
-
-    http(config, (err: Error, res) => {
-      !err && res.statusCode === 200
-        ? deferred.resolve()
-        : deferred.reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
+    const checkPromise = new Promise<void>((resolve, reject) => {
+      const check = (): void => {
+        amount++;
+        if (this.options.port) {
+          this.__call(this.options).then(
+            () => {
+              if (amount >= RETRY_AMOUNT) {
+                reject(
+                  new Error(
+                    'Pact stop failed; tried calling service 10 times with no result.'
+                  )
+                );
+                return;
+              }
+              setTimeout(check, CHECKTIME);
+            },
+            () => resolve()
+          );
+        } else {
+          resolve();
+        }
+      };
+      check(); // Check first time, start polling
     });
 
-    return deferred.promise;
+    return checkPromise;
+  }
+
+  private __call(options: ServiceOptions): Promise<unknown> {
+    return new Promise<void>((resolve, reject) => {
+      const config: HTTPConfig = {
+        uri: `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
+        method: 'GET',
+        headers: {
+          'X-Pact-Mock-Service': true,
+          'Content-Type': 'application/json',
+        },
+      };
+
+      if (options.ssl) {
+        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+        config.agentOptions = {};
+        config.agentOptions.rejectUnauthorized = false;
+        config.agentOptions.requestCert = false;
+        config.agentOptions.agent = false;
+      }
+
+      http(config, (err: Error, res) => {
+        !err && res.statusCode === 200
+          ? resolve()
+          : reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
+      });
+    });
   }
 }
 

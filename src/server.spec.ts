@@ -4,8 +4,6 @@ import chaiAsPromised = require('chai-as-promised');
 import fs = require('fs');
 import util = require('util');
 import path = require('path');
-import q = require('q');
-import _ = require('underscore');
 import mkdirp = require('mkdirp');
 import rimraf = require('rimraf');
 
@@ -102,16 +100,14 @@ describe('Server Spec', () => {
         server = serverFactory();
 
         const waitForServerUp = server['__waitForServiceUp'].bind(server);
-        return q
-          .allSettled([
+        return expect(
+          Promise.all([
             waitForServerUp(server.options),
-            q.delay(5000).then(() => server.start()),
+            new Promise(resolve => setTimeout(resolve, 5000)).then(() =>
+              server.start()
+            ),
           ])
-          .then(
-            results =>
-              expect(_.reduce(results, (m, r) => m && r.state === 'fulfilled'))
-                .to.be.true
-          );
+        ).to.eventually.be.fulfilled;
       });
 
       it('should start correctly with ssl', () => {
@@ -254,7 +250,7 @@ describe('Server Spec', () => {
 
       context('Log Level', () => {
         it("should start correctly with 'debug'", () => {
-          return q.allSettled([
+          return Promise.all([
             expect(
               serverFactory({
                 logLevel: 'debug',
@@ -271,7 +267,7 @@ describe('Server Spec', () => {
         });
 
         it("should start correctly with 'info'", () => {
-          return q.allSettled([
+          return Promise.all([
             expect(
               serverFactory({
                 logLevel: 'info',
@@ -288,7 +284,7 @@ describe('Server Spec', () => {
         });
 
         it("should start correctly with 'warn'", () => {
-          return q.allSettled([
+          return Promise.all([
             expect(
               serverFactory({
                 logLevel: 'warn',
@@ -305,7 +301,7 @@ describe('Server Spec', () => {
         });
 
         it("should start correctly with 'error'", () => {
-          return q.allSettled([
+          return Promise.all([
             expect(
               serverFactory({
                 logLevel: 'error',

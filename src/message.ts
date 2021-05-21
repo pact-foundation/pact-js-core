@@ -1,5 +1,4 @@
 import fs = require('fs');
-import q = require('q');
 import logger from './logger';
 import spawn from './spawn';
 import { DEFAULT_ARG } from './spawn';
@@ -78,34 +77,33 @@ export class Message {
     this.options = options;
   }
 
-  public createMessage(): q.Promise<unknown> {
+  public createMessage(): Promise<unknown> {
     logger.info(`Creating message pact`);
-    const deferred = q.defer();
-    const { pactFileWriteMode, content, ...restOptions } = this.options;
 
-    const instance = spawn.spawnBinary(
-      pactStandalone.messagePath,
-      [{ pactFileWriteMode }, restOptions],
-      this.__argMapping
-    );
-    const output: Array<string | Buffer> = [];
-    instance.stdout.on('data', l => output.push(l));
-    instance.stderr.on('data', l => output.push(l));
-    instance.stdin.write(content);
-    instance.once('close', code => {
-      const o = output.join('\n');
-      logger.info(o);
+    return new Promise((resolve, reject) => {
+      const { pactFileWriteMode, content, ...restOptions } = this.options;
 
-      if (code === 0) {
-        return deferred.resolve(o);
-      } else {
-        return deferred.reject(o);
-      }
+      const instance = spawn.spawnBinary(
+        pactStandalone.messagePath,
+        [{ pactFileWriteMode }, restOptions],
+        this.__argMapping
+      );
+      const output: Array<string | Buffer> = [];
+      instance.stdout.on('data', l => output.push(l));
+      instance.stderr.on('data', l => output.push(l));
+      instance.stdin.write(content);
+      instance.stdin.end();
+      instance.once('close', code => {
+        const o = output.join('\n');
+        logger.info(o);
+
+        if (code === 0) {
+          return resolve(o);
+        } else {
+          return reject(o);
+        }
+      });
     });
-
-    instance.stdin.end();
-
-    return deferred.promise;
   }
 }
 

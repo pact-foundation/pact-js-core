@@ -3,8 +3,6 @@ import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 import fs = require('fs');
 import path = require('path');
-import q = require('q');
-import _ = require('underscore');
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -84,16 +82,12 @@ describe('Stub Spec', () => {
         stub = stubFactory(validDefaults);
 
         const waitForStubUp = stub['__waitForServiceUp'].bind(stub);
-        return q
-          .allSettled([
-            waitForStubUp(stub.options),
-            q.delay(5000).then(() => stub.start()),
-          ])
-          .then(
-            results =>
-              expect(_.reduce(results, (m, r) => m && r.state === 'fulfilled'))
-                .to.be.true
-          );
+        return Promise.all([
+          waitForStubUp(stub.options),
+          new Promise(resolve => setTimeout(resolve, 5000)).then(() =>
+            stub.start()
+          ),
+        ]);
       });
 
       it('should start correctly with valid pact URLs', () => {

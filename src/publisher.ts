@@ -1,8 +1,8 @@
-import q = require('q');
 import path = require('path');
 import fs = require('fs');
 import logger, { verboseIsImplied } from './logger';
 import spawn from './spawn';
+import { timeout, TimeoutError } from 'promise-timeout';
 import { DEFAULT_ARG } from './spawn';
 import pactStandalone from './pact-standalone';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -96,33 +96,38 @@ export class Publisher {
     this.options = options;
   }
 
-  public publish(): q.Promise<string[]> {
+  public publish(): Promise<string[]> {
     logger.info(`Publishing pacts to broker at: ${this.options.pactBroker}`);
-    const deferred = q.defer<string[]>();
-    const instance = spawn.spawnBinary(
-      pactStandalone.brokerPath,
-      [{ cliVerb: 'publish' }, this.options],
-      this.__argMapping
-    );
-    const output: Array<string | Buffer> = [];
-    instance.stdout.on('data', l => output.push(l));
-    instance.stderr.on('data', l => output.push(l));
-    instance.once('close', code => {
-      const o = output.join('\n');
-      const pactUrls = /^https?:\/\/.*\/pacts\/.*$/gim.exec(o);
-      if (code !== 0 || !pactUrls) {
-        logger.error(`Could not publish pact:\n${o}`);
-        return deferred.reject(new Error(o));
+
+    return timeout(
+      new Promise<string[]>((resolve, reject) => {
+        const instance = spawn.spawnBinary(
+          pactStandalone.brokerPath,
+          [{ cliVerb: 'publish' }, this.options],
+          this.__argMapping
+        );
+        const output: Array<string | Buffer> = [];
+        instance.stdout.on('data', l => output.push(l));
+        instance.stderr.on('data', l => output.push(l));
+        instance.once('close', code => {
+          const o = output.join('\n');
+          const pactUrls = /^https?:\/\/.*\/pacts\/.*$/gim.exec(o);
+          if (code !== 0 || !pactUrls) {
+            logger.error(`Could not publish pact:\n${o}`);
+            return reject(new Error(o));
+          }
+
+          logger.info(o);
+          return resolve(pactUrls);
+        });
+      }),
+      this.options.timeout as number
+    ).catch((err: Error) => {
+      if (err instanceof TimeoutError) {
+        throw new Error(`Timeout waiting for publication process to complete`);
       }
-
-      logger.info(o);
-      return deferred.resolve(pactUrls);
+      throw err;
     });
-
-    return deferred.promise.timeout(
-      this.options.timeout as number,
-      `Timeout waiting for verification process to complete (PID: ${instance.pid})`
-    );
   }
 }
 
