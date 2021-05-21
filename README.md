@@ -311,6 +311,17 @@ pact.verifyPacts({
 | `logDir`   | false  | string   | Directory to output the pact.log file to
 | `logLevel`    | false     | LogLevel (string)          | Log level. One of "DEBUG", "ERROR", "WARN", "INFO" |
 
+The consumer version selector looks like this:
+
+```
+ConsumerVersionSelector {
+  tag?: string;
+  latest?: boolean;
+  consumer?: string;
+  fallbackTag?: string;
+}
+```
+See the [Pact Broker documentation on selectors](https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors) for more information.
 
 ### Pact Broker Publishing
 
