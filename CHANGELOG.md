@@ -2,6 +2,50 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.0.0](https://github.com/pact-foundation/pact-js-core/compare/v10.12.1...v11.0.0) (2021-05-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* All the interfaces that previously returned `q.Promise` have now been replaced with native es6 `Promise`s. Calling code will need to be updated.
+* All options deprecated in previous versions have been removed. Migration instructions:
+
+* In `VerifierOptions`: replace use of `tags`, `consumerVersionTag` and `providerVersionTag` with the appropriate `consumerVersionTags` or `providerVersionTags` option.
+
+* The following classes have had their `.create(options)` removed. Please use the appropriate constructor instead (for example, `new Verifier(options)`)
+    * `Verifier`
+    * `Publisher`
+    * `Server`
+    * `Stub`
+* **docs:** The type for consumer version selectors in the verifier has been corrected. This will affect typescript users who were using consumerVersionSelectors with the fields `pacticipant`, `all` or `version`. These fields never worked, and now will no longer compile in typescript. The correct type is:
+
+```
+ConsumerVersionSelector {
+  tag?: string;
+  latest?: boolean;
+  consumer?: string;
+  fallbackTag?: string;
+}
+```
+
+Note that `pacticipant`, `version` and `all` have been removed. Existing code that uses `pacticipant` needs to use `consumer` instead. The other fields can be dropped. Any questions, please reach out to us at https://slack.pact.io/
+* fix https://github.com/pact-foundation/pact-js-core/issues/285
+
+* **docs:** Add description of consumer version selectors to the documentation. ([1bdb45d](https://github.com/pact-foundation/pact-js-core/commit/1bdb45dfb82bfb2dcf4a01f88f2f2206681e3913))
+
+
+### Fixes and Improvements
+
+* ConsumerVersionSelector interface ([b1e5afe](https://github.com/pact-foundation/pact-js-core/commit/b1e5afeea5a6f5ad6265a0a08bf4c4976a99e6dc))
+* Replace `q` ith native `Promise` ([a5076cc](https://github.com/pact-foundation/pact-js-core/commit/a5076cc974c052ab9d281c86d90c136ea00f0f84))
+* The verifier option `providerStatesSetupUrl` is no longer deprecated. Other deprecated options have been removed. ([95b88e0](https://github.com/pact-foundation/pact-js-core/commit/95b88e084bf66d97717a99ac4ebf800c8116bc68))
+* update standalone to 1.88.46 ([e9f2b43](https://github.com/pact-foundation/pact-js-core/commit/e9f2b431b1118396c27814daaa0cfd4f538ea138))
+* update standalone to 1.88.47 ([5626f3b](https://github.com/pact-foundation/pact-js-core/commit/5626f3bcb92ce3c7141373232e4ec3701d8ae2d8))
+* update standalone to 1.88.48 ([14e31cf](https://github.com/pact-foundation/pact-js-core/commit/14e31cf812fd7f11fe84e130bcff4c50d0ff64de))
+* update standalone to 1.88.49 ([cb088ce](https://github.com/pact-foundation/pact-js-core/commit/cb088ce64d670ce5babadfec53d561e00d9ad8ff))
+* update standalone to 1.88.50 ([ce92950](https://github.com/pact-foundation/pact-js-core/commit/ce9295023b05df140b7575a6d910add55e62639c))
+* update standalone to 1.88.51 ([de83a99](https://github.com/pact-foundation/pact-js-core/commit/de83a99b1574d868557f7eba6069c4d9a84279e5))
+
 ### [10.12.2](https://github.com/pact-foundation/pact-js-core/compare/v10.12.1...v10.12.2) (2021-04-20)
 
 
