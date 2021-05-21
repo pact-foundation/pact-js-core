@@ -287,13 +287,12 @@ export default (options: VerifierOptions): Verifier => new Verifier(options);
 // A ConsumerVersionSelector is a way we specify which pacticipants and
 // versions we want to use when configuring verifications.
 //
-// See https://docs.pact.io/selectors for more
+// See https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors for more
 export interface ConsumerVersionSelector {
-  pacticipant?: string;
   tag?: string;
-  version?: string;
   latest?: boolean;
-  all?: boolean;
+  consumer?: string;
+  fallbackTag?: string;
 }
 
 interface CurrentVerifierOptions {
