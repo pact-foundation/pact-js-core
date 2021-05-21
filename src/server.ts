@@ -3,9 +3,7 @@ import pact from './pact-standalone';
 import path = require('path');
 import fs = require('fs');
 import mkdirp = require('mkdirp');
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const checkTypes = require('check-types');
+import checkTypes = require('check-types');
 
 export class Server extends AbstractService {
   public readonly options: ServerOptions;

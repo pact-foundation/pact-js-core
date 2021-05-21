@@ -5,8 +5,7 @@ import { timeout, TimeoutError } from 'promise-timeout';
 import { PACT_NODE_NO_VALUE } from './spawn';
 import * as _ from 'underscore';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const checkTypes = require('check-types');
+import checkTypes = require('check-types');
 
 export class CannotDeployError extends Error {
   output: CanDeployResponse | string;

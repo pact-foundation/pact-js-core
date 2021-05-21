@@ -5,9 +5,7 @@ import { DEFAULT_ARG } from './spawn';
 import pactStandalone from './pact-standalone';
 import path = require('path');
 import mkdirp = require('mkdirp');
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const checkTypes = require('check-types');
+import checkTypes = require('check-types');
 
 export class Message {
   public readonly options: MessageOptions;
@@ -25,19 +23,19 @@ export class Message {
     options.spec = options.spec || 3;
 
     checkTypes.assert.nonEmptyString(
-      options.consumer,
+      options.consumer || '',
       'Must provide the consumer name'
     );
     checkTypes.assert.nonEmptyString(
-      options.provider,
+      options.provider || '',
       'Must provide the provider name'
     );
     checkTypes.assert.nonEmptyString(
-      options.content,
+      options.content || '',
       'Must provide message content'
     );
     checkTypes.assert.nonEmptyString(
-      options.dir,
+      options.dir || '',
       'Must provide pact output dir'
     );
 

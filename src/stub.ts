@@ -2,8 +2,7 @@ import { DEFAULT_ARG } from './spawn';
 import { AbstractService, LogLevel } from './service';
 
 import pact from './pact-standalone';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const checkTypes = require('check-types');
+import checkTypes = require('check-types');
 
 export class Stub extends AbstractService {
   public readonly options: StubOptions;

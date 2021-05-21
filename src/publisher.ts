@@ -5,8 +5,7 @@ import spawn from './spawn';
 import { timeout, TimeoutError } from 'promise-timeout';
 import { DEFAULT_ARG } from './spawn';
 import pactStandalone from './pact-standalone';
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const checkTypes = require('check-types');
+import checkTypes = require('check-types');
 
 export class Publisher {
   public readonly options: PublisherOptions;

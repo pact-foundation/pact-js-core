@@ -7,10 +7,8 @@ import pactStandalone from './pact-standalone';
 import { timeout, TimeoutError } from 'promise-timeout';
 
 import _ = require('underscore');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const checkTypes = require('check-types');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const unixify = require('unixify');
+import checkTypes = require('check-types');
+import unixify = require('unixify');
 
 import fs = require('fs');
 import { LogLevel } from './service';
@@ -242,7 +240,7 @@ export interface ConsumerVersionSelector {
   fallbackTag?: string;
 }
 
-interface CurrentVerifierOptions {
+export interface VerifierOptions {
   providerBaseUrl: string;
   provider?: string;
   pactUrls?: string[];
@@ -267,5 +265,3 @@ interface CurrentVerifierOptions {
   providerStatesSetupUrl?: string;
   logLevel?: LogLevel;
 }
-
-export type VerifierOptions = CurrentVerifierOptions;

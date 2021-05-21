@@ -1,13 +1,11 @@
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const _ = require('underscore');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const checkTypes = require('check-types');
-
 import { CanDeployOptions } from '../can-deploy';
 import { MessageOptions } from '../message';
 import { PublisherOptions } from '../publisher';
 import { ServiceOptions } from '../service';
 import { VerifierOptions } from '../verifier';
+
+import _ = require('underscore');
+import checkTypes = require('check-types');
 
 export type CliVerbOptions = {
   cliVerb: string;
@@ -57,29 +55,23 @@ export class Arguments {
     mappings: { [id: string]: string }
   ): string[] {
     return _.chain(args instanceof Array ? args : [args])
-      .map((x: SpawnArguments) => this.createArgumentsFromObject(x, mappings))
+      .map((x: SpawnArgument) => this.createArgumentsFromObject(x, mappings))
       .flatten()
       .value();
   }
 
   private createArgumentsFromObject(
-    args: SpawnArguments,
+    args: SpawnArgument,
     mappings: { [id: string]: string }
   ): string[] {
-    return _.chain(args)
+    return _.chain(Object.keys(args))
       .reduce(
-        (
-          acc: Array<string>,
-          value: SpawnArguments | Array<SpawnArguments>,
-          key: string
-        ): Array<string> =>
+        (acc: Array<string>, key: string): Array<string> =>
           mappings[key] === DEFAULT_ARG
-            ? convertValue(mappings[key], value).concat(acc)
-            : acc.concat(convertValue(mappings[key], value)),
+            ? convertValue(mappings[key], args[key]).concat(acc)
+            : acc.concat(convertValue(mappings[key], args[key])),
         []
       )
-      .flatten()
-      .compact()
       .value();
   }
 }

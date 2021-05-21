@@ -7,8 +7,7 @@ import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import { timeout, TimeoutError } from 'promise-timeout';
 import mkdirp = require('mkdirp');
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const checkTypes = require('check-types');
+import checkTypes = require('check-types');
 
 // Get a reference to the global setTimeout object in case it is mocked by a testing library later
 const setTimeout = global.setTimeout;
