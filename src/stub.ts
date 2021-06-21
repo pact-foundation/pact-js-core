@@ -45,4 +45,5 @@ export interface StubOptions {
   sslkey?: string;
   log?: string;
   logLevel?: LogLevel;
+  timeout?: number;
 }

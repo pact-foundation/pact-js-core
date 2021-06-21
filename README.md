@@ -189,6 +189,7 @@ var server = pact.createServer({
 | `pactFileWriteMode` | false     | `overwrite` OR `update` OR `merge` | Control how the pact file is created. Defaults to "overwrite"                                                                        |
 | `format`            | false     | `json` OR `xml`                    | Format to write the results as, either in JSON or XML, defaults to JSON                                                              |
 | `out`               | false     | string                             | Write output to a file instead of returning it in the promise, defaults to none                                                      |
+| `timeout`               | false     | number                             | How long to wait for the mock server to start up (in milliseconds). Defaults to 30000 (30 seconds)                                                      |
 
 #### List Mock Servers
 
@@ -418,6 +419,8 @@ var server = pact.createStub({
 | sslcert   | false     | string  | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults false                      | to none |
 | sslkey    | false     | string  | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this option false. Defaults to none     |
 | cors      | false     | boolean | Allow CORS OPTION requests to be accepted, defaults to 'false'                                                                       |
+| timeout               | false     | number                             | How long to wait for the stub server to start up (in milliseconds). Defaults to 30000 (30 seconds)                                                      |
+
 
 ### Message Pacts
 

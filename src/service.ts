@@ -12,9 +12,13 @@ import checkTypes = require('check-types');
 // Get a reference to the global setTimeout object in case it is mocked by a testing library later
 const setTimeout = global.setTimeout;
 
-const CHECKTIME = 500;
 const RETRY_AMOUNT = 60;
-const PROCESS_TIMEOUT = 30000;
+
+const getTimeout = (options: ServiceOptions): number =>
+  options.timeout || 30000;
+
+const getRetryTickTime = (options: ServiceOptions): number =>
+  Math.round(getTimeout(options) / RETRY_AMOUNT);
 
 interface AbstractServiceEventInterface {
   START_EVENT: string;
@@ -73,7 +77,7 @@ export abstract class AbstractService extends events.EventEmitter {
       checkTypes.assert.number(options.port);
       checkTypes.assert.integer(options.port);
       checkTypes.assert.positive(options.port);
-      checkTypes.assert.inRange(options.port, 0, 65535);
+      checkTypes.inRange(options.port, 0, 65535);
 
       if (checkTypes.not.inRange(options.port, 1024, 49151)) {
         logger.warn(
@@ -180,7 +184,7 @@ export abstract class AbstractService extends events.EventEmitter {
     );
 
     // check service is available
-    return timeout(this.__waitForServiceUp(), PROCESS_TIMEOUT)
+    return timeout(this.__waitForServiceUp(), getTimeout(this.options))
       .then(() => {
         this.__running = true;
         this.emit(AbstractService.Events.START_EVENT, this);
@@ -205,7 +209,7 @@ export abstract class AbstractService extends events.EventEmitter {
       Promise.resolve(this.__instance)
         .then(spawn.killBinary)
         .then(() => this.__waitForServiceDown()),
-      PROCESS_TIMEOUT
+      getTimeout(this.options)
     )
       .catch((err: Error) => {
         if (err instanceof TimeoutError) {
@@ -252,7 +256,7 @@ export abstract class AbstractService extends events.EventEmitter {
           );
         }
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
-        setTimeout(check.bind(this), CHECKTIME);
+        setTimeout(check.bind(this), getRetryTickTime(this.options));
       };
 
       const check = (): void => {
@@ -286,7 +290,7 @@ export abstract class AbstractService extends events.EventEmitter {
                 );
                 return;
               }
-              setTimeout(check, CHECKTIME);
+              setTimeout(check, getRetryTickTime(this.options));
             },
             () => resolve()
           );
@@ -337,6 +341,7 @@ export interface ServiceOptions {
   sslkey?: string;
   log?: string;
   logLevel?: LogLevel;
+  timeout?: number;
 }
 
 // This is the pact binary's log level, which is a subset of the log levels for pact-core
