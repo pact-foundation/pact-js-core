@@ -179,7 +179,7 @@ export abstract class AbstractService extends events.EventEmitter {
       this.__instance.stdout.on('data', catchPort);
     }
 
-    this.__instance.stderr.on('data', data =>
+    this.__instance.stderr.on('data', (data) =>
       logger.error(`Pact Binary Error: ${data}`)
     );
 
@@ -193,7 +193,7 @@ export abstract class AbstractService extends events.EventEmitter {
       .catch((err: Error) => {
         if (err instanceof TimeoutError) {
           throw new Error(
-            `Couldn't start Pact with PID: ${
+            `Timeout while waiting to start Pact with PID: ${
               this.__instance ? this.__instance.pid : 'No Instance'
             }`
           );
@@ -213,7 +213,9 @@ export abstract class AbstractService extends events.EventEmitter {
     )
       .catch((err: Error) => {
         if (err instanceof TimeoutError) {
-          throw new Error(`Couldn't stop Pact with PID '${pid}'`);
+          throw new Error(
+            `Timeout while waiting to stop Pact with PID '${pid}'`
+          );
         }
         throw err;
       })
@@ -251,7 +253,7 @@ export abstract class AbstractService extends events.EventEmitter {
         if (amount >= RETRY_AMOUNT) {
           reject(
             new Error(
-              'Pact startup failed; tried calling service 10 times with no result.'
+              `Pact startup failed; tried calling service ${RETRY_AMOUNT} times with no result.`
             )
           );
         }
@@ -285,7 +287,7 @@ export abstract class AbstractService extends events.EventEmitter {
               if (amount >= RETRY_AMOUNT) {
                 reject(
                   new Error(
-                    'Pact stop failed; tried calling service 10 times with no result.'
+                    `Pact stop failed; tried calling service ${RETRY_AMOUNT} times with no result.`
                   )
                 );
                 return;
