@@ -77,7 +77,11 @@ export abstract class AbstractService extends events.EventEmitter {
       checkTypes.assert.number(options.port);
       checkTypes.assert.integer(options.port);
       checkTypes.assert.positive(options.port);
-      checkTypes.inRange(options.port, 0, 65535);
+      if (!checkTypes.inRange(options.port, 0, 65535)) {
+        throw new Error(
+          `Port number ${options.port} is not in the range 0-65535`
+        );
+      }
 
       if (checkTypes.not.inRange(options.port, 1024, 49151)) {
         logger.warn(
