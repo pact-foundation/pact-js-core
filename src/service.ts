@@ -179,7 +179,7 @@ export abstract class AbstractService extends events.EventEmitter {
       this.__instance.stdout.on('data', catchPort);
     }
 
-    this.__instance.stderr.on('data', (data) =>
+    this.__instance.stderr.on('data', data =>
       logger.error(`Pact Binary Error: ${data}`)
     );
 
