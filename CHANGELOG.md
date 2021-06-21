@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [11.0.1](https://github.com/pact-foundation/pact-js-core/compare/v11.0.0...v11.0.1) (2021-06-21)
+
+
+### Fixes and Improvements
+
+* Allow the user to specify the timeout (Fixes [#298](https://github.com/pact-foundation/pact-js-core/issues/298)) ([4c77ddb](https://github.com/pact-foundation/pact-js-core/commit/4c77ddb7071672050fd682e27992b37cb0682bb6))
+* update standalone to 1.88.56 ([81821fc](https://github.com/pact-foundation/pact-js-core/commit/81821fcd53649aedd242c9a2a4578b16c4c1fcd6))
+
 ## [11.0.0](https://github.com/pact-foundation/pact-js-core/compare/v10.12.1...v11.0.0) (2021-05-21)
 
 
