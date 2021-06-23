@@ -2,7 +2,7 @@ import pact from './pact';
 module.exports = exports = pact;
 export default pact;
 
-export * from './verifier';
+export * from './verifier/verifier';
 
 export * from './server';
 
