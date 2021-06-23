@@ -1,7 +1,7 @@
 import url = require('url');
 
 import { LogLevel } from '../service';
-import { ArgMapping } from './argumentMapper/types';
+import { ArgMapping } from '../ffi/argumentMapper/types';
 import { VerifierOptions } from './types';
 
 import { getUriType } from './filesystem';
