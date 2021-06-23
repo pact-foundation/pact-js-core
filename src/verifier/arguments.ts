@@ -1,28 +1,10 @@
+import url = require('url');
+
 import { LogLevel } from '../service';
 import { ArgMapping } from './argumentMapper/types';
 import { VerifierOptions } from './types';
 
-import path = require('path');
-import url = require('url');
-import fs = require('fs');
-
-type UriType = 'URL' | 'DIRECTORY' | 'FILE' | 'FILE_NOT_FOUND';
-
-// Todo: Extract this, and possibly rename
-const fileType = (uri: string): UriType => {
-  if (/https?:/.test(url.parse(uri).protocol || '')) {
-    return 'URL';
-  }
-  try {
-    if (fs.statSync(path.normalize(uri)).isDirectory()) {
-      return 'DIRECTORY';
-    } else {
-      return 'FILE';
-    }
-  } catch (e) {
-    throw new Error(`Pact file or directory '${uri}' doesn't exist`);
-  }
-};
+import { getUriType } from './filesystem';
 
 export const argMapping: ArgMapping<VerifierOptions> = {
   providerBaseUrl: (providerBaseUrl: string) => {
@@ -35,15 +17,13 @@ export const argMapping: ArgMapping<VerifierOptions> = {
   provider: { arg: '--provider-name', mapper: 'string' },
   pactUrls: (pactUrls: string[]) =>
     pactUrls.reduce<Array<string>>((acc: Array<string>, uri: string) => {
-      switch (fileType(uri)) {
+      switch (getUriType(uri)) {
         case 'URL':
           return [...acc, '--url', uri];
         case 'DIRECTORY':
           return [...acc, '--dir', uri];
         case 'FILE':
           return [...acc, '--file', uri];
-        case 'FILE_NOT_FOUND':
-          throw new Error(`Pact file or directory '${uri}' doesn't exist`);
         default:
           return acc;
       }

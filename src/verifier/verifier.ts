@@ -3,6 +3,7 @@ import { timeout, TimeoutError } from 'promise-timeout';
 
 import { VerifierOptions } from './types';
 import { verify } from './nativeVerifier';
+import { validateArgs } from './validateArgs';
 
 const applyDefaults = (options: VerifierOptions): VerifierOptions => ({
   timeout: 30000,
@@ -13,7 +14,7 @@ export class Verifier {
   public readonly options: VerifierOptions;
 
   constructor(options: VerifierOptions) {
-    this.options = applyDefaults(options);
+    this.options = validateArgs(applyDefaults(options));
   }
 
   public verify(): Promise<string> {
