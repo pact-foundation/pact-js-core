@@ -1,5 +1,5 @@
 import { VerifierOptions } from './types';
-import { verifierLib } from './ffiVerifier';
+import { getVerifierLib } from '../ffi/verifier';
 import logger from '../logger';
 import { argMapping } from './arguments';
 import { argumentMapper } from './argumentMapper';
@@ -32,6 +32,7 @@ Lastly, we're sorry about this!
 `;
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
+  const verifierLib = getVerifierLib();
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
     // Todo: Does this need to be a specific log level?
