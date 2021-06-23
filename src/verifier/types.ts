@@ -26,17 +26,8 @@ export interface VerifierOptions {
   includeWipPactsSince?: string;
   consumerVersionSelectors?: ConsumerVersionSelector[];
   logLevel?: LogLevel;
+
   // Todo in Rust maybe
-  customProviderHeaders?: string[];
   timeout?: number;
-
   logDir?: string;
-
-  // Kill
-  verbose?: boolean;
-  monkeypatch?: string;
-
-  // Unknown?
-  format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
-  out?: string;
 }
