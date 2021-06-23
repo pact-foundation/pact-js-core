@@ -1,5 +1,6 @@
 // https://github.com/node-ffi/node-ffi/wiki/Node-FFI-Tutorial
 import ffi = require('ffi-napi');
+import path = require('path');
 
 // I am so so sorry about these types. They exist
 // to infer the returned type of the library
@@ -50,8 +51,46 @@ type FfiBinding<T> = T extends LibDescription<string>
 // This function exists to wrap the untyped ffi lib, and return
 // the typed version
 export const initialiseFfi = <T>(
-  binaryPath: string,
+  filename: string,
   description: T
 ): FfiBinding<T> =>
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ffi.Library(binaryPath, description as { [k: string]: any });
+  ffi.Library(
+    path.resolve(process.cwd(), 'ffi', filename),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    description as { [k: string]: any }
+  );
+
+const platformLookup = {
+  linux: 'linux',
+  darwin: 'osx',
+  win32: 'windows', // yes, this is what process.platform returns on windows 64 bit
+};
+
+const archLookup = { x64: 'x86_64' };
+
+const extensionLookup = {
+  'osx-x86_64': 'dylib',
+  'linux-x86_64': 'so',
+  'windows-x86_64': 'dll',
+};
+
+export const libName = (library: string, version: string): string => {
+  const arch = archLookup[process.arch];
+  const platform = platformLookup[process.platform];
+
+  if (!arch || !platform) {
+    throw new Error(
+      `Pact does not currently support the operating system and architecture combination '${process.platform}/${process.arch}'`
+    );
+  }
+
+  const prefix = `${platform}-${arch}`;
+
+  const extension = extensionLookup[prefix];
+  if (!extension) {
+    throw new Error(
+      `Pact doesn't know what library to use for the architecture combination '${process.platform}/${process.arch}'`
+    );
+  }
+  return `${version}-${library}-${prefix}.${extension}`;
+};

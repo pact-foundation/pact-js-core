@@ -1,5 +1,4 @@
-import path = require('path');
-import { initialiseFfi } from '../ffi/ffi';
+import { initialiseFfi, libName } from '../ffi/ffi';
 
 // We have to declare this twice because typescript can't figure it out
 // There's a workaround here we could employ:
@@ -18,11 +17,7 @@ const description: FfiVerifierType = {
   verify: ['int', ['string']],
 };
 
-// TODO: make this dynamic and select the right one for the architecture
-const dll = path.resolve(
-  process.cwd(),
-  'ffi',
-  'libpact_verifier_ffi-osx-x86_64.dylib'
+export const verifierLib = initialiseFfi(
+  libName('libpact_verifier_ffi', 'v0.0.5'),
+  description
 );
-
-export const verifierLib = initialiseFfi(dll, description);
