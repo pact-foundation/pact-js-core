@@ -6,7 +6,17 @@ import { VerifierOptions } from './types';
 
 import { getUriType } from './filesystem';
 
-export const argMapping: ArgMapping<VerifierOptions> = {
+type DeprecatedVerifierOptions = {
+  format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
+  out?: string;
+  customProviderHeaders?: string[];
+  verbose: boolean;
+  monkeypatch: string;
+};
+
+export const argMapping: ArgMapping<
+  VerifierOptions & DeprecatedVerifierOptions
+> = {
   providerBaseUrl: (providerBaseUrl: string) => {
     const u = url.parse(providerBaseUrl);
     return u && u.port && u.hostname
@@ -52,27 +62,22 @@ export const argMapping: ArgMapping<VerifierOptions> = {
   publishVerificationResult: { arg: '--publish', mapper: 'flag' },
   enablePending: { arg: '--enable-pending', mapper: 'flag' },
 
-  // Todo in Rust
-  customProviderHeaders: () => {
-    throw new Error('customProviderHeaders are not yet implemented');
-  },
+  // We should support these, I think
   timeout: {
     warningMessage: 'Timeout currently has no effect on the rust binary',
   },
-  // We should support these, I think
   format: {
     warningMessage:
-      "All output is currently on standard out, setting 'format' has no effect",
+      "All output is now on standard out, setting 'format' has no effect",
   },
   out: {
     warningMessage:
-      "All output is currently on standard out, setting 'out' has no effect",
+      "All output is now on standard out, setting 'out' has no effect",
   },
-
   // Deprecate
   logDir: {
     warningMessage:
-      'Setting logDir is deprecated as all logs are now on standard out.',
+      'Setting logDir is deprecated as all logs are now on standard out',
   },
   verbose: {
     warningMessage:
@@ -81,5 +86,10 @@ export const argMapping: ArgMapping<VerifierOptions> = {
   monkeypatch: {
     warningMessage:
       'The undocumented feature monkeypatch is no more, please file an issue if you were using it and need this functionality',
+  },
+  // Todo in Rust ?
+  customProviderHeaders: {
+    warningMessage:
+      'customProviderHeaders have been removed. This functionality is provided by request filters in a much more flexible way',
   },
 };

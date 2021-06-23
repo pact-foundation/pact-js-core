@@ -188,7 +188,7 @@ describe('Verifier argument validator', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'progress',
-        })
+        } as VerifierOptions)
       ).to.not.throw(Error);
     });
 
