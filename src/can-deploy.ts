@@ -107,9 +107,9 @@ export class CanDeploy {
           this.__argMapping
         );
         const output: Array<string | Buffer> = [];
-        instance.stdout.on('data', l => output.push(l));
-        instance.stderr.on('data', l => output.push(l));
-        instance.once('close', code => {
+        instance.stdout.on('data', (l) => output.push(l));
+        instance.stderr.on('data', (l) => output.push(l));
+        instance.once('close', (code) => {
           const result: string = output.join('\n');
 
           if (this.options.output === 'json') {

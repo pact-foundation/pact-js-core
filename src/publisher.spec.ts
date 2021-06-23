@@ -23,7 +23,7 @@ describe('Publish Spec', () => {
   let relativePath: string;
 
   before(() =>
-    brokerMock(PORT).then(s => {
+    brokerMock(PORT).then((s) => {
       logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
     })

@@ -47,7 +47,7 @@ export abstract class AbstractService extends events.EventEmitter {
   protected constructor(
     command: string,
     options: ServiceOptions,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     argMapping: any,
     cliVerb?: CliVerbOptions
   ) {
@@ -183,7 +183,7 @@ export abstract class AbstractService extends events.EventEmitter {
       this.__instance.stdout.on('data', catchPort);
     }
 
-    this.__instance.stderr.on('data', data =>
+    this.__instance.stderr.on('data', (data) =>
       logger.error(`Pact Binary Error: ${data}`)
     );
 
@@ -351,6 +351,8 @@ export interface ServiceOptions {
 }
 
 // This is the pact binary's log level, which is a subset of the log levels for pact-core
+// It is the same type for both Ruby and Rust. If either of them start supporting more
+// levels, we'll need to change the type.
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface HTTPConfig {

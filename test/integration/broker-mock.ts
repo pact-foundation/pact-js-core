@@ -344,14 +344,12 @@ export default (port: number): Promise<http.Server> => {
         },
         pacts: [
           {
-            href:
-              'https://test.pact.dius.com.au/pacts/provider/bobby/consumer/billy/version/1.0.0',
+            href: 'https://test.pact.dius.com.au/pacts/provider/bobby/consumer/billy/version/1.0.0',
             title: 'Pact between billy (v1.0.0) and bobby',
             name: 'billy',
           },
           {
-            href:
-              'https://test.pact.dius.com.au/pacts/provider/bobby/consumer/someotherguy/version/1.0.0',
+            href: 'https://test.pact.dius.com.au/pacts/provider/bobby/consumer/someotherguy/version/1.0.0',
             title: 'Pact between someotherguy (v1.0.0) and bobby',
             name: 'someotherguy',
           },
@@ -531,7 +529,7 @@ export default (port: number): Promise<http.Server> => {
   );
 
   let s: http.Server;
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     s = server.listen(port, () => resolve());
   }).then(() => s);
 };

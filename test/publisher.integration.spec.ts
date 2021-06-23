@@ -16,7 +16,7 @@ describe('Publish Spec', () => {
   const authenticatedPactBrokerBaseUrl = `${pactBrokerBaseUrl}/auth`;
 
   before(() =>
-    brokerMock(PORT).then(s => {
+    brokerMock(PORT).then((s) => {
       logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
     })

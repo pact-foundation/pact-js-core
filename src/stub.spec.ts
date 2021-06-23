@@ -84,7 +84,7 @@ describe('Stub Spec', () => {
         const waitForStubUp = stub['__waitForServiceUp'].bind(stub);
         return Promise.all([
           waitForStubUp(stub.options),
-          new Promise(resolve => setTimeout(resolve, 5000)).then(() =>
+          new Promise((resolve) => setTimeout(resolve, 5000)).then(() =>
             stub.start()
           ),
         ]);
@@ -163,7 +163,7 @@ describe('Stub Spec', () => {
       });
     });
 
-    it('should dispatch event when starting', done => {
+    it('should dispatch event when starting', (done) => {
       stub = stubFactory(validDefaults);
       stub.once('start', () => done());
       stub.start();
@@ -182,7 +182,7 @@ describe('Stub Spec', () => {
         return stub.start().then(() => stub.stop());
       });
 
-      it('should dispatch event when stopping', done => {
+      it('should dispatch event when stopping', (done) => {
         stub = stubFactory(validDefaults);
         stub.once('stop', () => done());
         stub.start().then(() => stub.stop());
@@ -205,7 +205,7 @@ describe('Stub Spec', () => {
         return stub.start().then(() => stub.delete());
       });
 
-      it('should dispatch event when deleting', done => {
+      it('should dispatch event when deleting', (done) => {
         stub = stubFactory(validDefaults);
         stub.once('delete', () => done());
         stub.start().then(() => stub.delete());

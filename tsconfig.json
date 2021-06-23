@@ -1,24 +1,24 @@
 {
-	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es5",
-		"lib": ["es6", "dom"],
-		"removeComments": true,
-		"noLib": false,
-		"sourceMap": true,
-		"isolatedModules": false,
-		"moduleResolution": "node",
-		"suppressImplicitAnyIndexErrors": true,
-		"declaration": true,
-		"noImplicitReturns": true,
-		"noImplicitAny": true,
-		"noImplicitThis": true,
-		"skipLibCheck": true,
-		"strictNullChecks": true,
-		"strict": true,
-		"noUnusedLocals": true
-	},
-	"include": ["**/*.ts"],
-	"exclude": ["node_modules", "**/*.spec.ts", "**/__mocks__"],
-	"compileOnSave": false
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es5",
+    "lib": ["es6", "dom"],
+    "removeComments": true,
+    "noLib": false,
+    "sourceMap": true,
+    "isolatedModules": false,
+    "moduleResolution": "node",
+    "suppressImplicitAnyIndexErrors": true,
+    "declaration": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "skipLibCheck": true,
+    "strictNullChecks": true,
+    "strict": true,
+    "noUnusedLocals": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts", "**/__mocks__"],
+  "compileOnSave": false
 }

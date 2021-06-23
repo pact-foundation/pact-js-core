@@ -47,7 +47,7 @@ export class Publisher {
       checkTypes.assert.array.of.string(options.pactFilesOrDirs);
 
       // Resolve all paths as absolute paths
-      options.pactFilesOrDirs = options.pactFilesOrDirs.map(v => {
+      options.pactFilesOrDirs = options.pactFilesOrDirs.map((v) => {
         const newPath = path.resolve(v);
         if (!fs.existsSync(newPath)) {
           throw new Error(
@@ -106,9 +106,9 @@ export class Publisher {
           this.__argMapping
         );
         const output: Array<string | Buffer> = [];
-        instance.stdout.on('data', l => output.push(l));
-        instance.stderr.on('data', l => output.push(l));
-        instance.once('close', code => {
+        instance.stdout.on('data', (l) => output.push(l));
+        instance.stderr.on('data', (l) => output.push(l));
+        instance.once('close', (code) => {
           const o = output.join('\n');
           const pactUrls = /^https?:\/\/.*\/pacts\/.*$/gim.exec(o);
           if (code !== 0 || !pactUrls) {

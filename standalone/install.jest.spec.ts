@@ -24,7 +24,7 @@ describe('Install', () => {
     pact_binary_location?: string;
     pact_do_not_track?: boolean;
   }): void {
-    ((fs as unknown) as FS).initFS({
+    (fs as unknown as FS).initFS({
       [packagePath]: {
         ...packageConfig,
         config,
@@ -122,7 +122,7 @@ describe('Install', () => {
 
     it('Should download it', async () => {
       const { binaryChecksum, binary } = getBinaryEntry('linux', 'ia32');
-      ((fs as unknown) as FS).initFS({
+      (fs as unknown as FS).initFS({
         [path.join(__dirname, binary)]: 'mock binary',
         [path.join(__dirname, binaryChecksum)]: 'mock binary checksum',
       });

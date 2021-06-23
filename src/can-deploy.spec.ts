@@ -19,7 +19,7 @@ describe('CanDeploy Spec', () => {
   let relativePath: string;
 
   before(() =>
-    brokerMock(PORT).then(s => {
+    brokerMock(PORT).then((s) => {
       logger.debug(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
     })
@@ -125,28 +125,28 @@ describe('CanDeploy Spec', () => {
   });
 
   context('candeploy function', () => {
-    it('should return success with a table result deployable true', done => {
+    it('should return success with a table result deployable true', (done) => {
       const opts: CanDeployOptions = {
         pactBroker: `http://localhost:${PORT}`,
         pacticipants: [{ name: 'Foo', version: '4' }],
       };
       const ding = canDeployFactory(opts);
 
-      ding.canDeploy().then(results => {
+      ding.canDeploy().then((results) => {
         expect(results).not.to.be.null;
         done();
       });
     });
 
     context('with latest true', () => {
-      it('should return success with a table result deployable true', done => {
+      it('should return success with a table result deployable true', (done) => {
         const opts: CanDeployOptions = {
           pactBroker: `http://localhost:${PORT}`,
           pacticipants: [{ name: 'Foo', latest: true }],
         };
         const ding = canDeployFactory(opts);
 
-        ding.canDeploy().then(results => {
+        ding.canDeploy().then((results) => {
           expect(results).not.to.be.null;
           done();
         });
@@ -162,19 +162,19 @@ describe('CanDeploy Spec', () => {
         return ding
           .canDeploy()
           .then(() => expect.fail())
-          .catch(message => expect(message).not.be.null);
+          .catch((message) => expect(message).not.be.null);
       });
     });
 
     context('with latest a string', () => {
-      it('should return success with a table result deployable true', done => {
+      it('should return success with a table result deployable true', (done) => {
         const opts: CanDeployOptions = {
           pactBroker: `http://localhost:${PORT}`,
           pacticipants: [{ name: 'Foo', latest: 'tag' }],
         };
         const ding = canDeployFactory(opts);
 
-        ding.canDeploy().then(results => {
+        ding.canDeploy().then((results) => {
           expect(results).not.to.be.null;
           done();
         });
@@ -190,12 +190,12 @@ describe('CanDeploy Spec', () => {
         return ding
           .canDeploy()
           .then(() => expect.fail())
-          .catch(message => expect(message).not.be.null);
+          .catch((message) => expect(message).not.be.null);
       });
     });
 
     context('with latest a string, and a to', () => {
-      it('should return success with a table result deployable true', done => {
+      it('should return success with a table result deployable true', (done) => {
         const opts: CanDeployOptions = {
           pactBroker: `http://localhost:${PORT}`,
           pacticipants: [{ name: 'Foo', latest: 'tag' }],
@@ -203,7 +203,7 @@ describe('CanDeploy Spec', () => {
         };
         const ding = canDeployFactory(opts);
 
-        ding.canDeploy().then(results => {
+        ding.canDeploy().then((results) => {
           expect(results).not.to.be.null;
           done();
         });
@@ -220,7 +220,7 @@ describe('CanDeploy Spec', () => {
         return ding
           .canDeploy()
           .then(() => expect.fail())
-          .catch(message => expect(message).not.be.null);
+          .catch((message) => expect(message).not.be.null);
       });
     });
 
@@ -234,10 +234,10 @@ describe('CanDeploy Spec', () => {
       return ding
         .canDeploy()
         .then(() => expect.fail())
-        .catch(message => expect(message).not.be.null);
+        .catch((message) => expect(message).not.be.null);
     });
 
-    it('should return success with a json result deployable true', done => {
+    it('should return success with a json result deployable true', (done) => {
       const opts: CanDeployOptions = {
         pactBroker: `http://localhost:${PORT}`,
         pacticipants: [{ name: 'Foo', version: '4' }],
@@ -245,7 +245,7 @@ describe('CanDeploy Spec', () => {
       };
       const ding = canDeployFactory(opts);
 
-      ding.canDeploy().then(results => {
+      ding.canDeploy().then((results) => {
         expect(results).not.to.be.null;
         done();
       });
@@ -262,7 +262,7 @@ describe('CanDeploy Spec', () => {
       return ding
         .canDeploy()
         .then(() => expect.fail())
-        .catch(message => expect(message).not.be.null);
+        .catch((message) => expect(message).not.be.null);
     });
   });
 });

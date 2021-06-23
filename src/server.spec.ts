@@ -103,7 +103,7 @@ describe('Server Spec', () => {
         return expect(
           Promise.all([
             waitForServerUp(server.options),
-            new Promise(resolve => setTimeout(resolve, 5000)).then(() =>
+            new Promise((resolve) => setTimeout(resolve, 5000)).then(() =>
               server.start()
             ),
           ])
@@ -319,7 +319,7 @@ describe('Server Spec', () => {
       });
     });
 
-    it('should dispatch event when starting', done => {
+    it('should dispatch event when starting', (done) => {
       server = serverFactory();
       server.once('start', () => done());
       server.start();
@@ -338,7 +338,7 @@ describe('Server Spec', () => {
         return server.start().then(() => server.stop());
       });
 
-      it('should dispatch event when stopping', done => {
+      it('should dispatch event when stopping', (done) => {
         server = serverFactory();
         server.once('stop', () => done());
         server.start().then(() => server.stop());
@@ -361,7 +361,7 @@ describe('Server Spec', () => {
         return server.start().then(() => server.delete());
       });
 
-      it('should dispatch event when deleting', done => {
+      it('should dispatch event when deleting', (done) => {
         server = serverFactory();
         server.once('delete', () => done());
         server.start().then(() => server.delete());

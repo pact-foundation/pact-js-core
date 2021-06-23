@@ -14,9 +14,7 @@ describe('Pact Util Spec', () => {
           { providerBaseUrl: 'http://localhost' },
           { providerBaseUrl: '--provider-base-url' }
         );
-        expect(result)
-          .to.be.an('array')
-          .that.includes('--provider-base-url');
+        expect(result).to.be.an('array').that.includes('--provider-base-url');
         expect(result.length).to.be.equal(2);
       });
 
@@ -71,9 +69,7 @@ describe('Pact Util Spec', () => {
               providerBaseUrl: '--provider-base-url',
             }
           );
-          expect(result)
-            .to.be.an('array')
-            .that.includes('--provider-base-url');
+          expect(result).to.be.an('array').that.includes('--provider-base-url');
           expect(result.length).to.be.equal(2);
         });
 

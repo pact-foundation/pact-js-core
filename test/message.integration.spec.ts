@@ -27,7 +27,7 @@ describe('Message Integration Spec', () => {
       } catch (e) {}
     });
 
-    it('should return a successful promise', done => {
+    it('should return a successful promise', (done) => {
       const message = messageFactory({
         consumer: 'consumer',
         provider: 'provider',

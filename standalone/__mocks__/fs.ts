@@ -14,7 +14,7 @@ let mockedFiles: Files = {};
 function initFS(mockFiles: Files): void {
   mockedFiles = mockFiles;
 
-  Object.keys(mockFiles).forEach(filePath => {
+  Object.keys(mockFiles).forEach((filePath) => {
     jest.mock(filePath, () => mockFiles[filePath], { virtual: true });
   });
 }

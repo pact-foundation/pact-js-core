@@ -2,7 +2,7 @@ import { CanDeployOptions } from '../can-deploy';
 import { MessageOptions } from '../message';
 import { PublisherOptions } from '../publisher';
 import { ServiceOptions } from '../service';
-import { VerifierOptions } from '../verifier';
+import { VerifierOptions } from '../verifier/types';
 
 import _ = require('underscore');
 import checkTypes = require('check-types');
@@ -18,6 +18,7 @@ export type SpawnArgument =
   | ServiceOptions
   | VerifierOptions
   | CliVerbOptions
+  // eslint-disable-next-line @typescript-eslint/ban-types
   | {}; // Empty object is allowed to make tests less noisy. We should change this in the future
 
 export type SpawnArguments = Array<SpawnArgument> | SpawnArgument;

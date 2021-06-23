@@ -224,7 +224,7 @@ function download(data: Data): Promise<Data> {
         );
         // Trying to find all environment variables of all possible CI services to get more accurate stats
         // but it's still not 100% since not all systems have unique environment variables for their CI server
-        const isCI = CIs.some(key => process.env[key] !== undefined);
+        const isCI = CIs.some((key) => process.env[key] !== undefined);
         request
           .post({
             url: 'https://www.google-analytics.com/collect',
@@ -323,7 +323,7 @@ function extract(data: Data): Promise<Data> {
                   path: data.platformFolderPath,
                 })
               )
-              .on('entry', entry => entry.autodrain())
+              .on('entry', (entry) => entry.autodrain())
               .promise()
           : tar.x({
               file: data.filepath,
@@ -397,7 +397,7 @@ function setup(platform?: string, arch?: string): Promise<Data> {
 export function downloadChecksums(): Promise<void> {
   console.log(chalk.gray(`Downloading All Pact Standalone Binary Checksums.`));
   return Promise.all(
-    CONFIG.binaries.map(value =>
+    CONFIG.binaries.map((value) =>
       setup(value.platform, value.arch).then((data: Data) =>
         downloadFileRetry(
           data.checksumDownloadPath,
@@ -440,7 +440,7 @@ export default (platform?: string, arch?: string): Promise<Data> => {
   return setup(platform, arch)
     .then(download)
     .then(extract)
-    .then(d => {
+    .then((d) => {
       console.log(chalk.green('Pact Standalone Binary is ready.'));
       return { ...d, binaryInstallSkipped: false };
     })

@@ -64,7 +64,7 @@ export default (port: number): Promise<http.Server> => {
             'x-sent': true,
           },
         },
-        err => {
+        (err) => {
           if (err) {
             console.log(err);
             res.status(500).end();
@@ -105,7 +105,7 @@ export default (port: number): Promise<http.Server> => {
   );
 
   let s: http.Server;
-  return new Promise<void>(resolve => {
+  return new Promise<void>((resolve) => {
     s = server.listen(port, () => resolve());
   }).then(() => s);
 };

@@ -46,7 +46,7 @@ export class Spawn {
     instance.stdout.on('data', logger.debug.bind(logger));
     instance.stderr.on('data', logger.debug.bind(logger));
     instance.on('error', logger.error.bind(logger));
-    instance.once('close', code => {
+    instance.once('close', (code) => {
       if (code !== 0) {
         logger.warn(`Pact exited with code ${code}.`);
       }
