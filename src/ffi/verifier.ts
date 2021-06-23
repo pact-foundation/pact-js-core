@@ -1,4 +1,5 @@
-import { initialiseFfi, libName } from '../ffi/ffi';
+import { initialiseFfi, libName } from './internals';
+import { FfiBinding } from './internals/types';
 
 // We have to declare this twice because typescript can't figure it out
 // There's a workaround here we could employ:
@@ -17,7 +18,5 @@ const description: FfiVerifierType = {
   verify: ['int', ['string']],
 };
 
-export const verifierLib = initialiseFfi(
-  libName('libpact_verifier_ffi', 'v0.0.5'),
-  description
-);
+export const getVerifierLib = (): FfiBinding<FfiVerifierType> =>
+  initialiseFfi(libName('libpact_verifier_ffi', 'v0.0.5'), description);
