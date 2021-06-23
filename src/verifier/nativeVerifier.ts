@@ -10,27 +10,6 @@ const VERIFICATION_FAILED = 1;
 // 3 - method panicked
 const INVALID_ARGUMENTS = 4;
 
-const pactCrashMessage = (
-  extraMessage: string
-) => `!!!!!!!!! PACT CRASHED !!!!!!!!!
-
-${extraMessage}
-
-This is almost certainly a bug in pact-js-core. It would be great if you could
-open a bug report at: https://github.com/pact-foundation/pact-js-core/issues
-so that we can fix it.
-
-There is additional debugging information above. If you open a bug report, 
-please rerun with logLevel: 'debug' set in the VerifierOptions, and include the
-full output.
-
-SECURITY WARNING: Before including your log in the issue tracker, make sure you
-have removed sensitive info such as login credentials and urls that you don't want
-to share with the world.
-
-Lastly, we're sorry about this!
-`;
-
 export const verify = (opts: VerifierOptions): Promise<string> => {
   const verifierLib = getVerifierLib();
   // Todo: probably separate out the sections of this logic into separate promises
@@ -50,10 +29,8 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
       logger.debug(`response from verifier: ${err}, ${res}`);
       if (err) {
         logger.error(err);
-        logger.error(
-          pactCrashMessage(
-            'The underlying pact core returned an error through the ffi interface'
-          )
+        logger.pactCrash(
+          'The underlying pact core returned an error through the ffi interface'
         );
         reject(err);
       } else {
@@ -67,18 +44,14 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
             reject(new Error('Verfication failed'));
             break;
           case INVALID_ARGUMENTS:
-            logger.error(
-              pactCrashMessage(
-                'The underlying pact core was invoked incorrectly.'
-              )
+            logger.pactCrash(
+              'The underlying pact core was invoked incorrectly.'
             );
             reject(new Error('Verification was unable to run'));
             break;
           default:
-            logger.error(
-              pactCrashMessage(
-                'The underlying pact core crashed in an unexpected way.'
-              )
+            logger.pactCrash(
+              'The underlying pact core crashed in an unexpected way.'
             );
             reject(new Error('Pact core crashed'));
             break;

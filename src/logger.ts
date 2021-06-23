@@ -3,21 +3,48 @@ import pino = require('pino');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
-export type Logger = pino.Logger;
-export type LogLevels = pino.Level;
-
 const DEFAULT_LEVEL: LogLevels = (process.env.LOGLEVEL || 'info') as LogLevels;
 
-const createLogger = (level: LogLevels = DEFAULT_LEVEL): Logger =>
-  pino({
+export type Logger = pino.Logger;
+
+const createLogger = (level: LogLevels = DEFAULT_LEVEL): Logger => {
+  const pinoLogger = pino({
     level: level.toLowerCase(),
     prettyPrint: {
       messageFormat: `pact-core@${pkg.version}: {msg}`,
       translateTime: true,
     },
   });
+  pinoLogger.pactCrash = (message: string) => {
+    pinoLogger.error(pactCrashMessage(message));
+  };
+  return pinoLogger;
+};
 
-const logger: pino.Logger = createLogger();
+const pactCrashMessage = (
+  extraMessage: string
+) => `!!!!!!!!! PACT CRASHED !!!!!!!!!
+
+${extraMessage}
+
+This is almost certainly a bug in pact-js-core. It would be great if you could
+open a bug report at: https://github.com/pact-foundation/pact-js-core/issues
+so that we can fix it.
+
+There is additional debugging information above. If you open a bug report, 
+please rerun with logLevel: 'debug' set in the VerifierOptions, and include the
+full output.
+
+SECURITY WARNING: Before including your log in the issue tracker, make sure you
+have removed sensitive info such as login credentials and urls that you don't want
+to share with the world.
+
+Lastly, we're sorry about this!
+`;
+
+const logger = createLogger();
+
+export type LogLevels = pino.Level;
 
 export const setLogLevel = (
   wantedLevel?: pino.Level | number
