@@ -1,55 +1,30 @@
 // https://github.com/node-ffi/node-ffi/wiki/Node-FFI-Tutorial
 import ffi = require('ffi-napi');
 import path = require('path');
+import { FfiBinding } from './types';
 
-// I am so so sorry about these types. They exist
-// to infer the returned type of the library
-// using the object that we pass in to describe the functions
-type AsyncFfiCall<Args extends unknown[], ReturnType> = {
-  async: (
-    ...args: [...Args, (err: Error, ret: ReturnType) => void]
-  ) => ReturnType;
+// This is a lookup between process.platform and
+// the platform names used in pact-reference
+const PLATFORM_LOOKUP = {
+  linux: 'linux',
+  darwin: 'osx',
+  win32: 'windows', // yes, 'win32' is what process.platform returns on windows 64 bit
 };
 
-type FfiFunction<T> = T extends (...a: infer Args) => infer ReturnType
-  ? T & AsyncFfiCall<Args, ReturnType>
-  : never;
+// This is a lookup between process.arch and
+// the architecture names used in pact-reference
+const ARCH_LOOKUP = { x64: 'x86_64' };
 
-type StringType = 'string' | 'void' | 'int' | 'double' | 'float';
-
-type ActualType<T> = [T] extends ['string']
-  ? string
-  : [T] extends ['void']
-  ? void
-  : [T] extends ['int' | 'double' | 'float']
-  ? number
-  : never;
-
-type ArrayActualType<Tuple extends [...Array<unknown>]> = {
-  [Index in keyof Tuple]: ActualType<Tuple[Index]>;
-} & { length: Tuple['length'] };
-
-type TupleType = [StringType, Array<StringType>];
-
-type FunctionFromArray<A extends TupleType> = A extends [
-  r: infer ReturnTypeString,
-  args: [...infer ArgArrayType]
-]
-  ? (...args: ArrayActualType<ArgArrayType>) => ActualType<ReturnTypeString>
-  : never;
-
-type LibDescription<Functions extends string> = {
-  [k in Functions]: [StringType, Array<StringType>];
+// This is a lookup between "${platform}-${arch}" and
+// the file extensions to link on that platform/arch combination
+const EXTENSION_LOOKUP = {
+  'osx-x86_64': 'dylib',
+  'linux-x86_64': 'so',
+  'windows-x86_64': 'dll',
 };
 
-type FfiBinding<T> = T extends LibDescription<string>
-  ? {
-      [Key in keyof T]: FfiFunction<FunctionFromArray<T[Key]>>;
-    }
-  : never;
-
-// This function exists to wrap the untyped ffi lib, and return
-// the typed version
+// This function exists to wrap the untyped ffi lib
+// and return a typed version based on the description
 export const initialiseFfi = <T>(
   filename: string,
   description: T
@@ -60,23 +35,9 @@ export const initialiseFfi = <T>(
     description as { [k: string]: any }
   );
 
-const platformLookup = {
-  linux: 'linux',
-  darwin: 'osx',
-  win32: 'windows', // yes, this is what process.platform returns on windows 64 bit
-};
-
-const archLookup = { x64: 'x86_64' };
-
-const extensionLookup = {
-  'osx-x86_64': 'dylib',
-  'linux-x86_64': 'so',
-  'windows-x86_64': 'dll',
-};
-
 export const libName = (library: string, version: string): string => {
-  const arch = archLookup[process.arch];
-  const platform = platformLookup[process.platform];
+  const arch = ARCH_LOOKUP[process.arch];
+  const platform = PLATFORM_LOOKUP[process.platform];
 
   if (!arch || !platform) {
     throw new Error(
@@ -86,7 +47,7 @@ export const libName = (library: string, version: string): string => {
 
   const prefix = `${platform}-${arch}`;
 
-  const extension = extensionLookup[prefix];
+  const extension = EXTENSION_LOOKUP[prefix];
   if (!extension) {
     throw new Error(
       `Pact doesn't know what library to use for the architecture combination '${process.platform}/${process.arch}'`
