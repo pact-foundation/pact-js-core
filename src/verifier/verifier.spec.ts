@@ -1,12 +1,13 @@
 import path = require('path');
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import verifierFactory, { VerifierOptions } from './verifier';
+import verifierFactory from './verifier';
+import { VerifierOptions } from './types';
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe('Verifier Spec', () => {
+describe.only('Verifier Spec', () => {
   const currentDir =
     process && process.mainModule ? process.mainModule.filename : '';
 

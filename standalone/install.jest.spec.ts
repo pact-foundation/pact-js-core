@@ -44,10 +44,8 @@ describe('Install', () => {
   describe('Package.json Configuration', () => {
     describe('Binary Location', () => {
       it('Should be able to set binary location as an absolute path', () => {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         const pact_binary_location = '/some-location/or-other';
         initFS({
-          // eslint-disable-next-line @typescript-eslint/camelcase
           pact_binary_location,
         });
         const config = createConfig(packageBasePath);
@@ -59,9 +57,7 @@ describe('Install', () => {
       });
 
       it('Should be able to set binary location as an relative path', () => {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         const pact_binary_location = 'some-location/or-other';
-        // eslint-disable-next-line @typescript-eslint/camelcase
         initFS({ pact_binary_location });
         const config = createConfig(packageBasePath);
         config.binaries.forEach((entry: BinaryEntry) => {
@@ -72,9 +68,7 @@ describe('Install', () => {
       });
 
       it('Should be able to set binary location as an HTTP URL', () => {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         const pact_binary_location = 'http://some.url';
-        // eslint-disable-next-line @typescript-eslint/camelcase
         initFS({ pact_binary_location });
         const config = createConfig(packageBasePath);
         config.binaries.forEach((entry: BinaryEntry) => {
@@ -83,9 +77,7 @@ describe('Install', () => {
       });
 
       it('Should be able to set binary location as an HTTPS URL', () => {
-        // eslint-disable-next-line @typescript-eslint/camelcase
         const pact_binary_location = 'https://some.url';
-        // eslint-disable-next-line @typescript-eslint/camelcase
         initFS({ pact_binary_location });
         const config = createConfig(packageBasePath);
         config.binaries.forEach((entry: BinaryEntry) => {
@@ -95,9 +87,7 @@ describe('Install', () => {
     });
 
     it("Should be able to set 'do not track' from package.json config", () => {
-      // eslint-disable-next-line @typescript-eslint/camelcase
       const pact_do_not_track = true;
-      // eslint-disable-next-line @typescript-eslint/camelcase
       initFS({ pact_do_not_track });
       const config = createConfig(packageBasePath);
       expect(config.doNotTrack).toEqual(pact_do_not_track);
