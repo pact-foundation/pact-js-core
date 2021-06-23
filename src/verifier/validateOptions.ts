@@ -1,7 +1,7 @@
 import checkTypes = require('check-types');
 import { VerifierOptions } from './types';
 
-export const validateArgs = (options: VerifierOptions): VerifierOptions => {
+export const validateOptions = (options: VerifierOptions): VerifierOptions => {
   // This is the old validator from the ruby binaries. It's a bit
   // verbose and hard to reason about. It would be great to replace
   // it with some sort of validation library in the future.

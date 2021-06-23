@@ -1,7 +1,7 @@
 import path = require('path');
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import { validateArgs } from './validateArgs';
+import { validateOptions } from './validateOptions';
 import { VerifierOptions } from './types';
 
 const expect = chai.expect;
@@ -16,14 +16,14 @@ describe('Verifier argument validator', () => {
     process && process.mainModule ? process.mainModule.filename : '';
 
   const expectSuccessWith = (options: VerifierOptions) => {
-    expect(validateArgs(options)).to.deep.equal(options);
+    expect(validateOptions(options)).to.deep.equal(options);
   };
 
   context('when automatically finding pacts from a broker', () => {
     context('when not given --pact-urls and only --provider', () => {
       it('should fail with an error because pactUrls or pactBrokerUrl is required', () => {
         expect(() =>
-          validateArgs({
+          validateOptions({
             providerBaseUrl: 'http://localhost',
             provider: 'someprovider',
           })
@@ -34,7 +34,7 @@ describe('Verifier argument validator', () => {
     context('when not given --pact-urls and only --pact-broker-url', () => {
       it('should fail with an error because provider is missing', () => {
         expect(() =>
-          validateArgs({
+          validateOptions({
             providerBaseUrl: 'http://localhost',
             pactBrokerUrl: 'http://foo.com',
           })
@@ -55,14 +55,14 @@ describe('Verifier argument validator', () => {
 
   context('when not given --pact-urls or --provider-base-url', () => {
     it('should fail with an error', () => {
-      expect(() => validateArgs({} as VerifierOptions)).to.throw(Error);
+      expect(() => validateOptions({} as VerifierOptions)).to.throw(Error);
     });
   });
 
   context('when given --provider-states-setup-url', () => {
     it('should fail with an error', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerStatesSetupUrl: 'http://foo/provider-states/setup',
         } as VerifierOptions)
       ).to.throw(Error);
@@ -72,7 +72,7 @@ describe('Verifier argument validator', () => {
   context('when given an invalid timeout', () => {
     it('should fail with an error', () => {
       expect(() => {
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           timeout: -10,
@@ -84,7 +84,7 @@ describe('Verifier argument validator', () => {
   context("when given remote Pact URLs that don't exist", () => {
     it('should pass through to the Pact Verifier regardless', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
         })
@@ -95,7 +95,7 @@ describe('Verifier argument validator', () => {
   context('when given local Pact URLs that do exist', () => {
     it('should not fail', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
         })
@@ -109,7 +109,7 @@ describe('Verifier argument validator', () => {
       context('and specifies a provider version', () => {
         it('should pass through to the Pact Verifier', () => {
           expect(() =>
-            validateArgs({
+            validateOptions({
               providerBaseUrl: 'http://localhost',
               pactUrls: ['http://idontexist'],
               publishVerificationResult: true,
@@ -127,7 +127,7 @@ describe('Verifier argument validator', () => {
       context('and does not specify provider version', () => {
         it('should fail with an error', () => {
           expect(() =>
-            validateArgs({
+            validateOptions({
               providerBaseUrl: 'http://localhost',
               pactUrls: ['http://idontexist'],
               publishVerificationResult: true,
@@ -158,7 +158,7 @@ describe('Verifier argument validator', () => {
 
     it('should not accept an empty string', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           includeWipPactsSince: '',
@@ -170,21 +170,21 @@ describe('Verifier argument validator', () => {
   context('when an using format option', () => {
     it("should work with either 'json' or 'xml'", () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'xml',
         } as VerifierOptions)
       ).to.not.throw(Error);
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'json',
         } as VerifierOptions)
       ).to.not.throw(Error);
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'progress',
@@ -194,7 +194,7 @@ describe('Verifier argument validator', () => {
 
     it('should work with a case insensitive string', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'XML',
@@ -206,7 +206,7 @@ describe('Verifier argument validator', () => {
   context('when pactBrokerUrl is not provided', () => {
     it('should not fail', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
         })
@@ -217,7 +217,7 @@ describe('Verifier argument validator', () => {
   context('when pactBrokerUrl is provided', () => {
     it('should not fail', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           pactBrokerUrl: 'http://localhost',
@@ -229,7 +229,7 @@ describe('Verifier argument validator', () => {
   context('when consumerVersionTags is not provided', () => {
     it('should not fail', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
         })
@@ -240,7 +240,7 @@ describe('Verifier argument validator', () => {
   context('when consumerVersionTags is provided as a string', () => {
     it('should not fail', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           consumerVersionTags: 'tag-1',
@@ -252,7 +252,7 @@ describe('Verifier argument validator', () => {
   context('when consumerVersionTags is provided as an array', () => {
     it('should not fail', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           consumerVersionTags: ['tag-1'],
@@ -264,7 +264,7 @@ describe('Verifier argument validator', () => {
   context('when providerVersionTags is not provided', () => {
     it('should not fail', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
         })
@@ -275,7 +275,7 @@ describe('Verifier argument validator', () => {
   context('when providerVersionTags is provided as a string', () => {
     it('should not fail', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           providerVersionTags: 'tag-1',
@@ -287,7 +287,7 @@ describe('Verifier argument validator', () => {
   context('when providerVersionTags is provided as an array', () => {
     it('should not fail', () => {
       expect(() =>
-        validateArgs({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           providerVersionTags: ['tag-1'],
@@ -300,7 +300,7 @@ describe('Verifier argument validator', () => {
     context('and specifies a username or password', () => {
       it('should fail with an error', () => {
         expect(() =>
-          validateArgs({
+          validateOptions({
             providerBaseUrl: 'http://localhost',
             pactUrls: ['http://idontexist'],
             pactBrokerToken: '1234',

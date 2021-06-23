@@ -2,7 +2,7 @@ import { VerifierOptions } from './types';
 import { getVerifierLib } from '../ffi/verifier';
 import logger from '../logger';
 import { argMapping } from './arguments';
-import { argumentMapper } from './argumentMapper';
+import { argumentMapper } from '../ffi/argumentMapper';
 
 const VERIFICATION_SUCCESSFUL = 0;
 const VERIFICATION_FAILED = 1;
