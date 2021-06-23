@@ -1,4 +1,4 @@
-import verifierFactory from '../src/verifier/verifier';
+import verifierFactory from '../src/verifier';
 import chai = require('chai');
 import path = require('path');
 import chaiAsPromised = require('chai-as-promised');
