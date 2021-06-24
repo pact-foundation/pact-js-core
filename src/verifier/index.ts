@@ -7,6 +7,7 @@ import { validateOptions } from './validateOptions';
 
 const applyDefaults = (options: VerifierOptions): VerifierOptions => ({
   timeout: 30000,
+  logLevel: 'info',
   ...options,
 });
 

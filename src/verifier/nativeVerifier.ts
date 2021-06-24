@@ -10,15 +10,14 @@ const VERIFICATION_FAILED = 1;
 // 3 - method panicked
 const INVALID_ARGUMENTS = 4;
 
+const LOG_ENV_VAR_NAME = 'PACT_LOG_LEVEL';
+
 export const verify = (opts: VerifierOptions): Promise<string> => {
   const verifierLib = getVerifierLib();
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
-    // Todo: Does this need to be a specific log level?
-    // PACT_LOG_LEVEL
-    // LOG_LEVEL
-    // < .. >
-    verifierLib.init('LOG_LEVEL');
+    process.env[LOG_ENV_VAR_NAME] = opts.logLevel;
+    verifierLib.init(LOG_ENV_VAR_NAME);
 
     const request = argumentMapper(argMapping, opts)
       .map((s) => s.replace('\n', ''))
