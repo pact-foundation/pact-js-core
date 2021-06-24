@@ -2,7 +2,7 @@ import url = require('url');
 
 import { LogLevel } from '../service';
 import { ArgMapping } from '../ffi/argumentMapper/types';
-import { VerifierOptions } from './types';
+import { ConsumerVersionSelector, VerifierOptions } from './types';
 
 import { getUriType } from './filesystem';
 
@@ -10,8 +10,9 @@ type DeprecatedVerifierOptions = {
   format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
   out?: string;
   customProviderHeaders?: string[];
-  verbose: boolean;
-  monkeypatch: string;
+  verbose?: boolean;
+  monkeypatch?: string;
+  logDir?: string;
 };
 
 export const argMapping: ArgMapping<
@@ -54,18 +55,19 @@ export const argMapping: ArgMapping<
 
   providerVersion: { arg: '--provider-version', mapper: 'string' },
 
-  // Todo in FFI
   includeWipPactsSince: { arg: '--include-wip-pacts-since', mapper: 'string' },
-  consumerVersionSelectors: () => {
-    throw new Error('Consumer version selectors are not yet implemented');
-  },
+  consumerVersionSelectors: (selectors: ConsumerVersionSelector[]) =>
+    selectors
+      .map((s: ConsumerVersionSelector) => [
+        '--consumer-version-selectors',
+        JSON.stringify(s),
+      ]) // This reduce can be replaced simply with .flat() when node 10 is EOL
+      .reduce((acc: string[], current: string[]) => [...acc, ...current], []),
   publishVerificationResult: { arg: '--publish', mapper: 'flag' },
   enablePending: { arg: '--enable-pending', mapper: 'flag' },
+  timeout: { arg: '--request-timeout', mapper: 'string' },
 
   // We should support these, I think
-  timeout: {
-    warningMessage: 'Timeout currently has no effect on the rust binary',
-  },
   format: {
     warningMessage:
       "All output is now on standard out, setting 'format' has no effect",

@@ -20,7 +20,9 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     // < .. >
     verifierLib.init('LOG_LEVEL');
 
-    const request = argumentMapper(argMapping, opts).join('\n');
+    const request = argumentMapper(argMapping, opts)
+      .map((s) => s.replace('\n', ''))
+      .join('\n');
 
     logger.debug('sending arguments to FFI:');
     logger.debug(request);
