@@ -25,6 +25,5 @@ export interface VerifierOptions {
   includeWipPactsSince?: string;
   consumerVersionSelectors?: ConsumerVersionSelector[];
   timeout?: number;
-  // Todo in FFI
   logLevel?: LogLevel;
 }
