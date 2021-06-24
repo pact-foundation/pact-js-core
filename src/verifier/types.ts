@@ -22,12 +22,9 @@ export interface VerifierOptions {
   publishVerificationResult?: boolean;
   providerVersion?: string;
   enablePending?: boolean;
-  // Todo in FFI
   includeWipPactsSince?: string;
   consumerVersionSelectors?: ConsumerVersionSelector[];
-  logLevel?: LogLevel;
-
-  // Todo in Rust maybe
   timeout?: number;
-  logDir?: string;
+  // Todo in FFI
+  logLevel?: LogLevel;
 }

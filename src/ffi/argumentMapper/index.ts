@@ -18,7 +18,7 @@ export const argumentMapper = <PactOptions>(
       if (argMapping[key].arg) {
         switch (argMapping[key].mapper) {
           case 'string':
-            return [argMapping[key].arg, options[key]];
+            return [argMapping[key].arg, `${options[key]}`];
           case 'flag':
             return options[key] ? [argMapping[key].arg] : [];
           default:
