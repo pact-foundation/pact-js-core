@@ -303,14 +303,10 @@ pact.verifyPacts({
 | `pactBrokerPassword`        | false     | string  | Password for Pact Broker basic authentication                                                              |
 | `pactBrokerToken`           | false     | string  | Bearer token for Pact Broker authentication                                                              |
 | `publishVerificationResult` | false     | boolean | Publish verification result to Broker (_NOTE_: you should only enable this during CI builds)               |
-| `customProviderHeaders`     | false     | array   | Header(s) to add to provider state set up and pact verification                                            |  | `requests`. eg 'Authorization: Basic cGFjdDpwYWN0'. |
 | `providerVersion`           | false     | string  | Provider version, required to publish verification result to Broker. Optional otherwise.                   |
 | `enablePending`                   | false     | boolean  | Enable the [pending pacts](https://docs.pact.io/pending) feature.       |
 | `timeout`                   | false     | number  | The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.       |
-| `format`                    | false     | string  | What format the verification results are printed in. Options are `json`, `xml`, `progress` and `RspecJunitFormatter` (which is a synonym for `xml`) |
-| `verbose`            | false     | boolean        | Enables verbose output for underlying pact binary. |
-| `logDir`   | false  | string   | Directory to output the pact.log file to
-| `logLevel`    | false     | LogLevel (string)          | Log level. One of "DEBUG", "ERROR", "WARN", "INFO" |
+| `logLevel`    | false     | LogLevel (string)          | Log level. One of "TRACE", "DEBUG", "ERROR", "WARN", "INFO" |
 
 The consumer version selector looks like this:
 
