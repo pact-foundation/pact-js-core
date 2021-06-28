@@ -30,7 +30,7 @@ export const initialiseFfi = <T>(
   description: T
 ): FfiBinding<T> =>
   ffi.Library(
-    path.resolve(process.cwd(), 'ffi', filename),
+    path.resolve(__dirname, '..', '..', '..', 'ffi', filename),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     description as { [k: string]: any }
   );
