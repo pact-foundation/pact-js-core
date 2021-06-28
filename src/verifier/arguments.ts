@@ -1,10 +1,10 @@
 import url = require('url');
 
-import { LogLevel } from '../service';
 import { ArgMapping } from '../ffi/argumentMapper/types';
 import { ConsumerVersionSelector, VerifierOptions } from './types';
 
 import { getUriType } from './filesystem';
+import { LogLevel } from '../logger';
 
 type DeprecatedVerifierOptions = {
   format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';

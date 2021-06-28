@@ -1,8 +1,9 @@
 import { DEFAULT_ARG } from './spawn';
-import { AbstractService, LogLevel } from './service';
+import { AbstractService } from './service';
 
 import pact from './pact-standalone';
 import checkTypes = require('check-types');
+import { LogLevel } from './logger';
 
 export class Stub extends AbstractService {
   public readonly options: StubOptions;

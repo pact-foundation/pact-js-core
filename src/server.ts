@@ -1,9 +1,10 @@
-import { AbstractService, LogLevel } from './service';
+import { AbstractService } from './service';
 import pact from './pact-standalone';
 import path = require('path');
 import fs = require('fs');
 import mkdirp = require('mkdirp');
 import checkTypes = require('check-types');
+import { LogLevel } from './logger';
 
 export class Server extends AbstractService {
   public readonly options: ServerOptions;

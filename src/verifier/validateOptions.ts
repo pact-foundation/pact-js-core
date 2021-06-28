@@ -1,10 +1,29 @@
 import checkTypes = require('check-types');
+import { LogLevel } from '../logger';
 import { VerifierOptions } from './types';
 
-export const validateOptions = (options: VerifierOptions): VerifierOptions => {
+const LogLevels: LogLevel[] = ['debug', 'error', 'info', 'trace', 'warn'];
+
+export const validateOptions = (o: VerifierOptions): VerifierOptions => {
   // This is the old validator from the ruby binaries. It's a bit
   // verbose and hard to reason about. It would be great to replace
   // it with some sort of validation library in the future.
+
+  const options = { ...o };
+
+  if (options.logLevel) {
+    if (LogLevels.includes(options.logLevel.toLowerCase() as LogLevel)) {
+      options.logLevel = options.logLevel.toLowerCase() as LogLevel;
+    } else {
+      throw new Error(
+        `The logLevel '${
+          options.logLevel
+        }' is not a valid logLevel. The valid options are: ${LogLevels.join(
+          ', '
+        )}`
+      );
+    }
+  }
 
   if (options.providerVersionTags) {
     if (

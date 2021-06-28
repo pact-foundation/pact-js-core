@@ -1,4 +1,4 @@
-import { LogLevel } from '../service';
+import { LogLevel } from '../logger';
 
 export interface ConsumerVersionSelector {
   pacticipant?: string;

@@ -1,8 +1,8 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es5",
-    "lib": ["es6", "dom"],
+    "target": "es2016",
+    "lib": ["es6", "es2016"],
     "removeComments": true,
     "noLib": false,
     "sourceMap": true,

@@ -42,11 +42,6 @@ describe('Pact Spec', () => {
         pact.logLevel('error');
         expect(pact.logLevel()).to.be.equal(50);
       });
-
-      it("should be able to set log level 'fatal'", () => {
-        pact.logLevel('fatal');
-        expect(pact.logLevel()).to.be.equal(60);
-      });
     });
   });
 

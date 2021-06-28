@@ -1,7 +1,7 @@
 import path = require('path');
 import fs = require('fs');
 import events = require('events');
-import logger, { setLogLevel } from './logger';
+import logger, { LogLevel, setLogLevel } from './logger';
 import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import { timeout, TimeoutError } from 'promise-timeout';
@@ -348,11 +348,6 @@ export interface ServiceOptions {
   logLevel?: LogLevel;
   timeout?: number;
 }
-
-// This is the pact binary's log level, which is a subset of the log levels for pact-core
-// It is the same type for both Ruby and Rust. If either of them start supporting more
-// levels, we'll need to change the type.
-export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
 export interface HTTPConfig extends Omit<needle.NeedleOptions, 'headers'> {
   headers: {

@@ -3,11 +3,11 @@ import pino = require('pino');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
-const DEFAULT_LEVEL: LogLevels = (process.env.LOGLEVEL || 'info') as LogLevels;
+const DEFAULT_LEVEL: LogLevel = (process.env.LOGLEVEL || 'info') as LogLevel;
 
 export type Logger = pino.Logger;
 
-const createLogger = (level: LogLevels = DEFAULT_LEVEL): Logger => {
+const createLogger = (level: LogLevel = DEFAULT_LEVEL): Logger => {
   const pinoLogger = pino({
     level: level.toLowerCase(),
     prettyPrint: {
@@ -44,7 +44,7 @@ Lastly, we're sorry about this!
 
 const logger = createLogger();
 
-export type LogLevels = pino.Level;
+export type LogLevel = 'debug' | 'error' | 'info' | 'trace' | 'warn';
 
 export const setLogLevel = (
   wantedLevel?: pino.Level | number
