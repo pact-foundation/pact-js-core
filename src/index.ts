@@ -8,6 +8,7 @@ export * from './verifier/types';
 export * from './server';
 
 export * from './publisher';
+export * from './logger';
 
 export * from './stub';
 
