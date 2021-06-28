@@ -132,6 +132,7 @@
     "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test,bin,standalone}/**/*.spec.ts\" && jest",
     "dev": "npm run lint --force && npm test && node .",
     "watch": "nodemon -e ts,json --ignore '**/*.d.ts' -x npm run dev",
+    "prebuild": "./script/download-ffi.sh",
     "build": "npm run clean && tsc",
     "start": "npm run watch",
     "download-checksums": "node download-checksums.js",
