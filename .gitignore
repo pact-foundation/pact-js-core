@@ -58,6 +58,8 @@ standalone/*
 !standalone/__fixtures__/.keep
 !standalone/*.ts
 standalone/*.d.ts
+ffi/*
+!ffi/README.md
 
 # Folders created during testing
 log
