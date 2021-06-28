@@ -54,3 +54,11 @@ function download_ffi_verifier {
 for file in windows-x86_64.dll.gz windows-x86_64.dll.lib.gz linux-x86_64.so.gz osx-x86_64.dylib.gz ; do
   download_ffi_verifier "$file"
 done
+
+# Write readme in the ffi folder
+cat << EOF > "$FFI_DIR/README.md"
+# FFI binaries
+
+This folder is automatically populated during build by /script/download-ffi.sh
+EOF
+
