@@ -1,7 +1,7 @@
 import { VerifierOptions } from './types';
 import { getVerifierLib } from '../ffi/verifier';
 import logger from '../logger';
-import { argMapping } from './arguments';
+import { argMapping, ignoredArguments } from './arguments';
 import { argumentMapper } from '../ffi/argumentMapper';
 
 const VERIFICATION_SUCCESSFUL = 0;
@@ -19,7 +19,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     process.env[LOG_ENV_VAR_NAME] = opts.logLevel;
     verifierLib.init(LOG_ENV_VAR_NAME);
 
-    const request = argumentMapper(argMapping, opts)
+    const request = argumentMapper(argMapping, opts, ignoredArguments)
       .map((s) => s.replace('\n', ''))
       .join('\n');
 

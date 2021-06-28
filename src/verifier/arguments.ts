@@ -15,6 +15,14 @@ type DeprecatedVerifierOptions = {
   logDir?: string;
 };
 
+// These are arguments that are on the PactJS object that we don't need to use
+export const ignoredArguments = [
+  'requestFilter',
+  'stateHandlers',
+  'changeOrigin',
+  'validateSSL',
+];
+
 export const argMapping: ArgMapping<
   VerifierOptions & DeprecatedVerifierOptions
 > = {
@@ -48,7 +56,7 @@ export const argMapping: ArgMapping<
     Array.isArray(tags) ? tags.join(',') : tags,
   ],
   providerVersionTags: (tags: string | string[]) => [
-    '--provider-version-tags',
+    '--provider-tags',
     Array.isArray(tags) ? tags.join(',') : tags,
   ],
   providerStatesSetupUrl: { arg: '--state-change-url', mapper: 'string' },

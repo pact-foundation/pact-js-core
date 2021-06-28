@@ -3,12 +3,15 @@ import logger from '../../logger';
 
 export const argumentMapper = <PactOptions>(
   argMapping: ArgMapping<PactOptions>,
-  options: PactOptions
+  options: PactOptions,
+  ignoredArguments: string[]
 ): string[] =>
   Object.keys(options)
     .map((key: string) => {
       if (!argMapping[key]) {
-        logger.error(`No argument mapping exists for '${key}'`);
+        if (!ignoredArguments.includes(key)) {
+          logger.error(`Pact-core is ignoring unknown option '${key}'`);
+        }
         return [];
       }
       if (argMapping[key].warningMessage) {
@@ -22,8 +25,8 @@ export const argumentMapper = <PactOptions>(
           case 'flag':
             return options[key] ? [argMapping[key].arg] : [];
           default:
-            logger.error(
-              `Argument mapper for '${key}' maps to '${argMapping[key].arg}' with unknown mapper type '${argMapping[key].mapper}'`
+            logger.pactCrash(
+              `Option mapper for '${key}' maps to '${argMapping[key].arg}' with unknown mapper type '${argMapping[key].mapper}'`
             );
             return [];
         }
@@ -31,8 +34,8 @@ export const argumentMapper = <PactOptions>(
       if (typeof argMapping[key] === 'function') {
         return argMapping[key](options[key]);
       }
-      logger.error(
-        `The argument mapper completely failed to find a mapping for '${key}'. This is a bug in pact-js-core`
+      logger.pactCrash(
+        `The option mapper completely failed to find a mapping for '${key}'.`
       );
       return [];
     })
