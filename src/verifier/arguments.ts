@@ -19,7 +19,10 @@ type DeprecatedVerifierOptions = {
 export const ignoredArguments = [
   'requestFilter',
   'stateHandlers',
+  'messageProviders',
   'changeOrigin',
+  'beforeEach',
+  'afterEach',
   'validateSSL',
 ];
 
