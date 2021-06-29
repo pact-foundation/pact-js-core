@@ -1,6 +1,6 @@
 import checkTypes = require('check-types');
-import { LogLevel } from '../logger';
-import { VerifierOptions } from './types';
+import logger, { LogLevel } from '../logger';
+import { ConsumerVersionSelector, VerifierOptions } from './types';
 
 const LogLevels: LogLevel[] = ['debug', 'error', 'info', 'trace', 'warn'];
 
@@ -34,6 +34,69 @@ export const validateOptions = (o: VerifierOptions): VerifierOptions => {
         'providerVersionTags should be a string or an array of strings'
       );
     }
+    if (options.providerVersionTags.includes('latest')) {
+      logger.warn(
+        "Using the tag 'latest' is not recommended and probably does not do what you intended."
+      );
+      logger.warn(
+        '    See https://docs.pact.io/pact_broker/tags/#latest-pacts'
+      );
+    }
+  }
+
+  if (options.consumerVersionTags) {
+    if (
+      !checkTypes.string(options.consumerVersionTags) &&
+      !checkTypes.array.of.string(options.consumerVersionTags)
+    ) {
+      throw new Error(
+        'consumerVersionTags should be a string or an array of strings'
+      );
+    }
+    if (options.consumerVersionTags.includes('latest')) {
+      logger.warn(
+        "Using the tag 'latest' is not recommended and probably does not do what you intended."
+      );
+      logger.warn(
+        '    See https://docs.pact.io/pact_broker/tags/#latest-pacts'
+      );
+      logger.warn('    If you need to specify latest, try:');
+      logger.warn('       consumerVersionSelectors: [{ lastest: true }]');
+    }
+  }
+
+  if (
+    options.consumerVersionSelectors &&
+    Array.isArray(options.consumerVersionSelectors)
+  ) {
+    const PROPS: Array<keyof ConsumerVersionSelector> = [
+      'pacticipant',
+      'tag',
+      'version',
+      'latest',
+      'all',
+    ];
+    options.consumerVersionSelectors.forEach((selector) => {
+      if (selector.tag === 'latest') {
+        logger.warn(
+          "Using the tag 'latest' is not recommended and probably does not do what you intended."
+        );
+        logger.warn(
+          '    See https://docs.pact.io/pact_broker/tags/#latest-pacts'
+        );
+        logger.warn('    If you need to specify latest, try:');
+        logger.warn('       consumerVersionSelectors: [{ lastest: true }]');
+      }
+      Object.keys(selector).forEach((key) => {
+        if (!PROPS.includes(key as keyof ConsumerVersionSelector)) {
+          throw new Error(
+            `The property '${key}' is not a valid property of ConsumerVersionSelector. Allowed properties are ${PROPS.join(
+              ', '
+            )})`
+          );
+        }
+      });
+    });
   }
 
   if (options.includeWipPactsSince !== undefined) {
