@@ -39,7 +39,7 @@ SECURITY WARNING: Before including your log in the issue tracker, make sure you
 have removed sensitive info such as login credentials and urls that you don't want
 to share with the world.
 
-Lastly, we're sorry about this!
+We're sorry about this!
 `;
 
 const logger = createLogger();
