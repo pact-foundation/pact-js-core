@@ -1,7 +1,8 @@
 import path = require('path');
 import fs = require('fs');
 import events = require('events');
-import logger, { LogLevel, setLogLevel } from './logger';
+import logger, { setLogLevel } from './logger';
+import { LogLevel } from './logger/types';
 import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import { timeout, TimeoutError } from 'promise-timeout';

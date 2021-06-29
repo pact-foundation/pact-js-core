@@ -3,7 +3,7 @@ import { AbstractService } from './service';
 
 import pact from './pact-standalone';
 import checkTypes = require('check-types');
-import { LogLevel } from './logger';
+import { LogLevel } from './logger/types';
 
 export class Stub extends AbstractService {
   public readonly options: StubOptions;

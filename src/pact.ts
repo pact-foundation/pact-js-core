@@ -10,7 +10,8 @@ import canDeployFactory, {
   CanDeployResponse,
 } from './can-deploy';
 import pactEnvironment from './pact-environment';
-import logger, { LogLevel, setLogLevel } from './logger';
+import logger, { setLogLevel } from './logger';
+import { LogLevel } from './logger/types';
 import { AbstractService } from './service';
 import * as _ from 'underscore';
 import mkdirp = require('mkdirp');
@@ -43,7 +44,7 @@ export class Pact {
     process.once('SIGINT', () => process.exit());
   }
 
-  public logLevel(level?: LogLevel | number): number | void {
+  public logLevel(level?: LogLevel): void {
     return setLogLevel(level);
   }
 

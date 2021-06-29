@@ -4,7 +4,7 @@ import { ArgMapping } from '../ffi/argumentMapper/types';
 import { ConsumerVersionSelector, VerifierOptions } from './types';
 
 import { getUriType } from './filesystem';
-import { LogLevel } from '../logger';
+import { LogLevel } from '../logger/types';
 
 type DeprecatedVerifierOptions = {
   format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';

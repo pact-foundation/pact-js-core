@@ -1,5 +1,6 @@
 import checkTypes = require('check-types');
-import logger, { LogLevel } from '../logger';
+import logger from '../logger';
+import { LogLevel } from '../logger/types';
 import { ConsumerVersionSelector, VerifierOptions } from './types';
 
 const LogLevels: LogLevel[] = ['debug', 'error', 'info', 'trace', 'warn'];

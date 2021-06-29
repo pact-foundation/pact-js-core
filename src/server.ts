@@ -4,7 +4,7 @@ import path = require('path');
 import fs = require('fs');
 import mkdirp = require('mkdirp');
 import checkTypes = require('check-types');
-import { LogLevel } from './logger';
+import { LogLevel } from './logger/types';
 
 export class Server extends AbstractService {
   public readonly options: ServerOptions;

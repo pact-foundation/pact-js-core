@@ -5,6 +5,7 @@ import chaiAsPromised = require('chai-as-promised');
 import providerMock from './integration/provider-mock';
 import * as http from 'http';
 import { VerifierOptions } from '../src/verifier/types';
+import { LogLevel } from '../src/logger/types';
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -17,6 +18,7 @@ describe('Verifier Integration Spec', () => {
   const pactBrokerBaseUrl = `http://localhost:${PORT}`;
   const monkeypatchFile: string = path.resolve(__dirname, 'monkeypatch.rb');
   const DEFAULT_ARGS = {
+    logLevel: 'debug' as LogLevel,
     providerVersion: 'VERSION',
   };
 

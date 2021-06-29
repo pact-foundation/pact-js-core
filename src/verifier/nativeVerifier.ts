@@ -29,7 +29,12 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     verifierLib.verify.async(request, (err: Error, res: number) => {
       logger.debug(`response from verifier: ${err}, ${res}`);
       if (err) {
-        logger.error(err);
+        if (typeof err === 'string') {
+          // It might not really be an `Error`, because it comes from native code.
+          logger.error(err);
+        } else if (err.message) {
+          logger.error(err.message);
+        }
         logger.pactCrash(
           'The underlying pact core returned an error through the ffi interface'
         );
