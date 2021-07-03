@@ -3,6 +3,7 @@ module.exports = exports = pact;
 export default pact;
 
 export * from './verifier';
+export * from './verifier/types';
 
 export * from './server';
 

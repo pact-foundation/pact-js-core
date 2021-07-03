@@ -10,6 +10,10 @@ if [ -z "${LIB_ROBUST_BASH_SH:-}" ]; then
     echo "🔵  ${1:-}"
   }
 
+  function warn {
+    echo "⚠️  ${1:-}"
+  }
+
   # Check to see that we have a required binary on the path
   function require_binary {
     if [ -z "${1:-}" ]; then

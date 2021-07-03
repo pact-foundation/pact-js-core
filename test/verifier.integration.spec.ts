@@ -4,6 +4,7 @@ import path = require('path');
 import chaiAsPromised = require('chai-as-promised');
 import providerMock from './integration/provider-mock';
 import * as http from 'http';
+import { VerifierOptions } from '../src/verifier/types';
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -15,9 +16,12 @@ describe('Verifier Integration Spec', () => {
   const providerStatesSetupUrl = `${providerBaseUrl}/provider-state`;
   const pactBrokerBaseUrl = `http://localhost:${PORT}`;
   const monkeypatchFile: string = path.resolve(__dirname, 'monkeypatch.rb');
+  const DEFAULT_ARGS = {
+    providerVersion: 'VERSION',
+  };
 
   before(() =>
-    providerMock(PORT).then(s => {
+    providerMock(PORT).then((s) => {
       console.log(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
     })
@@ -30,6 +34,7 @@ describe('Verifier Integration Spec', () => {
       it('should return a successful promise', () =>
         expect(
           verifierFactory({
+            ...DEFAULT_ARGS,
             providerBaseUrl: providerBaseUrl,
             pactUrls: [
               path.resolve(
@@ -102,7 +107,7 @@ describe('Verifier Integration Spec', () => {
               path.resolve(__dirname, 'integration/me-they-success.json'),
             ],
             monkeypatch: monkeypatchFile,
-          }).verify()
+          } as VerifierOptions).verify()
         ).to.eventually.be.fulfilled);
     });
   });
@@ -221,8 +226,6 @@ describe('Verifier Integration Spec', () => {
               ),
             ],
             providerStatesSetupUrl: providerStatesSetupUrl,
-            publishVerificationResult: true,
-            providerVersion: '1.0.0',
           }).verify()
         ).to.eventually.be.fulfilled);
     });
@@ -241,8 +244,6 @@ describe('Verifier Integration Spec', () => {
                 ),
               ],
               providerStatesSetupUrl: providerStatesSetupUrl,
-              publishVerificationResult: true,
-              providerVersion: '1.0.0',
             }).verify()
           ).to.eventually.be.fulfilled);
       }
@@ -262,8 +263,6 @@ describe('Verifier Integration Spec', () => {
                 ),
               ],
               providerStatesSetupUrl: providerStatesSetupUrl,
-              publishVerificationResult: true,
-              providerVersion: '1.0.0',
             }).verify()
           ).to.eventually.be.fulfilled);
       }

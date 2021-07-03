@@ -1,20 +1,29 @@
 import path = require('path');
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import verifierFactory, { VerifierOptions } from './verifier';
+import { validateOptions } from './validateOptions';
+import { VerifierOptions } from './types';
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe('Verifier Spec', () => {
+describe('Verifier argument validator', () => {
+  // This spec largely tests the validation capabilties of the verifier
+  // It's a slightly modified version of the spec we had with the ruby
+  // verifier. I'd like to update it so that it better tests the behaviour
+  // of the verifier rather than just checking for errors.
   const currentDir =
     process && process.mainModule ? process.mainModule.filename : '';
 
+  const expectSuccessWith = (options: VerifierOptions) => {
+    expect(validateOptions(options)).to.deep.equal(options);
+  };
+
   context('when automatically finding pacts from a broker', () => {
     context('when not given --pact-urls and only --provider', () => {
-      it('should fail with an error', () => {
+      it('should fail with an error because pactUrls or pactBrokerUrl is required', () => {
         expect(() =>
-          verifierFactory({
+          validateOptions({
             providerBaseUrl: 'http://localhost',
             provider: 'someprovider',
           })
@@ -23,9 +32,9 @@ describe('Verifier Spec', () => {
     });
 
     context('when not given --pact-urls and only --pact-broker-url', () => {
-      it('should fail with an error', () => {
+      it('should fail with an error because provider is missing', () => {
         expect(() =>
-          verifierFactory({
+          validateOptions({
             providerBaseUrl: 'http://localhost',
             pactBrokerUrl: 'http://foo.com',
           })
@@ -35,40 +44,27 @@ describe('Verifier Spec', () => {
 
     context('when given valid arguments', () => {
       it('should return a Verifier object', () => {
-        const verifier = verifierFactory({
+        expectSuccessWith({
           providerBaseUrl: 'http://localhost',
           pactBrokerUrl: 'http://foo.com',
           provider: 'someprovider',
         });
-        expect(verifier).to.be.a('object');
-        expect(verifier).to.respondTo('verify');
       });
     });
   });
 
   context('when not given --pact-urls or --provider-base-url', () => {
     it('should fail with an error', () => {
-      expect(() => verifierFactory({} as VerifierOptions)).to.throw(Error);
+      expect(() => validateOptions({} as VerifierOptions)).to.throw(Error);
     });
   });
 
   context('when given --provider-states-setup-url', () => {
     it('should fail with an error', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerStatesSetupUrl: 'http://foo/provider-states/setup',
         } as VerifierOptions)
-      ).to.throw(Error);
-    });
-  });
-
-  context("when given local Pact URLs that don't exist", () => {
-    it('should fail with an error', () => {
-      expect(() =>
-        verifierFactory({
-          providerBaseUrl: 'http://localhost',
-          pactUrls: ['test.json'],
-        })
       ).to.throw(Error);
     });
   });
@@ -76,7 +72,7 @@ describe('Verifier Spec', () => {
   context('when given an invalid timeout', () => {
     it('should fail with an error', () => {
       expect(() => {
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           timeout: -10,
@@ -85,22 +81,10 @@ describe('Verifier Spec', () => {
     });
   });
 
-  context('when user specifies monkeypatch', () => {
-    it('should return an error on invalid path', () => {
-      expect(() => {
-        verifierFactory({
-          providerBaseUrl: 'http://localhost',
-          pactUrls: ['http://idontexist'],
-          monkeypatch: 'some-ruby-file.rb',
-        });
-      }).to.throw(Error);
-    });
-  });
-
   context("when given remote Pact URLs that don't exist", () => {
     it('should pass through to the Pact Verifier regardless', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
         })
@@ -111,7 +95,7 @@ describe('Verifier Spec', () => {
   context('when given local Pact URLs that do exist', () => {
     it('should not fail', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
         })
@@ -125,7 +109,7 @@ describe('Verifier Spec', () => {
       context('and specifies a provider version', () => {
         it('should pass through to the Pact Verifier', () => {
           expect(() =>
-            verifierFactory({
+            validateOptions({
               providerBaseUrl: 'http://localhost',
               pactUrls: ['http://idontexist'],
               publishVerificationResult: true,
@@ -143,7 +127,7 @@ describe('Verifier Spec', () => {
       context('and does not specify provider version', () => {
         it('should fail with an error', () => {
           expect(() =>
-            verifierFactory({
+            validateOptions({
               providerBaseUrl: 'http://localhost',
               pactUrls: ['http://idontexist'],
               publishVerificationResult: true,
@@ -156,29 +140,25 @@ describe('Verifier Spec', () => {
 
   context('when given the correct arguments', () => {
     it('should return a Verifier object', () => {
-      const verifier = verifierFactory({
+      expectSuccessWith({
         providerBaseUrl: 'http://localhost',
         pactUrls: ['http://idontexist'],
       });
-      expect(verifier).to.be.a('object');
-      expect(verifier).to.respondTo('verify');
     });
   });
 
   context('when using includeWipPactsSince', () => {
     it('should accept a non-empty string', () => {
-      const verifier = verifierFactory({
+      expectSuccessWith({
         providerBaseUrl: 'http://localhost',
         pactUrls: ['http://idontexist'],
         includeWipPactsSince: 'thisshouldactuallybeadate',
       });
-      expect(verifier).to.be.a('object');
-      expect(verifier).to.respondTo('verify');
     });
 
     it('should not accept an empty string', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           includeWipPactsSince: '',
@@ -190,49 +170,35 @@ describe('Verifier Spec', () => {
   context('when an using format option', () => {
     it("should work with either 'json' or 'xml'", () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'xml',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any)
+        } as VerifierOptions)
       ).to.not.throw(Error);
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'json',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any)
+        } as VerifierOptions)
       ).to.not.throw(Error);
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'progress',
-        })
+        } as VerifierOptions)
       ).to.not.throw(Error);
-    });
-
-    it('should throw an error with anything but a string', () => {
-      expect(() =>
-        verifierFactory({
-          providerBaseUrl: 'http://localhost',
-          pactUrls: ['http://idontexist'],
-          format: 10,
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any)
-      ).to.throw(Error);
     });
 
     it('should work with a case insensitive string', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
           format: 'XML',
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        } as any)
+        } as unknown as VerifierOptions)
       ).to.not.throw(Error);
     });
   });
@@ -240,7 +206,7 @@ describe('Verifier Spec', () => {
   context('when pactBrokerUrl is not provided', () => {
     it('should not fail', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
         })
@@ -251,7 +217,7 @@ describe('Verifier Spec', () => {
   context('when pactBrokerUrl is provided', () => {
     it('should not fail', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           pactBrokerUrl: 'http://localhost',
@@ -263,7 +229,7 @@ describe('Verifier Spec', () => {
   context('when consumerVersionTags is not provided', () => {
     it('should not fail', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
         })
@@ -272,21 +238,21 @@ describe('Verifier Spec', () => {
   });
 
   context('when consumerVersionTags is provided as a string', () => {
-    it('should convert the argument to an array', () => {
-      const v = verifierFactory({
-        providerBaseUrl: 'http://localhost',
-        pactUrls: [path.dirname(currentDir)],
-        consumerVersionTags: 'tag-1',
-      });
-
-      expect(v.options.consumerVersionTags).to.deep.eq(['tag-1']);
+    it('should not fail', () => {
+      expect(() =>
+        validateOptions({
+          providerBaseUrl: 'http://localhost',
+          pactUrls: [path.dirname(currentDir)],
+          consumerVersionTags: 'tag-1',
+        })
+      ).to.not.throw(Error);
     });
   });
 
   context('when consumerVersionTags is provided as an array', () => {
     it('should not fail', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           consumerVersionTags: ['tag-1'],
@@ -298,7 +264,7 @@ describe('Verifier Spec', () => {
   context('when providerVersionTags is not provided', () => {
     it('should not fail', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
         })
@@ -307,21 +273,21 @@ describe('Verifier Spec', () => {
   });
 
   context('when providerVersionTags is provided as a string', () => {
-    it('should convert the argument to an array', () => {
-      const v = verifierFactory({
-        providerBaseUrl: 'http://localhost',
-        pactUrls: [path.dirname(currentDir)],
-        providerVersionTags: 'tag-1',
-      });
-
-      expect(v.options.providerVersionTags).to.deep.eq(['tag-1']);
+    it('should not fail', () => {
+      expect(() =>
+        validateOptions({
+          providerBaseUrl: 'http://localhost',
+          pactUrls: [path.dirname(currentDir)],
+          providerVersionTags: 'tag-1',
+        })
+      ).to.not.throw(Error);
     });
   });
 
   context('when providerVersionTags is provided as an array', () => {
     it('should not fail', () => {
       expect(() =>
-        verifierFactory({
+        validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           providerVersionTags: ['tag-1'],
@@ -334,7 +300,7 @@ describe('Verifier Spec', () => {
     context('and specifies a username or password', () => {
       it('should fail with an error', () => {
         expect(() =>
-          verifierFactory({
+          validateOptions({
             providerBaseUrl: 'http://localhost',
             pactUrls: ['http://idontexist'],
             pactBrokerToken: '1234',
@@ -345,13 +311,11 @@ describe('Verifier Spec', () => {
       });
     });
     it('should not fail', () => {
-      const v = verifierFactory({
+      expectSuccessWith({
         providerBaseUrl: 'http://localhost',
         pactUrls: ['http://idontexist'],
         pactBrokerToken: '1234',
       });
-
-      expect(v.options.pactBrokerToken).to.eq('1234');
     });
   });
 });
