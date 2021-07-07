@@ -1,5 +1,5 @@
 import * as http from 'http';
-import * as Request from 'request';
+import * as needle from 'needle';
 import unzipper = require('unzipper');
 import tar = require('tar');
 import pactEnvironment from '../src/pact-environment';
@@ -14,13 +14,15 @@ const config = require('libnpmconfig');
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const sumchecker = require('sumchecker');
 
-// Sets the request default for all calls through npm environment variables for proxy
-const request = Request.defaults({
-  proxy:
-    process.env.npm_config_https_proxy ||
-    process.env.npm_config_proxy ||
-    undefined,
-});
+// Sets the needle default for all calls through npm environment variables for proxy
+const environmentProxy =
+  process.env.npm_config_https_proxy || process.env.npm_config_proxy;
+
+if (environmentProxy) {
+  needle.defaults({
+    proxy: environmentProxy,
+  });
+}
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
 export const PACT_STANDALONE_VERSION = '1.88.58';
@@ -160,16 +162,16 @@ function downloadFileRetry(
       if (ca) {
         ca = fs.readFileSync(ca);
       }
-      request({
-        url,
-        headers: {
-          'User-Agent': 'https://github.com/pact-foundation/pact-js-core',
-        },
-        strictSSL: config.read()['strict-ssl'],
-        agentOptions: {
+      needle
+        .get(url, {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          follow_max: 5,
+          headers: {
+            'User-Agent': 'https://github.com/pact-foundation/pact-js-core',
+          },
+          rejectUnauthorized: config.read()['strict-ssl'] || false,
           ca: ca,
-        },
-      })
+        })
         .on('error', (e: string) => reject(e))
         .on(
           'response',
@@ -225,9 +227,8 @@ function download(data: Data): Promise<Data> {
         // Trying to find all environment variables of all possible CI services to get more accurate stats
         // but it's still not 100% since not all systems have unique environment variables for their CI server
         const isCI = CIs.some((key) => process.env[key] !== undefined);
-        request
-          .post({
-            url: 'https://www.google-analytics.com/collect',
+        needle
+          .post('https://www.google-analytics.com/collect', {
             form: {
               v: 1,
               tid: 'UA-117778936-1', // Tracking ID / Property ID.
@@ -393,7 +394,7 @@ function setup(platform?: string, arch?: string): Promise<Data> {
   });
 }
 
-// This function is unused, but I'm not touching it.
+// This function is used in the pretest script
 export function downloadChecksums(): Promise<void> {
   console.log(chalk.gray(`Downloading All Pact Standalone Binary Checksums.`));
   return Promise.all(
