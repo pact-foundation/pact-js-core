@@ -1,4 +1,3 @@
-import path = require('path');
 import url = require('url');
 import logger, { verboseIsImplied } from './logger';
 import spawn from './spawn';
@@ -12,6 +11,7 @@ const checkTypes = require('check-types');
 const unixify = require('unixify');
 
 import fs = require('fs');
+import path = require('path')
 import { deprecate } from 'util';
 import { LogLevel } from './service';
 

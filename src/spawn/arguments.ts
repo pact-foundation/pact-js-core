@@ -9,6 +9,7 @@ import { PublisherOptions } from '../publisher';
 import { ServiceOptions } from '../service';
 import { VerifierOptions } from '../verifier';
 
+
 export type CliVerbOptions = {
   cliVerb: string;
 };
