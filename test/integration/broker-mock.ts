@@ -160,7 +160,7 @@ export default (port: number): Promise<http.Server> => {
 
   // Matrix
   server.get('/matrix', (req: express.Request, res: express.Response) => {
-    if (req.query.q[0].pacticipant === 'Foo') {
+    if (req.query && req.query.q && req.query.q[0].pacticipant === 'Foo') {
       return res.json({
         summary: {
           deployable: true,

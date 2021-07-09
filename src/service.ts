@@ -1,13 +1,13 @@
 import path = require('path');
 import fs = require('fs');
 import events = require('events');
-import http = require('request');
 import logger, { setLogLevel } from './logger';
 import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import { timeout, TimeoutError } from 'promise-timeout';
 import mkdirp = require('mkdirp');
 import checkTypes = require('check-types');
+import needle = require('needle');
 
 // Get a reference to the global setTimeout object in case it is mocked by a testing library later
 const setTimeout = global.setTimeout;
@@ -313,27 +313,28 @@ export abstract class AbstractService extends events.EventEmitter {
   private __call(options: ServiceOptions): Promise<unknown> {
     return new Promise<void>((resolve, reject) => {
       const config: HTTPConfig = {
-        uri: `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
         method: 'GET',
         headers: {
-          'X-Pact-Mock-Service': true,
+          'X-Pact-Mock-Service': 'true',
           'Content-Type': 'application/json',
         },
       };
 
       if (options.ssl) {
         process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-        config.agentOptions = {};
-        config.agentOptions.rejectUnauthorized = false;
-        config.agentOptions.requestCert = false;
-        config.agentOptions.agent = false;
+        config.rejectUnauthorized = false;
+        config.agent = false;
       }
 
-      http(config, (err: Error, res) => {
-        !err && res.statusCode === 200
-          ? resolve()
-          : reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
-      });
+      needle.get(
+        `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
+        config,
+        (err: Error | null, res) => {
+          !err && res.statusCode === 200
+            ? resolve()
+            : reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
+        }
+      );
     });
   }
 }
@@ -355,16 +356,9 @@ export interface ServiceOptions {
 // levels, we'll need to change the type.
 export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
 
-export interface HTTPConfig {
-  uri: string;
-  method: string;
+export interface HTTPConfig extends Omit<needle.NeedleOptions, 'headers'> {
   headers: {
-    'X-Pact-Mock-Service': boolean;
+    'X-Pact-Mock-Service': string;
     'Content-Type': string;
-  };
-  agentOptions?: {
-    rejectUnauthorized?: boolean;
-    requestCert?: boolean;
-    agent?: boolean;
   };
 }

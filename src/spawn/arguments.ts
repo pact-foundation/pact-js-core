@@ -2,7 +2,7 @@ import { CanDeployOptions } from '../can-deploy';
 import { MessageOptions } from '../message';
 import { PublisherOptions } from '../publisher';
 import { ServiceOptions } from '../service';
-import { VerifierOptions } from '../verifier/types';
+import { VerifierOptions } from '../verifier';
 
 import _ = require('underscore');
 import checkTypes = require('check-types');

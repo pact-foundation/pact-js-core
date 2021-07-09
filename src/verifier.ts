@@ -209,9 +209,9 @@ export class Verifier {
           this.__argMapping
         );
         const output: Array<string | Buffer> = [];
-        instance.stdout.on('data', l => output.push(l));
-        instance.stderr.on('data', l => output.push(l));
-        instance.once('close', code => {
+        instance.stdout.on('data', (l) => output.push(l));
+        instance.stderr.on('data', (l) => output.push(l));
+        instance.once('close', (code) => {
           const o = output.join('\n');
           code === 0 ? resolve(o) : reject(new Error(o));
         });
