@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.13.0](https://github.com/pact-foundation/pact-node/compare/v10.12.1...v10.13.0) (2021-08-02)
+
+
+### Features
+
+* improve m1 support (via rosetta2) ([09c0b36](https://github.com/pact-foundation/pact-node/commit/09c0b3691727b425180f3baab41b295ea69939c3))
+
+
+### Fixes and Improvements
+
+* Replace request with needle ([5e0bdea](https://github.com/pact-foundation/pact-node/commit/5e0bdeaf39b91c44c8eb0f8fc2c0a4bb40260db5))
+* update standalone to 1.88.46 ([e9f2b43](https://github.com/pact-foundation/pact-node/commit/e9f2b431b1118396c27814daaa0cfd4f538ea138))
+* update standalone to 1.88.47 ([5626f3b](https://github.com/pact-foundation/pact-node/commit/5626f3bcb92ce3c7141373232e4ec3701d8ae2d8))
+* update standalone to 1.88.48 ([14e31cf](https://github.com/pact-foundation/pact-node/commit/14e31cf812fd7f11fe84e130bcff4c50d0ff64de))
+* update standalone to 1.88.49 ([cb088ce](https://github.com/pact-foundation/pact-node/commit/cb088ce64d670ce5babadfec53d561e00d9ad8ff))
+* update standalone to 1.88.61 ([1d525f7](https://github.com/pact-foundation/pact-node/commit/1d525f717f88c1e023100ca0b642c11ee3d74122))
+
 ### [10.12.2](https://github.com/pact-foundation/pact-js-core/compare/v10.12.1...v10.12.2) (2021-04-20)
 
 
