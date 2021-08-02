@@ -148,53 +148,53 @@ function downloadFileRetry(
   filepath: string,
   retry = 3
 ): Promise<unknown> {
-	return new Promise(
-		(
-			resolve: (unused?: unknown) => void,
-			reject: (e: string) => void,
-		): void => {
-			let len = 0;
-			let downloaded = 0;
-			let time = Date.now();
-			let ca = config.read()['cafile'];
-			if (ca) {
-				ca = fs.readFileSync(ca);
-			}
-			request({
-				url,
-				headers: {
-					'User-Agent': 'https://github.com/pact-foundation/pact-node',
-				},
-				strictSSL: config.read()['strict-ssl'],
-				agentOptions: {
-					ca: ca,
-				},
-			})
-				.on('error', (e: string) => reject(e))
-				.on(
-					'response',
-					(res: http.IncomingMessage) =>
-						(len = parseInt(res.headers['content-length'] as string, 10)),
-				)
-				.on('data', (chunk: string[]) => {
-					downloaded += chunk.length;
-					// Only show download progress every second
-					const now = Date.now();
-					if (now - time > 1000) {
-						time = now;
-						console.log(
-							chalk.gray(
-								`Downloaded ${((100 * downloaded) / len).toFixed(2)}%...`,
-							),
-						);
-					}
-				})
-				.pipe(fs.createWriteStream(filepath))
-				.on('finish', resolve);
-		},
-	).catch((e: string) =>
-		retry-- === 0 ? throwError(e) : downloadFileRetry(url, filepath, retry),
-	);
+  return new Promise(
+    (
+      resolve: (unused?: unknown) => void,
+      reject: (e: string) => void
+    ): void => {
+      let len = 0;
+      let downloaded = 0;
+      let time = Date.now();
+      let ca = config.read()['cafile'];
+      if (ca) {
+        ca = fs.readFileSync(ca);
+      }
+      request({
+        url,
+        headers: {
+          'User-Agent': 'https://github.com/pact-foundation/pact-node',
+        },
+        strictSSL: config.read()['strict-ssl'],
+        agentOptions: {
+          ca: ca,
+        },
+      })
+        .on('error', (e: string) => reject(e))
+        .on(
+          'response',
+          (res: http.IncomingMessage) =>
+            (len = parseInt(res.headers['content-length'] as string, 10))
+        )
+        .on('data', (chunk: string[]) => {
+          downloaded += chunk.length;
+          // Only show download progress every second
+          const now = Date.now();
+          if (now - time > 1000) {
+            time = now;
+            console.log(
+              chalk.gray(
+                `Downloaded ${((100 * downloaded) / len).toFixed(2)}%...`
+              )
+            );
+          }
+        })
+        .pipe(fs.createWriteStream(filepath))
+        .on('finish', resolve);
+    }
+  ).catch((e: string) =>
+    retry-- === 0 ? throwError(e) : downloadFileRetry(url, filepath, retry)
+  );
 }
 
 function download(data: Data): Promise<Data> {
@@ -214,37 +214,37 @@ function download(data: Data): Promise<Data> {
         )
       );
 
-			// Track downloads through Google Analytics unless testing or don't want to be tracked
-			if (!CONFIG.doNotTrack) {
-				console.log(
-					chalk.gray(
-						'Please note: we are tracking this download anonymously to gather important usage statistics. ' +
-							"To disable tracking, set 'pact_do_not_track: true' in your package.json 'config' section.",
-					),
-				);
-				// Trying to find all environment variables of all possible CI services to get more accurate stats
-				// but it's still not 100% since not all systems have unique environment variables for their CI server
-				const isCI = CIs.some(key => process.env[key] !== undefined);
-				request
-					.post({
-						url: 'https://www.google-analytics.com/collect',
-						form: {
-							v: 1,
-							tid: 'UA-117778936-1', // Tracking ID / Property ID.
-							cid: Math.round(2147483647 * Math.random()).toString(), // Anonymous Client ID.
-							t: 'screenview', // Screenview hit type.
-							an: 'pact-install', // App name.
-							av: require('../package.json').version, // App version.
-							aid: 'pact-node', // App Id.
-							aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
-							cd: `download-node-${data.platform}-${isCI ? 'ci' : 'user'}`,
-							aip: true, // Anonymise IP address
-						},
-					})
-					.on('error', () => {
-						/* Ignore all errors */
-					});
-			}
+      // Track downloads through Google Analytics unless testing or don't want to be tracked
+      if (!CONFIG.doNotTrack) {
+        console.log(
+          chalk.gray(
+            'Please note: we are tracking this download anonymously to gather important usage statistics. ' +
+              "To disable tracking, set 'pact_do_not_track: true' in your package.json 'config' section."
+          )
+        );
+        // Trying to find all environment variables of all possible CI services to get more accurate stats
+        // but it's still not 100% since not all systems have unique environment variables for their CI server
+        const isCI = CIs.some(key => process.env[key] !== undefined);
+        request
+          .post({
+            url: 'https://www.google-analytics.com/collect',
+            form: {
+              v: 1,
+              tid: 'UA-117778936-1', // Tracking ID / Property ID.
+              cid: Math.round(2147483647 * Math.random()).toString(), // Anonymous Client ID.
+              t: 'screenview', // Screenview hit type.
+              an: 'pact-install', // App name.
+              av: require('../package.json').version, // App version.
+              aid: 'pact-node', // App Id.
+              aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.
+              cd: `download-node-${data.platform}-${isCI ? 'ci' : 'user'}`,
+              aip: true, // Anonymise IP address
+            },
+          })
+          .on('error', () => {
+            /* Ignore all errors */
+          });
+      }
 
       // Get archive of release
       // If URL, download via HTTP
