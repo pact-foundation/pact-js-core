@@ -2,6 +2,8 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.1](https://github.com/pact-foundation/pact-node/compare/v10.13.0...v10.13.1) (2021-08-02)
+
 ## [10.13.0](https://github.com/pact-foundation/pact-node/compare/v10.12.1...v10.13.0) (2021-08-02)
 
 
