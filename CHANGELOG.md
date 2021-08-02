@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [11.1.0](https://github.com/pact-foundation/pact-js-core/compare/v11.0.1...v11.1.0) (2021-08-02)
+
+
+### Features
+
+* improve m1 support (via rosetta2) ([92bd98b](https://github.com/pact-foundation/pact-js-core/commit/92bd98b15e55c1ba603355fa9d0d57c3ce3fdd23))
+
+
+### Fixes and Improvements
+
+* Replace request with needle ([b053e54](https://github.com/pact-foundation/pact-js-core/commit/b053e54e7ee313d0bd165f178e55108b1dd58052))
+* update standalone to 1.88.58 ([b95b6ae](https://github.com/pact-foundation/pact-js-core/commit/b95b6aeb4198c2f32ebdc40adb9a6322a451fc42))
+* update standalone to 1.88.61 ([019af87](https://github.com/pact-foundation/pact-js-core/commit/019af87cf72d1991313e82663d5530692fd2e42d))
+
 ### [11.0.1](https://github.com/pact-foundation/pact-js-core/compare/v11.0.0...v11.0.1) (2021-06-21)
 
 
