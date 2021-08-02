@@ -1,22 +1,15 @@
 import path = require('path');
 import fs = require('fs');
 import events = require('events');
-<<<<<<< HEAD
-import http = require('request');
 import q = require('q');
-=======
->>>>>>> b053e54 (fix: Replace request with needle)
+
 import logger, { setLogLevel } from './logger';
 import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import mkdirp = require('mkdirp');
-<<<<<<< HEAD
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const checkTypes = require('check-types');
-=======
+
 import checkTypes = require('check-types');
 import needle = require('needle');
->>>>>>> b053e54 (fix: Replace request with needle)
 
 // Get a reference to the global setTimeout object in case it is mocked by a testing library later
 const setTimeout = global.setTimeout;
@@ -295,59 +288,31 @@ export abstract class AbstractService extends events.EventEmitter {
     return deferred.promise;
   }
 
-<<<<<<< HEAD
   private __call(options: ServiceOptions): q.Promise<unknown> {
     const deferred = q.defer();
     const config: HTTPConfig = {
-      uri: `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
       method: 'GET',
       headers: {
-        'X-Pact-Mock-Service': true,
+        'X-Pact-Mock-Service': 'true',
         'Content-Type': 'application/json',
       },
     };
 
     if (options.ssl) {
       process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-      config.agentOptions = {};
-      config.agentOptions.rejectUnauthorized = false;
-      config.agentOptions.requestCert = false;
-      config.agentOptions.agent = false;
+      config.rejectUnauthorized = false;
+      config.agent = false;
     }
 
-    http(config, (err: Error, res) => {
-      !err && res.statusCode === 200
-        ? deferred.resolve()
-        : deferred.reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
-=======
-  private __call(options: ServiceOptions): Promise<unknown> {
-    return new Promise<void>((resolve, reject) => {
-      const config: HTTPConfig = {
-        method: 'GET',
-        headers: {
-          'X-Pact-Mock-Service': 'true',
-          'Content-Type': 'application/json',
-        },
-      };
-
-      if (options.ssl) {
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-        config.rejectUnauthorized = false;
-        config.agent = false;
+    needle.get(
+      `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
+      config,
+      (err: Error | null, res) => {
+        !err && res.statusCode === 200
+          ? deferred.resolve()
+          : deferred.reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
       }
-
-      needle.get(
-        `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
-        config,
-        (err: Error | null, res) => {
-          !err && res.statusCode === 200
-            ? resolve()
-            : reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
-        }
-      );
->>>>>>> b053e54 (fix: Replace request with needle)
-    });
-
+    );
     return deferred.promise;
   }
 }

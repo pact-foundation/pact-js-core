@@ -226,7 +226,7 @@ function download(data: Data): Promise<Data> {
         );
         // Trying to find all environment variables of all possible CI services to get more accurate stats
         // but it's still not 100% since not all systems have unique environment variables for their CI server
-        const isCI = CIs.some((key) => process.env[key] !== undefined);
+        const isCI = CIs.some(key => process.env[key] !== undefined);
         needle
           .post('https://www.google-analytics.com/collect', {
             form: {

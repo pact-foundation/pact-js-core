@@ -17,7 +17,7 @@ describe('Verifier Integration Spec', () => {
   const monkeypatchFile: string = path.resolve(__dirname, 'monkeypatch.rb');
 
   before(() =>
-    providerMock(PORT).then((s) => {
+    providerMock(PORT).then(s => {
       console.log(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
     })
