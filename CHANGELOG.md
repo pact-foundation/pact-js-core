@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [11.1.1](https://github.com/pact-foundation/pact-js-core/compare/v11.1.0...v11.1.1) (2021-08-11)
+
+
+### Fixes and Improvements
+
+* Avoid throwing an exception if needle can't connect to the mock service during polling (may fix [#314](https://github.com/pact-foundation/pact-js-core/issues/314)) ([74a2cde](https://github.com/pact-foundation/pact-js-core/commit/74a2cde1a48566fb7ccf8ed91e5b1902e8715c32))
+* package.json & package-lock.json to reduce vulnerabilities ([1a1439c](https://github.com/pact-foundation/pact-js-core/commit/1a1439c7d25f136307d43ff3818682377868e6a6))
+* package.json & package-lock.json to reduce vulnerabilities ([44bd189](https://github.com/pact-foundation/pact-js-core/commit/44bd189fff0303922e6fb04ac60de0fc1f39f7cf))
+* update standalone to 1.88.63 ([240ea6c](https://github.com/pact-foundation/pact-js-core/commit/240ea6cb2274cead6705557d61907949996053d3))
+
 ## [11.1.0](https://github.com/pact-foundation/pact-js-core/compare/v11.0.1...v11.1.0) (2021-08-02)
 
 
