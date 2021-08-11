@@ -10,7 +10,7 @@ import { LogLevel } from '../src/logger/types';
 const expect = chai.expect;
 chai.use(chaiAsPromised);
 
-describe.only('Verifier Integration Spec', () => {
+describe('Verifier Integration Spec', () => {
   let server: http.Server;
   const PORT = 9123;
   const providerBaseUrl = `http://localhost:${PORT}`;

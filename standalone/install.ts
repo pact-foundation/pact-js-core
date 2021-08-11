@@ -165,7 +165,6 @@ function downloadFileRetry(
       }
       needle
         .get(url, {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           follow_max: 5,
           headers: {
             'User-Agent': 'https://github.com/pact-foundation/pact-js-core',
