@@ -311,30 +311,28 @@ export abstract class AbstractService extends events.EventEmitter {
   }
 
   private __call(options: ServiceOptions): Promise<unknown> {
-    return new Promise<void>((resolve, reject) => {
-      const config: HTTPConfig = {
-        method: 'GET',
-        headers: {
-          'X-Pact-Mock-Service': 'true',
-          'Content-Type': 'application/json',
-        },
-      };
+    const config: HTTPConfig = {
+      method: 'GET',
+      headers: {
+        'X-Pact-Mock-Service': 'true',
+        'Content-Type': 'application/json',
+      },
+    };
 
-      if (options.ssl) {
-        process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-        config.rejectUnauthorized = false;
-        config.agent = false;
+    if (options.ssl) {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      config.rejectUnauthorized = false;
+      config.agent = false;
+    }
+
+    return needle(
+      'get',
+      `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
+      config
+    ).then((res) => {
+      if (res.statusCode !== 200) {
+        throw new Error(`HTTP Error: '${JSON.stringify(res)}'`);
       }
-
-      needle.get(
-        `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
-        config,
-        (err: Error | null, res) => {
-          !err && res.statusCode === 200
-            ? resolve()
-            : reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
-        }
-      );
     });
   }
 }
