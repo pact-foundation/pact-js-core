@@ -304,15 +304,21 @@ export abstract class AbstractService extends events.EventEmitter {
       config.agent = false;
     }
 
-    needle.get(
+    needle(
+      'get',
       `http${options.ssl ? 's' : ''}://${options.host}:${options.port}`,
-      config,
-      (err: Error | null, res) => {
-        !err && res.statusCode === 200
-          ? deferred.resolve()
-          : deferred.reject(`HTTP Error: '${JSON.stringify(err ? err : res)}'`);
-      }
-    );
+      config
+    )
+      .then(res => {
+        if (res.statusCode !== 200) {
+          throw new Error(`HTTP Error: '${JSON.stringify(res)}'`);
+        }
+      })
+      .then(
+        d => deferred.resolve(d),
+        e => deferred.reject(e)
+      );
+
     return deferred.promise;
   }
 }
