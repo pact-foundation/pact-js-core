@@ -2,16 +2,20 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
 . "$SCRIPT_DIR"/ci/lib/robust-bash.sh
 
+
 require_binary curl
 require_binary gunzip
 
-FFI_VERIFIER_VERSION=v0.0.5
-BASEURL=https://github.com/pact-foundation/pact-reference/releases/download/
+FFI_VERSION=v0.0.0
+BASEURL=https://github.com/pact-foundation/pact-reference/releases/download
 FFI_DIR="$SCRIPT_DIR/../ffi"
-
 
 warn "Cleaning ffi directory $FFI_DIR"
 rm -f "$FFI_DIR"/*
+
+# This is a hack so that I can run (locally built) M1 libraries
+log "Copying in local libraries"
+cp "$SCRIPT_DIR"/../*.dylib "$FFI_DIR"
 
 function download_to {
   if [ -z "${1:-}" ]; then
@@ -34,25 +38,31 @@ function download_to {
   fi
 }
 
-function download_ffi_verifier {
+
+function download_ffi {
   if [ -z "${1:-}" ]; then
     error "${FUNCNAME[0]} requires the environment filename suffix"
     exit 1
   fi
-  SUFFIX=$1
+  SUFFIX="$1"
+  PREFIX="${2:-}"
 
-  VERIFIER_FILENAME="libpact_verifier_ffi-$SUFFIX"
+  FFI_FILENAME="${PREFIX}pact_ffi-$SUFFIX"
 
-  URL="${BASEURL}pact_verifier_ffi-${FFI_VERIFIER_VERSION}/${VERIFIER_FILENAME}"
-  DOWNLOAD_LOCATION="$FFI_DIR/${FFI_VERIFIER_VERSION}-${VERIFIER_FILENAME}"
+  URL="${BASEURL}/libpact_ffi-${FFI_VERSION}/${FFI_FILENAME}"
+  DOWNLOAD_LOCATION="$FFI_DIR/${FFI_VERSION}-${FFI_FILENAME}"
 
-  log "Downloading verifier $FFI_VERIFIER_VERSION for $SUFFIX"
+  log "Downloading verifier $FFI_VERSION for $SUFFIX"
   download_to "$URL" "$DOWNLOAD_LOCATION"
   gunzip "$DOWNLOAD_LOCATION"
 }
 
-for file in windows-x86_64.dll.gz windows-x86_64.dll.lib.gz linux-x86_64.so.gz osx-x86_64.dylib.gz ; do
-  download_ffi_verifier "$file"
+for file in linux-x86_64.so.gz osx-x86_64.dylib.gz ; do
+  download_ffi "$file" "lib"
+done
+
+for file in windows-x86_64.dll.gz windows-x86_64.dll.lib.gz ; do
+  download_ffi "$file" ""
 done
 
 # Write readme in the ffi folder
@@ -61,4 +71,3 @@ cat << EOF > "$FFI_DIR/README.md"
 
 This folder is automatically populated during build by /script/download-ffi.sh
 EOF
-

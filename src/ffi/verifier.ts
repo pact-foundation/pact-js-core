@@ -5,18 +5,18 @@ import { FfiBinding } from './internals/types';
 // There's a workaround here we could employ:
 // https://gist.github.com/jcalz/381562d282ebaa9b41217d1b31e2c211
 type FfiVerifierType = {
-  init: ['string', ['string']];
-  version: ['string', []];
-  free_string: ['void', ['string']];
-  verify: ['int', ['string']];
+  pactffi_init: ['string', ['string']];
+  pactffi_version: ['string', []];
+  pactffi_free_string: ['void', ['string']];
+  pactffi_verify: ['int', ['string']];
 };
 
 const description: FfiVerifierType = {
-  init: ['string', ['string']],
-  version: ['string', []],
-  free_string: ['void', ['string']],
-  verify: ['int', ['string']],
+  pactffi_init: ['string', ['string']],
+  pactffi_version: ['string', []],
+  pactffi_free_string: ['void', ['string']],
+  pactffi_verify: ['int', ['string']],
 };
 
 export const getVerifierLib = (): FfiBinding<FfiVerifierType> =>
-  initialiseFfi(libName('libpact_verifier_ffi', 'v0.0.5'), description);
+  initialiseFfi(libName('pact_ffi', 'v0.0.0'), description);

@@ -11,14 +11,23 @@ const PLATFORM_LOOKUP = {
   win32: 'windows', // yes, 'win32' is what process.platform returns on windows 64 bit
 };
 
+// This is a lookup between process.platform and
+// the prefixes for the library name
+const LIBNAME_PREFIX_LOOKUP = {
+  linux: 'lib',
+  darwin: 'lib',
+  win32: 'lib', // yes, 'win32' is what process.platform returns on windows 64 bit
+};
+
 // This is a lookup between process.arch and
 // the architecture names used in pact-reference
-const ARCH_LOOKUP = { x64: 'x86_64' };
+const ARCH_LOOKUP = { x64: 'x86_64', arm64: 'arm64' };
 
 // This is a lookup between "${platform}-${arch}" and
 // the file extensions to link on that platform/arch combination
 const EXTENSION_LOOKUP = {
   'osx-x86_64': 'dylib',
+  'osx-arm64': 'dylib',
   'linux-x86_64': 'so',
   'windows-x86_64': 'dll',
 };
@@ -45,13 +54,21 @@ export const libName = (library: string, version: string): string => {
     );
   }
 
-  const prefix = `${platform}-${arch}`;
+  const target = `${platform}-${arch}`;
 
-  const extension = EXTENSION_LOOKUP[prefix];
+  const extension = EXTENSION_LOOKUP[target];
   if (!extension) {
     throw new Error(
-      `Pact doesn't know what library to use for the architecture combination '${process.platform}/${process.arch}'`
+      `Pact doesn't know what extension to use for the libraries in the architecture combination '${process.platform}/${process.arch}'`
     );
   }
-  return `${version}-${library}-${prefix}.${extension}`;
+
+  const libnamePrefix = LIBNAME_PREFIX_LOOKUP[process.platform];
+  if (libnamePrefix === undefined) {
+    throw new Error(
+      `Pact doesn't know what prefix to use for the libraries on '${process.platform}'`
+    );
+  }
+
+  return `${version}-${libnamePrefix}${library}-${target}.${extension}`;
 };

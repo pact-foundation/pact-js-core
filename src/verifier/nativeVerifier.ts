@@ -17,7 +17,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
     process.env[LOG_ENV_VAR_NAME] = opts.logLevel;
-    verifierLib.init(LOG_ENV_VAR_NAME);
+    verifierLib.pactffi_init(LOG_ENV_VAR_NAME);
 
     const request = argumentMapper(argMapping, opts, ignoredArguments)
       .map((s) => s.replace('\n', ''))
@@ -26,7 +26,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     logger.debug('sending arguments to FFI:');
     logger.debug(request);
 
-    verifierLib.verify.async(request, (err: Error, res: number) => {
+    verifierLib.pactffi_verify.async(request, (err: Error, res: number) => {
       logger.debug(`response from verifier: ${err}, ${res}`);
       if (err) {
         if (typeof err === 'string') {
