@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.3](https://github.com/pact-foundation/pact-node/compare/v10.13.2...v10.13.3) (2021-08-12)
+
+
+### Fixes and Improvements
+
+* Expose needle types as a dependency rather than a devdependency to fix typescript users ([0fe0592](https://github.com/pact-foundation/pact-node/commit/0fe0592d369276e1c7098188c566248796e642d8))
+
 ### [10.13.2](https://github.com/pact-foundation/pact-node/compare/v10.13.1...v10.13.2) (2021-08-12)
 
 
