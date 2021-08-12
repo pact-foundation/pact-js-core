@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.2](https://github.com/pact-foundation/pact-node/compare/v10.13.1...v10.13.2) (2021-08-12)
+
+
+### Fixes and Improvements
+
+* Avoid throwing an exception if needle can't connect to the mock service during polling (may fix [#314](https://github.com/pact-foundation/pact-node/issues/314)) ([edc877f](https://github.com/pact-foundation/pact-node/commit/edc877f6d3334b290dceddf5906cb9782dab4fe5))
+* update standalone to 1.88.63 ([7856a70](https://github.com/pact-foundation/pact-node/commit/7856a7073387545c9f1e695061245954f84e03d6))
+
 ### [10.13.1](https://github.com/pact-foundation/pact-node/compare/v10.13.0...v10.13.1) (2021-08-02)
 
 ## [10.13.0](https://github.com/pact-foundation/pact-node/compare/v10.12.1...v10.13.0) (2021-08-02)
