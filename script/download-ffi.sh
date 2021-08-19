@@ -13,9 +13,6 @@ FFI_DIR="$SCRIPT_DIR/../ffi"
 warn "Cleaning ffi directory $FFI_DIR"
 rm -f "$FFI_DIR"/*
 
-# This is a hack so that I can run (locally built) M1 libraries
-log "Copying in local libraries"
-cp "$SCRIPT_DIR"/../*.dylib "$FFI_DIR"
 
 function download_to {
   if [ -z "${1:-}" ]; then
