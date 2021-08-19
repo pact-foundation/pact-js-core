@@ -6,7 +6,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the 
 require_binary curl
 require_binary gunzip
 
-FFI_VERSION=v0.0.0
+FFI_VERSION=v0.0.1
 BASEURL=https://github.com/pact-foundation/pact-reference/releases/download
 FFI_DIR="$SCRIPT_DIR/../ffi"
 
@@ -57,7 +57,7 @@ function download_ffi {
   gunzip "$DOWNLOAD_LOCATION"
 }
 
-for file in linux-x86_64.so.gz osx-x86_64.dylib.gz ; do
+for file in linux-x86_64.so.gz osx-x86_64.dylib.gz osx-aarch64-apple-darwin.dylib.gz ; do
   download_ffi "$file" "lib"
 done
 

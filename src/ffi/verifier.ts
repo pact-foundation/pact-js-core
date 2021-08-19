@@ -19,4 +19,4 @@ const description: FfiVerifierType = {
 };
 
 export const getVerifierLib = (): FfiBinding<FfiVerifierType> =>
-  initialiseFfi(libName('pact_ffi', 'v0.0.0'), description);
+  initialiseFfi(libName('pact_ffi', 'v0.0.1'), description);

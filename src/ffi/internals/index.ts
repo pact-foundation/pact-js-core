@@ -21,13 +21,13 @@ const LIBNAME_PREFIX_LOOKUP = {
 
 // This is a lookup between process.arch and
 // the architecture names used in pact-reference
-const ARCH_LOOKUP = { x64: 'x86_64', arm64: 'arm64' };
+const ARCH_LOOKUP = { x64: 'x86_64', arm64: 'aarch64-apple-darwin' };
 
 // This is a lookup between "${platform}-${arch}" and
 // the file extensions to link on that platform/arch combination
 const EXTENSION_LOOKUP = {
   'osx-x86_64': 'dylib',
-  'osx-arm64': 'dylib',
+  'osx-aarch64-apple-darwin': 'dylib',
   'linux-x86_64': 'so',
   'windows-x86_64': 'dll',
 };
@@ -59,7 +59,7 @@ export const libName = (library: string, version: string): string => {
   const extension = EXTENSION_LOOKUP[target];
   if (!extension) {
     throw new Error(
-      `Pact doesn't know what extension to use for the libraries in the architecture combination '${process.platform}/${process.arch}'`
+      `Pact doesn't know what extension to use for the libraries in the architecture combination '${target}'`
     );
   }
 
