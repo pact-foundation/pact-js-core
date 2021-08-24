@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.0.1](https://github.com/pact-foundation/pact-js-core/compare/v13.0.0...v13.0.1) (2021-08-24)
+
+
+### Fixes and Improvements
+
+* expose needle types as a dependency to fix TS ([e8ad281](https://github.com/pact-foundation/pact-js-core/commit/e8ad281839c4f888507d08c8c2e55825c4ec33e6))
+
 ## [13.0.0](https://github.com/pact-foundation/pact-js-core/compare/v11.1.1...v13.0.0) (2021-08-24)
 
 
