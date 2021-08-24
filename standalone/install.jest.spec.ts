@@ -1,16 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import install, { BinaryEntry, createConfig, getBinaryEntry } from './install';
+import { BinaryEntry, createConfig } from './install';
 import { FS } from './__mocks__/fs';
 
 jest.mock('fs');
-jest.mock('sumchecker', () =>
-  jest.fn().mockImplementation(() => Promise.resolve())
-);
-jest.mock('libnpmconfig', () => ({
-  read: (): jest.Mock => jest.fn(),
-}));
-jest.mock('tar');
 
 describe('Install', () => {
   const packageBasePath: string = path.resolve(__dirname, '__fixtures__');
@@ -91,35 +84,6 @@ describe('Install', () => {
       initFS({ pact_do_not_track });
       const config = createConfig(packageBasePath);
       expect(config.doNotTrack).toEqual(pact_do_not_track);
-    });
-  });
-
-  describe('Environment variables configuration', () => {
-    it("Should be able to set 'do not track' from environment variable 'PACT_DO_NOT_TRACK'", () => {
-      const doNotTrack = true;
-      process.env.PACT_DO_NOT_TRACK = `${doNotTrack}`;
-      const config = createConfig(packageBasePath);
-      expect(config.doNotTrack).toEqual(doNotTrack);
-    });
-  });
-
-  describe('Skip install binary', () => {
-    it('Should not download it', async () => {
-      process.env.PACT_SKIP_BINARY_INSTALL = 'true';
-      const { binaryInstallSkipped } = await install('linux', 'ia32');
-      expect(binaryInstallSkipped).toBeTruthy();
-    });
-
-    it('Should download it', async () => {
-      const { binaryChecksum, binary } = getBinaryEntry('linux', 'ia32');
-      (fs as unknown as FS).initFS({
-        [path.join(__dirname, binary)]: 'mock binary',
-        [path.join(__dirname, binaryChecksum)]: 'mock binary checksum',
-      });
-
-      process.env.PACT_SKIP_BINARY_INSTALL = 'false';
-      const { binaryInstallSkipped } = await install('linux', 'ia32');
-      expect(binaryInstallSkipped).toBeFalsy();
     });
   });
 });

@@ -1,40 +1,17 @@
 #!/bin/bash -eu
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
-. "$SCRIPT_DIR"/ci/lib/robust-bash.sh
-
+. "${SCRIPT_DIR}/ci/lib/robust-bash.sh"
+. "${SCRIPT_DIR}/ci/lib/download-file.sh"
 
 require_binary curl
 require_binary gunzip
 
 FFI_VERSION=v0.0.1
 BASEURL=https://github.com/pact-foundation/pact-reference/releases/download
-FFI_DIR="$SCRIPT_DIR/../ffi"
+FFI_DIR="${SCRIPT_DIR}/../ffi"
 
 warn "Cleaning ffi directory $FFI_DIR"
 rm -f "$FFI_DIR"/*
-
-
-function download_to {
-  if [ -z "${1:-}" ]; then
-    error "${FUNCNAME[0]} requires the URL to download from as the first argument"
-    exit 1
-  fi
-  if [ -z "${2:-}" ]; then
-    error "${FUNCNAME[0]} requires the file to save the download in as the second argument"
-    exit 1
-  fi
-  URL=$1
-  OUTPUT_FILE=$2
-
-  HTTP_CODE=$(curl --silent --output "$OUTPUT_FILE" --write-out "%{http_code}" --location "$URL")
-  if [[ ${HTTP_CODE} -lt 200 || ${HTTP_CODE} -gt 299 ]] ; then
-    error "Unable to download file at url ${URL}"
-    error "Downloaded content follows"
-    echo "$(cat $OUTPUT_FILE)"
-    exit 1
-  fi
-}
-
 
 function download_ffi {
   if [ -z "${1:-}" ]; then

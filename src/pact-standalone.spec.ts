@@ -3,7 +3,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as chai from 'chai';
-import install from '../standalone/install';
 import pactEnvironment from './pact-environment';
 import { PactStandalone, standalone } from './pact-standalone';
 
@@ -16,9 +15,6 @@ describe('Pact Standalone', function () {
   this.timeout(600000);
 
   let pact: PactStandalone;
-
-  // reinstall the correct binary for the system for all other tests that might use it.
-  after(() => install());
 
   it('should return an object with cwd, file and fullPath properties that is platform specific', () => {
     pact = standalone();
@@ -42,8 +38,6 @@ describe('Pact Standalone', function () {
 
   describe('Check if OS specific files are there', () => {
     describe('OSX', () => {
-      before(() => install('darwin'));
-
       beforeEach(() => (pact = standalone('darwin')));
 
       it('broker relative path', () => {
@@ -91,8 +85,6 @@ describe('Pact Standalone', function () {
     });
 
     describe('Linux ia32', () => {
-      before(() => install('linux', 'ia32'));
-
       beforeEach(() => (pact = standalone('linux', 'ia32')));
 
       it('broker relative path', () => {
@@ -140,8 +132,6 @@ describe('Pact Standalone', function () {
     });
 
     describe('Linux X64', () => {
-      before(() => install('linux', 'x64'));
-
       beforeEach(() => (pact = standalone('linux', 'x64')));
 
       it('broker relative path', () => {
@@ -189,8 +179,6 @@ describe('Pact Standalone', function () {
     });
 
     describe('Windows', () => {
-      before(() => install('win32'));
-
       beforeEach(() => (pact = standalone('win32')));
 
       it("should add '.bat' to the end of the binary names", () => {
