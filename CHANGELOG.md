@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.0.0](https://github.com/pact-foundation/pact-js-core/compare/v11.1.1...v13.0.0) (2021-08-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* setLogLevel no longer accepts or returns a `number`
+* The verbose option has been removed, as it is now implied by `logLevel` of `DEBUG` or `TRACE`
+* All logging and reporting is now on standard out. This was the default before. This means the logDir / format / out options are no longer supported. If your ecosystem needs the ability to customise logging and reporting, please let us know by opening an issue.
+* The undocumented option monkeypatch has been removed. The use cases for this feature are mostly covered by other options.
+* customProviderHeaders has been removed. Please see the request [filter documentation](https://github.com/pact-foundation/pact-js#modify-requests-prior-to-verification-request-filters) in pact-js.
+
+### Features
+
+* include standalone binaries in released package ([eedeb18](https://github.com/pact-foundation/pact-js-core/commit/eedeb187ad0d0fd4bdae72af0dc01dd21d09488a))
+* Use the native ffi bindings for the Verifier instead of the ruby bindings ([119c3ce](https://github.com/pact-foundation/pact-js-core/commit/119c3ce764392070d255f04959333100f07f6be2))
+
+
+* Add migration docs and update readme ([e589c01](https://github.com/pact-foundation/pact-js-core/commit/e589c01116f3a6cf6c6b1a65e2ba31e2e3e2d00e))
+* Refactor logger to make it easier to use ffi logs ([c650192](https://github.com/pact-foundation/pact-js-core/commit/c650192d4e83ce342bba4f84ce8b43d573827bda))
+
+
+### Fixes and Improvements
+
+* Correct exposed log levels to 'debug' | 'error' | 'info' | 'trace' | 'warn'. ([4a6f573](https://github.com/pact-foundation/pact-js-core/commit/4a6f5737f9b6d568e6f97273e41299caaa0105de))
+* Expose logger as a base level export ([5686a66](https://github.com/pact-foundation/pact-js-core/commit/5686a66a8c4906b0146f31456bd9afee56de8c80))
+* Print warnings if 'latest' is used as a tag during verification ([ddd516d](https://github.com/pact-foundation/pact-js-core/commit/ddd516d639b12c31f3b7f5cfbcbb859f16c40f85))
+* Remove some unnecessary files from the npm package ([60c4aa1](https://github.com/pact-foundation/pact-js-core/commit/60c4aa1f28130c7e0764ff8ca7ed1a14f1dc81dc))
+* Use the new pact_ffi instead of the verifier-only one ([5d2f364](https://github.com/pact-foundation/pact-js-core/commit/5d2f3640e7856eabf2ba355d0fcfb8b5790fa2fe))
+
 ### [11.1.1](https://github.com/pact-foundation/pact-js-core/compare/v11.1.0...v11.1.1) (2021-08-11)
 
 
