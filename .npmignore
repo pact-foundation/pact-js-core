@@ -67,12 +67,6 @@ ts-node-*
 # include TypeScript definitions to go with compiled JS
 !*.d.ts
 
-# pact standalone binaries
-standalone/*
-!standalone/*.js
-!standalone/*.checksum
-!standalone/*.d.ts
-
 # Folders created during testing
 log
 reports
