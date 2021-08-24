@@ -17,11 +17,9 @@ A wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-fou
 
 <!-- TOC -->
 
-- [Pact Core](#pact-js-core)
+- [Pact-JS Core](#pact-js-core)
   - [Installation](#installation)
     - [Do Not Track](#do-not-track)
-    - [Pact Download Location](#pact-download-location)
-    - [Skip Pact binary downloading](#skip-pact-binary-downloading)
   - [Which Library/Package should I use?](#which-librarypackage-should-i-use)
   - [Usage](#usage)
   - [Documentation](#documentation)
@@ -64,43 +62,6 @@ In order to get better statistics as to who is using Pact, we have an anonymous 
 	},
 	...
 }
-```
-
-### Pact Download Location
-
-For those that are behind a corporate firewall or are seeing issues where our package downloads binaries during installation, you can download the binaries directly from our [github releases](https://github.com/pact-foundation/pact-ruby-standalone/releases), and specify the location where you want Pact to get the binaries from using the 'config' section in your package.json file:
-
-```json
-{
-	"name": "some-project",
-	...
-	"config": {
-		"pact_binary_location": "/home/some-user/Downloads"
-	},
-	...
-}
-```
-
-It will accept both a local path or an http(s) url. It must point to the directory containing the binary needed as the binary name is appended to the end of the location. For the example given above, Pact will look for the binary at `/home/some-user/Downloads/pact-1.44.0-win32.zip` for a Windows system. However, by using this method, you must use the correct Pact version binary associated with this version of Pact-Core. For extra security measurements, checksum validation has been added to prevent tampering with the binaries.
-
-If your environment uses self-signed certificates from an internal Certificate Authority (CA), you can configure this using the standard options in an [npmrc](https://docs.npmjs.com/configuring-npm/npmrc.html) file as per below:
-
-_~/.npmrc_:
-```
-cafile=/etc/ssl/certs/ca-certificates.crt
-strict-ssl=true
-```
-
-### Skip Pact binary downloading
-
-You can also force Pact to skip the installation of the binary during `npm install` by
-setting `PACT_SKIP_BINARY_INSTALL=true`. This feature is useful if you want to speed up 
-builds that don't need Pact and don't want to modify your projects dependencies. 
-
-Note that pact-core will not be functional without the binary.
-
-```bash
-PACT_SKIP_BINARY_INSTALL=true npm install
 ```
 
 ## Which Library/Package should I use?
