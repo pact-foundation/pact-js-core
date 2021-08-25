@@ -1,14 +1,14 @@
 #!/bin/bash -eu
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
-. "${SCRIPT_DIR}/robust-bash.sh"
-. "${SCRIPT_DIR}/download-file.sh"
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
+. "${LIB_DIR}/robust-bash.sh"
+. "${LIB_DIR}/download-file.sh"
 
 require_binary curl
 require_binary unzip
 
 STANDALONE_VERSION=$(grep "PACT_STANDALONE_VERSION = '" ./standalone/install.ts | grep -E -o "([0-9][\.0-9]+[0-9])")
 BASEURL=https://github.com/pact-foundation/pact-ruby-standalone/releases/download
-STANDALONE_DIR="${SCRIPT_DIR}/../../standalone"
+STANDALONE_DIR="${LIB_DIR}/../../standalone"
 
 function download_standalone {
   if [ -z "${1:-}" ]; then
