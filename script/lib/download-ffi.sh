@@ -32,9 +32,9 @@ function download_ffi {
 }
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
-  for file in linux-x86_64.so.gz osx-x86_64.dylib.gz osx-aarch64-apple-darwin.dylib.gz ; do
-    download_ffi "$file" "lib"
-  done
+  download_ffi "linux-x86_64.so.gz" "lib"
+  download_ffi "osx-x86_64.dylib.gz" "lib"
+  download_ffi "osx-aarch64-apple-darwin.dylib.gz" "lib"
 else
   log "Skipped download of non-windows FFI libs"
 fi
