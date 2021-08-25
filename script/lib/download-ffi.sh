@@ -12,6 +12,7 @@ FFI_DIR="${LIB_DIR}/../../ffi"
 
 warn "Cleaning ffi directory $FFI_DIR"
 rm -f "$FFI_DIR"/*
+mkdir -p "$FFI_DIR"
 
 function download_ffi {
   if [ -z "${1:-}" ]; then
