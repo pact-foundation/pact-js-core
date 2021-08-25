@@ -3,4 +3,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the 
 . "$SCRIPT_DIR"/../lib/robust-bash.sh
 
 npm ci
-npm test
+npm run format:check
+npm run lint
+npm run test
+npm run build

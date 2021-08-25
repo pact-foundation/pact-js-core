@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: script/ci/build-and-test.sh
+      - run: script/ci/build-and-test-nix.sh
         env:
           NODE_VERSION: ${{ matrix.node-version }}
 
@@ -34,6 +34,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: bash script/ci/build-and-test.sh
+      - run: bash script/ci/build-and-test-windows.sh
+        shell: bash
         env:
           NODE_VERSION: ${{ matrix.node-version }}
