@@ -6,6 +6,15 @@ require_env_var CI "This script must be run from CI. If you are running locally,
 require_env_var GITHUB_ACTOR
 require_env_var NODE_AUTH_TOKEN
 
+
+if [ ! -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then 
+    error "The environment variable ONLY_DOWNLOAD_PACT_FOR_WINDOWS is set"
+    echo "   - you cannot run a release with this variable set"
+    echo "     as only the windows binaries would be included"
+    echo "*** STOPPING RELEASE PROCESS ***"
+    exit 1
+fi
+
 # Setup git for github actions
 git config user.email "${GITHUB_ACTOR}@users.noreply.github.com"
 git config user.name "${GITHUB_ACTOR}"
@@ -15,7 +24,7 @@ git config user.name "${GITHUB_ACTOR}"
 RELEASE_NOTES="$(npx standard-version --dry-run | awk 'BEGIN { flag=0 } /^---$/ { if (flag == 0) { flag=1 } else { flag=2 }; next } flag == 1')"
 # Don't release if there are no changes
 if [ "$(echo "$RELEASE_NOTES" | wc -l)" -eq 1 ] ; then
-    echo "ERROR: This release would have no release notes. Does it include changes?"
+    error "This release would have no release notes. Does it include changes?"
     echo "   - You must have at least one fix / feat commit to generate release notes"
     echo "*** STOPPING RELEASE PROCESS ***"
     exit 1
