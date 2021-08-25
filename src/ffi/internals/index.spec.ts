@@ -7,7 +7,7 @@ chai.use(chaiAsPromised);
 describe('ffi names', () => {
   it('has the correct name for windows', () => {
     expect(libName('pact_ffi', 'v0.0.1', 'x64', 'win32')).to.be.equal(
-      'v0.0.1-pact_ffi-windows-x86_64.dll.lib'
+      'v0.0.1-pact_ffi-windows-x86_64.dll'
     );
   });
   it('has the correct name for linux', () => {
