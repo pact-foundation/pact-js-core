@@ -38,3 +38,7 @@ jobs:
         shell: bash
         env:
           NODE_VERSION: ${{ matrix.node-version }}
+          # The windows build agent has trouble unpacking the tar for
+          # linux, so we only download windows binaries. This means
+          # we cannot release from Windows in CI.
+          ONLY_DOWNLOAD_PACT_FOR_WINDOWS: true
