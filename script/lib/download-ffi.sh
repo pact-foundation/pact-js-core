@@ -1,7 +1,7 @@
 #!/bin/bash -eu
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
-. "${SCRIPT_DIR}/robust-bash.sh"
-. "${SCRIPT_DIR}/download-file.sh"
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
+. "${LIB_DIR}/robust-bash.sh"
+. "${LIB_DIR}/download-file.sh"
 
 require_binary curl
 require_binary gunzip
@@ -29,6 +29,7 @@ function download_ffi {
   log "Downloading ffi $FFI_VERSION for $SUFFIX"
   download_to "$URL" "$DOWNLOAD_LOCATION"
   gunzip "$DOWNLOAD_LOCATION"
+  log " ... saved to '$DOWNLOAD_LOCATION'"
 }
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
