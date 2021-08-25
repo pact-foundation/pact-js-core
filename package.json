@@ -123,8 +123,8 @@
     "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test,bin,standalone}/**/*.spec.ts\" && jest",
     "snyk-protect": "snyk protect",
     "format:base": "prettier --parser typescript",
-    "format:check": "npm run prettier:base -- --list-different \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
-    "format:fix": "npm run prettier:base -- --write \"{src,standalone,bin,test}/**/*.{ts,tsx}\""
+    "format:check": "npm run format:base -- --list-different \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
+    "format:fix": "npm run format:base -- --write \"{src,standalone,bin,test}/**/*.{ts,tsx}\""
   },
   "prettier": "@pact-foundation/pact-js-prettier-config",
   "standard-version": {
