@@ -1,7 +1,7 @@
 #!/bin/bash -eu
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
-. "${SCRIPT_DIR}/ci/lib/robust-bash.sh"
-. "${SCRIPT_DIR}/ci/lib/download-file.sh"
+. "${SCRIPT_DIR}/robust-bash.sh"
+. "${SCRIPT_DIR}/download-file.sh"
 
 require_binary curl
 require_binary gunzip
