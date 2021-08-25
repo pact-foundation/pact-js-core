@@ -30,7 +30,7 @@ function download_ffi {
   log "Downloading ffi $FFI_VERSION for $SUFFIX"
   download_to "$URL" "$DOWNLOAD_LOCATION"
   gunzip "$DOWNLOAD_LOCATION"
-  log " ... saved to '$DOWNLOAD_LOCATION'"
+  debug_log " ... saved to '$DOWNLOAD_LOCATION'"
 }
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then

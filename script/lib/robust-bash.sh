@@ -10,11 +10,18 @@ if [ -z "${LIB_ROBUST_BASH_SH:-}" ]; then
     echo "🔵  ${1:-}"
   }
 
+  function debug_log {
+    if [ ! -z "${LIB_ROBUST_BASH_DEBUG:-}" ]; then
+      echo "🔎  ${1:-}"
+    fi
+  }
+
   function warn {
-    echo "⚠️  ${1:-}"
+    echo "🟡  ${1:-}"
   }
 
   # Check to see that we have a required binary on the path
+  # and fail the script if it is not present
   function require_binary {
     if [ -z "${1:-}" ]; then
       error "${FUNCNAME[0]} requires an argument"
@@ -27,6 +34,11 @@ if [ -z "${LIB_ROBUST_BASH_SH:-}" ]; then
     fi
   }
 
+  # Check to see that we have a required environment variable set,
+  # and fail the script if it is not set.
+  #
+  # Optionally, a second argument can be provided to display 
+  # a helpful message before failing
   function require_env_var {
     var_name="${1:-}"
     if [ -z "${!var_name:-}" ]; then
