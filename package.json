@@ -116,19 +116,15 @@
   "scripts": {
     "clean": "rimraf '{src,test,bin,standalone}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
     "lint": "eslint . --ext .ts --config .eslintrc",
-    "pretest": "npm run prettier:check && npm run lint && npm run build",
-    "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test,bin,standalone}/**/*.spec.ts\" && jest",
-    "dev": "npm run lint --force && npm test && node .",
-    "watch": "nodemon -e ts,json --ignore '**/*.d.ts' -x npm run dev",
-    "prebuild": "./script/download-libs.sh",
-    "build": "npm run clean && tsc",
-    "start": "npm run watch",
-    "prerelease": "npm i && npm t && npm run snyk-protect",
+    "prebuild": "npm run clean && bash script/download-libs.sh",
+    "build": "tsc",
+    "prerelease": "npm run snyk-protect",
     "release": "standard-version",
+    "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test,bin,standalone}/**/*.spec.ts\" && jest",
     "snyk-protect": "snyk protect",
-    "prettier:base": "prettier --parser typescript",
-    "prettier:check": "npm run prettier:base -- --list-different \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
-    "prettier:write": "npm run prettier:base -- --write \"{src,standalone,bin,test}/**/*.{ts,tsx}\""
+    "format:base": "prettier --parser typescript",
+    "format:check": "npm run format:base -- --list-different \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
+    "format:fix": "npm run format:base -- --write \"{src,standalone,bin,test}/**/*.{ts,tsx}\""
   },
   "prettier": "@pact-foundation/pact-js-prettier-config",
   "standard-version": {

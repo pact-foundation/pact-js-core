@@ -37,146 +37,154 @@ describe('Pact Standalone', function () {
   });
 
   describe('Check if OS specific files are there', () => {
-    describe('OSX', () => {
-      beforeEach(() => (pact = standalone('darwin')));
+    if (!process.env.ONLY_DOWNLOAD_PACT_FOR_WINDOWS) {
+      describe('OSX', () => {
+        beforeEach(() => (pact = standalone('darwin')));
 
-      it('broker relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
-          .true;
+        it('broker relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
+            .true;
+        });
+
+        it('broker full path', () => {
+          expect(fs.existsSync(pact.brokerFullPath)).to.be.true;
+        });
+
+        it('mock service relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.mockServicePath))).to
+            .be.true;
+        });
+
+        it('mock service full path', () => {
+          expect(fs.existsSync(pact.mockServiceFullPath)).to.be.true;
+        });
+
+        it('stub relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.stubPath))).to.be
+            .true;
+        });
+
+        it('stub full path', () => {
+          expect(fs.existsSync(pact.stubFullPath)).to.be.true;
+        });
+
+        it('provider verifier relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.verifierPath))).to.be
+            .true;
+        });
+
+        it('provider verifier full path', () => {
+          expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
+        });
+
+        it('pact relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be
+            .true;
+        });
+
+        it('pact full path', () => {
+          expect(fs.existsSync(pact.pactFullPath)).to.be.true;
+        });
       });
 
-      it('broker full path', () => {
-        expect(fs.existsSync(pact.brokerFullPath)).to.be.true;
+      describe('Linux ia32', () => {
+        beforeEach(() => (pact = standalone('linux', 'ia32')));
+
+        it('broker relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
+            .true;
+        });
+
+        it('broker full path', () => {
+          expect(fs.existsSync(pact.brokerFullPath)).to.be.true;
+        });
+
+        it('mock service relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.mockServicePath))).to
+            .be.true;
+        });
+
+        it('mock service full path', () => {
+          expect(fs.existsSync(pact.mockServiceFullPath)).to.be.true;
+        });
+
+        it('stub relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.stubPath))).to.be
+            .true;
+        });
+
+        it('stub full path', () => {
+          expect(fs.existsSync(pact.stubFullPath)).to.be.true;
+        });
+
+        it('provider verifier relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.verifierPath))).to.be
+            .true;
+        });
+
+        it('provider verifier full path', () => {
+          expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
+        });
+
+        it('pact relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be
+            .true;
+        });
+
+        it('pact full path', () => {
+          expect(fs.existsSync(pact.pactFullPath)).to.be.true;
+        });
       });
 
-      it('mock service relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.mockServicePath))).to
-          .be.true;
+      describe('Linux X64', () => {
+        beforeEach(() => (pact = standalone('linux', 'x64')));
+
+        it('broker relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
+            .true;
+        });
+
+        it('broker full path', () => {
+          expect(fs.existsSync(pact.brokerFullPath)).to.be.true;
+        });
+
+        it('mock service relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.mockServicePath))).to
+            .be.true;
+        });
+
+        it('mock service full path', () => {
+          expect(fs.existsSync(pact.mockServiceFullPath)).to.be.true;
+        });
+
+        it('stub relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.stubPath))).to.be
+            .true;
+        });
+
+        it('stub full path', () => {
+          expect(fs.existsSync(pact.stubFullPath)).to.be.true;
+        });
+
+        it('provider verifier relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.verifierPath))).to.be
+            .true;
+        });
+
+        it('provider verifier full path', () => {
+          expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
+        });
+
+        it('pact relative path', () => {
+          expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be
+            .true;
+        });
+
+        it('pact full path', () => {
+          expect(fs.existsSync(pact.pactFullPath)).to.be.true;
+        });
       });
-
-      it('mock service full path', () => {
-        expect(fs.existsSync(pact.mockServiceFullPath)).to.be.true;
-      });
-
-      it('stub relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.stubPath))).to.be.true;
-      });
-
-      it('stub full path', () => {
-        expect(fs.existsSync(pact.stubFullPath)).to.be.true;
-      });
-
-      it('provider verifier relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.verifierPath))).to.be
-          .true;
-      });
-
-      it('provider verifier full path', () => {
-        expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
-      });
-
-      it('pact relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be.true;
-      });
-
-      it('pact full path', () => {
-        expect(fs.existsSync(pact.pactFullPath)).to.be.true;
-      });
-    });
-
-    describe('Linux ia32', () => {
-      beforeEach(() => (pact = standalone('linux', 'ia32')));
-
-      it('broker relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
-          .true;
-      });
-
-      it('broker full path', () => {
-        expect(fs.existsSync(pact.brokerFullPath)).to.be.true;
-      });
-
-      it('mock service relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.mockServicePath))).to
-          .be.true;
-      });
-
-      it('mock service full path', () => {
-        expect(fs.existsSync(pact.mockServiceFullPath)).to.be.true;
-      });
-
-      it('stub relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.stubPath))).to.be.true;
-      });
-
-      it('stub full path', () => {
-        expect(fs.existsSync(pact.stubFullPath)).to.be.true;
-      });
-
-      it('provider verifier relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.verifierPath))).to.be
-          .true;
-      });
-
-      it('provider verifier full path', () => {
-        expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
-      });
-
-      it('pact relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be.true;
-      });
-
-      it('pact full path', () => {
-        expect(fs.existsSync(pact.pactFullPath)).to.be.true;
-      });
-    });
-
-    describe('Linux X64', () => {
-      beforeEach(() => (pact = standalone('linux', 'x64')));
-
-      it('broker relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
-          .true;
-      });
-
-      it('broker full path', () => {
-        expect(fs.existsSync(pact.brokerFullPath)).to.be.true;
-      });
-
-      it('mock service relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.mockServicePath))).to
-          .be.true;
-      });
-
-      it('mock service full path', () => {
-        expect(fs.existsSync(pact.mockServiceFullPath)).to.be.true;
-      });
-
-      it('stub relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.stubPath))).to.be.true;
-      });
-
-      it('stub full path', () => {
-        expect(fs.existsSync(pact.stubFullPath)).to.be.true;
-      });
-
-      it('provider verifier relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.verifierPath))).to.be
-          .true;
-      });
-
-      it('provider verifier full path', () => {
-        expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
-      });
-
-      it('pact relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be.true;
-      });
-
-      it('pact full path', () => {
-        expect(fs.existsSync(pact.pactFullPath)).to.be.true;
-      });
-    });
+    }
 
     describe('Windows', () => {
       beforeEach(() => (pact = standalone('win32')));

@@ -1,18 +1,23 @@
 #!/bin/bash -eu
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
-. "${SCRIPT_DIR}/robust-bash.sh"
-. "${SCRIPT_DIR}/download-file.sh"
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
+. "${LIB_DIR}/robust-bash.sh"
+. "${LIB_DIR}/download-file.sh"
 
 require_binary curl
 require_binary unzip
 
 STANDALONE_VERSION=$(grep "PACT_STANDALONE_VERSION = '" ./standalone/install.ts | grep -E -o "([0-9][\.0-9]+[0-9])")
 BASEURL=https://github.com/pact-foundation/pact-ruby-standalone/releases/download
-STANDALONE_DIR="${SCRIPT_DIR}/../../standalone"
+STANDALONE_DIR="${LIB_DIR}/../../standalone"
 
 function download_standalone {
   if [ -z "${1:-}" ]; then
-    error "${FUNCNAME[0]} requires the environment filename suffix"
+    error "${FUNCNAME[0]} requires the filename to download from"
+    exit 1
+  fi
+
+  if [ -z "${2:-}" ]; then
+    error "${FUNCNAME[0]} requires the filename to save the download in"
     exit 1
   fi
   STANDALONE_FILENAME="$2"
@@ -37,9 +42,12 @@ if [[ $(find "${STANDALONE_DIR}" -name "*${STANDALONE_VERSION}") ]]; then
 fi
 
 download_standalone "pact-${STANDALONE_VERSION}-win32.zip"            "win32-${STANDALONE_VERSION}.zip"
-download_standalone "pact-${STANDALONE_VERSION}-osx.tar.gz"           "darwin-${STANDALONE_VERSION}.tar.gz"
-download_standalone "pact-${STANDALONE_VERSION}-linux-x86_64.tar.gz"  "linux-x64-${STANDALONE_VERSION}.tar.gz"
-download_standalone "pact-${STANDALONE_VERSION}-linux-x86.tar.gz"     "linux-ia32-${STANDALONE_VERSION}.tar.gz"
+
+if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
+  download_standalone "pact-${STANDALONE_VERSION}-osx.tar.gz"           "darwin-${STANDALONE_VERSION}.tar.gz"
+  download_standalone "pact-${STANDALONE_VERSION}-linux-x86_64.tar.gz"  "linux-x64-${STANDALONE_VERSION}.tar.gz"
+  download_standalone "pact-${STANDALONE_VERSION}-linux-x86.tar.gz"     "linux-ia32-${STANDALONE_VERSION}.tar.gz"
+fi
 
 # Write readme in the ffi folder
 cat << EOF > "$STANDALONE_DIR/README.md"

@@ -1,17 +1,18 @@
 #!/bin/bash -eu
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
-. "${SCRIPT_DIR}/robust-bash.sh"
-. "${SCRIPT_DIR}/download-file.sh"
+LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
+. "${LIB_DIR}/robust-bash.sh"
+. "${LIB_DIR}/download-file.sh"
 
 require_binary curl
 require_binary gunzip
 
 FFI_VERSION=v0.0.1
 BASEURL=https://github.com/pact-foundation/pact-reference/releases/download
-FFI_DIR="${SCRIPT_DIR}/../../ffi"
+FFI_DIR="${LIB_DIR}/../../ffi"
 
 warn "Cleaning ffi directory $FFI_DIR"
 rm -f "$FFI_DIR"/*
+mkdir -p "$FFI_DIR"
 
 function download_ffi {
   if [ -z "${1:-}" ]; then
@@ -26,18 +27,21 @@ function download_ffi {
   URL="${BASEURL}/libpact_ffi-${FFI_VERSION}/${FFI_FILENAME}"
   DOWNLOAD_LOCATION="$FFI_DIR/${FFI_VERSION}-${FFI_FILENAME}"
 
-  log "Downloading verifier $FFI_VERSION for $SUFFIX"
+  log "Downloading ffi $FFI_VERSION for $SUFFIX"
   download_to "$URL" "$DOWNLOAD_LOCATION"
   gunzip "$DOWNLOAD_LOCATION"
+  debug_log " ... saved to '$DOWNLOAD_LOCATION'"
 }
 
-for file in linux-x86_64.so.gz osx-x86_64.dylib.gz osx-aarch64-apple-darwin.dylib.gz ; do
-  download_ffi "$file" "lib"
-done
+if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
+  download_ffi "linux-x86_64.so.gz" "lib"
+  download_ffi "osx-x86_64.dylib.gz" "lib"
+  download_ffi "osx-aarch64-apple-darwin.dylib.gz" "lib"
+else
+  warn "Skipped download of non-windows FFI libs because ONLY_DOWNLOAD_PACT_FOR_WINDOWS is set"
+fi
 
-for file in windows-x86_64.dll.gz windows-x86_64.dll.lib.gz ; do
-  download_ffi "$file" ""
-done
+download_ffi "windows-x86_64.dll.gz" ""
 
 # Write readme in the ffi folder
 cat << EOF > "$FFI_DIR/README.md"
