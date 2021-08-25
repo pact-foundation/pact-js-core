@@ -116,7 +116,7 @@
   "scripts": {
     "clean": "rimraf '{src,test,bin,standalone}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
     "lint": "eslint . --ext .ts --config .eslintrc",
-    "prebuild": "npm run clean && ./script/download-libs.sh",
+    "prebuild": "npm run clean && bash script/download-libs.sh",
     "build": "tsc",
     "prerelease": "npm run snyk-protect",
     "release": "standard-version",
