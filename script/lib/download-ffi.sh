@@ -38,12 +38,10 @@ if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
   download_ffi "osx-x86_64.dylib.gz" "lib"
   download_ffi "osx-aarch64-apple-darwin.dylib.gz" "lib"
 else
-  log "Skipped download of non-windows FFI libs"
+  warn "Skipped download of non-windows FFI libs because ONLY_DOWNLOAD_PACT_FOR_WINDOWS is set"
 fi
 
-for file in windows-x86_64.dll.gz windows-x86_64.dll.lib.gz ; do
-  download_ffi "$file" ""
-done
+download_ffi "windows-x86_64.dll.gz" ""
 
 # Write readme in the ffi folder
 cat << EOF > "$FFI_DIR/README.md"
