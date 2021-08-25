@@ -16,7 +16,7 @@ function download_to {
   if [[ ${HTTP_CODE} -lt 200 || ${HTTP_CODE} -gt 299 ]] ; then
     error "Unable to download file at url ${URL}"
     error "Downloaded content follows"
-    echo "$(cat $OUTPUT_FILE)"
+    cat "$OUTPUT_FILE"
     exit 1
   fi
 }
