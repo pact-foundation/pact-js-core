@@ -5,5 +5,5 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the 
 npm ci
 npm run format:check
 npm run lint
-npm run test
 npm run build
+npm run test

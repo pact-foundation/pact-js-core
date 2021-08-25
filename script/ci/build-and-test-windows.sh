@@ -6,5 +6,5 @@ npm ci
 # We don't check format on windows because it always fails
 # npm run format:check
 npm run lint
-npm run test
 npm run build
+npm run test
