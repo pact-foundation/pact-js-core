@@ -12,7 +12,12 @@ STANDALONE_DIR="${SCRIPT_DIR}/../../standalone"
 
 function download_standalone {
   if [ -z "${1:-}" ]; then
-    error "${FUNCNAME[0]} requires the environment filename suffix"
+    error "${FUNCNAME[0]} requires the filename to download from"
+    exit 1
+  fi
+
+  if [ -z "${2:-}" ]; then
+    error "${FUNCNAME[0]} requires the filename to save the download in"
     exit 1
   fi
   STANDALONE_FILENAME="$2"

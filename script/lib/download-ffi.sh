@@ -26,7 +26,7 @@ function download_ffi {
   URL="${BASEURL}/libpact_ffi-${FFI_VERSION}/${FFI_FILENAME}"
   DOWNLOAD_LOCATION="$FFI_DIR/${FFI_VERSION}-${FFI_FILENAME}"
 
-  log "Downloading verifier $FFI_VERSION for $SUFFIX"
+  log "Downloading ffi $FFI_VERSION for $SUFFIX"
   download_to "$URL" "$DOWNLOAD_LOCATION"
   gunzip "$DOWNLOAD_LOCATION"
 }
@@ -35,6 +35,8 @@ if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
   for file in linux-x86_64.so.gz osx-x86_64.dylib.gz osx-aarch64-apple-darwin.dylib.gz ; do
     download_ffi "$file" "lib"
   done
+else
+  log "Skipped download of non-windows FFI libs"
 fi
 
 for file in windows-x86_64.dll.gz windows-x86_64.dll.lib.gz ; do
