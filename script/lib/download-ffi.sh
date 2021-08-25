@@ -8,7 +8,7 @@ require_binary gunzip
 
 FFI_VERSION=v0.0.1
 BASEURL=https://github.com/pact-foundation/pact-reference/releases/download
-FFI_DIR="${SCRIPT_DIR}/../ffi"
+FFI_DIR="${SCRIPT_DIR}/../../ffi"
 
 warn "Cleaning ffi directory $FFI_DIR"
 rm -f "$FFI_DIR"/*

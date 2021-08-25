@@ -8,7 +8,7 @@ require_binary unzip
 
 STANDALONE_VERSION=$(grep "PACT_STANDALONE_VERSION = '" ./standalone/install.ts | grep -E -o "([0-9][\.0-9]+[0-9])")
 BASEURL=https://github.com/pact-foundation/pact-ruby-standalone/releases/download
-STANDALONE_DIR="${SCRIPT_DIR}/../standalone"
+STANDALONE_DIR="${SCRIPT_DIR}/../../standalone"
 
 function download_standalone {
   if [ -z "${1:-}" ]; then
