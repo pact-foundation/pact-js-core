@@ -31,9 +31,11 @@ function download_ffi {
   gunzip "$DOWNLOAD_LOCATION"
 }
 
-for file in linux-x86_64.so.gz osx-x86_64.dylib.gz osx-aarch64-apple-darwin.dylib.gz ; do
-  download_ffi "$file" "lib"
-done
+if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
+  for file in linux-x86_64.so.gz osx-x86_64.dylib.gz osx-aarch64-apple-darwin.dylib.gz ; do
+    download_ffi "$file" "lib"
+  done
+fi
 
 for file in windows-x86_64.dll.gz windows-x86_64.dll.lib.gz ; do
   download_ffi "$file" ""
