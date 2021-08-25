@@ -16,7 +16,7 @@ const PLATFORM_LOOKUP = {
 const LIBNAME_PREFIX_LOOKUP = {
   linux: 'lib',
   darwin: 'lib',
-  win32: 'lib', // yes, 'win32' is what process.platform returns on windows 64 bit
+  win32: '', // yes, 'win32' is what process.platform returns on windows 64 bit
 };
 
 // This is a lookup between process.arch and
@@ -44,13 +44,18 @@ export const initialiseFfi = <T>(
     description as { [k: string]: any }
   );
 
-export const libName = (library: string, version: string): string => {
-  const arch = ARCH_LOOKUP[process.arch];
-  const platform = PLATFORM_LOOKUP[process.platform];
+export const libName = (
+  library: string,
+  version: string,
+  processArch = process.arch,
+  processPlatform = process.platform
+): string => {
+  const arch = ARCH_LOOKUP[processArch];
+  const platform = PLATFORM_LOOKUP[processPlatform];
 
   if (!arch || !platform) {
     throw new Error(
-      `Pact does not currently support the operating system and architecture combination '${process.platform}/${process.arch}'`
+      `Pact does not currently support the operating system and architecture combination '${processPlatform}/${processArch}'`
     );
   }
 
@@ -63,10 +68,10 @@ export const libName = (library: string, version: string): string => {
     );
   }
 
-  const libnamePrefix = LIBNAME_PREFIX_LOOKUP[process.platform];
+  const libnamePrefix = LIBNAME_PREFIX_LOOKUP[processPlatform];
   if (libnamePrefix === undefined) {
     throw new Error(
-      `Pact doesn't know what prefix to use for the libraries on '${process.platform}'`
+      `Pact doesn't know what prefix to use for the libraries on '${processPlatform}'`
     );
   }
 
