@@ -29,7 +29,7 @@ const EXTENSION_LOOKUP = {
   'osx-x86_64': 'dylib',
   'osx-aarch64-apple-darwin': 'dylib',
   'linux-x86_64': 'so',
-  'windows-x86_64': 'dll',
+  'windows-x86_64': 'dll.lib',
 };
 
 // This function exists to wrap the untyped ffi lib
