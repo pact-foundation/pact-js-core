@@ -1,6 +1,6 @@
 #!/bin/bash -eu
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
-. "$SCRIPT_DIR"/lib/robust-bash.sh
+. "$SCRIPT_DIR"/../lib/robust-bash.sh
 
 require_env_var CI "This script must be run from CI. If you are running locally, note that it stamps your repo git settings."
 require_env_var GITHUB_ACTOR
