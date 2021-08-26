@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.1.0](https://github.com/pact-foundation/pact-js-core/compare/v13.0.1...v13.1.0) (2021-08-26)
+
+
+### Features
+
+* The new verifier now works on windows too ([#316](https://github.com/pact-foundation/pact-js-core/issues/316)) ([072e080](https://github.com/pact-foundation/pact-js-core/commit/072e080fcec01bfb07747f152e4d93f47cddb33d))
+
+
+### Fixes and Improvements
+
+* correct ffi library name on windows ([814ed9c](https://github.com/pact-foundation/pact-js-core/commit/814ed9c0f8e030555a2a47f2f9f89299ccf4cdca))
+
 ### [13.0.1](https://github.com/pact-foundation/pact-js-core/compare/v13.0.0...v13.0.1) (2021-08-24)
 
 
