@@ -71,11 +71,15 @@ export const validateOptions = (o: VerifierOptions): VerifierOptions => {
     Array.isArray(options.consumerVersionSelectors)
   ) {
     const PROPS: Array<keyof ConsumerVersionSelector> = [
-      'pacticipant',
       'tag',
-      'version',
       'latest',
-      'all',
+      'consumer',
+      'deployedOrReleased',
+      'deployed',
+      'released',
+      'environment',
+      'fallbackTag',
+      'latest',
     ];
     options.consumerVersionSelectors.forEach((selector) => {
       if (selector.tag === 'latest') {
