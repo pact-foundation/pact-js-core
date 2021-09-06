@@ -276,9 +276,14 @@ ConsumerVersionSelector {
   tag?: string;
   latest?: boolean;
   consumer?: string;
+  deployedOrReleased?: boolean;
+  deployed?: boolean; 
+  released?: boolean; 
+  environment?: string;
   fallbackTag?: string;
 }
 ```
+
 See the [Pact Broker documentation on selectors](https://docs.pact.io/pact_broker/advanced_topics/consumer_version_selectors) for more information.
 
 ### Pact Broker Publishing

@@ -1,11 +1,14 @@
 import { LogLevel } from '../logger/types';
 
 export interface ConsumerVersionSelector {
-  pacticipant?: string;
   tag?: string;
-  version?: string;
   latest?: boolean;
-  all?: boolean;
+  consumer?: string;
+  deployedOrReleased?: boolean;
+  deployed?: boolean;
+  released?: boolean;
+  environment?: string;
+  fallbackTag?: string;
 }
 
 export interface VerifierOptions {
