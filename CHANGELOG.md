@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.1.3](https://github.com/pact-foundation/pact-js-core/compare/v13.1.2...v13.1.3) (2021-09-06)
+
+
+### Fixes and Improvements
+
+* Add consumer version selectors for deployedOrReleased, deployed, released and environment ([#715](https://github.com/pact-foundation/pact-js-core/issues/715)) ([1bf3b22](https://github.com/pact-foundation/pact-js-core/commit/1bf3b225da0006ddfca61bd5773df2758f4b249a))
+
 ### [13.1.2](https://github.com/pact-foundation/pact-js-core/compare/v13.1.1...v13.1.2) (2021-09-06)
 
 
