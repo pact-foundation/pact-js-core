@@ -284,16 +284,33 @@ export class Verifier {
 // Creates a new instance of the pact server with the specified option
 export default (options: VerifierOptions): Verifier => new Verifier(options);
 
-// A ConsumerVersionSelector is a way we specify which pacticipants and
-// versions we want to use when configuring verifications.
-//
-// See https://docs.pact.io/selectors for more
-export interface ConsumerVersionSelector {
+/**
+ * The BrokenConsumerVersionSelectors are not understood by the broker.
+ * they are only here to avoid a breaking change for legacy pact-node users.
+ *
+ */
+interface BrokenConsumerVersionSelectors {
   pacticipant?: string;
-  tag?: string;
   version?: string;
-  latest?: boolean;
   all?: boolean;
+}
+
+/**
+ * A ConsumerVersionSelector specifies which pacticipants and
+ * versions to use when performing verification.
+ *
+ * See https://docs.pact.io/selectors for more information.
+ */
+export interface ConsumerVersionSelector
+  extends BrokenConsumerVersionSelectors {
+  tag?: string;
+  latest?: boolean;
+  consumer?: string;
+  deployedOrReleased?: boolean;
+  deployed?: boolean;
+  released?: boolean;
+  environment?: string;
+  fallbackTag?: string;
 }
 
 interface CurrentVerifierOptions {
