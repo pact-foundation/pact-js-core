@@ -1,5 +1,4 @@
-// we have to use ES6 imports as it's providing correct types for chalk.
-import chalk from 'chalk';
+import chalk = require('chalk');
 import path = require('path');
 import fs = require('fs');
 
