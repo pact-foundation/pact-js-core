@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.1.2](https://github.com/pact-foundation/pact-js-core/compare/v13.1.1...v13.1.2) (2021-09-06)
+
+
+### Fixes and Improvements
+
+* Don't create logger on each log call, so that frameworks that check for imports after teardown (jest) don't throw errors deep inside pino ([c5cf077](https://github.com/pact-foundation/pact-js-core/commit/c5cf07796a564fd1d70cafcd6d705d8b3e81a3f7))
+
 ### [13.1.1](https://github.com/pact-foundation/pact-js-core/compare/v13.1.0...v13.1.1) (2021-09-06)
 
 
