@@ -58,6 +58,7 @@ package-lock.json
 *.tgz
 *.tar.gz
 
+
 # ts-node cache
 ts-node-*
 
@@ -72,3 +73,9 @@ log
 reports
 tmp
 .tmp
+
+# Actual tests
+test
+
+# release scripts
+script
