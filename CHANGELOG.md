@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.5](https://github.com/pact-foundation/pact-node/compare/v10.13.4...v10.13.5) (2021-09-06)
+
+
+### Fixes and Improvements
+
+* reduce npm package size ([7804c52](https://github.com/pact-foundation/pact-node/commit/7804c5269bc04b684eaa602ebf7af74cead74fe1))
+
 ### [10.13.4](https://github.com/pact-foundation/pact-node/compare/v10.13.3...v10.13.4) (2021-09-06)
 
 
