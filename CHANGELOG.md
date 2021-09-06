@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.4](https://github.com/pact-foundation/pact-node/compare/v10.13.3...v10.13.4) (2021-09-06)
+
+
+### Fixes and Improvements
+
+* Add consumer version selectors for deployedOrReleased, deployed, released and environment ([#715](https://github.com/pact-foundation/pact-node/issues/715)) ([27945f3](https://github.com/pact-foundation/pact-node/commit/27945f3465403604f9c2b0ce0b251e3b456b80c6))
+* update tar to 6.1.11 ([bcf8fa0](https://github.com/pact-foundation/pact-node/commit/bcf8fa04cbe3efda19fd759250e2d8946135511c))
+
 ### [10.13.3](https://github.com/pact-foundation/pact-node/compare/v10.13.2...v10.13.3) (2021-08-12)
 
 
