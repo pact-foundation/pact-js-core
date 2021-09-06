@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.1.1](https://github.com/pact-foundation/pact-js-core/compare/v13.1.0...v13.1.1) (2021-09-06)
+
+
+### Fixes and Improvements
+
+* bump dependencies to fix a possible issue with a misbehaving pino ([fe09e4e](https://github.com/pact-foundation/pact-js-core/commit/fe09e4e1206eb38dd40fc15c472b2e6c491a8095))
+
 ## [13.1.0](https://github.com/pact-foundation/pact-js-core/compare/v13.0.1...v13.1.0) (2021-08-26)
 
 
