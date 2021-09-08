@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.6](https://github.com/pact-foundation/pact-node/compare/v10.13.5...v10.13.6) (2021-09-08)
+
+
+### Fixes and Improvements
+
+* Allow the user to specify the timeout (Fixes [#298](https://github.com/pact-foundation/pact-node/issues/298), backported from 4c77ddb) ([c1fd849](https://github.com/pact-foundation/pact-node/commit/c1fd8493069a4571a68a25b1cfbd62ab5f412f4e))
+* Fix an issue that caused ENOENT on some platforms ([76e2fa1](https://github.com/pact-foundation/pact-node/commit/76e2fa10b89be7f8d7b81a94d7bd6d0adc1e30e9))
+* update standalone to 1.88.65 ([#319](https://github.com/pact-foundation/pact-node/issues/319)) ([9c20478](https://github.com/pact-foundation/pact-node/commit/9c20478163abb68506fb334174d443e2944f5902))
+
 ### [10.13.5](https://github.com/pact-foundation/pact-node/compare/v10.13.4...v10.13.5) (2021-09-06)
 
 
