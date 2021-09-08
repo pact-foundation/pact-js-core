@@ -101,7 +101,7 @@ export class Publisher {
     return timeout(
       new Promise<string[]>((resolve, reject) => {
         const instance = spawn.spawnBinary(
-          pactStandalone.brokerPath,
+          pactStandalone.brokerFullPath,
           [{ cliVerb: 'publish' }, this.options],
           this.__argMapping
         );

@@ -99,7 +99,7 @@ export class CanDeploy {
     const canDeployPromise = new Promise<CanDeployResponse | string>(
       (resolve, reject) => {
         const instance = spawn.spawnBinary(
-          pactStandalone.brokerPath,
+          pactStandalone.brokerFullPath,
           [
             { cliVerb: 'can-i-deploy' },
             ...CanDeploy.convertForSpawnBinary(this.options),

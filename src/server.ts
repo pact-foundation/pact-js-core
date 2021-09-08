@@ -64,7 +64,7 @@ export class Server extends AbstractService {
     }
 
     super(
-      pact.mockServicePath,
+      pact.mockServiceFullPath,
       options,
       {
         port: '--port',
