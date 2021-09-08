@@ -112,5 +112,6 @@ export interface ServerOptions {
   provider?: string;
   monkeypatch?: string;
   logLevel?: LogLevel;
+  timeout?: number;
   pactFileWriteMode?: 'overwrite' | 'update' | 'merge';
 }

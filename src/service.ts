@@ -14,10 +14,13 @@ import needle = require('needle');
 // Get a reference to the global setTimeout object in case it is mocked by a testing library later
 const setTimeout = global.setTimeout;
 
-const CHECKTIME = 500;
 const RETRY_AMOUNT = 60;
-const PROCESS_TIMEOUT = 30000;
 
+const getTimeout = (options: ServiceOptions): number =>
+  options.timeout || 30000;
+
+const getRetryTickTime = (options: ServiceOptions): number =>
+  Math.round(getTimeout(options) / RETRY_AMOUNT);
 interface AbstractServiceEventInterface {
   START_EVENT: string;
   STOP_EVENT: string;
@@ -184,7 +187,7 @@ export abstract class AbstractService extends events.EventEmitter {
     // check service is available
     return this.__waitForServiceUp()
       .timeout(
-        PROCESS_TIMEOUT,
+        getTimeout(this.options),
         `Couldn't start Pact with PID: ${this.__instance.pid}`
       )
       .then(() => {
@@ -199,7 +202,7 @@ export abstract class AbstractService extends events.EventEmitter {
     const pid = this.__instance ? this.__instance.pid : -1;
     return q(spawn.killBinary(this.__instance))
       .then(() => this.__waitForServiceDown())
-      .timeout(PROCESS_TIMEOUT, `Couldn't stop Pact with PID '${pid}'`)
+      .timeout(getTimeout(this.options), `Couldn't stop Pact with PID '${pid}'`)
       .then(() => {
         this.__running = false;
         this.emit(AbstractService.Events.STOP_EVENT, this);
@@ -239,7 +242,7 @@ export abstract class AbstractService extends events.EventEmitter {
         );
       }
       // eslint-disable-next-line @typescript-eslint/no-use-before-define
-      setTimeout(check.bind(this), CHECKTIME);
+      setTimeout(check.bind(this), getRetryTickTime(this.options));
     };
 
     const check = (): void => {
@@ -275,7 +278,7 @@ export abstract class AbstractService extends events.EventEmitter {
               );
               return;
             }
-            setTimeout(check, CHECKTIME);
+            setTimeout(check, getRetryTickTime(this.options));
           },
           () => deferred.resolve()
         );
@@ -332,6 +335,7 @@ export interface ServiceOptions {
   sslkey?: string;
   log?: string;
   logLevel?: LogLevel;
+  timeout?: number;
 }
 
 // This is the pact binary's log level, which is a subset of the log levels for pact-node

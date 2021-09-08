@@ -405,6 +405,7 @@ var server = pact.createStub({
 | sslcert   | false     | string  | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults false                      | to none |
 | sslkey    | false     | string  | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this option false. Defaults to none     |
 | cors      | false     | boolean | Allow CORS OPTION requests to be accepted, defaults to 'false'                                                                       |
+| timeout   | false     | number  | How long to wait for the stub server to start up (in milliseconds). Defaults to 30000 (30 seconds) |
 
 ### Message Pacts
 
