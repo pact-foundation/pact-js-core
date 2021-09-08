@@ -84,7 +84,7 @@ export class Message {
     const { pactFileWriteMode, content, ...restOptions } = this.options;
 
     const instance = spawn.spawnBinary(
-      pactStandalone.messagePath,
+      pactStandalone.messageFullPath,
       [{ pactFileWriteMode }, restOptions],
       this.__argMapping
     );

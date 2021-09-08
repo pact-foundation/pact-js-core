@@ -260,7 +260,7 @@ export class Verifier {
     logger.info('Verifying Pact Files');
     const deferred = q.defer<string>();
     const instance = spawn.spawnBinary(
-      pactStandalone.verifierPath,
+      pactStandalone.verifierFullPath,
       this.options,
       this.__argMapping
     );

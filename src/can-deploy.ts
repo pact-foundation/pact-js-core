@@ -99,7 +99,7 @@ export class CanDeploy {
     );
     const deferred = q.defer<CanDeployResponse | string>();
     const instance = spawn.spawnBinary(
-      pactStandalone.brokerPath,
+      pactStandalone.brokerFullPath,
       [
         { cliVerb: 'can-i-deploy' },
         ...CanDeploy.convertForSpawnBinary(this.options),
