@@ -69,3 +69,6 @@ test
 
 # release scripts
 script
+
+# In case you're publishing pact-node and pact-core, you'll want this in pact node
+ffi
