@@ -29,4 +29,5 @@ export interface VerifierOptions {
   consumerVersionSelectors?: ConsumerVersionSelector[];
   timeout?: number;
   logLevel?: LogLevel;
+  disableSslVerification?: boolean;
 }

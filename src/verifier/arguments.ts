@@ -26,9 +26,8 @@ export const ignoredArguments = [
   'validateSSL',
 ];
 
-export const argMapping: ArgMapping<
-  VerifierOptions & DeprecatedVerifierOptions
-> = {
+export const argMapping: ArgMapping<VerifierOptions &
+  DeprecatedVerifierOptions> = {
   providerBaseUrl: (providerBaseUrl: string) => {
     const u = url.parse(providerBaseUrl);
     return u && u.port && u.hostname
@@ -77,8 +76,8 @@ export const argMapping: ArgMapping<
   publishVerificationResult: { arg: '--publish', mapper: 'flag' },
   enablePending: { arg: '--enable-pending', mapper: 'flag' },
   timeout: { arg: '--request-timeout', mapper: 'string' },
-
-  // We should support these, I think
+  disableSslVerification: { arg: '--disable-ssl-verification', mapper: 'flag' },
+  // We should support these in the future, I think
   format: {
     warningMessage:
       "All output is now on standard out, setting 'format' has no effect",
@@ -100,7 +99,6 @@ export const argMapping: ArgMapping<
     warningMessage:
       'The undocumented feature monkeypatch is no more, please file an issue if you were using it and need this functionality',
   },
-  // Todo in Rust ?
   customProviderHeaders: {
     warningMessage:
       'customProviderHeaders have been removed. This functionality is provided by request filters in a much more flexible way',
