@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.1.5](https://github.com/pact-foundation/pact-js-core/compare/v13.1.4...v13.1.5) (2021-09-09)
+
+
+### Fixes and Improvements
+
+* add disableSslVerification option to verifier ([f354d8a](https://github.com/pact-foundation/pact-js-core/commit/f354d8a2052ef52ed2066bffcc18b3e022ca44d0))
+* update standalone to 1.88.66 ([#320](https://github.com/pact-foundation/pact-js-core/issues/320)) ([92f0532](https://github.com/pact-foundation/pact-js-core/commit/92f0532af57757acfca01efae75cefd192de0a58))
+
 ### [13.1.4](https://github.com/pact-foundation/pact-js-core/compare/v13.1.3...v13.1.4) (2021-09-08)
 
 
