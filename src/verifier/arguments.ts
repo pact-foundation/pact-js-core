@@ -26,8 +26,9 @@ export const ignoredArguments = [
   'validateSSL',
 ];
 
-export const argMapping: ArgMapping<VerifierOptions &
-  DeprecatedVerifierOptions> = {
+export const argMapping: ArgMapping<
+  VerifierOptions & DeprecatedVerifierOptions
+> = {
   providerBaseUrl: (providerBaseUrl: string) => {
     const u = url.parse(providerBaseUrl);
     return u && u.port && u.hostname
