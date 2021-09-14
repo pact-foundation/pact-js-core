@@ -53,7 +53,7 @@ export const argMapping: ArgMapping<
   pactBrokerUrl: { arg: '--broker-url', mapper: 'string' },
   pactBrokerUsername: { arg: '--user', mapper: 'string' },
   pactBrokerPassword: { arg: '--password', mapper: 'string' },
-  pactBrokerToken: { arg: '--broker-token', mapper: 'string' },
+  pactBrokerToken: { arg: '--token', mapper: 'string' },
   consumerVersionTags: (tags: string | string[]) => [
     '--consumer-version-tags',
     Array.isArray(tags) ? tags.join(',') : tags,
