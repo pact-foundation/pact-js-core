@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.1.6](https://github.com/pact-foundation/pact-js-core/compare/v13.1.5...v13.1.6) (2021-09-14)
+
+
+### Fixes and Improvements
+
+* **verifier:** Correct the way that authentication tokens are sent to the verifier ([4902db7](https://github.com/pact-foundation/pact-js-core/commit/4902db73fcd334647b246cd03c9e979ca024b069))
+
 ### [13.1.5](https://github.com/pact-foundation/pact-js-core/compare/v13.1.4...v13.1.5) (2021-09-09)
 
 
