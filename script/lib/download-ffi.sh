@@ -17,6 +17,22 @@ warn "Cleaning ffi directory $FFI_DIR"
 rm -f "$FFI_DIR"/*
 mkdir -p "$FFI_DIR"
 
+
+function download_ffi_file {
+  if [ -z "${1:-}" ]; then
+    error "${FUNCNAME[0]} requires the filename to download"
+    exit 1
+  fi
+  FFI_FILENAME="$1"
+
+  URL="${BASEURL}/libpact_ffi-${FFI_VERSION}/${FFI_FILENAME}"
+  DOWNLOAD_LOCATION="$FFI_DIR/${FFI_VERSION}-${FFI_FILENAME}"
+
+  log "Downloading ffi $FFI_VERSION for $SUFFIX"
+  download_to "$URL" "$DOWNLOAD_LOCATION"
+  debug_log " ... downloaded to '$DOWNLOAD_LOCATION'"
+}
+
 function download_ffi {
   if [ -z "${1:-}" ]; then
     error "${FUNCNAME[0]} requires the environment filename suffix"
@@ -25,15 +41,9 @@ function download_ffi {
   SUFFIX="$1"
   PREFIX="${2:-}"
 
-  FFI_FILENAME="${PREFIX}pact_ffi-$SUFFIX"
-
-  URL="${BASEURL}/libpact_ffi-${FFI_VERSION}/${FFI_FILENAME}"
-  DOWNLOAD_LOCATION="$FFI_DIR/${FFI_VERSION}-${FFI_FILENAME}"
-
-  log "Downloading ffi $FFI_VERSION for $SUFFIX"
-  download_to "$URL" "$DOWNLOAD_LOCATION"
+  download_ffi_file "${PREFIX}pact_ffi-$SUFFIX"
+  debug_log " ... unzipping '$DOWNLOAD_LOCATION'"
   gunzip "$DOWNLOAD_LOCATION"
-  debug_log " ... saved to '$DOWNLOAD_LOCATION'"
 }
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
@@ -45,6 +55,8 @@ else
 fi
 
 download_ffi "windows-x86_64.dll.gz" ""
+
+download_ffi_file "pact.h"
 
 # Write readme in the ffi folder
 cat << EOF > "$FFI_DIR/README.md"
