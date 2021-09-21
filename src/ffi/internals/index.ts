@@ -35,7 +35,7 @@ const EXTENSION_LOOKUP = {
 
 // This function exists to wrap the untyped ffi lib
 // and return a typed version based on the description
-export const initialiseFfi = <T>(
+export const createFfi = <T>(
   filename: string,
   description: T
 ): FfiBinding<T> => {
