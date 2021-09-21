@@ -5,8 +5,8 @@ LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the scr
 
 require_binary curl
 require_binary unzip
+require_env_var STANDALONE_VERSION
 
-STANDALONE_VERSION=$(grep "PACT_STANDALONE_VERSION = '" ./standalone/install.ts | grep -E -o "([0-9][\.0-9]+[0-9])")
 BASEURL=https://github.com/pact-foundation/pact-ruby-standalone/releases/download
 STANDALONE_DIR="${LIB_DIR}/../../standalone"
 
@@ -36,8 +36,10 @@ function download_standalone {
   fi
 }
 
+log "Downloading Ruby standalone ${STANDALONE_VERSION}"
+
 if [[ $(find "${STANDALONE_DIR}" -name "*${STANDALONE_VERSION}") ]]; then
-  echo "skipping download of standalone, as they exist"
+  log "Skipping download of Ruby standalone, as it exists"
   exit 0
 fi
 
