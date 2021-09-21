@@ -11,7 +11,11 @@ type FfiFunction<T> = T extends (...a: infer Args) => infer ReturnType
   ? T & AsyncFfiCall<Args, ReturnType>
   : never;
 
-type StringType = 'string' | 'void' | 'int' | 'double' | 'float';
+// We allow any here, because typescript won't accept the `StructType`from
+// ref-struct-di for some reason. Using any lets us pass through arbitrary
+// parameter types, so we just have to be careful to get them right.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type VariableType = 'string' | 'void' | 'int' | 'double' | 'float' | any;
 
 type ActualType<T> = [T] extends ['string']
   ? string
@@ -19,23 +23,23 @@ type ActualType<T> = [T] extends ['string']
   ? void
   : [T] extends ['int' | 'double' | 'float']
   ? number
-  : never;
+  : T;
 
 type ArrayActualType<Tuple extends [...Array<unknown>]> = {
   [Index in keyof Tuple]: ActualType<Tuple[Index]>;
 } & { length: Tuple['length'] };
 
-type TupleType = [StringType, Array<StringType>];
+type TupleType = [VariableType, Array<VariableType>];
 
 type FunctionFromArray<A extends TupleType> = A extends [
-  r: infer ReturnTypeString,
+  r: infer ReturnType,
   args: [...infer ArgArrayType]
 ]
-  ? (...args: ArrayActualType<ArgArrayType>) => ActualType<ReturnTypeString>
+  ? (...args: ArrayActualType<ArgArrayType>) => ActualType<ReturnType>
   : never;
 
 type LibDescription<Functions extends string> = {
-  [k in Functions]: [StringType, Array<StringType>];
+  [k in Functions]: [VariableType, Array<VariableType>];
 };
 
 export type FfiBinding<T> = T extends LibDescription<string>
