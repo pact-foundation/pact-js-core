@@ -3,8 +3,10 @@ import refStructDi = require('ref-struct-di');
 
 const struct = refStructDi(ref);
 
-const pact = ref.types.void; // unknown type
-const interaction = ref.types.void; // unknown type
+const unknown = ref.types.void; // unknown type
+
+const pact = unknown;
+const interaction = unknown;
 const InteractionPtr = ref.refType(interaction);
 const PactPtr = ref.refType(pact);
 const PactHandle = struct({
