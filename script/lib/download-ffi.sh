@@ -3,10 +3,13 @@ LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the scr
 . "${LIB_DIR}/robust-bash.sh"
 . "${LIB_DIR}/download-file.sh"
 
+PROJECT_DIR="${LIB_DIR}"/../../
+
 require_binary curl
 require_binary gunzip
 
-FFI_VERSION=v0.0.1
+
+FFI_VERSION=v$(grep "PACT_FFI_VERSION = '" "$PROJECT_DIR"/src/ffi/index.ts | grep -E -o "([0-9][\.0-9]+[0-9])")
 BASEURL=https://github.com/pact-foundation/pact-reference/releases/download
 FFI_DIR="${LIB_DIR}/../../ffi"
 

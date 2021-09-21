@@ -1,6 +1,8 @@
 import { initialiseFfi, libName } from './internals';
 import { FfiBinding } from './internals/types';
 
+const PACT_FFI_VERSION = '0.0.1';
+
 // We have to declare this twice because typescript can't figure it out
 // There's a workaround here we could employ:
 // https://gist.github.com/jcalz/381562d282ebaa9b41217d1b31e2c211
@@ -19,4 +21,4 @@ const description: FfiVerifierType = {
 };
 
 export const getVerifierLib = (): FfiBinding<FfiVerifierType> =>
-  initialiseFfi(libName('pact_ffi', 'v0.0.1'), description);
+  initialiseFfi(libName('pact_ffi', `v${PACT_FFI_VERSION}`), description);

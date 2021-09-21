@@ -1,5 +1,5 @@
 import { VerifierOptions } from './types';
-import { getVerifierLib } from '../ffi/verifier';
+import { getFfiLib } from '../ffi';
 import logger from '../logger';
 import { argMapping, ignoredArguments } from './arguments';
 import { argumentMapper } from '../ffi/argumentMapper';
@@ -13,7 +13,7 @@ const INVALID_ARGUMENTS = 4;
 const LOG_ENV_VAR_NAME = 'PACT_LOG_LEVEL';
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
-  const verifierLib = getVerifierLib();
+  const verifierLib = getFfiLib();
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
     process.env[LOG_ENV_VAR_NAME] = opts.logLevel;
