@@ -11,10 +11,14 @@ require_env_var FFI_VERSION
 BASEURL=https://github.com/pact-foundation/pact-reference/releases/download
 FFI_DIR="${LIB_DIR}/../../ffi"
 
+if [[ $(find "${FFI_DIR}" -name "${FFI_VERSION}*") ]]; then
+  log "Skipping download of FFI libraries ${FFI_VERSION}, as they exist"
+  exit 0
+fi
+
 warn "Cleaning ffi directory $FFI_DIR"
 rm -f "$FFI_DIR"/*
 mkdir -p "$FFI_DIR"
-
 
 function download_ffi_file {
   if [ -z "${1:-}" ]; then
