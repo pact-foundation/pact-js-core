@@ -3,6 +3,8 @@ import { FfiBinding } from './internals/types';
 
 import ref = require('ref-napi');
 import structDi = require('ref-struct-di');
+import logger, { DEFAULT_LOG_LEVEL } from '../logger';
+import { LogLevel } from '../logger/types';
 
 const struct = structDi(ref);
 
@@ -89,5 +91,17 @@ const description: FfiDeclarations = {
   pactffi_get_tls_ca_certificate: ['string', []],
 };
 
-export const getFfiLib = (): FfiBinding<FfiDeclarations> =>
-  initialiseFfi(libName('pact_ffi', `v${PACT_FFI_VERSION}`), description);
+const LOG_ENV_VAR_NAME = 'PACT_LOG_LEVEL';
+
+export const getFfiLib = (
+  logLevel: LogLevel = DEFAULT_LOG_LEVEL
+): FfiBinding<FfiDeclarations> => {
+  logger.debug(`Initalising native core at log level '${logLevel}'`);
+  process.env[LOG_ENV_VAR_NAME] = logLevel;
+  const lib = initialiseFfi(
+    libName('pact_ffi', `v${PACT_FFI_VERSION}`),
+    description
+  );
+  lib.pactffi_init(LOG_ENV_VAR_NAME);
+  return lib;
+};

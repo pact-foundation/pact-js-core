@@ -10,15 +10,10 @@ const VERIFICATION_FAILED = 1;
 // 3 - method panicked
 const INVALID_ARGUMENTS = 4;
 
-const LOG_ENV_VAR_NAME = 'PACT_LOG_LEVEL';
-
 export const verify = (opts: VerifierOptions): Promise<string> => {
   const verifierLib = getFfiLib();
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
-    process.env[LOG_ENV_VAR_NAME] = opts.logLevel;
-    verifierLib.pactffi_init(LOG_ENV_VAR_NAME);
-
     const request = argumentMapper(argMapping, opts, ignoredArguments)
       .map((s) => s.replace('\n', ''))
       .join('\n');

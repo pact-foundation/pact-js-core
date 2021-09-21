@@ -9,6 +9,8 @@ const logContext = `pact-core@${pkg.version}`;
 let currentLogLevel: LogLevel = 'info';
 let logger = createLogger(currentLogLevel);
 
+export const DEFAULT_LOG_LEVEL = 'info';
+
 export const setLogLevel = (level: LogLevel = 'info'): void => {
   currentLogLevel = level;
   logger = createLogger(currentLogLevel);

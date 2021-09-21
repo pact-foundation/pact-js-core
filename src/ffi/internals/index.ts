@@ -2,6 +2,7 @@
 import ffi = require('ffi-napi');
 import path = require('path');
 import { FfiBinding } from './types';
+import logger from '../../logger';
 
 // This is a lookup between process.platform and
 // the platform names used in pact-reference
@@ -37,12 +38,17 @@ const EXTENSION_LOOKUP = {
 export const initialiseFfi = <T>(
   filename: string,
   description: T
-): FfiBinding<T> =>
-  ffi.Library(
+): FfiBinding<T> => {
+  logger.trace(`Native core located at '${filename}'`);
+  const lib = ffi.Library(
     path.resolve(__dirname, '..', '..', '..', 'ffi', filename),
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     description as { [k: string]: any }
   );
+  logger.trace(`Native core linked successfully`);
+
+  return lib;
+};
 
 export const libName = (
   library: string,
