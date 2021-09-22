@@ -14,6 +14,12 @@ export const argumentMapper = <PactOptions>(
         }
         return [];
       }
+      if (options[key] === undefined) {
+        logger.warn(
+          `The Verifier option '${key}' was was explicitly set to undefined and will be ignored. This may indicate an error in your config. Remove the option entirely to prevent this warning`
+        );
+        return [];
+      }
       if (argMapping[key].warningMessage) {
         logger.warn(argMapping[key].warningMessage);
         return [];
