@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.1.7](https://github.com/pact-foundation/pact-js-core/compare/v13.1.6...v13.1.7) (2021-09-22)
+
+
+### Fixes and Improvements
+
+* Bump version of libpact_ffi to 0.0.2 ([490249c](https://github.com/pact-foundation/pact-js-core/commit/490249caceaf65659c629d7c42590ff46fa97115))
+* Verifier now accepts explicitly setting options to undefined (it will ignore and warn). This fixes a regression introduced in beta-45 ([7521c61](https://github.com/pact-foundation/pact-js-core/commit/7521c6121ec0523795c97ec5c422c3b6d6024dd8))
+
 ### [13.1.6](https://github.com/pact-foundation/pact-js-core/compare/v13.1.5...v13.1.6) (2021-09-14)
 
 
