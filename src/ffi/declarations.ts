@@ -1,5 +1,7 @@
 import ref = require('ref-napi');
 import refStructDi = require('ref-struct-di');
+import { FfiEnum } from './internals/types';
+import { FfiInteractionPart, FfiSpecificationVersion } from './types';
 
 const struct = refStructDi(ref);
 
@@ -17,6 +19,11 @@ const InteractionHandle = struct({
   interaction: InteractionPtr,
 });
 
+const StringResultStruct = struct({
+  tag: ref.types.int,
+  ok: ref.types.CString,
+});
+
 // We have to declare this twice because typescript can't figure it out
 // There's a workaround here we could employ:
 // https://gist.github.com/jcalz/381562d282ebaa9b41217d1b31e2c211
@@ -30,42 +37,57 @@ export type FfiDeclarations = {
     [typeof PactHandle, 'string', 'bool']
   ];
   pactffi_new_pact: [typeof PactHandle, ['string', 'string']];
-  pactffi_with_specification: ['void', [typeof PactHandle, 'int']];
+  pactffi_with_specification: [
+    'bool',
+    [typeof PactHandle, FfiEnum<FfiSpecificationVersion>]
+  ];
   pactffi_new_interaction: [
     typeof InteractionHandle,
     [typeof PactHandle, 'string']
   ];
-  pactffi_upon_receiving: ['void', [typeof InteractionHandle, 'string']];
-  pactffi_given: ['void', [typeof InteractionHandle, 'string']];
+  pactffi_upon_receiving: ['bool', [typeof InteractionHandle, 'string']];
+  pactffi_given: ['bool', [typeof InteractionHandle, 'string']];
   pactffi_given_with_param: [
-    'void',
+    'bool',
     [typeof InteractionHandle, 'string', 'string', 'string']
   ];
   pactffi_with_request: [
-    'void',
+    'bool',
     [typeof InteractionHandle, 'string', 'string']
   ];
   pactffi_with_query_parameter: [
-    'void',
+    'bool',
     [typeof InteractionHandle, 'string', 'int', 'string']
   ];
   pactffi_with_header: [
-    'void',
-    [typeof InteractionHandle, 'int', 'string', 'int', 'string']
+    'bool',
+    [
+      typeof InteractionHandle,
+      FfiEnum<FfiInteractionPart>,
+      'string',
+      'int',
+      'string'
+    ]
   ];
   pactffi_with_body: [
-    'void',
-    [typeof InteractionHandle, 'int', 'string', 'string']
+    'bool',
+    [typeof InteractionHandle, FfiEnum<FfiInteractionPart>, 'string', 'string']
   ];
   pactffi_with_binary_file: [
-    'void',
-    [typeof InteractionHandle, 'int', 'string', 'string', 'int']
+    'bool',
+    [
+      typeof InteractionHandle,
+      FfiEnum<FfiInteractionPart>,
+      'string',
+      'string',
+      'int'
+    ]
   ];
   pactffi_with_multipart_file: [
-    'void',
+    typeof StringResultStruct,
     [typeof InteractionHandle, 'int', 'string', 'string', 'string']
   ];
-  pactffi_response_status: ['void', [typeof InteractionHandle, 'int']];
+  pactffi_response_status: ['bool', [typeof InteractionHandle, 'int']];
   pactffi_write_pact_file: ['int', ['int', 'string']];
   pactffi_cleanup_mock_server: ['bool', ['int']];
   pactffi_mock_server_mismatches: ['string', ['int']];
@@ -85,33 +107,33 @@ export const declarations: FfiDeclarations = {
   pactffi_verify: ['int', ['string']],
   pactffi_create_mock_server_for_pact: ['int', [PactHandle, 'string', 'bool']],
   pactffi_new_pact: [PactHandle, ['string', 'string']],
-  pactffi_with_specification: ['void', [PactHandle, 'int']],
+  pactffi_with_specification: ['bool', [PactHandle, 'int']],
   pactffi_new_interaction: [InteractionHandle, [PactHandle, 'string']],
-  pactffi_upon_receiving: ['void', [InteractionHandle, 'string']],
-  pactffi_given: ['void', [InteractionHandle, 'string']],
+  pactffi_upon_receiving: ['bool', [InteractionHandle, 'string']],
+  pactffi_given: ['bool', [InteractionHandle, 'string']],
   pactffi_given_with_param: [
-    'void',
+    'bool',
     [InteractionHandle, 'string', 'string', 'string'],
   ],
-  pactffi_with_request: ['void', [InteractionHandle, 'string', 'string']],
+  pactffi_with_request: ['bool', [InteractionHandle, 'string', 'string']],
   pactffi_with_query_parameter: [
-    'void',
+    'bool',
     [InteractionHandle, 'string', 'int', 'string'],
   ],
   pactffi_with_header: [
-    'void',
+    'bool',
     [InteractionHandle, 'int', 'string', 'int', 'string'],
   ],
-  pactffi_with_body: ['void', [InteractionHandle, 'int', 'string', 'string']],
+  pactffi_with_body: ['bool', [InteractionHandle, 'int', 'string', 'string']],
   pactffi_with_binary_file: [
-    'void',
+    'bool',
     [InteractionHandle, 'int', 'string', 'string', 'int'],
   ],
   pactffi_with_multipart_file: [
-    'void',
+    StringResultStruct,
     [InteractionHandle, 'int', 'string', 'string', 'string'],
   ],
-  pactffi_response_status: ['void', [InteractionHandle, 'int']],
+  pactffi_response_status: ['bool', [InteractionHandle, 'int']],
   pactffi_write_pact_file: ['int', ['int', 'string']],
   pactffi_cleanup_mock_server: ['bool', ['int']],
   pactffi_mock_server_mismatches: ['string', ['int']],
@@ -127,20 +149,6 @@ export const declarations: FfiDeclarations = {
 export enum FfiFunctionResult {
   RESULT_OK = 0,
   RESULT_FAILED,
-}
-
-export enum FfiSpecificationVersion {
-  SPECIFICATION_VERSION_UNKNOWN = 0,
-  SPECIFICATION_VERSION_V1,
-  SPECIFICATION_VERSION_V1_1,
-  SPECIFICATION_VERSION_V2,
-  SPECIFICATION_VERSION_V3,
-  SPECIFICATION_VERSION_V4,
-}
-
-export enum FfiInteractionPart {
-  INTERACTION_PART_REQUEST = 0,
-  INTERACTION_PART_RESPONSE,
 }
 
 export enum FfiLogLevelFilter {
