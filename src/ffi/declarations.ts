@@ -67,10 +67,27 @@ export type FfiDeclarations = {
     'bool',
     [typeof PactHandle, FfiEnum<FfiSpecificationVersion>]
   ];
+  /**
+   * Creates a new Interaction and returns a handle to it.
+   *
+   * * `description` - The interaction description. It needs to be unique for each interaction.
+   *
+   * Returns a new `InteractionHandle`.
+   *
+   * struct InteractionHandle pactffi_new_interaction(struct PactHandle pact, const char *description);
+   */
   pactffi_new_interaction: [
     typeof InteractionHandle,
     [typeof PactHandle, 'string']
   ];
+  /**
+   * Sets the description for the Interaction. Returns false if the interaction or Pact can't be
+   * modified (i.e. the mock server for it has already started)
+   *
+   * `description` - The interaction description. It needs to be unique for each interaction.
+   *
+   * bool pactffi_upon_receiving(struct InteractionHandle interaction, const char *description);
+   */
   pactffi_upon_receiving: ['bool', [typeof InteractionHandle, 'string']];
   /** bool pactffi_given(struct InteractionHandle interaction, const char *description); */
   pactffi_given: ['bool', [typeof InteractionHandle, 'string']];
@@ -115,8 +132,50 @@ export type FfiDeclarations = {
     [typeof InteractionHandle, 'int', 'string', 'string', 'string']
   ];
   pactffi_response_status: ['bool', [typeof InteractionHandle, 'int']];
+  /**
+   * External interface to trigger a mock server to write out its pact file. This function should
+   * be called if all the consumer tests have passed. The directory to write the file to is passed
+   * as the second parameter. If a NULL pointer is passed, the current working directory is used.
+   *
+   * If overwrite is true, the file will be overwritten with the contents of the current pact.
+   * Otherwise, it will be merged with any existing pact file.
+   *
+   * Returns 0 if the pact file was successfully written. Returns a positive code if the file can
+   * not be written, or there is no mock server running on that port or the function panics.
+   *
+   * # Errors
+   *
+   * Errors are returned as positive values.
+   *
+   * | Error | Description |
+   * |-------|-------------|
+   * | 1 | A general panic was caught |
+   * | 2 | The pact file was not able to be written |
+   * | 3 | A mock server with the provided port was not found |
+   */
   pactffi_write_pact_file: ['int', ['int', 'string']];
+  /**
+   * External interface to cleanup a mock server. This function will try terminate the mock server
+   * with the given port number and cleanup any memory allocated for it. Returns true, unless a
+   * mock server with the given port number does not exist, or the function panics.
+   */
   pactffi_cleanup_mock_server: ['bool', ['int']];
+  /**
+   * External interface to get all the mismatches from a mock server. The port number of the mock
+   * server is passed in, and a pointer to a C string with the mismatches in JSON format is
+   * returned.
+   *
+   * **NOTE:** The JSON string for the result is allocated on the heap, and will have to be freed
+   * once the code using the mock server is complete. The [`cleanup_mock_server`](fn.cleanup_mock_server.html) function is
+   * provided for this purpose.
+   *
+   * # Errors
+   *
+   * If there is no mock server with the provided port number, or the function panics, a NULL
+   * pointer will be returned. Don't try to dereference it, it will not end well for you.
+   *
+   * char *pactffi_mock_server_mismatches(int32_t mock_server_port);
+   */
   pactffi_mock_server_mismatches: ['string', ['int']];
   pactffi_get_tls_ca_certificate: ['string', []];
   pactffi_log_message: ['void', ['string', 'string', 'string']];

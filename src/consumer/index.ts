@@ -6,29 +6,15 @@ import {
   INTERACTION_PART_RESPONSE,
 } from '../ffi/types';
 import { logCrashAndThrow, logErrorAndThrow } from '../logger';
+import { wrapAllWithCheck, wrapWithCheck } from './checkErrors';
+
+import { ConsumerInteraction, ConsumerPact, MatchingResult } from './types';
 
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap {
   [key: string]: AnyJson;
 }
 type JsonArray = Array<AnyJson>;
-
-type ConsumerInteraction = {
-  uponReceiving: (description: string) => boolean;
-  given: (state: string) => boolean;
-  withRequest: (method: string, path: string) => boolean;
-  withQuery: (name: string, index: number, value: string) => boolean;
-  withStatus: (status: number) => boolean;
-  withRequestHeader: (name: string, index: number, value: string) => boolean;
-  withRequestBody: (body: string, contentType: string) => boolean;
-  withResponseHeader: (name: string, index: number, value: string) => boolean;
-  withResponseBody: (body: string, contentType: string) => boolean;
-};
-
-type ConsumerPact = {
-  newInteraction: (description: string) => ConsumerInteraction;
-  createMockServer: (address: string, tls?: boolean) => number;
-};
 
 export const makeConsumerPact = (
   consumer: string,
@@ -73,9 +59,24 @@ export const makeConsumerPact = (
       }
       return port;
     },
+    mockServerMismatches: (port: number): MatchingResult => {
+      const result = JSON.parse(lib.pactffi_mock_server_mismatches(port));
+      return {
+        ...result,
+        ...(result.mismatches
+          ? { mismatches: result.mismatches.map((m: string) => JSON.parse(m)) }
+          : {}),
+      };
+    },
+    cleanupMockServer: (port: number): boolean => {
+      return wrapWithCheck<[number], (port: number) => boolean>(
+        (port: number) => lib.pactffi_cleanup_mock_server(port),
+        'cleanupMockServer'
+      )(port);
+    },
     newInteraction: (description: string): ConsumerInteraction => {
       const interactionPtr = lib.pactffi_new_interaction(pactPtr, description);
-      return {
+      return wrapAllWithCheck<ConsumerInteraction>({
         uponReceiving: (description: string) => {
           return lib.pactffi_upon_receiving(interactionPtr, description);
         },
@@ -130,7 +131,7 @@ export const makeConsumerPact = (
         withStatus: (status: number) => {
           return lib.pactffi_response_status(interactionPtr, status);
         },
-      };
+      });
     },
   };
 };
