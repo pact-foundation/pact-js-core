@@ -32,6 +32,32 @@ export type FfiDeclarations = {
   pactffi_version: ['string', []];
   pactffi_free_string: ['void', ['string']];
   pactffi_verify: ['int', ['string']];
+  /**
+   * External interface to create a mock server. A pointer to the pact JSON as a C string is passed in,
+   * as well as the port for the mock server to run on. A value of 0 for the port will result in a
+   * port being allocated by the operating system. The port of the mock server is returned.
+   *
+   * * `pact_str` - Pact JSON
+   * * `addr_str` - Address to bind to in the form name:port (i.e. 127.0.0.1:0)
+   * * `tls` - boolean flag to indicate of the mock server should use TLS (using a self-signed certificate)
+   *
+   * # Errors
+   *
+   * Errors are returned as negative values.
+   *
+   * | Error | Description |
+   * |-------|-------------|
+   * | -1 | A null pointer was received |
+   * | -2 | The pact JSON could not be parsed |
+   * | -3 | The mock server could not be started |
+   * | -4 | The method panicked |
+   * | -5 | The address is not valid |
+   * | -6 | Could not create the TLS configuration with the self-signed certificate |
+   *
+   *  int32_t pactffi_create_mock_server(const char *pact_str,
+   *   const char *addr_str,
+   *   bool tls);
+   */
   pactffi_create_mock_server_for_pact: [
     'int',
     [typeof PactHandle, 'string', 'bool']
@@ -46,6 +72,7 @@ export type FfiDeclarations = {
     [typeof PactHandle, 'string']
   ];
   pactffi_upon_receiving: ['bool', [typeof InteractionHandle, 'string']];
+  /** bool pactffi_given(struct InteractionHandle interaction, const char *description); */
   pactffi_given: ['bool', [typeof InteractionHandle, 'string']];
   pactffi_given_with_param: [
     'bool',

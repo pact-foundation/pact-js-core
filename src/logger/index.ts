@@ -22,7 +22,7 @@ export const verboseIsImplied = (): boolean =>
 const addContext = (context: string, message: string) =>
   `${context}: ${message}`;
 
-export default {
+const logFunctions = {
   pactCrash: (message: string, context: string = logContext): void =>
     logger.error(addContext(context, pactCrashMessage(message))),
   error: (message: string, context: string = logContext): void =>
@@ -36,3 +36,15 @@ export default {
   trace: (message: string, context: string = logContext): void =>
     logger.trace(addContext(context, message)),
 };
+
+export const logErrorAndThrow = (message: string, context?: string): never => {
+  logger.error(message, context);
+  throw new Error(message);
+};
+
+export const logCrashAndThrow = (message: string, context?: string): never => {
+  logger.pactCrash(message, context);
+  throw new Error(message);
+};
+
+export default logFunctions;

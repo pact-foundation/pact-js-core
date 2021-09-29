@@ -1,9 +1,11 @@
 import { getFfiLib } from '../ffi';
 import {
+  CREATE_MOCK_SERVER_ERRORS,
   FfiSpecificationVersion,
   INTERACTION_PART_REQUEST,
   INTERACTION_PART_RESPONSE,
 } from '../ffi/types';
+import { logCrashAndThrow, logErrorAndThrow } from '../logger';
 
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap {
@@ -25,6 +27,7 @@ type ConsumerInteraction = {
 
 type ConsumerPact = {
   newInteraction: (description: string) => ConsumerInteraction;
+  createMockServer: (address: string, tls?: boolean) => number;
 };
 
 export const makeConsumerPact = (
@@ -38,6 +41,38 @@ export const makeConsumerPact = (
   lib.pactffi_with_specification(pactPtr, version);
 
   return {
+    createMockServer: (address: string, tls = false) => {
+      const port = lib.pactffi_create_mock_server_for_pact(
+        pactPtr,
+        address,
+        tls
+      );
+      const error: keyof typeof CREATE_MOCK_SERVER_ERRORS | undefined =
+        Object.keys(CREATE_MOCK_SERVER_ERRORS).find(
+          (key) => CREATE_MOCK_SERVER_ERRORS[key] === port
+        ) as keyof typeof CREATE_MOCK_SERVER_ERRORS;
+      if (error) {
+        if (error === 'ADDRESS_NOT_VALID') {
+          logErrorAndThrow(
+            `Unable to start mock server at '${address}'. Is the address valid?`
+          );
+        }
+        if (error === 'TLS_CONFIG') {
+          logErrorAndThrow(
+            `Unable to create TLS configuration with self-signed certificate`
+          );
+        }
+        logCrashAndThrow(
+          `The pact core couldn\'t create the mock server because of an error described by '${error}'`
+        );
+      }
+      if (port <= 0) {
+        logCrashAndThrow(
+          `The pact core returned an unhandled error code '${port}'`
+        );
+      }
+      return port;
+    },
     newInteraction: (description: string): ConsumerInteraction => {
       const interactionPtr = lib.pactffi_new_interaction(pactPtr, description);
       return {
