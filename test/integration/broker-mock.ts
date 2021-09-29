@@ -122,6 +122,54 @@ export default (port: number): q.Promise<http.Server> => {
     return res.sendStatus(201);
   }
 
+  const rootResponse = () =>
+    returnJson({
+      _links: {
+        self: {
+          href: BROKER_HOST,
+          title: 'Index',
+          templated: false,
+        },
+        'pb:publish-pact': {
+          href: `${BROKER_HOST}/pacts/provider/{provider}/consumer/{consumer}/version/{consumerApplicationVersion}`,
+          title: 'Publish a pact',
+          templated: true,
+        },
+        'pb:latest-pact-versions': {
+          href: `${BROKER_HOST}/pacts/latest`,
+          title: 'Latest pact version',
+          templated: false,
+        },
+        'pb:pacticipants': {
+          href: `${BROKER_HOST}/pacticipants`,
+          title: 'Pacticipants',
+          templated: false,
+        },
+        'pb:latest-provider-pacts': {
+          href: `${BROKER_HOST}/pacts/provider/{provider}/latest`,
+          title: 'Latest pacts by provider',
+          templated: true,
+        },
+        'pb:latest-provider-pacts-with-tag': {
+          href: `${BROKER_HOST}/pacts/provider/{provider}/latest/{tag}`,
+          title: 'Latest pacts by provider with a specified tag',
+          templated: true,
+        },
+        'pb:webhooks': {
+          href: `${BROKER_HOST}/webhooks`,
+          title: 'Webhooks',
+          templated: false,
+        },
+        curies: [
+          {
+            name: 'pb',
+            href: `${BROKER_HOST}/doc/{rel}`,
+            templated: true,
+          },
+        ],
+      },
+    });
+
   server.get('/somebrokenpact', returnJson({}));
 
   server.get(
@@ -227,55 +275,9 @@ export default (port: number): q.Promise<http.Server> => {
   });
 
   // Get root HAL links
-  server.get(
-    '/',
-    returnJson({
-      _links: {
-        self: {
-          href: BROKER_HOST,
-          title: 'Index',
-          templated: false,
-        },
-        'pb:publish-pact': {
-          href: `${BROKER_HOST}/pacts/provider/{provider}/consumer/{consumer}/version/{consumerApplicationVersion}`,
-          title: 'Publish a pact',
-          templated: true,
-        },
-        'pb:latest-pact-versions': {
-          href: `${BROKER_HOST}/pacts/latest`,
-          title: 'Latest pact version',
-          templated: false,
-        },
-        'pb:pacticipants': {
-          href: `${BROKER_HOST}/pacticipants`,
-          title: 'Pacticipants',
-          templated: false,
-        },
-        'pb:latest-provider-pacts': {
-          href: `${BROKER_HOST}/pacts/provider/{provider}/latest`,
-          title: 'Latest pacts by provider',
-          templated: true,
-        },
-        'pb:latest-provider-pacts-with-tag': {
-          href: `${BROKER_HOST}/pacts/provider/{provider}/latest/{tag}`,
-          title: 'Latest pacts by provider with a specified tag',
-          templated: true,
-        },
-        'pb:webhooks': {
-          href: `${BROKER_HOST}/webhooks`,
-          title: 'Webhooks',
-          templated: false,
-        },
-        curies: [
-          {
-            name: 'pb',
-            href: `${BROKER_HOST}/doc/{rel}`,
-            templated: true,
-          },
-        ],
-      },
-    })
-  );
+  server.get('/', rootResponse());
+  server.get('/auth', rootResponse());
+  server.get('/noauth', rootResponse());
 
   // Get pacts by Provider "notfound"
   server.get(
