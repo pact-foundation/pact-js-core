@@ -1,12 +1,22 @@
 export type FfiSpecificationVersion = 0 | 1 | 2 | 3 | 4 | 5;
 
-export const FfiSpecificationVersion = {
-  SPECIFICATION_VERSION_UNKNOWN: 0,
-  SPECIFICATION_VERSION_V1: 1,
-  SPECIFICATION_VERSION_V1_1: 2,
-  SPECIFICATION_VERSION_V2: 3,
-  SPECIFICATION_VERSION_V3: 4,
-  SPECIFICATION_VERSION_V4: 5,
+export const FfiSpecificationVersion: Record<string, FfiSpecificationVersion> =
+  {
+    SPECIFICATION_VERSION_UNKNOWN: 0,
+    SPECIFICATION_VERSION_V1: 1,
+    SPECIFICATION_VERSION_V1_1: 2,
+    SPECIFICATION_VERSION_V2: 3,
+    SPECIFICATION_VERSION_V3: 4,
+    SPECIFICATION_VERSION_V4: 5,
+  };
+
+export type FfiWritePactResponse = 0 | 1 | 2 | 3;
+
+export const FfiWritePactResponse: Record<string, FfiWritePactResponse> = {
+  SUCCESS: 0,
+  GENERAL_PANIC: 1,
+  UNABLE_TO_WRITE_PACT_FILE: 2,
+  MOCK_SERVER_NOT_FOUND: 3,
 };
 
 export type FfiInteractionPart = 0 | 1;

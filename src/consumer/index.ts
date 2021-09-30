@@ -2,13 +2,19 @@ import { getFfiLib } from '../ffi';
 import {
   CREATE_MOCK_SERVER_ERRORS,
   FfiSpecificationVersion,
+  FfiWritePactResponse,
   INTERACTION_PART_REQUEST,
   INTERACTION_PART_RESPONSE,
 } from '../ffi/types';
 import { logCrashAndThrow, logErrorAndThrow } from '../logger';
 import { wrapAllWithCheck, wrapWithCheck } from './checkErrors';
 
-import { ConsumerInteraction, ConsumerPact, MatchingResult } from './types';
+import {
+  ConsumerInteraction,
+  ConsumerPact,
+  MatchingResult,
+  Mismatch,
+} from './types';
 
 type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
 interface JsonMap {
@@ -24,13 +30,21 @@ export const makeConsumerPact = (
   const lib = getFfiLib();
 
   const pactPtr = lib.pactffi_new_pact(consumer, provider);
-  lib.pactffi_with_specification(pactPtr, version);
+  if (!lib.pactffi_with_specification(pactPtr, version)) {
+    throw new Error(
+      `Unable to set core spec version. The pact FfiSpecificationVersion '${version}' may be invalid (note this is not the same as the pact spec version)`
+    );
+  }
 
   return {
-    createMockServer: (address: string, tls = false) => {
+    createMockServer: (
+      address: string,
+      requestedPort?: number,
+      tls = false
+    ) => {
       const port = lib.pactffi_create_mock_server_for_pact(
         pactPtr,
-        address,
+        `${address}:${requestedPort ? requestedPort : 0}`,
         tls
       );
       const error: keyof typeof CREATE_MOCK_SERVER_ERRORS | undefined =
@@ -40,7 +54,7 @@ export const makeConsumerPact = (
       if (error) {
         if (error === 'ADDRESS_NOT_VALID') {
           logErrorAndThrow(
-            `Unable to start mock server at '${address}'. Is the address valid?`
+            `Unable to start mock server at '${address}'. Is the address and port valid?`
           );
         }
         if (error === 'TLS_CONFIG') {
@@ -59,20 +73,51 @@ export const makeConsumerPact = (
       }
       return port;
     },
-    mockServerMismatches: (port: number): MatchingResult => {
-      const result = JSON.parse(lib.pactffi_mock_server_mismatches(port));
-      return {
+
+    mockServerMatchedSuccessfully: (port: number) => {
+      return lib.pactffi_mock_server_matched(port);
+    },
+    mockServerMismatches: (port: number): MatchingResult[] => {
+      const results: MatchingResult[] = JSON.parse(
+        lib.pactffi_mock_server_mismatches(port)
+      );
+      return results.map((result: MatchingResult) => ({
         ...result,
-        ...(result.mismatches
-          ? { mismatches: result.mismatches.map((m: string) => JSON.parse(m)) }
+        ...('mismatches' in result
+          ? {
+              mismatches: result.mismatches.map((m: string | Mismatch) =>
+                typeof m === 'string' ? JSON.parse(m) : m
+              ),
+            }
           : {}),
-      };
+      }));
     },
     cleanupMockServer: (port: number): boolean => {
-      return wrapWithCheck<[number], (port: number) => boolean>(
-        (port: number) => lib.pactffi_cleanup_mock_server(port),
+      return wrapWithCheck<(port: number) => boolean>(
+        (port: number): boolean => lib.pactffi_cleanup_mock_server(port),
         'cleanupMockServer'
       )(port);
+    },
+    writePactFile: (port: number, dir: string, merge = true) => {
+      const result = lib.pactffi_write_pact_file(port, dir, !merge);
+      switch (result) {
+        case FfiWritePactResponse.SUCCESS:
+          return;
+        case FfiWritePactResponse.UNABLE_TO_WRITE_PACT_FILE:
+          logErrorAndThrow('The pact core was unable to write the pact file');
+        case FfiWritePactResponse.GENERAL_PANIC:
+          logCrashAndThrow(
+            'The pact core panicked while writing the pact file'
+          );
+        case FfiWritePactResponse.MOCK_SERVER_NOT_FOUND:
+          logCrashAndThrow(
+            'The pact core was asked to write a pact file from a mock server that appears not to exist'
+          );
+        default:
+          logCrashAndThrow(
+            `The pact core returned an unknown error code (${result}) instead of writing the pact`
+          );
+      }
     },
     newInteraction: (description: string): ConsumerInteraction => {
       const interactionPtr = lib.pactffi_new_interaction(pactPtr, description);

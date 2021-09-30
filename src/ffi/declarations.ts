@@ -63,10 +63,29 @@ export type FfiDeclarations = {
     [typeof PactHandle, 'string', 'bool']
   ];
   pactffi_new_pact: [typeof PactHandle, ['string', 'string']];
+  /**
+   * Sets the specification version for a given Pact model. Returns false if the interaction or Pact can't be
+   * modified (i.e. the mock server for it has already started) or the version is invalid
+   *
+   * * `pact` - Handle to a Pact model
+   * * `version` - the spec version to use
+   *
+   * bool pactffi_with_specification(struct PactHandle pact,
+   *       enum PactSpecification version);
+   */
   pactffi_with_specification: [
     'bool',
     [typeof PactHandle, FfiEnum<FfiSpecificationVersion>]
   ];
+  /**
+   * External interface to check if a mock server has matched all its requests. The port number is
+   * passed in, and if all requests have been matched, true is returned. False is returned if there
+   * is no mock server on the given port, or if any request has not been successfully matched, or
+   * the method panics.
+   *
+   * bool pactffi_mock_server_matched(int32_t mock_server_port);
+   */
+  pactffi_mock_server_matched: ['bool', ['int']];
   /**
    * Creates a new Interaction and returns a handle to it.
    *
@@ -152,8 +171,10 @@ export type FfiDeclarations = {
    * | 1 | A general panic was caught |
    * | 2 | The pact file was not able to be written |
    * | 3 | A mock server with the provided port was not found |
+   *
+   * int32_t pactffi_write_pact_file(int32_t mock_server_port, const char *directory, bool overwrite);
    */
-  pactffi_write_pact_file: ['int', ['int', 'string']];
+  pactffi_write_pact_file: ['int', ['int', 'string', 'bool']];
   /**
    * External interface to cleanup a mock server. This function will try terminate the mock server
    * with the given port number and cleanup any memory allocated for it. Returns true, unless a
@@ -194,6 +215,7 @@ export const declarations: FfiDeclarations = {
   pactffi_create_mock_server_for_pact: ['int', [PactHandle, 'string', 'bool']],
   pactffi_new_pact: [PactHandle, ['string', 'string']],
   pactffi_with_specification: ['bool', [PactHandle, 'int']],
+  pactffi_mock_server_matched: ['bool', ['int']],
   pactffi_new_interaction: [InteractionHandle, [PactHandle, 'string']],
   pactffi_upon_receiving: ['bool', [InteractionHandle, 'string']],
   pactffi_given: ['bool', [InteractionHandle, 'string']],
@@ -220,7 +242,7 @@ export const declarations: FfiDeclarations = {
     [InteractionHandle, 'int', 'string', 'string', 'string'],
   ],
   pactffi_response_status: ['bool', [InteractionHandle, 'int']],
-  pactffi_write_pact_file: ['int', ['int', 'string']],
+  pactffi_write_pact_file: ['int', ['int', 'string', 'bool']],
   pactffi_cleanup_mock_server: ['bool', ['int']],
   pactffi_mock_server_mismatches: ['string', ['int']],
   pactffi_get_tls_ca_certificate: ['string', []],

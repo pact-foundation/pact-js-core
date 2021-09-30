@@ -4,6 +4,8 @@ export type MatchingResult =
   | MatchingResultRequestNotFound
   | MatchingResultMissingRequest;
 
+// As far as I can tell, MatchingResultSuccess is actually
+// never produced by the FFI lib
 export type MatchingResultSuccess = {
   type: 'request-match';
 };
@@ -114,7 +116,25 @@ export type ConsumerInteraction = {
 
 export type ConsumerPact = {
   newInteraction: (description: string) => ConsumerInteraction;
-  createMockServer: (address: string, tls?: boolean) => number;
-  mockServerMismatches: (port: number) => MatchingResult;
+  createMockServer: (address: string, port?: number, tls?: boolean) => number;
+  mockServerMismatches: (port: number) => MatchingResult[];
   cleanupMockServer: (port: number) => boolean;
+  /**
+   * This function writes the pact file, regardless of whether or not the test was successful.
+   * Do not call it without checking that the tests were successful, unless you want to write the wrong pact contents.
+   *
+   * @param port the port number the mock server is running on.
+   * @param dir the directory to write the pact file to
+   * @param merge whether or not to merge the pact file contents (default true)
+   */
+  writePactFile: (port: number, dir: string, merge?: boolean) => void;
+  /**
+   * Check if a mock server has matched all its requests.
+   *
+   * @param port the port number the mock server is running on.
+   * @returns {boolean} true if all requests have been matched. False if there
+   * is no mock server on the given port, or if any request has not been successfully matched, or
+   * the method panics.
+   */
+  mockServerMatchedSuccessfully: (port: number) => boolean;
 };

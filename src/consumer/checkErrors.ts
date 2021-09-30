@@ -1,11 +1,11 @@
 import logger from '../logger';
 
 export const wrapWithCheck =
-  <Params extends Array<unknown>, F extends (...args: Params) => boolean>(
-    f: F,
+  <F extends (...args: never[]) => boolean>(
+    f: BooleanFunction<F>,
     contextMessage: string
   ) =>
-  (...args: Params): boolean => {
+  (...args: Parameters<F>): boolean => {
     const result = f(...args);
     if (!result) {
       logger.pactCrash(
@@ -15,10 +15,12 @@ export const wrapWithCheck =
     return result;
   };
 
+type BooleanFunction<T> = T extends (...args: infer A) => boolean
+  ? (...args: A) => boolean
+  : never;
+
 type BooleanFunctions<T> = {
-  [key in keyof T]: T[key] extends (...args: infer A) => boolean
-    ? (...args: A) => boolean
-    : never;
+  [key in keyof T]: BooleanFunction<T[key]>;
 };
 
 export const wrapAllWithCheck = <T extends BooleanFunctions<T>>(

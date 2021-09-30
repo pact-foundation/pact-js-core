@@ -65,6 +65,9 @@ reports
 tmp
 .tmp
 
+# Files created during testing
+foo-consumer-bar-provider.json
+
 # jest config
 !jest.config.js
 
