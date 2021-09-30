@@ -31,7 +31,7 @@ export type FfiDeclarations = {
   pactffi_init: ['string', ['string']];
   pactffi_version: ['string', []];
   pactffi_free_string: ['void', ['string']];
-  pactffi_verify: ['int', ['string']];
+  pactffi_verify: ['int32', ['string']];
   /**
    * External interface to create a mock server. A pointer to the pact JSON as a C string is passed in,
    * as well as the port for the mock server to run on. A value of 0 for the port will result in a
@@ -59,7 +59,7 @@ export type FfiDeclarations = {
    *   bool tls);
    */
   pactffi_create_mock_server_for_pact: [
-    'int',
+    'int32',
     [typeof PactHandle, 'string', 'bool']
   ];
   pactffi_new_pact: [typeof PactHandle, ['string', 'string']];
@@ -85,7 +85,7 @@ export type FfiDeclarations = {
    *
    * bool pactffi_mock_server_matched(int32_t mock_server_port);
    */
-  pactffi_mock_server_matched: ['bool', ['int']];
+  pactffi_mock_server_matched: ['bool', ['int32']];
   /**
    * Creates a new Interaction and returns a handle to it.
    *
@@ -120,7 +120,7 @@ export type FfiDeclarations = {
   ];
   pactffi_with_query_parameter: [
     'bool',
-    [typeof InteractionHandle, 'string', 'int', 'string']
+    [typeof InteractionHandle, 'string', 'int32', 'string']
   ];
   pactffi_with_header: [
     'bool',
@@ -128,7 +128,7 @@ export type FfiDeclarations = {
       typeof InteractionHandle,
       FfiEnum<FfiInteractionPart>,
       'string',
-      'int',
+      'int32',
       'string'
     ]
   ];
@@ -143,14 +143,14 @@ export type FfiDeclarations = {
       FfiEnum<FfiInteractionPart>,
       'string',
       'string',
-      'int'
+      'int32'
     ]
   ];
   pactffi_with_multipart_file: [
     typeof StringResultStruct,
-    [typeof InteractionHandle, 'int', 'string', 'string', 'string']
+    [typeof InteractionHandle, 'int32', 'string', 'string', 'string']
   ];
-  pactffi_response_status: ['bool', [typeof InteractionHandle, 'int']];
+  pactffi_response_status: ['bool', [typeof InteractionHandle, 'int32']];
   /**
    * External interface to trigger a mock server to write out its pact file. This function should
    * be called if all the consumer tests have passed. The directory to write the file to is passed
@@ -174,13 +174,13 @@ export type FfiDeclarations = {
    *
    * int32_t pactffi_write_pact_file(int32_t mock_server_port, const char *directory, bool overwrite);
    */
-  pactffi_write_pact_file: ['int', ['int', 'string', 'bool']];
+  pactffi_write_pact_file: ['int32', ['int32', 'string', 'bool']];
   /**
    * External interface to cleanup a mock server. This function will try terminate the mock server
    * with the given port number and cleanup any memory allocated for it. Returns true, unless a
    * mock server with the given port number does not exist, or the function panics.
    */
-  pactffi_cleanup_mock_server: ['bool', ['int']];
+  pactffi_cleanup_mock_server: ['bool', ['int32']];
   /**
    * External interface to get all the mismatches from a mock server. The port number of the mock
    * server is passed in, and a pointer to a C string with the mismatches in JSON format is
@@ -197,25 +197,28 @@ export type FfiDeclarations = {
    *
    * char *pactffi_mock_server_mismatches(int32_t mock_server_port);
    */
-  pactffi_mock_server_mismatches: ['string', ['int']];
+  pactffi_mock_server_mismatches: ['string', ['int32']];
   pactffi_get_tls_ca_certificate: ['string', []];
   pactffi_log_message: ['void', ['string', 'string', 'string']];
-  pactffi_log_to_buffer: ['int', ['int']];
-  pactffi_init_with_log_level: ['void', ['int']];
-  pactffi_log_to_stdout: ['int', ['int']];
-  pactffi_log_to_file: ['int', ['string', 'int', 'int']];
-  pactffi_fetch_log_buffer: ['string', ['int']];
+  pactffi_log_to_buffer: ['int32', ['int32']];
+  pactffi_init_with_log_level: ['void', ['int32']];
+  pactffi_log_to_stdout: ['int32', ['int32']];
+  pactffi_log_to_file: ['int32', ['string', 'int32', 'int32']];
+  pactffi_fetch_log_buffer: ['string', ['int32']];
 };
 
 export const declarations: FfiDeclarations = {
   pactffi_init: ['string', ['string']],
   pactffi_version: ['string', []],
   pactffi_free_string: ['void', ['string']],
-  pactffi_verify: ['int', ['string']],
-  pactffi_create_mock_server_for_pact: ['int', [PactHandle, 'string', 'bool']],
+  pactffi_verify: ['int32', ['string']],
+  pactffi_create_mock_server_for_pact: [
+    'int32',
+    [PactHandle, 'string', 'bool'],
+  ],
   pactffi_new_pact: [PactHandle, ['string', 'string']],
-  pactffi_with_specification: ['bool', [PactHandle, 'int']],
-  pactffi_mock_server_matched: ['bool', ['int']],
+  pactffi_with_specification: ['bool', [PactHandle, 'int32']],
+  pactffi_mock_server_matched: ['bool', ['int32']],
   pactffi_new_interaction: [InteractionHandle, [PactHandle, 'string']],
   pactffi_upon_receiving: ['bool', [InteractionHandle, 'string']],
   pactffi_given: ['bool', [InteractionHandle, 'string']],
@@ -226,32 +229,32 @@ export const declarations: FfiDeclarations = {
   pactffi_with_request: ['bool', [InteractionHandle, 'string', 'string']],
   pactffi_with_query_parameter: [
     'bool',
-    [InteractionHandle, 'string', 'int', 'string'],
+    [InteractionHandle, 'string', 'int32', 'string'],
   ],
   pactffi_with_header: [
     'bool',
-    [InteractionHandle, 'int', 'string', 'int', 'string'],
+    [InteractionHandle, 'int32', 'string', 'int32', 'string'],
   ],
-  pactffi_with_body: ['bool', [InteractionHandle, 'int', 'string', 'string']],
+  pactffi_with_body: ['bool', [InteractionHandle, 'int32', 'string', 'string']],
   pactffi_with_binary_file: [
     'bool',
-    [InteractionHandle, 'int', 'string', 'string', 'int'],
+    [InteractionHandle, 'int32', 'string', 'string', 'int32'],
   ],
   pactffi_with_multipart_file: [
     StringResultStruct,
-    [InteractionHandle, 'int', 'string', 'string', 'string'],
+    [InteractionHandle, 'int32', 'string', 'string', 'string'],
   ],
-  pactffi_response_status: ['bool', [InteractionHandle, 'int']],
-  pactffi_write_pact_file: ['int', ['int', 'string', 'bool']],
-  pactffi_cleanup_mock_server: ['bool', ['int']],
-  pactffi_mock_server_mismatches: ['string', ['int']],
+  pactffi_response_status: ['bool', [InteractionHandle, 'int32']],
+  pactffi_write_pact_file: ['int32', ['int32', 'string', 'bool']],
+  pactffi_cleanup_mock_server: ['bool', ['int32']],
+  pactffi_mock_server_mismatches: ['string', ['int32']],
   pactffi_get_tls_ca_certificate: ['string', []],
   pactffi_log_message: ['void', ['string', 'string', 'string']],
-  pactffi_log_to_buffer: ['int', ['int']],
-  pactffi_init_with_log_level: ['void', ['int']],
-  pactffi_fetch_log_buffer: ['string', ['int']],
-  pactffi_log_to_stdout: ['int', ['int']],
-  pactffi_log_to_file: ['int', ['string', 'int', 'int']],
+  pactffi_log_to_buffer: ['int32', ['int32']],
+  pactffi_init_with_log_level: ['void', ['int32']],
+  pactffi_fetch_log_buffer: ['string', ['int32']],
+  pactffi_log_to_stdout: ['int32', ['int32']],
+  pactffi_log_to_file: ['int32', ['string', 'int32', 'int32']],
 };
 
 export enum FfiFunctionResult {

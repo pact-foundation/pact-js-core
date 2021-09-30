@@ -14,8 +14,15 @@ type FfiFunction<T> = T extends (...a: infer Args) => infer ReturnType
 // We allow any here, because typescript won't accept the `StructType`from
 // ref-struct-di for some reason. Using any lets us pass through arbitrary
 // parameter types, so we just have to be careful to get them right.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type VariableType = 'string' | 'void' | 'int' | 'double' | 'float' | any;
+type VariableType =
+  | 'string'
+  | 'void'
+  | 'int'
+  | 'int32'
+  | 'double'
+  | 'float'
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | any;
 
 // This allows us to have enum types report as 'int', but
 // be typed correctly on the way back
@@ -31,6 +38,10 @@ type ActualType<T> = [T] extends ['string']
   ? void
   : [number] extends [T]
   ? UnpackEnum<T>
+  : ['int32'] extends [T]
+  ? [T] extends ['int32']
+    ? number
+    : UnpackEnum<T>
   : ['int'] extends [T]
   ? [T] extends ['int']
     ? number
@@ -70,4 +81,4 @@ export type FfiBinding<T> = T extends LibDescription<string>
   : never;
 
 /** Use this type within an `FfiBinding` to tell the FFI that it's an enum type that it should respect */
-export type FfiEnum<T> = T | 'int';
+export type FfiEnum<T> = T | 'int32';
