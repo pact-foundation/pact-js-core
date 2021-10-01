@@ -21,6 +21,7 @@ jobs:
       - run: script/ci/build-and-test-nix.sh
         env:
           NODE_VERSION: ${{ matrix.node-version }}
+          PACT_BROKER_FEATURES: publish_pacts_using_old_api
 
   build-and-test-windows:
     runs-on: windows-latest
@@ -42,3 +43,4 @@ jobs:
           # linux, so we only download windows binaries. This means
           # we cannot release from Windows in CI.
           ONLY_DOWNLOAD_PACT_FOR_WINDOWS: true
+          PACT_BROKER_FEATURES: publish_pacts_using_old_api
