@@ -35,7 +35,7 @@ export const argMapping: ArgMapping<
       ? ['--port', u.port, '--hostname', u.hostname]
       : [];
   },
-  logLevel: (logLevel: LogLevel) => ['--loglevel', logLevel],
+  logLevel: (logLevel: LogLevel) => ['--loglevel', logLevel.toUpperCase()],
   provider: { arg: '--provider-name', mapper: 'string' },
   pactUrls: (pactUrls: string[]) =>
     pactUrls.reduce<Array<string>>((acc: Array<string>, uri: string) => {

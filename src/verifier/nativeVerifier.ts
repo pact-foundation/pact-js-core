@@ -11,7 +11,7 @@ const VERIFICATION_FAILED = 1;
 const INVALID_ARGUMENTS = 4;
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
-  const verifierLib = getFfiLib();
+  const verifierLib = getFfiLib(opts.logLevel);
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
     const request = argumentMapper(argMapping, opts, ignoredArguments)
