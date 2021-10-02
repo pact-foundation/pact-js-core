@@ -14,7 +14,7 @@ let ffiLogLevel: LogLevel;
 
 const initialiseFfi = (logLevel: LogLevel): FfiBinding<FfiDeclarations> => {
   logger.debug(`Initalising native core at log level '${logLevel}'`);
-  process.env[LOG_ENV_VAR_NAME] = logLevel;
+  process.env[LOG_ENV_VAR_NAME] = logLevel.toUpperCase();
   ffiLogLevel = logLevel;
   const lib = createFfi(
     libName('pact_ffi', `v${PACT_FFI_VERSION}`),
