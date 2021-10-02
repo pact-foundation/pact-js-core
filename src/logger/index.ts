@@ -16,6 +16,8 @@ export const setLogLevel = (level: LogLevel = 'info'): void => {
   logger = createLogger(currentLogLevel);
 };
 
+export const getLogLevel = (): LogLevel => currentLogLevel;
+
 export const verboseIsImplied = (): boolean =>
   currentLogLevel === 'trace' || currentLogLevel === 'debug';
 

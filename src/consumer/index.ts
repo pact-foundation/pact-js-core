@@ -6,7 +6,7 @@ import {
   INTERACTION_PART_REQUEST,
   INTERACTION_PART_RESPONSE,
 } from '../ffi/types';
-import { logCrashAndThrow, logErrorAndThrow } from '../logger';
+import { getLogLevel, logCrashAndThrow, logErrorAndThrow } from '../logger';
 import { wrapAllWithCheck, wrapWithCheck } from './checkErrors';
 
 import {
@@ -25,9 +25,10 @@ type JsonArray = Array<AnyJson>;
 export const makeConsumerPact = (
   consumer: string,
   provider: string,
-  version: FfiSpecificationVersion
+  version: FfiSpecificationVersion,
+  logLevel = getLogLevel()
 ): ConsumerPact => {
-  const lib = getFfiLib();
+  const lib = getFfiLib(logLevel);
 
   const pactPtr = lib.pactffi_new_pact(consumer, provider);
   if (!lib.pactffi_with_specification(pactPtr, version)) {
