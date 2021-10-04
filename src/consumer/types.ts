@@ -105,13 +105,26 @@ export type MetadataMismatch = {
 export type ConsumerInteraction = {
   uponReceiving: (description: string) => boolean;
   given: (state: string) => boolean;
+  givenWithParam: (state: string, name: string, value: string) => boolean;
   withRequest: (method: string, path: string) => boolean;
   withQuery: (name: string, index: number, value: string) => boolean;
   withStatus: (status: number) => boolean;
   withRequestHeader: (name: string, index: number, value: string) => boolean;
   withRequestBody: (body: string, contentType: string) => boolean;
+  withRequestBinaryBody: (body: Buffer, contentType: string) => boolean;
+  withRequestMultipartBody: (
+    contentType: string,
+    filename: string,
+    mimePartName: string
+  ) => boolean;
   withResponseHeader: (name: string, index: number, value: string) => boolean;
   withResponseBody: (body: string, contentType: string) => boolean;
+  withResponseBinaryBody: (body: Buffer, contentType: string) => boolean;
+  withResponseMultipartBody: (
+    contentType: string,
+    filename: string,
+    mimePartName: string
+  ) => boolean;
 };
 
 export type ConsumerPact = {

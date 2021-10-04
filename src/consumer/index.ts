@@ -16,11 +16,14 @@ import {
   Mismatch,
 } from './types';
 
-type AnyJson = boolean | number | string | null | JsonArray | JsonMap;
-interface JsonMap {
-  [key: string]: AnyJson;
-}
-type JsonArray = Array<AnyJson>;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleStringResult = (res: any): boolean => {
+  if (res.tag !== 0) {
+    logErrorAndThrow(`invalid multipart body specified: ${res.ok}`);
+  }
+
+  return true;
+};
 
 export const makeConsumerPact = (
   consumer: string,
@@ -129,6 +132,14 @@ export const makeConsumerPact = (
         given: (state: string) => {
           return lib.pactffi_given(interactionPtr, state);
         },
+        givenWithParam: (state: string, name: string, value: string) => {
+          return lib.pactffi_given_with_param(
+            interactionPtr,
+            state,
+            name,
+            value
+          );
+        },
         withRequest: (method: string, path: string) => {
           return lib.pactffi_with_request(interactionPtr, method, path);
         },
@@ -157,6 +168,30 @@ export const makeConsumerPact = (
             body
           );
         },
+        withRequestBinaryBody: (body: Buffer, contentType: string) => {
+          return lib.pactffi_with_binary_file(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            contentType,
+            body,
+            body.length
+          );
+        },
+        withRequestMultipartBody: (
+          contentType: string,
+          filename: string,
+          mimePartName: string
+        ) => {
+          const res = lib.pactffi_with_multipart_file(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            contentType,
+            filename,
+            mimePartName
+          );
+
+          return handleStringResult(res);
+        },
         withResponseHeader: (name: string, index: number, value: string) => {
           return lib.pactffi_with_header(
             interactionPtr,
@@ -173,6 +208,30 @@ export const makeConsumerPact = (
             contentType,
             body
           );
+        },
+        withResponseBinaryBody: (body: Buffer, contentType: string) => {
+          return lib.pactffi_with_binary_file(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            contentType,
+            body,
+            body.length
+          );
+        },
+        withResponseMultipartBody: (
+          contentType: string,
+          filename: string,
+          mimePartName: string
+        ) => {
+          const res = lib.pactffi_with_multipart_file(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            contentType,
+            filename,
+            mimePartName
+          );
+
+          return handleStringResult(res);
         },
         withStatus: (status: number) => {
           return lib.pactffi_response_status(interactionPtr, status);

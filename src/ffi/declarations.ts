@@ -6,10 +6,10 @@ import { FfiInteractionPart, FfiSpecificationVersion } from './types';
 const struct = refStructDi(ref);
 
 const unknown = ref.types.void; // unknown type
-
 const pact = unknown;
 const interaction = unknown;
 const InteractionPtr = ref.refType(interaction);
+const BinaryPtr = ref.refType(ref.types.uint8);
 const PactPtr = ref.refType(pact);
 const PactHandle = struct({
   pact: PactPtr,
@@ -142,7 +142,7 @@ export type FfiDeclarations = {
       typeof InteractionHandle,
       FfiEnum<FfiInteractionPart>,
       'string',
-      'string',
+      typeof BinaryPtr | Buffer,
       'int32'
     ]
   ];
@@ -238,7 +238,7 @@ export const declarations: FfiDeclarations = {
   pactffi_with_body: ['bool', [InteractionHandle, 'int32', 'string', 'string']],
   pactffi_with_binary_file: [
     'bool',
-    [InteractionHandle, 'int32', 'string', 'string', 'int32'],
+    [InteractionHandle, 'int32', 'string', BinaryPtr, 'int32'],
   ],
   pactffi_with_multipart_file: [
     StringResultStruct,
