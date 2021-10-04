@@ -16,15 +16,13 @@ export const setLogLevel = (level: LogLevel = 'info'): void => {
   logger = createLogger(currentLogLevel);
 };
 
-export const getLogLevel = (): LogLevel => currentLogLevel;
-
 export const verboseIsImplied = (): boolean =>
   currentLogLevel === 'trace' || currentLogLevel === 'debug';
 
 const addContext = (context: string, message: string) =>
   `${context}: ${message}`;
 
-const logFunctions = {
+export default {
   pactCrash: (message: string, context: string = logContext): void =>
     logger.error(addContext(context, pactCrashMessage(message))),
   error: (message: string, context: string = logContext): void =>
@@ -38,15 +36,3 @@ const logFunctions = {
   trace: (message: string, context: string = logContext): void =>
     logger.trace(addContext(context, message)),
 };
-
-export const logErrorAndThrow = (message: string, context?: string): never => {
-  logger.error(message, context);
-  throw new Error(message);
-};
-
-export const logCrashAndThrow = (message: string, context?: string): never => {
-  logger.pactCrash(message, context);
-  throw new Error(message);
-};
-
-export default logFunctions;
