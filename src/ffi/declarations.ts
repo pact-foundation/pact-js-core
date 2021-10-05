@@ -205,6 +205,10 @@ export type FfiDeclarations = {
   pactffi_log_to_stdout: ['int32', ['int32']];
   pactffi_log_to_file: ['int32', ['string', 'int32', 'int32']];
   pactffi_fetch_log_buffer: ['string', ['int32']];
+  pactffi_with_pact_metadata: [
+    'bool',
+    [typeof PactHandle, 'string', 'string', 'string']
+  ];
 };
 
 export const declarations: FfiDeclarations = {
@@ -255,6 +259,10 @@ export const declarations: FfiDeclarations = {
   pactffi_fetch_log_buffer: ['string', ['int32']],
   pactffi_log_to_stdout: ['int32', ['int32']],
   pactffi_log_to_file: ['int32', ['string', 'int32', 'int32']],
+  pactffi_with_pact_metadata: [
+    'bool',
+    [PactHandle, 'string', 'string', 'string'],
+  ],
 };
 
 export enum FfiFunctionResult {

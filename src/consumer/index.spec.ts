@@ -180,7 +180,7 @@ describe('Integration like test for the consumer API', () => {
   });
 
   describe('with multipart data', () => {
-    pact = makeConsumerPact(
+    const pact = makeConsumerPact(
       'foo-consumer',
       'bar-provider',
       FfiSpecificationVersion.SPECIFICATION_VERSION_V3

@@ -21,14 +21,14 @@ export type MatchingResultRequestNotFound = {
   type: 'request-not-found';
   method: string;
   path: string;
-  request: unknown;
+  request: RequestMismatch;
 };
 
 export type MatchingResultMissingRequest = {
   type: 'missing-request';
   method: string;
   path: string;
-  request: unknown;
+  request: RequestMismatch;
 };
 
 export type Mismatch =
@@ -102,6 +102,14 @@ export type MetadataMismatch = {
   mismatch: string;
 };
 
+export type RequestMismatch = {
+  method?: string;
+  path?: string;
+  headers?: Record<string, Array<string>>;
+  query?: Record<string, Array<string>>;
+  body?: string;
+};
+
 export type ConsumerInteraction = {
   uponReceiving: (description: string) => boolean;
   given: (state: string) => boolean;
@@ -150,4 +158,5 @@ export type ConsumerPact = {
    * the method panics.
    */
   mockServerMatchedSuccessfully: (port: number) => boolean;
+  addMetadata: (namespace: string, name: string, value: string) => boolean;
 };

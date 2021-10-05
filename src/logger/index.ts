@@ -45,7 +45,7 @@ export const logErrorAndThrow = (message: string, context?: string): never => {
 };
 
 export const logCrashAndThrow = (message: string, context?: string): never => {
-  logger.pactCrash(message, context);
+  logFunctions.pactCrash(message, context);
   throw new Error(message);
 };
 

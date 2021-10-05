@@ -28,7 +28,7 @@ const handleStringResult = (res: any): boolean => {
 export const makeConsumerPact = (
   consumer: string,
   provider: string,
-  version: FfiSpecificationVersion,
+  version: FfiSpecificationVersion = 3,
   logLevel = getLogLevel()
 ): ConsumerPact => {
   const lib = getFfiLib(logLevel);
@@ -122,6 +122,9 @@ export const makeConsumerPact = (
             `The pact core returned an unknown error code (${result}) instead of writing the pact`
           );
       }
+    },
+    addMetadata: (namespace: string, name: string, value: string): boolean => {
+      return lib.pactffi_with_pact_metadata(pactPtr, namespace, name, value);
     },
     newInteraction: (description: string): ConsumerInteraction => {
       const interactionPtr = lib.pactffi_new_interaction(pactPtr, description);
