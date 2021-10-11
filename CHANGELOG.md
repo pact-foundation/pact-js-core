@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.9](https://github.com/pact-foundation/pact-node/compare/v10.13.8...v10.13.9) (2021-10-11)
+
+
+### Fixes and Improvements
+
+* update standalone to 1.88.77 ([11dc749](https://github.com/pact-foundation/pact-node/commit/11dc749ddd17c9d0ad5c4ff2c42dde7d83b39842))
+
 ### [10.13.8](https://github.com/pact-foundation/pact-node/compare/v10.13.7...v10.13.8) (2021-10-01)
 
 
