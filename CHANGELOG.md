@@ -2,6 +2,32 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.2.0](https://github.com/pact-foundation/pact-js-core/compare/v13.1.7...v13.2.0) (2021-10-16)
+
+
+### Features
+
+* Add a beta interface to the FFI / V3 Consumer tests. Try it out with `import { makeConsumerPact } from 'pact-core/src/consumer'` ([46d6667](https://github.com/pact-foundation/pact-js-core/commit/46d6667b58abacc007a4c1736d8c2f861ec5a487))
+* Revert the consumer changes until the issues with node 14 are fixed (the release notes about the V3 consumer support in this release are not true, sorry) ([dc5217d](https://github.com/pact-foundation/pact-js-core/commit/dc5217da5bbee79024439526fdfc72da279d01ec))
+
+
+### Fixes and Improvements
+
+* Pass logLevel down to the native consumer ([88b329c](https://github.com/pact-foundation/pact-js-core/commit/88b329c4857f0777881574f50ae31e42c8764a8c))
+* Pin standalone version back to the last known good version 1.88.66 ([77eab71](https://github.com/pact-foundation/pact-js-core/commit/77eab71aa0bf6183398b0787e5c370f2b20a9a2d))
+* update standalone to 1.88.68 ([5f38729](https://github.com/pact-foundation/pact-js-core/commit/5f38729e523430c1ed7fdd863c53ef4a71800f54))
+* update standalone to 1.88.69 ([ceb7071](https://github.com/pact-foundation/pact-js-core/commit/ceb7071e55bfb8d303233dfc95f1fd65ef6d6c8f))
+* update standalone to 1.88.70 ([138a2c4](https://github.com/pact-foundation/pact-js-core/commit/138a2c4ba7223c442299d7fdb4cde023bbd09a50))
+* update standalone to 1.88.71 ([850178d](https://github.com/pact-foundation/pact-js-core/commit/850178dc093e2b7e883920363234d3672d02d4c9))
+* update standalone to 1.88.72 ([f8d0d0f](https://github.com/pact-foundation/pact-js-core/commit/f8d0d0fa9e9faff5c5dd772b8ccc7805b4c2afaa))
+* update standalone to 1.88.73 ([4ba164d](https://github.com/pact-foundation/pact-js-core/commit/4ba164d11255f20ec699de0c5f0056f8a435c58c))
+* update standalone to 1.88.75 ([c2fc6ac](https://github.com/pact-foundation/pact-js-core/commit/c2fc6acd19a4d5894a95ef4e5ac7c2959dddc2d6))
+* update standalone to 1.88.76 ([eea5c54](https://github.com/pact-foundation/pact-js-core/commit/eea5c54d653da982b540e2cc6315cef40c5a501d))
+* update standalone to 1.88.77 ([9659f35](https://github.com/pact-foundation/pact-js-core/commit/9659f35603dc9c89f698561c95c4fb30880c8f66))
+* **verifier:** Correctly pass down log levels to the native core ([c11ce75](https://github.com/pact-foundation/pact-js-core/commit/c11ce75dffaf6d1932decdd3e275e7b54cf817aa))
+* **verifier:** Correctly pass down log levels to the native core ([13d5ded](https://github.com/pact-foundation/pact-js-core/commit/13d5ded36e5fbb1e1fa4654affff58ed67a6f190))
+* Warn if broker arguments are set without a broker URL and ignore the argument (fixes pact-foundation/pact-js[#760](https://github.com/pact-foundation/pact-js-core/issues/760)) ([17d3eb1](https://github.com/pact-foundation/pact-js-core/commit/17d3eb1629256828d3162a46d078087dd6ef7b91))
+
 ### [13.1.7](https://github.com/pact-foundation/pact-js-core/compare/v13.1.6...v13.1.7) (2021-09-22)
 
 
