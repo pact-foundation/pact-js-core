@@ -46,6 +46,26 @@ describe('Verifier Integration Spec', () => {
             ],
           }).verify()
         ).to.eventually.be.fulfilled);
+      context('with some broker args but no broker URL', () => {
+        it('should return a successful promise', () =>
+          expect(
+            verifierFactory({
+              ...DEFAULT_ARGS,
+              providerBaseUrl: providerBaseUrl,
+              pactUrls: [
+                path.resolve(
+                  __dirname,
+                  'integration/me-they-weird path-success.json'
+                ),
+              ],
+              // These don't mean anything without a broker URL, but should not fail the verification
+              enablePending: true,
+              consumerVersionSelectors: [{ latest: true }],
+              consumerVersionTags: ['main'],
+              publishVerificationResult: true,
+            }).verify()
+          ).to.eventually.be.fulfilled);
+      });
     });
 
     context('without provider states', () => {
