@@ -1,8 +1,12 @@
 import { VerifierOptions } from './types';
 import { getFfiLib } from '../ffi';
-import logger from '../logger';
-import { argMapping, ignoredArguments } from './arguments';
-import { argumentMapper } from '../ffi/argumentMapper';
+import logger, { setLogLevel } from '../logger';
+import {
+  argMapping,
+  ignoredArguments,
+  ignoreOptionCombinations,
+} from './arguments';
+import { argumentMapper } from './argumentMapper';
 
 const VERIFICATION_SUCCESSFUL = 0;
 const VERIFICATION_FAILED = 1;
@@ -12,9 +16,17 @@ const INVALID_ARGUMENTS = 4;
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
   const verifierLib = getFfiLib(opts.logLevel);
+  if (opts.logLevel) {
+    setLogLevel(opts.logLevel);
+  }
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
-    const request = argumentMapper(argMapping, opts, ignoredArguments)
+    const request = argumentMapper(
+      argMapping,
+      opts,
+      ignoredArguments,
+      ignoreOptionCombinations
+    )
       .map((s) => s.replace('\n', ''))
       .join('\n');
 

@@ -16,7 +16,8 @@
     "skipLibCheck": true,
     "strictNullChecks": true,
     "strict": true,
-    "noUnusedLocals": true
+    "noUnusedLocals": true,
+    "stripInternal": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules", "**/*.spec.ts", "**/__mocks__"],
