@@ -1,22 +1,21 @@
 import url = require('url');
 
-import { ArgMapping } from '../ffi/argumentMapper/types';
-import { ConsumerVersionSelector, VerifierOptions } from './types';
+import { ArgMapping, IgnoreOptionCombinations } from './types';
+import {
+  ConsumerVersionSelector,
+  InternalPactVerifierOptions,
+  VerifierOptions,
+} from '../types';
 
-import { getUriType } from './filesystem';
-import { LogLevel } from '../logger/types';
+import { getUriType } from '../filesystem';
+import { LogLevel } from '../../logger/types';
 
-type DeprecatedVerifierOptions = {
-  format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
-  out?: string;
-  customProviderHeaders?: string[];
-  verbose?: boolean;
-  monkeypatch?: string;
-  logDir?: string;
-};
-
-// These are arguments that are on the PactJS object that we don't need to use
-export const ignoredArguments = [
+/**
+ * These are arguments that are on the PactJS object that we don't need to use
+ * An array of strings for options to ignore (typed as strings and not `keyof VerifierOptions`,
+ * because pact-js puts extra options on the object that aren't in the core VerifierOptions)
+ */
+export const ignoredArguments: Array<string> = [
   'requestFilter',
   'stateHandlers',
   'messageProviders',
@@ -26,9 +25,15 @@ export const ignoredArguments = [
   'validateSSL',
 ];
 
-export const argMapping: ArgMapping<
-  VerifierOptions & DeprecatedVerifierOptions
-> = {
+export const ignoreOptionCombinations: IgnoreOptionCombinations<VerifierOptions> =
+  {
+    enablePending: { ifNotSet: 'pactBrokerUrl' },
+    consumerVersionSelectors: { ifNotSet: 'pactBrokerUrl' },
+    consumerVersionTags: { ifNotSet: 'pactBrokerUrl' },
+    publishVerificationResult: { ifNotSet: 'pactBrokerUrl' },
+  };
+
+export const argMapping: ArgMapping<InternalPactVerifierOptions> = {
   providerBaseUrl: (providerBaseUrl: string) => {
     const u = url.parse(providerBaseUrl);
     return u && u.port && u.hostname
