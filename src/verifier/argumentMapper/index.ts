@@ -1,23 +1,22 @@
-import { ArgMapping, FunctionMapping, IgnoreOptionCombinations } from './types';
+import { FunctionMapping } from './types';
 import logger from '../../logger';
 import { InternalPactVerifierOptions } from '../types';
+import {
+  argMapping,
+  ignoredArguments,
+  ignoreOptionCombinations,
+} from './arguments';
 
 /**
  * This function maps arguments from the Verifier to the Rust core's verifier arguments
  *
  * @internal
  *
- * @param argMapping The argument mapping for the internal verifier
  * @param options The actual options passed by the user
- * @param ignoredArguments An array of strings for options to ignore (this is strings, because pact-js might put options on the object that we don't need)
- * @param ignoreOptionCombinations Describes some options that we might want to ignore if certain other options are not set
  * @returns An array of strings to past to the Rust core verifier
  */
 export const argumentMapper = (
-  argMapping: ArgMapping<InternalPactVerifierOptions>,
-  options: InternalPactVerifierOptions,
-  ignoredArguments: Array<string>,
-  ignoreOptionCombinations: IgnoreOptionCombinations<InternalPactVerifierOptions>
+  options: InternalPactVerifierOptions
 ): string[] =>
   (Object.keys(options) as Array<keyof InternalPactVerifierOptions>)
     .filter((k) => {

@@ -1,11 +1,6 @@
 import { VerifierOptions } from './types';
 import { getFfiLib } from '../ffi';
 import logger, { setLogLevel } from '../logger';
-import {
-  argMapping,
-  ignoredArguments,
-  ignoreOptionCombinations,
-} from './arguments';
 import { argumentMapper } from './argumentMapper';
 
 const VERIFICATION_SUCCESSFUL = 0;
@@ -21,12 +16,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
   }
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
-    const request = argumentMapper(
-      argMapping,
-      opts,
-      ignoredArguments,
-      ignoreOptionCombinations
-    )
+    const request = argumentMapper(opts)
       .map((s) => s.replace('\n', ''))
       .join('\n');
 

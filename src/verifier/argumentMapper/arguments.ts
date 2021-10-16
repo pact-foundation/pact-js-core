@@ -1,16 +1,20 @@
 import url = require('url');
 
-import { ArgMapping, IgnoreOptionCombinations } from './argumentMapper/types';
+import { ArgMapping, IgnoreOptionCombinations } from './types';
 import {
   ConsumerVersionSelector,
   InternalPactVerifierOptions,
   VerifierOptions,
-} from './types';
+} from '../types';
 
-import { getUriType } from './filesystem';
-import { LogLevel } from '../logger/types';
+import { getUriType } from '../filesystem';
+import { LogLevel } from '../../logger/types';
 
-// These are arguments that are on the PactJS object that we don't need to use
+/**
+ * These are arguments that are on the PactJS object that we don't need to use
+ * An array of strings for options to ignore (typed as strings and not `keyof VerifierOptions`,
+ * because pact-js puts extra options on the object that aren't in the core VerifierOptions)
+ */
 export const ignoredArguments: Array<string> = [
   'requestFilter',
   'stateHandlers',
