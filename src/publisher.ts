@@ -116,9 +116,15 @@ export class Publisher {
     instance.once('close', code => {
       const o = output.join('\n');
       const pactUrls = /https?:\/\/.*\/pacts\/.*$/gim.exec(o);
-      if (code !== 0 || !pactUrls) {
-        logger.error(`Could not publish pact:\n${o}`);
-        return deferred.reject(new Error(o));
+      if (code !== 0) {
+        const message = `Pact publication failed with non-zero exit code. Full output was:\n${o}`;
+        logger.error(message);
+        return deferred.reject(new Error(message));
+      }
+      if (!pactUrls) {
+        const message = `Publication appeared to fail, as we did not detect any pact URLs in the following output:\n${o}`;
+        logger.error(message);
+        return deferred.reject(new Error(message));
       }
 
       logger.info(o);
