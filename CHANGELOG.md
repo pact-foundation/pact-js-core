@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.13.10](https://github.com/pact-foundation/pact-node/compare/v10.13.9...v10.13.10) (2021-10-18)
+
+
+### Fixes and Improvements
+
+* **publisher:** Fix an issue that caused the publisher API to reject with the most recent binaries (As an aside, the recommended approach is to use the CLI not the API for almost all use cases- see the examples for more details) ([8d06cea](https://github.com/pact-foundation/pact-node/commit/8d06cea33bd7bcd932ca34e15c7b0c0305ff2ee7))
+* Substantially improve error messages if the pact publisher API fails ([f528b9c](https://github.com/pact-foundation/pact-node/commit/f528b9cfab63d33e160e548a81f68592486fc2a8))
+
 ### [10.13.9](https://github.com/pact-foundation/pact-node/compare/v10.13.8...v10.13.9) (2021-10-11)
 
 
