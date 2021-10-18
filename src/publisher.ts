@@ -110,7 +110,7 @@ export class Publisher {
         instance.stderr.on('data', (l) => output.push(l));
         instance.once('close', (code) => {
           const o = output.join('\n');
-          const pactUrls = /^https?:\/\/.*\/pacts\/.*$/gim.exec(o);
+          const pactUrls = /https?:\/\/.*\/pacts\/.*$/gim.exec(o);
           if (code !== 0 || !pactUrls) {
             logger.error(`Could not publish pact:\n${o}`);
             return reject(new Error(o));
