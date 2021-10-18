@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.2.1](https://github.com/pact-foundation/pact-js-core/compare/v13.2.0...v13.2.1) (2021-10-18)
+
+
+### Fixes and Improvements
+
+* **publisher:** Fix an issue that caused the publisher API to reject with the most recent binaries (As an aside, the recommended approach is to use the CLI not the API for almost all use cases- see the examples for more details) ([4a100bb](https://github.com/pact-foundation/pact-js-core/commit/4a100bbc72e3b31ef9663aed78617b8954be784c))
+* Substantially improve error messages if the pact publisher API fails ([81d3511](https://github.com/pact-foundation/pact-js-core/commit/81d35115489e2960d6517d856593de28b54d2d12))
+
 ## [13.2.0](https://github.com/pact-foundation/pact-js-core/compare/v13.1.7...v13.2.0) (2021-10-16)
 
 
