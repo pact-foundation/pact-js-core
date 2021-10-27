@@ -1,8 +1,10 @@
 import path = require('path');
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
+import * as sinon from 'sinon';
+import logger from '../logger';
 import { validateOptions } from './validateOptions';
-import { VerifierOptions } from './types';
+import { ConsumerVersionSelector, VerifierOptions } from './types';
 
 const expect = chai.expect;
 chai.use(chaiAsPromised);
@@ -315,6 +317,66 @@ describe('Verifier argument validator', () => {
         providerBaseUrl: 'http://localhost',
         pactUrls: ['http://idontexist'],
         pactBrokerToken: '1234',
+      });
+    });
+  });
+
+  context('when providing consumerVersionSelectors', () => {
+    context('and an unsupported selector is specified', () => {
+      it('should fail with an error', () => {
+        expect(() =>
+          validateOptions({
+            providerBaseUrl: 'http://localhost',
+            pactUrls: ['http://idontexist'],
+            consumerVersionSelectors: [
+              { unsupportedFlag: true } as ConsumerVersionSelector,
+            ],
+          })
+        ).to.throw(Error);
+      });
+    });
+  });
+
+  context('and the tag of "latest" is specified', () => {
+    it('should log out a warning that using this selector is not recommended', () => {
+      const warnSpy = sinon.spy(logger, 'warn');
+
+      expectSuccessWith({
+        providerBaseUrl: 'http://localhost',
+        pactUrls: ['http://idontexist'],
+        consumerVersionSelectors: [{ tag: 'latest' }],
+      });
+
+      expect(
+        warnSpy.calledWith(
+          "Using the tag 'latest' is not recommended and probably does not do what you intended."
+        )
+      ).to.be.ok;
+    });
+  });
+
+  context('and valid selectors are specified', () => {
+    [
+      { tag: 'a-tag' },
+      { latest: true },
+      { consumer: 'the-consumer' },
+      { deployedOrReleased: true },
+      { deployed: true },
+      { released: true },
+      { environment: 'an-environment' },
+      { fallbackTag: 'a-fallback-tag' },
+      { branch: 'the-branch' },
+      { mainBranch: false },
+      { matchingBranch: true },
+    ].forEach((consumerVersionSelector) => {
+      it(`should not fail when consumerVersionSelectors is ${JSON.stringify(
+        consumerVersionSelector
+      )}`, () => {
+        expectSuccessWith({
+          providerBaseUrl: 'http://localhost',
+          pactUrls: ['http://idontexist'],
+          consumerVersionSelectors: [consumerVersionSelector],
+        });
       });
     });
   });

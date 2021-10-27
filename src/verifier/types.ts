@@ -9,6 +9,9 @@ export interface ConsumerVersionSelector {
   released?: boolean;
   environment?: string;
   fallbackTag?: string;
+  branch?: string;
+  mainBranch?: boolean;
+  matchingBranch?: boolean;
 }
 
 export interface VerifierOptions {
