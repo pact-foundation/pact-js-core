@@ -57,6 +57,7 @@ function findPackageConfig(location: string, tries = 10): PackageConfig {
   }
   const packagePath = path.resolve(location, 'package.json');
   if (fs.existsSync(packagePath)) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const config = require(packagePath).config;
     if (config && (config.pact_binary_location || config.pact_do_not_track)) {
       return {
@@ -164,7 +165,6 @@ function downloadFileRetry(
       }
       needle
         .get(url, {
-          // eslint-disable-next-line @typescript-eslint/camelcase
           follow_max: 5,
           headers: {
             'User-Agent': 'https://github.com/pact-foundation/pact-node',
@@ -235,6 +235,7 @@ function download(data: Data): Promise<Data> {
               cid: Math.round(2147483647 * Math.random()).toString(), // Anonymous Client ID.
               t: 'screenview', // Screenview hit type.
               an: 'pact-install', // App name.
+              // eslint-disable-next-line @typescript-eslint/no-var-requires
               av: require('../package.json').version, // App version.
               aid: 'pact-node', // App Id.
               aiid: `standalone-${PACT_STANDALONE_VERSION}`, // App Installer Id.

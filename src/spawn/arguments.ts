@@ -20,7 +20,7 @@ export type SpawnArgument =
   | ServiceOptions
   | VerifierOptions
   | CliVerbOptions
-  | {}; // Empty object is allowed to make tests less noisy. We should change this in the future
+  | unknown; // unknown is allowed to make tests less noisy. We should change this in the future
 
 export type SpawnArguments = Array<SpawnArgument> | SpawnArgument;
 

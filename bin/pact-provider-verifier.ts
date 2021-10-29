@@ -1,9 +1,13 @@
 #!/usr/bin/env node
 
 import standalone from '../src/pact-standalone';
-const spawnSync = require('child_process').spawnSync;
+import cp = require('child_process');
 
-const status = spawnSync(standalone.verifierFullPath, process.argv.slice(2), {
-  stdio: 'inherit',
-}).status;
+const status = cp.spawnSync(
+  standalone.verifierFullPath,
+  process.argv.slice(2),
+  {
+    stdio: 'inherit',
+  }
+).status;
 process.exit(status);
