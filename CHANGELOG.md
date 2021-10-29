@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.3.0](https://github.com/pact-foundation/pact-js-core/compare/v13.2.1...v13.3.0) (2021-10-29)
+
+
+### Features
+
+* Add new branch consumerVersionSelector options to verifier ([c3872be](https://github.com/pact-foundation/pact-js-core/commit/c3872be506d96f1ec40bfeb273b0ffc0ae6400e2))
+
+
+### Fixes and Improvements
+
+* Bump version of Pact FFI to 0.0.3 ([bc74026](https://github.com/pact-foundation/pact-js-core/commit/bc7402677c6436fbbaf560f094e1259d58e49f4c))
+* update standalone to 1.88.78 ([cb25136](https://github.com/pact-foundation/pact-js-core/commit/cb2513678dc30a7fd188bdb800e78898bb299f3b))
+
 ### [13.2.1](https://github.com/pact-foundation/pact-js-core/compare/v13.2.0...v13.2.1) (2021-10-18)
 
 
