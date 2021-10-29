@@ -79,7 +79,9 @@ export const validateOptions = (o: VerifierOptions): VerifierOptions => {
       'released',
       'environment',
       'fallbackTag',
-      'latest',
+      'branch',
+      'mainBranch',
+      'matchingBranch',
     ];
     options.consumerVersionSelectors.forEach((selector) => {
       if (selector.tag === 'latest') {
