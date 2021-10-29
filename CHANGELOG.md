@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.14.0](https://github.com/pact-foundation/pact-node/compare/v10.13.10...v10.14.0) (2021-10-29)
+
+
+### Features
+
+* Add new branch consumerVersionSelector options to verifier ([365ecce](https://github.com/pact-foundation/pact-node/commit/365ecce0c7ba74e91da6d2ea32b9904c09bb7085))
+
 ### [10.13.10](https://github.com/pact-foundation/pact-node/compare/v10.13.9...v10.13.10) (2021-10-18)
 
 
