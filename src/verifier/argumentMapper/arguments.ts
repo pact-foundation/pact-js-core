@@ -71,6 +71,8 @@ export const argMapping: ArgMapping<InternalPactVerifierOptions> = {
 
   providerVersion: { arg: '--provider-version', mapper: 'string' },
 
+  providerVersionBranch: { arg: '--provider-branch', mapper: 'string' },
+
   includeWipPactsSince: { arg: '--include-wip-pacts-since', mapper: 'string' },
   consumerVersionSelectors: (selectors: ConsumerVersionSelector[]) =>
     selectors

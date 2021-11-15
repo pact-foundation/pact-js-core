@@ -7,7 +7,7 @@ import { declarations, FfiDeclarations } from './declarations';
 
 const LOG_ENV_VAR_NAME = 'PACT_LOG_LEVEL';
 
-const PACT_FFI_VERSION = '0.0.3';
+const PACT_FFI_VERSION = '0.1.0';
 
 let ffi: Omit<FfiBinding<FfiDeclarations>, 'pactffi_init'>;
 let ffiLogLevel: LogLevel;

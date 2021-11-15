@@ -24,6 +24,7 @@ export interface VerifierOptions {
   pactBrokerToken?: string;
   consumerVersionTags?: string | string[];
   providerVersionTags?: string | string[];
+  providerVersionBranch?: string;
   providerStatesSetupUrl?: string;
   publishVerificationResult?: boolean;
   providerVersion?: string;
