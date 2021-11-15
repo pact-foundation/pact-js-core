@@ -34,6 +34,7 @@ export class Verifier {
     providerVersionTag: '--provider-version-tag',
     consumerVersionTags: '--consumer-version-tag',
     providerVersionTags: '--provider-version-tag',
+    providerVersionBranch: '--provider-version-branch',
     consumerVersionSelectors: '--consumer-version-selector',
     publishVerificationResult: '--publish-verification-results',
     providerVersion: '--provider-app-version',
@@ -326,6 +327,7 @@ interface CurrentVerifierOptions {
   pactBrokerToken?: string;
   consumerVersionTags?: string | string[];
   providerVersionTags?: string | string[];
+  providerVersionBranch?: string;
   consumerVersionSelectors?: ConsumerVersionSelector[];
   customProviderHeaders?: string[];
   publishVerificationResult?: boolean;

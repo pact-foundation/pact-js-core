@@ -385,6 +385,18 @@ describe('Verifier Spec', () => {
     }
   );
 
+  context('when providerVersionBranch is provided', () => {
+    it('should allow the property to be set', () => {
+      const v = verifierFactory({
+        providerBaseUrl: 'http://localhost',
+        pactUrls: [path.dirname(currentDir)],
+        providerVersionBranch: 'main',
+      });
+
+      expect(v.options.providerVersionBranch).to.eq('main');
+    });
+  });
+
   context('when using a bearer token', () => {
     context('and specifies a username or password', () => {
       it('should fail with an error', () => {
