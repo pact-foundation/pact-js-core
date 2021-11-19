@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.15.0](https://github.com/pact-foundation/pact-node/compare/v10.14.0...v10.15.0) (2021-11-19)
+
+
+### Features
+
+* support specifying provider branch in verifications ([4e4231f](https://github.com/pact-foundation/pact-node/commit/4e4231fe7ac5c9b82dd183002bd012cbb7644e23))
+
 ## [10.14.0](https://github.com/pact-foundation/pact-node/compare/v10.13.10...v10.14.0) (2021-10-29)
 
 
