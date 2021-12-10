@@ -25,6 +25,7 @@ export class Publisher {
     tags: '--tag',
     consumerVersion: '--consumer-app-version',
     verbose: '--verbose',
+    buildUrl: '--build-url',
   };
 
   constructor(options: PublisherOptions) {
@@ -150,4 +151,5 @@ export interface PublisherOptions {
   tags?: string[];
   verbose?: boolean;
   timeout?: number;
+  buildUrl?: string;
 }

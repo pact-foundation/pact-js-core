@@ -37,6 +37,7 @@ describe('Publish Spec', () => {
               ),
             ],
             consumerVersion: '1.0.0',
+            buildUrl: 'http://ci/build/1',
           });
 
           expect(publisher).to.be.a('object');
