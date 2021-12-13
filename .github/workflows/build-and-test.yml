@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: script/ci/build-and-test-nix.sh
+      - run: script/ci/build-and-test.sh
         env:
           NODE_VERSION: ${{ matrix.node-version }}
           PACT_BROKER_FEATURES: publish_pacts_using_old_api
@@ -35,7 +35,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: bash script/ci/build-and-test-windows.sh
+      - run: bash script/ci/build-and-test.sh
         shell: bash
         env:
           NODE_VERSION: ${{ matrix.node-version }}
