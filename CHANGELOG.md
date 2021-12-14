@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.4.0](https://github.com/pact-foundation/pact-js-core/compare/v13.3.0...v13.4.0) (2021-12-14)
+
+
+### Features
+
+* Add buildUrl option to Pact Broker Publishing API ([58be64a](https://github.com/pact-foundation/pact-js-core/commit/58be64a20d0ebc203e36f489580b77e6e583bea6))
+
+
+### Fixes and Improvements
+
+* update standalone to 1.88.80 ([c0332e8](https://github.com/pact-foundation/pact-js-core/commit/c0332e81e8ce61f24c131fa61028034314f2c21d))
+
 ## [13.3.0](https://github.com/pact-foundation/pact-js-core/compare/v13.2.1...v13.3.0) (2021-10-29)
 
 
