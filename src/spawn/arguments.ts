@@ -41,7 +41,7 @@ const convertValue = (
   mapping: string,
   v: SpawnArgument | Array<SpawnArgument>
 ): Array<string> => {
-  if (v && mapping) {
+  if (mapping && (v || typeof v === 'boolean')) {
     return checkTypes.array(v)
       ? _.flatten(
           (v as Array<string>).map((val: string) => mapFor(mapping, val))

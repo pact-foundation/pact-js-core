@@ -44,6 +44,18 @@ describe('Verifier Spec', () => {
         expect(verifier).to.respondTo('verify');
       });
     });
+    context('when given valid arguments', () => {
+      it('should return a Verifier object', () => {
+        const verifier = verifierFactory({
+          providerBaseUrl: 'http://localhost',
+          pactBrokerUrl: 'http://foo.com',
+          provider: 'someprovider',
+          enablePending: false,
+        });
+        expect(verifier).to.be.a('object');
+        expect(verifier).to.respondTo('verify');
+      });
+    });
   });
 
   context('when not given --pact-urls or --provider-base-url', () => {

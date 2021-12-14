@@ -36,6 +36,28 @@ describe('Pact Util Spec', () => {
         expect(result).to.include('--pact-urls');
         expect(result).to.include('http://idontexist');
       });
+      describe('and one of the arguments is false', () => {
+        it('should serialise the arguments correctly', () => {
+          const result = argsHelper.toArgumentsArray(
+            { enablePending: false },
+            {
+              enablePending: '--enable-pending',
+            }
+          );
+          expect(result).to.eql(['--enable-pending', 'false']);
+        });
+      });
+      describe('and one of the arguments is undefined', () => {
+        it('should not serialise the argument', () => {
+          const result = argsHelper.toArgumentsArray(
+            { enablePending: undefined },
+            {
+              enablePending: '--enable-pending',
+            }
+          );
+          expect(result).to.eql([]);
+        });
+      });
       describe("and the argument's value is also an object", () => {
         it('should serialise the argument value to a JSON string', () => {
           const result = argsHelper.toArgumentsArray(
