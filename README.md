@@ -313,6 +313,7 @@ pact.publishPacts(opts).then(function () {
 | `pactBrokerPassword` | false     | string | Password for Pact Broker basic authentication. Optional             |
 | `pactBrokerToken`    | false     | string | Bearer token for Pact Broker authentication. Optional               |
 | `tags`               | false     | array  | An array of Strings to tag the Pacts being published. Optional      |
+| `buildUrl`           | false     | string | The build URL that created the pact. Optional                       |
 | `verbose`           |  false  | boolean | Enables verbose output for underlying pact binary. |
 
 ### Pact Broker Deployment Check
