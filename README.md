@@ -335,6 +335,7 @@ pact.publishPacts(opts).then(function () {
 | `pactBrokerToken`    | false     | string | Bearer token for Pact Broker authentication. Optional               |
 | `tags`               | false     | array  | An array of Strings to tag the Pacts being published. Optional      |
 | `buildUrl`           | false     | string | The build URL that created the pact. Optional                       |
+| `branch`             | false     | string | The branch of the version for which you want to check the verification results. Optional |
 | `verbose`           |  false  | boolean | Enables verbose output for underlying pact binary. |
 
 ### Pact Broker Deployment Check
