@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.16.0](https://github.com/pact-foundation/pact-node/compare/v10.15.0...v10.16.0) (2021-12-14)
+
+
+### Features
+
+* Add buildUrl option to Pact Broker Publishing API ([dc1eb14](https://github.com/pact-foundation/pact-node/commit/dc1eb1427be3dfcfe8b13f08274a1ca33994618f))
+
 ## [10.15.0](https://github.com/pact-foundation/pact-node/compare/v10.14.0...v10.15.0) (2021-11-19)
 
 
