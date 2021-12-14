@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.16.1](https://github.com/pact-foundation/pact-node/compare/v10.16.0...v10.16.1) (2021-12-14)
+
+
+### Fixes and Improvements
+
+* Correctly serialise arguments set to false for the Ruby binaries (previously they were erroneously ignored) ([1780eae](https://github.com/pact-foundation/pact-node/commit/1780eae7c0367848b0c31991862919cd83401912))
+
 ## [10.16.0](https://github.com/pact-foundation/pact-node/compare/v10.15.0...v10.16.0) (2021-12-14)
 
 
