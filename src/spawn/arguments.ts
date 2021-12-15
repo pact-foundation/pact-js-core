@@ -13,6 +13,12 @@ export type CliVerbOptions = {
   cliVerb: string;
 };
 
+export interface ArgumentMappings {
+  [key: string]: Mapping;
+}
+
+type Mapping = string | ((val: unknown) => string[]);
+
 export type SpawnArgument =
   | CanDeployOptions
   | MessageOptions
@@ -34,11 +40,15 @@ const valFor = (v: SpawnArgument): Array<string> => {
   return v !== PACT_NODE_NO_VALUE ? [`${v}`] : [];
 };
 
-const mapFor = (mapping: string, v: string): Array<string> =>
-  mapping === DEFAULT_ARG ? valFor(v) : [mapping].concat(valFor(v));
+const mapFor = (mapping: Mapping, v: unknown): Array<string> =>
+  mapping === DEFAULT_ARG
+    ? valFor(v)
+    : typeof mapping === 'string'
+    ? [mapping].concat(valFor(v))
+    : mapping(v);
 
 const convertValue = (
-  mapping: string,
+  mapping: Mapping,
   v: SpawnArgument | Array<SpawnArgument>
 ): Array<string> => {
   if (mapping && (v || typeof v === 'boolean')) {
@@ -46,7 +56,7 @@ const convertValue = (
       ? _.flatten(
           (v as Array<string>).map((val: string) => mapFor(mapping, val))
         )
-      : mapFor(mapping, v as string);
+      : mapFor(mapping, v);
   }
   return [];
 };
@@ -54,7 +64,7 @@ const convertValue = (
 export class Arguments {
   public toArgumentsArray(
     args: SpawnArguments,
-    mappings: { [id: string]: string }
+    mappings: ArgumentMappings
   ): string[] {
     return _.chain(args instanceof Array ? args : [args])
       .map((x: SpawnArguments) => this.createArgumentsFromObject(x, mappings))
@@ -64,7 +74,7 @@ export class Arguments {
 
   private createArgumentsFromObject(
     args: SpawnArguments,
-    mappings: { [id: string]: string }
+    mappings: ArgumentMappings
   ): string[] {
     return _.chain(args)
       .reduce(
