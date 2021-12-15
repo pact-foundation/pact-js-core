@@ -13,6 +13,13 @@ export type CliVerbOptions = {
   cliVerb: string;
 };
 
+export interface ArgumentMappings {
+  [key: string]: Mapping;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Mapping = string | ((val: any) => string[]);
+
 export type SpawnArgument =
   | CanDeployOptions
   | MessageOptions
@@ -34,11 +41,12 @@ const valFor = (v: SpawnArgument): Array<string> => {
   return v !== PACT_NODE_NO_VALUE ? [`${v}`] : [];
 };
 
-const mapFor = (mapping: string, v: string): Array<string> =>
-  mapping === DEFAULT_ARG ? valFor(v) : [mapping].concat(valFor(v));
+const mapFor = (mapping: Mapping, v: string): Array<string> =>
+  mapping === DEFAULT_ARG ? valFor(v) :
+    typeof mapping === 'string' ? [mapping].concat(valFor(v)): mapping(v);
 
 const convertValue = (
-  mapping: string,
+  mapping: Mapping,
   v: SpawnArgument | Array<SpawnArgument>
 ): Array<string> => {
   if (mapping && (v || typeof v === 'boolean')) {
@@ -54,7 +62,7 @@ const convertValue = (
 export class Arguments {
   public toArgumentsArray(
     args: SpawnArguments,
-    mappings: { [id: string]: string }
+    mappings: ArgumentMappings
   ): string[] {
     return _.chain(args instanceof Array ? args : [args])
       .map((x: SpawnArguments) => this.createArgumentsFromObject(x, mappings))
@@ -64,7 +72,7 @@ export class Arguments {
 
   private createArgumentsFromObject(
     args: SpawnArguments,
-    mappings: { [id: string]: string }
+    mappings: ArgumentMappings
   ): string[] {
     return _.chain(args)
       .reduce(

@@ -190,5 +190,17 @@ describe('Pact Util Spec', () => {
       expect(result.length).to.be.equal(3);
       expect(result[0]).to.be.equal('http://idontexist');
     });
+    it('should accept mapping as function', () => {
+      const result = argsHelper.toArgumentsArray(
+        {
+          enablePending: false,
+        },
+        {
+          enablePending: (enablePending: boolean) =>
+            enablePending ? ['--enable-pending'] : ['--no-enable-pending'],
+        }
+      );
+      expect(result).to.eql(['--no-enable-pending']);
+    });
   });
 });

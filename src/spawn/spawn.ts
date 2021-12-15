@@ -5,6 +5,7 @@ import * as path from 'path';
 import logger from '../logger';
 import pactEnvironment from '../pact-environment';
 import argsHelper, { SpawnArguments, DEFAULT_ARG } from './arguments';
+import { ArgumentMappings } from '.';
 
 export class Spawn {
   public get cwd(): string {
@@ -14,7 +15,7 @@ export class Spawn {
   public spawnBinary(
     command: string,
     args: SpawnArguments = {},
-    argMapping: { [id: string]: string } = {}
+    argMapping: ArgumentMappings = {}
   ): ChildProcess {
     const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
     // Remove environment variable if there

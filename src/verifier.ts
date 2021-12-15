@@ -39,7 +39,7 @@ export class Verifier {
     publishVerificationResult: '--publish-verification-results',
     providerVersion: '--provider-app-version',
     provider: '--provider',
-    enablePending: '--enable-pending',
+    enablePending: (enablePending: boolean) => [enablePending ? '--enable-pending' : '--no-enable-pending'],
     customProviderHeaders: '--custom-provider-header',
     verbose: '--verbose',
     includeWipPactsSince: '--include-wip-pacts-since',
