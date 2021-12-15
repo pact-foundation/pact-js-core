@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [10.17.0](https://github.com/pact-foundation/pact-node/compare/v10.16.1...v10.17.0) (2021-12-15)
+
+
+### Features
+
+* Add branch option to Pact Broker Publishing API ([02d9677](https://github.com/pact-foundation/pact-node/commit/02d96774f83ecb44bdbc636d38a05381fa7c8d3d))
+
 ### [10.16.1](https://github.com/pact-foundation/pact-node/compare/v10.16.0...v10.16.1) (2021-12-14)
 
 
