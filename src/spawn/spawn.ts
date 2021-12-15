@@ -4,7 +4,11 @@ import { ChildProcess, SpawnOptions } from 'child_process';
 import * as path from 'path';
 import logger from '../logger';
 import pactEnvironment from '../pact-environment';
-import argsHelper, { SpawnArguments, ArgumentMappings, DEFAULT_ARG } from './arguments';
+import argsHelper, {
+  SpawnArguments,
+  ArgumentMappings,
+  DEFAULT_ARG,
+} from './arguments';
 
 export class Spawn {
   public get cwd(): string {

@@ -17,8 +17,7 @@ export interface ArgumentMappings {
   [key: string]: Mapping;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type Mapping = string | ((val: any) => string[]);
+type Mapping = string | ((val: unknown) => string[]);
 
 export type SpawnArgument =
   | CanDeployOptions
@@ -41,9 +40,12 @@ const valFor = (v: SpawnArgument): Array<string> => {
   return v !== PACT_NODE_NO_VALUE ? [`${v}`] : [];
 };
 
-const mapFor = (mapping: Mapping, v: string): Array<string> =>
-  mapping === DEFAULT_ARG ? valFor(v) :
-    typeof mapping === 'string' ? [mapping].concat(valFor(v)): mapping(v);
+const mapFor = (mapping: Mapping, v: unknown): Array<string> =>
+  mapping === DEFAULT_ARG
+    ? valFor(v)
+    : typeof mapping === 'string'
+    ? [mapping].concat(valFor(v))
+    : mapping(v);
 
 const convertValue = (
   mapping: Mapping,
@@ -54,7 +56,7 @@ const convertValue = (
       ? _.flatten(
           (v as Array<string>).map((val: string) => mapFor(mapping, val))
         )
-      : mapFor(mapping, v as string);
+      : mapFor(mapping, v);
   }
   return [];
 };

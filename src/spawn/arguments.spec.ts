@@ -196,7 +196,7 @@ describe('Pact Util Spec', () => {
           enablePending: false,
         },
         {
-          enablePending: (enablePending: boolean) =>
+          enablePending: (enablePending: unknown) =>
             enablePending ? ['--enable-pending'] : ['--no-enable-pending'],
         }
       );
