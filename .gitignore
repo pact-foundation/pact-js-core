@@ -20,7 +20,7 @@ coverage
 .lock-wscript
 
 # Compiled binary addons (http://nodejs.org/api/addons.html)
-build/Release
+build
 
 # Redis database dump
 dump.rdb
@@ -45,6 +45,7 @@ test/**/**.d.ts
 bin/**/**.d.ts
 **/*.d.ts
 *.js
+!test.js
 
 *.js.map
 

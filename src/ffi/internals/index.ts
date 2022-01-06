@@ -1,8 +1,8 @@
 // https://github.com/node-ffi/node-ffi/wiki/Node-FFI-Tutorial
-import ffi = require('ffi-napi');
-import path = require('path');
-import { FfiBinding } from './types';
-import logger from '../../logger';
+// import ffi = require('ffi-napi');
+// import path = require('path');
+// import { FfiBinding } from './types';
+// import logger from '../../logger';
 
 // This is a lookup between process.platform and
 // the platform names used in pact-reference
@@ -35,20 +35,20 @@ const EXTENSION_LOOKUP = {
 
 // This function exists to wrap the untyped ffi lib
 // and return a typed version based on the description
-export const createFfi = <T>(
-  filename: string,
-  description: T
-): FfiBinding<T> => {
-  logger.trace(`Native core located at '${filename}'`);
-  const lib = ffi.Library(
-    path.resolve(__dirname, '..', '..', '..', 'ffi', filename),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    description as { [k: string]: any }
-  );
-  logger.trace(`Native core linked successfully`);
+// export const createFfi = <T>(
+//   filename: string,
+//   description: T
+// ): FfiBinding<T> => {
+//   logger.trace(`Native core located at '${filename}'`);
+//   const lib = ffi.Library(
+//     path.resolve(__dirname, '..', '..', '..', 'ffi', filename),
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     description as { [k: string]: any }
+//   );
+//   logger.trace(`Native core linked successfully`);
 
-  return lib;
-};
+//   return lib;
+// };
 
 export const libName = (
   library: string,

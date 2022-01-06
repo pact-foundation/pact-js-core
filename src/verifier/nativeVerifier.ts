@@ -1,7 +1,9 @@
 import { VerifierOptions } from './types';
-import { getFfiLib } from '../ffi';
 import logger, { setLogLevel } from '../logger';
 import { argumentMapper } from './argumentMapper';
+import * as bindings from 'bindings';
+
+const ffiLib = bindings('pact.node');
 
 const VERIFICATION_SUCCESSFUL = 0;
 const VERIFICATION_FAILED = 1;
@@ -10,10 +12,11 @@ const VERIFICATION_FAILED = 1;
 const INVALID_ARGUMENTS = 4;
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
-  const verifierLib = getFfiLib(opts.logLevel);
+  ffiLib.init(opts.logLevel);
   if (opts.logLevel) {
     setLogLevel(opts.logLevel);
   }
+
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
     const request = argumentMapper(opts)
@@ -23,8 +26,9 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     logger.debug('sending arguments to FFI:');
     logger.debug(request);
 
-    verifierLib.pactffi_verify.async(request, (err: Error, res: number) => {
+    ffiLib.verifyProvider(request, (err: Error, res: number) => {
       logger.debug(`response from verifier: ${err}, ${res}`);
+      console.log(`response from verifier: ${err}, ${res}`);
       if (err) {
         if (typeof err === 'string') {
           // It might not really be an `Error`, because it comes from native code.
