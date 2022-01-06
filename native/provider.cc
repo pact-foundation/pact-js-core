@@ -39,9 +39,17 @@ class VerificationWorker : public AsyncWorker {
 
 // Asynchronous access to the `Estimate()` function
 Napi::Value VerifyProvider(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env,  "verifyProvider(arguments) received < 1 argument");
+  }
+
+  if (!info[0].IsString()) {
+    throw Napi::Error::New(env, "verifyProvider(arguments) expected a string");
+  }
+
   // Extract arguments to verifier
   std::string str = info[0].As<Napi::String>().Utf8Value();
-  // TODO: error handling
 
   // Execute the function asynchronously
   Napi::Function callback = info[1].As<Napi::Function>();
@@ -52,13 +60,22 @@ Napi::Value VerifyProvider(const Napi::CallbackInfo& info) {
 }
 
 Napi::Value InitPact(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "init(logLevel) received < 1 argument");
+  }
+
+  if (!info[0].IsString()) {
+    throw Napi::Error::New(env, "init(logLevel) expected a string");
+  }
+
   // Extract log level
   std::string logLevel = info[0].As<Napi::String>().Utf8Value();
-  // TODO: error handling
 
   // Initialise Pact
   const char* level = logLevel.c_str();
   initPact(level);
 
-  return info.Env().Undefined();
+  return env.Undefined();
 }
