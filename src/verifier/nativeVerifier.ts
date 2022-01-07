@@ -12,7 +12,7 @@ const VERIFICATION_FAILED = 1;
 const INVALID_ARGUMENTS = 4;
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
-  ffiLib.init(opts.logLevel);
+  ffiLib.pactffiInitWithLogLevel(opts.logLevel);
   if (opts.logLevel) {
     setLogLevel(opts.logLevel);
   }
@@ -26,9 +26,8 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     logger.debug('sending arguments to FFI:');
     logger.debug(request);
 
-    ffiLib.verifyProvider(request, (err: Error, res: number) => {
+    ffiLib.pactffiVerify(request, (err: Error, res: number) => {
       logger.debug(`response from verifier: ${err}, ${res}`);
-      console.log(`response from verifier: ${err}, ${res}`);
       if (err) {
         if (typeof err === 'string') {
           // It might not really be an `Error`, because it comes from native code.

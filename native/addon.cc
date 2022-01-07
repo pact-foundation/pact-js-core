@@ -2,10 +2,14 @@
 #include "provider.h"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports) {
-  exports.Set(Napi::String::New(env, "verifyProvider"),
-              Napi::Function::New(env, VerifyProvider));
-  exports.Set(Napi::String::New(env, "init"),
-              Napi::Function::New(env, InitPact));
+  exports.Set(Napi::String::New(env, "pactffiInitWithLogLevel"),
+              Napi::Function::New(env, PactffiInitWithLogLevel));
+
+  // Consumer
+
+  // Provider
+  exports.Set(Napi::String::New(env, "pactffiVerify"),
+              Napi::Function::New(env, PactffiVerify));
 
   return exports;
 }

@@ -4,14 +4,6 @@
 #include "pact.h"
 #include <iostream>
 
-int runVerification(const char* args) {
-  return pactffi_verify(args);
-}
-
-void initPact(const char* level) {
-  return pactffi_init_with_log_level(level);
-}
-
 using namespace Napi;
 
 class VerificationWorker : public AsyncWorker {
@@ -23,7 +15,7 @@ class VerificationWorker : public AsyncWorker {
 
     // This code will be executed on the worker thread
     void Execute() override {
-      result = runVerification(args.c_str());
+      result = pactffi_verify(args.c_str());
     }
 
     void OnOK() override {
@@ -37,15 +29,14 @@ class VerificationWorker : public AsyncWorker {
 
 };
 
-// Asynchronous access to the `Estimate()` function
-Napi::Value VerifyProvider(const Napi::CallbackInfo& info) {
+Napi::Value PactffiVerify(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
   if (info.Length() < 1) {
-    throw Napi::Error::New(env,  "verifyProvider(arguments) received < 1 argument");
+    throw Napi::Error::New(env,  "PactffiInit(arguments) received < 1 argument");
   }
 
   if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "verifyProvider(arguments) expected a string");
+    throw Napi::Error::New(env, "PactffiInit(arguments) expected a string");
   }
 
   // Extract arguments to verifier
@@ -59,7 +50,7 @@ Napi::Value VerifyProvider(const Napi::CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
-Napi::Value InitPact(const Napi::CallbackInfo& info) {
+Napi::Value PactffiInitWithLogLevel(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
   if (info.Length() < 1) {
@@ -75,7 +66,7 @@ Napi::Value InitPact(const Napi::CallbackInfo& info) {
 
   // Initialise Pact
   const char* level = logLevel.c_str();
-  initPact(level);
+  pactffi_init_with_log_level(level);
 
   return env.Undefined();
 }
