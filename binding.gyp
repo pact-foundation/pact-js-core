@@ -4,7 +4,10 @@
       "target_name": "pact",
       "sources": [
         "native/addon.cc",
-        "native/provider.cc"
+        "native/ffi.cc",
+        "native/consumer.cc",
+        "native/provider.cc",
+        "native/plugin.cc"
       ],
       "include_dirs": [
         "<!(node -p \"require('node-addon-api').include_dir\")",

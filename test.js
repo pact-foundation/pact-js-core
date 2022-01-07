@@ -10,3 +10,5 @@ result = Pact.pactffiVerify(
     console.log(result);
   }
 );
+
+console.log(Pact.pactffiVersion());

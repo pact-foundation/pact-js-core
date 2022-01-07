@@ -1,7 +1,5 @@
 #include <napi.h>
 
-Napi::Value PactffiInit(const Napi::CallbackInfo& info);
-Napi::Value PactffiInitWithLogLevel(const Napi::CallbackInfo& info);
 Napi::Value PactffiVerify(const Napi::CallbackInfo& info);
 
 // Unimplemented
