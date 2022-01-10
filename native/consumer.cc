@@ -159,24 +159,24 @@ Napi::Value PactffiMockServerMismatches(const Napi::CallbackInfo& info) {
  *
  *    int32_t pactffi_create_mock_server_for_pact(PactHandle pact, const char *addr_str, bool tls);
  */
-Napi::Value PactffiPactffiCreateMockServerForPact(const Napi::CallbackInfo& info) {
+Napi::Value PactffiCreateMockServerForPact(const Napi::CallbackInfo& info) {
    // return: int32_t
    Napi::Env env = info.Env();
 
   if (info.Length() < 3) {
-    throw Napi::Error::New(env, "PactffiPactffiCreateMockServerForPact received < 3 arguments");
+    throw Napi::Error::New(env, "PactffiCreateMockServerForPact received < 3 arguments");
   }
 
   if (!info[0].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiPactffiCreateMockServerForPact(arg 0) expected a PactHandle (uint16_t)");
+    throw Napi::Error::New(env, "PactffiCreateMockServerForPact(arg 0) expected a PactHandle (uint16_t)");
   }
 
   if (!info[1].IsString()) {
-    throw Napi::Error::New(env, "PactffiPactffiCreateMockServerForPact(arg 1) expected a string");
+    throw Napi::Error::New(env, "PactffiCreateMockServerForPact(arg 1) expected a string");
   }
 
   if (!info[2].IsBoolean()) {
-    throw Napi::Error::New(env, "PactffiPactffiCreateMockServerForPact(arg 2) expected a boolean");
+    throw Napi::Error::New(env, "PactffiCreateMockServerForPact(arg 2) expected a boolean");
   }
 
   PactHandle pact = info[0].As<Napi::Number>().Int32Value();
