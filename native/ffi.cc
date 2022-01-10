@@ -29,6 +29,7 @@ Napi::Value PactffiInit(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
+/*
 Napi::Value PactffiInitWithLogLevel(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
@@ -48,3 +49,99 @@ Napi::Value PactffiInitWithLogLevel(const Napi::CallbackInfo& info) {
 
   return env.Undefined();
 }
+
+Napi::Value Pactffi_log_message(const Napi::CallbackInfo& info) {
+   // return: void
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) received < 1 argument");
+  }
+
+  if (!info[0].IsString()) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) expected a string");
+  }
+
+  // pactffi_log_message(const char *source, const char *log_level, const char *message);
+
+  pactffi_log_message(const char *source, const char *log_level, const char *message);
+
+  return info.Env().Undefined();
+}
+
+Napi::Value Pactffi_log_to_stdout(const Napi::CallbackInfo& info) {
+   // return: int
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) received < 1 argument");
+  }
+
+  if (!info[0].IsString()) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) expected a string");
+  }
+
+  // pactffi_log_to_stdout(LevelFilter level_filter);
+
+  pactffi_log_to_stdout(LevelFilter level_filter);
+
+  return info.Env().Undefined();
+}
+
+Napi::Value Pactffi_log_to_stderr(const Napi::CallbackInfo& info) {
+   // return: int
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) received < 1 argument");
+  }
+
+  if (!info[0].IsString()) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) expected a string");
+  }
+
+  // pactffi_log_to_stderr(LevelFilter level_filter);
+
+  pactffi_log_to_stderr(LevelFilter level_filter);
+
+  return info.Env().Undefined();
+}
+
+Napi::Value Pactffi_log_to_file(const Napi::CallbackInfo& info) {
+   // return: int
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) received < 1 argument");
+  }
+
+  if (!info[0].IsString()) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) expected a string");
+  }
+
+  // pactffi_log_to_file(const char *file_name, LevelFilter level_filter);
+
+  pactffi_log_to_file(const char *file_name, LevelFilter level_filter);
+
+  return info.Env().Undefined();
+}
+
+Napi::Value Pactffi_log_to_buffer(const Napi::CallbackInfo& info) {
+   // return: int
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) received < 1 argument");
+  }
+
+  if (!info[0].IsString()) {
+    throw Napi::Error::New(env, "PactffiInit(envVar) expected a string");
+  }
+
+  // pactffi_log_to_buffer(LevelFilter level_filter);
+
+  pactffi_log_to_buffer(LevelFilter level_filter);
+
+  return info.Env().Undefined();
+}
+*/
