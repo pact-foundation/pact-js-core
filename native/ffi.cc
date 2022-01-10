@@ -29,7 +29,6 @@ Napi::Value PactffiInit(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
-/*
 Napi::Value PactffiInitWithLogLevel(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
@@ -49,6 +48,8 @@ Napi::Value PactffiInitWithLogLevel(const Napi::CallbackInfo& info) {
 
   return env.Undefined();
 }
+
+/*
 
 Napi::Value Pactffi_log_message(const Napi::CallbackInfo& info) {
    // return: void
