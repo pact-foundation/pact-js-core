@@ -1,7 +1,7 @@
 import { VerifierOptions } from './types';
 import logger, { setLogLevel } from '../logger';
 import { argumentMapper } from './argumentMapper';
-import * as bindings from 'bindings';
+import bindings = require('bindings');
 
 const ffiLib = bindings('pact.node');
 
