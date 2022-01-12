@@ -18,7 +18,7 @@
           "OS=='win'",
           {
             "libraries": [
-              "<(module_root_dir)/ffi/libpact_ffi.dll"
+              "<(module_root_dir)/ffi/libpact_ffi.dll.lib"
             ],
             "defines": [
               "_HAS_EXCEPTIONS=1"
@@ -88,7 +88,7 @@
       "library_dirs": [
         "<(module_root_dir)/native"
       ],
-      "ldflags" : [ "-Wl,-s" ],
+      "ldflags" : [ "-Wl,-s", "-Werror" ],
       "cflags_cc!": [
         "-fno-exceptions"
       ],

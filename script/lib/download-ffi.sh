@@ -63,6 +63,7 @@ else
 fi
 
 download_ffi "windows-x86_64.dll.gz" "" "libpact_ffi.dll.gz"
+download_ffi "windows-x86_64.dll.lib.gz" "" "libpact_ffi.dll.lib.gz"
 
 download_ffi_file "pact.h" "pact.h"
 
