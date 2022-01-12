@@ -104,7 +104,7 @@
       "copies": [
         {
           "files": [
-            "<!(pwd)/ffi/",
+            "<(module_root_dir)/ffi/",
           ],
           "destination": "<(PRODUCT_DIR)"
         }
