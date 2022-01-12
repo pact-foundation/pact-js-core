@@ -13,13 +13,13 @@
         "<!(node -p \"require('node-addon-api').include_dir\")",
         "<(module_root_dir)/native"
       ],
-      "libraries": [
-        "-lpact_ffi",
-      ],
       "conditions": [
         [
           "OS=='win'",
           {
+            "libraries": [
+              "<(module_root_dir)/ffi/libpact_ffi.dll"
+            ],
             "defines": [
               "_HAS_EXCEPTIONS=1"
             ],
@@ -44,6 +44,7 @@
             },
             "link_settings": {
               "libraries": [
+                "-lpact_ffi",
                 "-L<(module_root_dir)/ffi",
                 "-Wl,-rpath,@loader_path/ffi"
               ]
@@ -64,6 +65,7 @@
             },
             "link_settings": {
               "libraries": [
+                "-lpact_ffi",
                 "-L<(module_root_dir)/ffi/osxaarch64",
                 "-Wl,-rpath,@loader_path/ffi/osxaarch64"
               ]
@@ -75,6 +77,7 @@
           {
             "link_settings": {
               "libraries": [
+                "-lpact_ffi",
                 "-L<(module_root_dir)/ffi",
                 "-Wl,-rpath,'$$ORIGIN'/ffi"
               ]
