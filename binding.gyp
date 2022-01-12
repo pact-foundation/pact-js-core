@@ -44,8 +44,8 @@
             },
             "link_settings": {
               "libraries": [
-                "-L<(module_root_dir)/ffi/osx",
-                "-Wl,-rpath,@loader_path/ffi/osx"
+                "-L<(module_root_dir)/ffi",
+                "-Wl,-rpath,@loader_path"
               ]
             }
           }
@@ -65,7 +65,7 @@
             "link_settings": {
               "libraries": [
                 "-L<(module_root_dir)/ffi/osxaarch64",
-                "-Wl,-rpath,@loader_path/ffi/osxaarch64"
+                "-Wl,-rpath,@loader_path/osxaarch64"
               ]
             }
           }
@@ -75,8 +75,8 @@
           {
             "link_settings": {
               "libraries": [
-                "-L<(module_root_dir)/ffi/linux",
-                "-Wl,-rpath,'$$ORIGIN'/ffi/linux"
+                "-L<(module_root_dir)/ffi",
+                "-Wl,-rpath,'$$ORIGIN'"
               ]
             }
           }
@@ -85,7 +85,7 @@
       "library_dirs": [
         "<(module_root_dir)/native"
       ],
-      "ldflags": [],
+      "ldflags" : [ "-Wl,-s" ],
       "cflags_cc!": [
         "-fno-exceptions"
       ],
@@ -93,22 +93,23 @@
         "NAPI_CPP_EXCEPTIONS"
       ]
     },
-    # Need to set the library install name to enable the rpath settings to work on OSX
+    # Copy the shared libraries into the build/Release folder for distribution
     {
-      "target_name": "set_osx_install_name",
+      "target_name": "copy_release_artifacts",
       "type": "none",
       "copies": [
         {
           "files": [
-            "<!(pwd)/ffi/"
+            "<!(pwd)/ffi/",
+            "<!(pwd)/ffi/libpact_ffi.dll",
           ],
           "destination": "<(PRODUCT_DIR)"
         }
       ]
     },
-    # Copy the shared libraries into the build/Release folder for distribution
+    # Need to set the library install name to enable the rpath settings to work on OSX
     {
-      "target_name": "action_after_build",
+      "target_name": "set_osx_install_name",
       "dependencies": ["pact"],
       "type": "none",
       "target_conditions":[
@@ -127,7 +128,5 @@
         ]
       ]
     }
-    # Need to run this command AFTER for Mac OSX
-    #
   ]
 }
