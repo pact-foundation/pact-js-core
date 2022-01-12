@@ -99,6 +99,7 @@
     # Copy the shared libraries into the build/Release folder for distribution
     {
       "target_name": "copy_release_artifacts",
+      "dependencies": ["pact"],
       "type": "none",
       "copies": [
         {
