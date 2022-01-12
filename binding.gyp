@@ -103,6 +103,7 @@
       "type": "none",
       "copies": [
         {
+          # must use module_root_dir here, because it uses proper windows paths
           "files": [
             "<(module_root_dir)/ffi/",
           ],

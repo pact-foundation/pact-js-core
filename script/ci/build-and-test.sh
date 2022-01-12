@@ -4,6 +4,10 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the 
 
 npm ci
 
+echo "checking FFI artifacts"
+find ./ffi
+find ./build/Release
+echo "....continuing build"
 npm run format:check
 npm run lint
 npm run build
