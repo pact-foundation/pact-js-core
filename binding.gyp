@@ -18,7 +18,7 @@
           "OS=='win'",
           {
             "libraries": [
-              "<(module_root_dir)/ffi/libpact_ffi.dll.lib"
+              "<(module_root_dir)/ffi/pact_ffi.dll.lib"
             ],
             "defines": [
               "_HAS_EXCEPTIONS=1"
@@ -46,7 +46,7 @@
               "libraries": [
                 "-lpact_ffi",
                 "-L<(module_root_dir)/ffi",
-                "-Wl,-rpath,@loader_path/ffi"
+                "-Wl,-rpath,@loader_path"
               ]
             }
           }
@@ -67,7 +67,7 @@
               "libraries": [
                 "-lpact_ffi",
                 "-L<(module_root_dir)/ffi/osxaarch64",
-                "-Wl,-rpath,@loader_path/ffi/osxaarch64"
+                "-Wl,-rpath,@loader_path/osxaarch64"
               ]
             }
           }
@@ -79,7 +79,7 @@
               "libraries": [
                 "-lpact_ffi",
                 "-L<(module_root_dir)/ffi",
-                "-Wl,-rpath,'$$ORIGIN'/ffi"
+                "-Wl,-rpath,'$$ORIGIN'"
               ]
             }
           }
@@ -105,9 +105,17 @@
         {
           # must use module_root_dir here, because it uses proper windows paths
           "files": [
-            "<(module_root_dir)/ffi/",
+            "<(module_root_dir)/ffi/libpact_ffi.dylib",
+            "<(module_root_dir)/ffi/libpact_ffi.so",
+            "<(module_root_dir)/ffi/pact_ffi.dll",
           ],
           "destination": "<(PRODUCT_DIR)"
+        },
+        {
+          "files": [
+            "<(module_root_dir)/ffi/osxaarch64/libpact_ffi.dylib",
+          ],
+          "destination": "<(PRODUCT_DIR)/osxaarch64"
         }
       ]
     },
@@ -123,22 +131,9 @@
             "actions": [
               {
                 "action_name": "modify install_name on osx",
-                "inputs": ["<!(pwd)/build/Release/pact.node"],
-                "outputs": ["<!(pwd)/build/Release/pact.node"],
-                'action': ['install_name_tool', '-change', 'libpact_ffi.dylib', '@rpath/libpact_ffi.dylib', '<!(pwd)/build/Release/pact.node'],
-              }
-            ]
-          }
-        ],
-        [
-          "OS==\"win\"",
-          {
-            "actions": [
-              {
-                "action_name": "move dll into correct location",
-                "inputs": ["<!(pwd)/build/Release/ffi/libpact_ffi.dll"],
-                "outputs": ["<!(pwd)/build/Release/libpact_ffi.dll"],
-                'action': ['mv', "<!(pwd)/build/Release/ffi/libpact_ffi.dll", "<!(pwd)/build/Release/libpact_ffi.dll"],
+                "inputs": ["<(module_root_dir)/build/Release/pact.node"],
+                "outputs": ["<(module_root_dir)/build/Release/pact.node"],
+                'action': ['install_name_tool', '-change', 'libpact_ffi.dylib', '@rpath/libpact_ffi.dylib', '<(module_root_dir)/build/Release/pact.node'],
               }
             ]
           }
