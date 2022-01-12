@@ -17,18 +17,23 @@ if [[ $(find "${FFI_DIR}" -name "${FFI_VERSION}*") ]]; then
 fi
 
 warn "Cleaning ffi directory $FFI_DIR"
-rm -f "$FFI_DIR"/*
-mkdir -p "$FFI_DIR"
+rm -rf "${FFI_DIR:?}/*"
+mkdir -p "$FFI_DIR/osxaarch64"
 
 function download_ffi_file {
   if [ -z "${1:-}" ]; then
     error "${FUNCNAME[0]} requires the filename to download"
     exit 1
   fi
+  if [ -z "${2:-}" ]; then
+    error "${FUNCNAME[0]} requires the output filename to download"
+    exit 1
+  fi
   FFI_FILENAME="$1"
+  OUTPUT_FILENAME="$2"
 
   URL="${BASEURL}/libpact_ffi-${FFI_VERSION}/${FFI_FILENAME}"
-  DOWNLOAD_LOCATION="$FFI_DIR/${FFI_VERSION}-${FFI_FILENAME}"
+  DOWNLOAD_LOCATION="$FFI_DIR/${OUTPUT_FILENAME}"
 
   log "Downloading ffi $FFI_VERSION for $SUFFIX"
   download_to "$URL" "$DOWNLOAD_LOCATION"
@@ -42,23 +47,24 @@ function download_ffi {
   fi
   SUFFIX="$1"
   PREFIX="${2:-}"
+  OUTPUT_FILENAME="${3:-}"
 
-  download_ffi_file "${PREFIX}pact_ffi-$SUFFIX"
+  download_ffi_file "${PREFIX}pact_ffi-$SUFFIX" "${OUTPUT_FILENAME}"
   debug_log " ... unzipping '$DOWNLOAD_LOCATION'"
   gunzip "$DOWNLOAD_LOCATION"
 }
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
-  download_ffi "linux-x86_64.so.gz" "lib"
-  download_ffi "osx-x86_64.dylib.gz" "lib"
-  download_ffi "osx-aarch64-apple-darwin.dylib.gz" "lib"
+  download_ffi "linux-x86_64.so.gz" "lib" "libpact_ffi.so.gz"
+  download_ffi "osx-x86_64.dylib.gz" "lib" "libpact_ffi.dylib.gz"
+  download_ffi "osx-aarch64-apple-darwin.dylib.gz" "lib" "osxaarch64/libpact_ffi.dylib.gz"
 else
   warn "Skipped download of non-windows FFI libs because ONLY_DOWNLOAD_PACT_FOR_WINDOWS is set"
 fi
 
-download_ffi "windows-x86_64.dll.gz" ""
+download_ffi "windows-x86_64.dll.gz" "" "libpact_ffi.dll.gz"
 
-download_ffi_file "pact.h"
+download_ffi_file "pact.h" "pact.h"
 
 # Write readme in the ffi folder
 cat << EOF > "$FFI_DIR/README.md"

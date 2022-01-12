@@ -45,7 +45,7 @@
             "link_settings": {
               "libraries": [
                 "-L<(module_root_dir)/ffi",
-                "-Wl,-rpath,@loader_path"
+                "-Wl,-rpath,@loader_path/ffi"
               ]
             }
           }
@@ -65,7 +65,7 @@
             "link_settings": {
               "libraries": [
                 "-L<(module_root_dir)/ffi/osxaarch64",
-                "-Wl,-rpath,@loader_path/osxaarch64"
+                "-Wl,-rpath,@loader_path/ffi/osxaarch64"
               ]
             }
           }
@@ -76,7 +76,7 @@
             "link_settings": {
               "libraries": [
                 "-L<(module_root_dir)/ffi",
-                "-Wl,-rpath,'$$ORIGIN'"
+                "-Wl,-rpath,'$$ORIGIN'/ffi"
               ]
             }
           }
@@ -101,7 +101,6 @@
         {
           "files": [
             "<!(pwd)/ffi/",
-            "<!(pwd)/ffi/libpact_ffi.dll",
           ],
           "destination": "<(PRODUCT_DIR)"
         }
