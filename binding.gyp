@@ -14,16 +14,7 @@
         "<(module_root_dir)/native"
       ],
       "libraries": [
-        "-lpact_ffi"
-      ],
-      "library_dirs": [
-        "<(module_root_dir)/native"
-      ],
-      "ldflags": [
-        "-Wl,-z,defs"
-      ],
-      "cflags_cc!": [
-        "-fno-exceptions"
+        "-lpact_ffi",
       ],
       "conditions": [
         [
@@ -40,7 +31,7 @@
           }
         ],
         [
-          "OS=='mac'",
+          "OS==\"mac\" and target_arch ==\"x64\"",
           {
             "cflags+": [
               "-fvisibility=hidden"
@@ -50,13 +41,93 @@
               "GCC_ENABLE_CPP_EXCEPTIONS": "YES",
               "CLANG_CXX_LIBRARY": "libc++",
               "MACOSX_DEPLOYMENT_TARGET": "10.7"
+            },
+            "link_settings": {
+              "libraries": [
+                "-L<(module_root_dir)/ffi/osx",
+                "-Wl,-rpath,@loader_path/ffi/osx"
+              ]
+            }
+          }
+        ],
+        [
+          "OS==\"mac\" and target_arch ==\"arm64\"",
+          {
+            "cflags+": [
+              "-fvisibility=hidden"
+            ],
+            "xcode_settings": {
+              "GCC_SYMBOLS_PRIVATE_EXTERN": "YES",
+              "GCC_ENABLE_CPP_EXCEPTIONS": "YES",
+              "CLANG_CXX_LIBRARY": "libc++",
+              "MACOSX_DEPLOYMENT_TARGET": "10.7"
+            },
+            "link_settings": {
+              "libraries": [
+                "-L<(module_root_dir)/ffi/osxaarch64",
+                "-Wl,-rpath,@loader_path/ffi/osxaarch64"
+              ]
+            }
+          }
+        ],
+        [
+          "OS==\"linux\"",
+          {
+            "link_settings": {
+              "libraries": [
+                "-L<(module_root_dir)/ffi/linux",
+                "-Wl,-rpath,'$$ORIGIN'/ffi/linux"
+              ]
             }
           }
         ]
       ],
+      "library_dirs": [
+        "<(module_root_dir)/native"
+      ],
+      "ldflags": [],
+      "cflags_cc!": [
+        "-fno-exceptions"
+      ],
       "defines": [
         "NAPI_CPP_EXCEPTIONS"
       ]
+    },
+    # Need to set the library install name to enable the rpath settings to work on OSX
+    {
+      "target_name": "set_osx_install_name",
+      "type": "none",
+      "copies": [
+        {
+          "files": [
+            "<!(pwd)/ffi/"
+          ],
+          "destination": "<(PRODUCT_DIR)"
+        }
+      ]
+    },
+    # Copy the shared libraries into the build/Release folder for distribution
+    {
+      "target_name": "action_after_build",
+      "dependencies": ["pact"],
+      "type": "none",
+      "target_conditions":[
+        [
+          "OS==\"mac\"",
+          {
+            "actions": [
+              {
+                "action_name": "modify install_name on osx",
+                "inputs": ["<!(pwd)/build/Release/pact.node"],
+                "outputs": ["<!(pwd)/build/Release/pact.node"],
+                'action': ['install_name_tool', '-change', 'libpact_ffi.dylib', '@rpath/libpact_ffi.dylib', '<!(pwd)/build/Release/pact.node'],
+              }
+            ]
+          }
+        ]
+      ]
     }
+    # Need to run this command AFTER for Mac OSX
+    #
   ]
 }
