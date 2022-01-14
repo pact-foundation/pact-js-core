@@ -8,15 +8,15 @@ import path = require('path');
 import { setLogLevel } from '../logger';
 import { ConsumerPact, MatchingResultRequestMismatch } from './types';
 import zlib = require('zlib');
-// import FormData = require('form-data');
-// import fs = require('fs');
+import FormData = require('form-data');
+import fs = require('fs');
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
 const HOST = '127.0.0.1';
 
-describe('Integration like test for the consumer API', () => {
+describe.only('Integration like test for the consumer API', () => {
   setLogLevel('trace');
 
   let port: number;
@@ -64,7 +64,7 @@ describe('Integration like test for the consumer API', () => {
       port = pact.createMockServer(HOST);
     });
 
-    it.only('generates a pact with success', () => {
+    it('generates a pact with success', () => {
       return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
@@ -179,80 +179,80 @@ describe('Integration like test for the consumer API', () => {
     });
   });
 
-  // describe.skip('with multipart data', () => {
-  //   const form = new FormData();
-  //   const f: string = path.resolve(__dirname, '../../test/monkeypatch.rb');
-  //   form.append('my_file', fs.createReadStream(f));
-  //   const formHeaders = form.getHeaders();
+  describe('with multipart data', () => {
+    const form = new FormData();
+    const f: string = path.resolve(__dirname, '../../test/monkeypatch.rb');
+    form.append('my_file', fs.createReadStream(f));
+    const formHeaders = form.getHeaders();
 
-  //   beforeEach(() => {
-  //     const pact = makeConsumerPact(
-  //       'foo-consumer',
-  //       'bar-provider',
-  //       FfiSpecificationVersion.SPECIFICATION_VERSION_V3
-  //     );
+    beforeEach(() => {
+      const pact = makeConsumerPact(
+        'foo-consumer',
+        'bar-provider',
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V3
+      );
 
-  //     const interaction = pact.newInteraction('some description');
+      const interaction = pact.newInteraction('some description');
 
-  //     interaction.uponReceiving('a request to get a dog with multipart data');
-  //     interaction.given('fido exists');
-  //     interaction.withRequest('POST', '/dogs/1234');
-  //     interaction.withRequestHeader('x-special-header', 0, 'header');
-  //     interaction.withQuery('someParam', 0, 'someValue');
-  //     interaction.withRequestMultipartBody('text/plain', f, 'my_file');
-  //     interaction.withResponseBody(
-  //       JSON.stringify({
-  //         name: like('fido'),
-  //         age: like(23),
-  //         alive: like(true),
-  //       }),
-  //       'application/json'
-  //     );
-  //     interaction.withResponseHeader('x-special-header', 0, 'header');
-  //     interaction.withStatus(200);
+      interaction.uponReceiving('a request to get a dog with multipart data');
+      interaction.given('fido exists');
+      interaction.withRequest('POST', '/dogs/1234');
+      interaction.withRequestHeader('x-special-header', 0, 'header');
+      interaction.withQuery('someParam', 0, 'someValue');
+      interaction.withRequestMultipartBody('text/plain', f, 'my_file');
+      interaction.withResponseBody(
+        JSON.stringify({
+          name: like('fido'),
+          age: like(23),
+          alive: like(true),
+        }),
+        'application/json'
+      );
+      interaction.withResponseHeader('x-special-header', 0, 'header');
+      interaction.withStatus(200);
 
-  //     port = pact.createMockServer(HOST);
-  //   });
+      port = pact.createMockServer(HOST);
+    });
 
-  //   it('generates a pact with success', () => {
-  //     return axios
-  //       .request({
-  //         baseURL: `http://${HOST}:${port}`,
-  //         headers: {
-  //           'Content-Type': 'multipart/form-data',
-  //           Accept: 'application/json',
-  //           'x-special-header': 'header',
-  //           ...formHeaders,
-  //         },
-  //         params: {
-  //           someParam: 'someValue',
-  //         },
-  //         data: form,
-  //         method: 'POST',
-  //         url: '/dogs/1234',
-  //       })
-  //       .then((res) => {
-  //         expect(res.data).to.deep.equal({
-  //           name: 'fido',
-  //           age: 23,
-  //           alive: true,
-  //         });
-  //       })
-  //       .then(() => {
-  //         // You don't have to call this, it's just here to check it works
-  //         const mismatches = pact.mockServerMismatches(port);
-  //         console.dir(mismatches, { depth: 10 });
-  //         expect(mismatches).to.have.length(0);
-  //       })
-  //       .then(() => {
-  //         expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
-  //       })
-  //       .then(() => {
-  //         pact.writePactFile(port, path.join(__dirname, '__testoutput__'));
-  //       })
-  //       .then(() => {
-  //         pact.cleanupMockServer(port);
-  //       });
-  //   });
-  // });
+    it('generates a pact with success', () => {
+      return axios
+        .request({
+          baseURL: `http://${HOST}:${port}`,
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Accept: 'application/json',
+            'x-special-header': 'header',
+            ...formHeaders,
+          },
+          params: {
+            someParam: 'someValue',
+          },
+          data: form,
+          method: 'POST',
+          url: '/dogs/1234',
+        })
+        .then((res) => {
+          expect(res.data).to.deep.equal({
+            name: 'fido',
+            age: 23,
+            alive: true,
+          });
+        })
+        .then(() => {
+          // You don't have to call this, it's just here to check it works
+          const mismatches = pact.mockServerMismatches(port);
+          console.dir(mismatches, { depth: 10 });
+          expect(mismatches).to.have.length(0);
+        })
+        .then(() => {
+          expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
+        })
+        .then(() => {
+          pact.writePactFile(port, path.join(__dirname, '__testoutput__'));
+        })
+        .then(() => {
+          pact.cleanupMockServer(port);
+        });
+    });
+  });
 });

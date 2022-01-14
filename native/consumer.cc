@@ -732,22 +732,7 @@ Napi::Value PactffiWithHeader(const Napi::CallbackInfo& info) {
   size_t index = info[3].As<Napi::Number>().Uint32Value();
   std::string value = info[4].As<Napi::String>().Utf8Value();
 
-  // TODO: these don't seem to be passing proper strings to the c lib:
-  //
-  // [pact_ffi/src/mock_server/handles.rs:622] interaction = InteractionHandle {
-  //     interaction_ref: 65537,
-  // }
-  // [pact_ffi/src/mock_server/handles.rs:623] "part" = "part"
-  // [pact_ffi/src/mock_server/handles.rs:623] part = Request
-  // [pact_ffi/src/mock_server/handles.rs:624] "name" = "name"
-  // [pact_ffi/src/mock_server/handles.rs:624] name = 0x00007ffeefbfa9f1
-  // [pact_ffi/src/mock_server/handles.rs:625] "index" = "index"
-  // [pact_ffi/src/mock_server/handles.rs:625] index = 0
-  // [pact_ffi/src/mock_server/handles.rs:626] "value" = "value"
-  // [pact_ffi/src/mock_server/handles.rs:626] value = 0x00007ffeefbfa9d1
-  const char* n = name.c_str();
-  const char* v = value.c_str();
-  bool res = pactffi_with_header(interaction, part, n, index, v);
+  bool res = pactffi_with_header(interaction, part, name.c_str(), index, value.c_str());
 
   return Napi::Boolean::New(env, res);
 }
@@ -961,7 +946,7 @@ Napi::Value PactffiResponseStatus(const Napi::CallbackInfo& info) {
   }
 
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
-  unsigned short status = info[0].As<Napi::Number>().Uint32Value();
+  unsigned short status = info[1].As<Napi::Number>().Uint32Value();
 
   bool res = pactffi_response_status(interaction, status);
 
