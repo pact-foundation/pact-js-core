@@ -43,11 +43,6 @@ describe.only('Integration like test for the consumer API', () => {
       interaction.given('fido exists');
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
-      interaction.withRequestHeader(
-        'content-type',
-        0,
-        'application/octet-stream'
-      );
       interaction.withQuery('someParam', 0, 'someValue');
       interaction.withRequestBinaryBody(bytes, 'application/gzip');
       interaction.withResponseBody(
@@ -152,21 +147,13 @@ describe.only('Integration like test for the consumer API', () => {
           });
           expect(requestMismatches.mismatches).to.deep.include({
             actual: 'application/x-www-form-urlencoded',
+            actualBody: null,
             expected: 'application/octet-stream',
-            key: 'content-type',
+            expectedBody: 'ERROR: could not convert to UTF-8 from bytes',
             mismatch:
-              "Mismatch with header 'content-type': Expected header 'content-type' to have value 'application/octet-stream' but was 'application/x-www-form-urlencoded'",
-            type: 'HeaderMismatch',
-          }),
-            expect(requestMismatches.mismatches).to.deep.include({
-              actual: 'application/x-www-form-urlencoded',
-              actualBody: null,
-              expected: 'application/octet-stream',
-              expectedBody: 'ERROR: could not convert to UTF-8 from bytes',
-              mismatch:
-                'Expected body with content type application/octet-stream but was application/x-www-form-urlencoded',
-              type: 'BodyTypeMismatch',
-            });
+              'Expected body with content type application/octet-stream but was application/x-www-form-urlencoded',
+            type: 'BodyTypeMismatch',
+          });
         })
         .then(() => {
           // Yes, this writes the pact file.
