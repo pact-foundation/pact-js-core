@@ -15,3 +15,5 @@ export * from './logger/types';
 export * from './stub';
 
 export * from './can-deploy';
+
+export * from './consumer';

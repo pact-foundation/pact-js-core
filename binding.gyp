@@ -33,12 +33,10 @@
         [
           "OS==\"mac\" and target_arch ==\"x64\"",
           {
-            "cflags+": [
-              "-fvisibility=hidden"
-            ],
             "xcode_settings": {
               "GCC_SYMBOLS_PRIVATE_EXTERN": "YES",
               "GCC_ENABLE_CPP_EXCEPTIONS": "YES",
+              "GCC_TREAT_WARNINGS_AS_ERRORS": "YES",
               "CLANG_CXX_LIBRARY": "libc++",
               "MACOSX_DEPLOYMENT_TARGET": "10.7"
             },
@@ -54,12 +52,10 @@
         [
           "OS==\"mac\" and target_arch ==\"arm64\"",
           {
-            "cflags+": [
-              "-fvisibility=hidden"
-            ],
             "xcode_settings": {
               "GCC_SYMBOLS_PRIVATE_EXTERN": "YES",
               "GCC_ENABLE_CPP_EXCEPTIONS": "YES",
+              "GCC_TREAT_WARNINGS_AS_ERRORS": "YES",
               "CLANG_CXX_LIBRARY": "libc++",
               "MACOSX_DEPLOYMENT_TARGET": "10.7"
             },
@@ -88,10 +84,10 @@
       "library_dirs": [
         "<(module_root_dir)/native"
       ],
-      "ldflags" : [ "-Wl,-s", "-Werror" ],
       "cflags_cc!": [
-        "-fno-exceptions"
+        "-fno-exceptions",
       ],
+      "cflags_cc": [ "-Werror" ],
       "defines": [
         "NAPI_CPP_EXCEPTIONS"
       ]

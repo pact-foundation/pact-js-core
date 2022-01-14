@@ -1,7 +1,52 @@
 #include <napi.h>
 #include "pact.h"
+#include <iostream>
 
+
+using namespace std;
 using namespace Napi;
+
+PactSpecification integerToSpecification(uint32_t number) {
+  PactSpecification specification;
+
+  switch(number) {
+    case 0:
+      specification = PactSpecification::PactSpecification_Unknown;
+      break;
+    case 1:
+      specification = PactSpecification::PactSpecification_V1;
+      break;
+    case 2:
+      specification = PactSpecification::PactSpecification_V1_1;
+      break;
+    case 3:
+      specification = PactSpecification::PactSpecification_V2;
+      break;
+    case 4:
+      specification = PactSpecification::PactSpecification_V3;
+      break;
+    case 5:
+      specification = PactSpecification::PactSpecification_V4;
+      break;
+  }
+
+  return specification;
+}
+
+InteractionPart integerToInteractionPart(uint32_t number) {
+  InteractionPart part;
+
+  switch(number) {
+    case 0:
+      part = InteractionPart::InteractionPart_Request;
+      break;
+    case 1:
+      part = InteractionPart::InteractionPart_Response;
+      break;
+  }
+
+  return part;
+}
 
 /**
  * Fetch the in-memory logger buffer contents. This will only have any contents if the `buffer`
@@ -265,12 +310,12 @@ Napi::Value PactffiWritePactFile(const Napi::CallbackInfo& info) {
   }
 
   int32_t port = info[0].As<Napi::Number>().Int32Value();
-  std::string dir = info[0].As<Napi::String>().Utf8Value();
-  bool overwrite = info[0].As<Napi::Boolean>().Value();
+  std::string dir = info[1].As<Napi::String>().Utf8Value();
+  bool overwrite = info[2].As<Napi::Boolean>().Value();
 
-  pactffi_write_pact_file(port, dir.c_str(), overwrite);
+  int32_t res = pactffi_write_pact_file(port, dir.c_str(), overwrite);
 
-  return info.Env().Undefined();
+  return Number::New(env, res);
 }
 
 /**
@@ -375,6 +420,8 @@ Napi::Value PactffiUponReceiving(const Napi::CallbackInfo& info) {
   std::string description = info[1].As<Napi::String>().Utf8Value();
 
   bool res = pactffi_upon_receiving(interaction, description.c_str());
+
+  cout << "response from upon receiving: " << res;
 
   return Napi::Boolean::New(env, res);
 }
@@ -541,7 +588,7 @@ Napi::Value PactffiWithQueryParameter(const Napi::CallbackInfo& info) {
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
   std::string name = info[1].As<Napi::String>().Utf8Value();
   size_t index = info[2].As<Napi::Number>().Uint32Value();
-  std::string value = info[2].As<Napi::String>().Utf8Value();
+  std::string value = info[3].As<Napi::String>().Utf8Value();
 
   bool res = pactffi_with_query_parameter(interaction, name.c_str(), index, value.c_str());
 
@@ -572,18 +619,19 @@ Napi::Value PactffiWithSpecification(const Napi::CallbackInfo& info) {
   }
 
   if (!info[1].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiWithSpecification(arg 1) expected a string");
+    throw Napi::Error::New(env, "PactffiWithSpecification(arg 1) expected a number");
   }
 
   PactHandle pact = info[0].As<Napi::Number>().Uint32Value();
-  PactSpecification* specification = info[1].As<External<PactSpecification>>().Data();
-  // Alternatively could just handle as ints (the rust code ensures the enum is layed out correctly) e.g.
-  // uint32 specification = info[1].As<Napi::Number>().Uint32Value();
+  uint32_t specificationNumber = info[1].As<Napi::Number>().Uint32Value();
+  PactSpecification specification = integerToSpecification(specificationNumber);
 
-  bool res = pactffi_with_specification(pact, *specification);
+  bool res = pactffi_with_specification(pact, specification);
 
   return Napi::Boolean::New(env, res);
 }
+
+
 
 /**
  * Sets the additional metadata on the Pact file. Common uses are to add the client library details such as the name and version
@@ -669,22 +717,37 @@ Napi::Value PactffiWithHeader(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiWithHeader(arg 2) expected a string");
   }
 
-  if (!info[3].IsString()) {
-    throw Napi::Error::New(env, "PactffiWithHeader(arg 3) expected a string");
+  if (!info[3].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiWithHeader(arg 3) expected a number");
   }
 
   if (!info[4].IsString()) {
     throw Napi::Error::New(env, "PactffiWithHeader(arg 4) expected a string");
   }
 
-  PactHandle pact = info[0].As<Napi::Number>().Uint32Value();
-  InteractionPart* part = info[1].As<External<InteractionPart>>().Data();
-  // uint32_t part = info[1].As<Napi::Number>().Uint32Value();
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
+  InteractionPart part = integerToInteractionPart(partNumber);
   std::string name = info[2].As<Napi::String>().Utf8Value();
   size_t index = info[3].As<Napi::Number>().Uint32Value();
-  std::string value = info[3].As<Napi::String>().Utf8Value();
+  std::string value = info[4].As<Napi::String>().Utf8Value();
 
-  bool res = pactffi_with_header(pact, *part, name.c_str(), index, value.c_str());
+  // TODO: these don't seem to be passing proper strings to the c lib:
+  //
+  // [pact_ffi/src/mock_server/handles.rs:622] interaction = InteractionHandle {
+  //     interaction_ref: 65537,
+  // }
+  // [pact_ffi/src/mock_server/handles.rs:623] "part" = "part"
+  // [pact_ffi/src/mock_server/handles.rs:623] part = Request
+  // [pact_ffi/src/mock_server/handles.rs:624] "name" = "name"
+  // [pact_ffi/src/mock_server/handles.rs:624] name = 0x00007ffeefbfa9f1
+  // [pact_ffi/src/mock_server/handles.rs:625] "index" = "index"
+  // [pact_ffi/src/mock_server/handles.rs:625] index = 0
+  // [pact_ffi/src/mock_server/handles.rs:626] "value" = "value"
+  // [pact_ffi/src/mock_server/handles.rs:626] value = 0x00007ffeefbfa9d1
+  const char* n = name.c_str();
+  const char* v = value.c_str();
+  bool res = pactffi_with_header(interaction, part, n, index, v);
 
   return Napi::Boolean::New(env, res);
 }
@@ -729,13 +792,13 @@ Napi::Value PactffiWithBody(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiWithBody(arg 3) expected a string");
   }
 
-  PactHandle pact = info[0].As<Napi::Number>().Uint32Value();
-  InteractionPart* part = info[1].As<External<InteractionPart>>().Data();
-  // uint32_t part = info[1].As<Napi::Number>().Uint32Value();
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
+  InteractionPart part = integerToInteractionPart(partNumber);
   std::string contentType = info[2].As<Napi::String>().Utf8Value();
   std::string body = info[3].As<Napi::String>().Utf8Value();
 
-  bool res = pactffi_with_body(pact, *part, contentType.c_str(), body.c_str());
+  bool res = pactffi_with_body(interaction, part, contentType.c_str(), body.c_str());
 
   return Napi::Boolean::New(env, res);
 }
@@ -787,14 +850,16 @@ Napi::Value PactffiWithBinaryFile(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiWithBinaryFile(arg 4) expected a number");
   }
 
-  PactHandle pact = info[0].As<Napi::Number>().Uint32Value();
-  InteractionPart* part = info[1].As<External<InteractionPart>>().Data();
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
+  InteractionPart part = integerToInteractionPart(partNumber);
+
   // uint32_t part = info[1].As<Napi::Number>().Uint32Value();
   std::string contentType = info[2].As<Napi::String>().Utf8Value();
   Napi::Buffer<uint8_t> buffer = info[3].As<Napi::Buffer<uint8_t>>();
   size_t size = info[4].As<Napi::Number>().Uint32Value();
 
-  bool res = pactffi_with_binary_file(pact, *part, contentType.c_str(), buffer.Data(), size);
+  bool res = pactffi_with_binary_file(interaction, part, contentType.c_str(), buffer.Data(), size);
 
   return Napi::Boolean::New(env, res);
 }
@@ -817,7 +882,7 @@ Napi::Value PactffiWithBinaryFile(const Napi::CallbackInfo& info) {
  *                                          InteractionPart part,
  *                                          const char *content_type,
  *                                          const char *file,
- *                                          const char *part_name);
+ *                                          const char part_name);
  */
 Napi::Value PactffiWithMultipartFile(const Napi::CallbackInfo& info) {
    // return: bool
@@ -847,14 +912,15 @@ Napi::Value PactffiWithMultipartFile(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiWithMultipartFile(arg 4) expected a string");
   }
 
-  PactHandle pact = info[0].As<Napi::Number>().Uint32Value();
-  InteractionPart* part = info[1].As<External<InteractionPart>>().Data();
-  // uint32_t part = info[1].As<Napi::Number>().Uint32Value();
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
+  InteractionPart part = integerToInteractionPart(partNumber);
+
   std::string contentType = info[2].As<Napi::String>().Utf8Value();
   std::string file = info[3].As<Napi::String>().Utf8Value();
   std::string partName = info[4].As<Napi::String>().Utf8Value();
 
-  StringResult res = pactffi_with_multipart_file(pact, *part, contentType.c_str(), file.c_str(), partName.c_str());
+  StringResult res = pactffi_with_multipart_file(interaction, part, contentType.c_str(), file.c_str(), partName.c_str());
 
   // TODO: this will also break the https://github.com/pact-foundation/pact-js-core/tree/feat/ffi-consumer/src/consumer branch
   //       which expects a struct
@@ -886,8 +952,8 @@ Napi::Value PactffiResponseStatus(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiResponseStatus received < 2 arguments");
   }
 
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiResponseStatus(arg 0) expected a string");
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiResponseStatus(arg 0) expected a number");
   }
 
   if (!info[1].IsNumber()) {
