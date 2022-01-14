@@ -1,13 +1,10 @@
 #include <napi.h>
 #include "pact.h"
-#include <iostream>
 
-
-using namespace std;
 using namespace Napi;
 
-PactSpecification integerToSpecification(uint32_t number) {
-  PactSpecification specification;
+PactSpecification integerToSpecification(Napi::Env &env, uint32_t number) {
+  PactSpecification specification = PactSpecification::PactSpecification_V2;
 
   switch(number) {
     case 0:
@@ -28,13 +25,18 @@ PactSpecification integerToSpecification(uint32_t number) {
     case 5:
       specification = PactSpecification::PactSpecification_V4;
       break;
+    default:
+      std::string err =  "Unable to parse pact specification: ";
+      err += number;
+
+      throw Napi::Error::New(env, err);
   }
 
   return specification;
 }
 
-InteractionPart integerToInteractionPart(uint32_t number) {
-  InteractionPart part;
+InteractionPart integerToInteractionPart(Napi::Env &env, uint32_t number) {
+  InteractionPart part = InteractionPart::InteractionPart_Request;
 
   switch(number) {
     case 0:
@@ -43,6 +45,11 @@ InteractionPart integerToInteractionPart(uint32_t number) {
     case 1:
       part = InteractionPart::InteractionPart_Response;
       break;
+    default:
+      std::string err =  "Unable to parse pact interaction part: ";
+      err += number;
+
+      throw Napi::Error::New(env, err);
   }
 
   return part;
@@ -421,8 +428,6 @@ Napi::Value PactffiUponReceiving(const Napi::CallbackInfo& info) {
 
   bool res = pactffi_upon_receiving(interaction, description.c_str());
 
-  cout << "response from upon receiving: " << res;
-
   return Napi::Boolean::New(env, res);
 }
 
@@ -624,7 +629,7 @@ Napi::Value PactffiWithSpecification(const Napi::CallbackInfo& info) {
 
   PactHandle pact = info[0].As<Napi::Number>().Uint32Value();
   uint32_t specificationNumber = info[1].As<Napi::Number>().Uint32Value();
-  PactSpecification specification = integerToSpecification(specificationNumber);
+  PactSpecification specification = integerToSpecification(env, specificationNumber);
 
   bool res = pactffi_with_specification(pact, specification);
 
@@ -727,7 +732,7 @@ Napi::Value PactffiWithHeader(const Napi::CallbackInfo& info) {
 
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
   uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
-  InteractionPart part = integerToInteractionPart(partNumber);
+  InteractionPart part = integerToInteractionPart(env, partNumber);
   std::string name = info[2].As<Napi::String>().Utf8Value();
   size_t index = info[3].As<Napi::Number>().Uint32Value();
   std::string value = info[4].As<Napi::String>().Utf8Value();
@@ -779,7 +784,7 @@ Napi::Value PactffiWithBody(const Napi::CallbackInfo& info) {
 
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
   uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
-  InteractionPart part = integerToInteractionPart(partNumber);
+  InteractionPart part = integerToInteractionPart(env, partNumber);
   std::string contentType = info[2].As<Napi::String>().Utf8Value();
   std::string body = info[3].As<Napi::String>().Utf8Value();
 
@@ -837,7 +842,7 @@ Napi::Value PactffiWithBinaryFile(const Napi::CallbackInfo& info) {
 
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
   uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
-  InteractionPart part = integerToInteractionPart(partNumber);
+  InteractionPart part = integerToInteractionPart(env, partNumber);
 
   // uint32_t part = info[1].As<Napi::Number>().Uint32Value();
   std::string contentType = info[2].As<Napi::String>().Utf8Value();
@@ -899,7 +904,7 @@ Napi::Value PactffiWithMultipartFile(const Napi::CallbackInfo& info) {
 
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
   uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
-  InteractionPart part = integerToInteractionPart(partNumber);
+  InteractionPart part = integerToInteractionPart(env, partNumber);
 
   std::string contentType = info[2].As<Napi::String>().Utf8Value();
   std::string file = info[3].As<Napi::String>().Utf8Value();
