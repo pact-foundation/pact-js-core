@@ -16,7 +16,7 @@ const expect = chai.expect;
 
 const HOST = '127.0.0.1';
 
-describe.only('Integration like test for the consumer API', () => {
+describe('Integration like test for the consumer API', () => {
   setLogLevel('trace');
 
   let port: number;
@@ -73,7 +73,7 @@ describe.only('Integration like test for the consumer API', () => {
       port = pact.createMockServer(HOST);
     });
 
-    it.only('generates a pact with success', () => {
+    it('generates a pact with success', () => {
       return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
