@@ -43,16 +43,7 @@ describe('Integration like test for the consumer API', () => {
       interaction.given('fido exists');
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
-      interaction.withQuery(
-        'someParam',
-        0,
-        JSON.stringify({
-          'pact:matcher:type': 'type',
-          'pact:generator:type': 'ProviderState',
-          expression: '${accountNumber}',
-          value: '100',
-        })
-      );
+      interaction.withQuery('someParam', 0, 'someValue');
       interaction.withResponseBody(
         JSON.stringify({
           id: like(1234),
