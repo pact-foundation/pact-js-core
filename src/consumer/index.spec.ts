@@ -43,13 +43,22 @@ describe.only('Integration like test for the consumer API', () => {
       interaction.given('fido exists');
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
+      interaction.withQuery(
+        'someParam',
+        0,
+        JSON.stringify({
+          'pact:matcher:type': 'type',
+          'pact:generator:type': 'ProviderState',
+          expression: '${accountNumber}',
+          value: '100',
+        })
+      );
       interaction.withResponseBody(
         JSON.stringify({
           id: like(1234),
         }),
         'application/json'
       );
-      interaction.withQuery('someParam', 0, 'someValue');
       interaction.withResponseBody(
         JSON.stringify({
           name: like('fido'),
@@ -64,7 +73,7 @@ describe.only('Integration like test for the consumer API', () => {
       port = pact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', () => {
+    it.only('generates a pact with success', () => {
       return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
@@ -165,7 +174,8 @@ describe.only('Integration like test for the consumer API', () => {
   });
 
   // binary data is flakey on CI. If I set everything to application/gzip, it complains about it not being application/octet-stream and vice-versa
-  // Haven't looked to hard to get to the bottom of it, but it might be axios sending different headers across OS
+  // Haven't looked to hard to get to the bottom of it, but it might be axios sending different headers across OS/node versions or it might be the
+  //  way rust sniffs binary payloads?
   // e.g. https://github.com/pact-foundation/pact-js-core/runs/4812910376?check_suite_focus=true#step:4:360
   describe.skip('with binary data', () => {
     beforeEach(() => {

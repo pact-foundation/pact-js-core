@@ -242,3 +242,5 @@ export const makeConsumerPact = (
     },
   };
 };
+
+export * from './types';

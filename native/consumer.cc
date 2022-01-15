@@ -507,7 +507,7 @@ Napi::Value PactffiGivenWithParam(const Napi::CallbackInfo& info) {
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
   std::string description = info[1].As<Napi::String>().Utf8Value();
   std::string name = info[2].As<Napi::String>().Utf8Value();
-  std::string value = info[4].As<Napi::String>().Utf8Value();
+  std::string value = info[3].As<Napi::String>().Utf8Value();
 
   bool res = pactffi_given_with_param(interaction, description.c_str(), name.c_str(), value.c_str());
 
