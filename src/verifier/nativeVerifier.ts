@@ -1,18 +1,11 @@
 import { VerifierOptions } from './types';
 import logger, { setLogLevel } from '../logger';
 import { argumentMapper } from './argumentMapper';
-import bindings = require('bindings');
-
-const ffiLib = bindings('pact.node');
-
-const VERIFICATION_SUCCESSFUL = 0;
-const VERIFICATION_FAILED = 1;
-// 2 - null string passed
-// 3 - method panicked
-const INVALID_ARGUMENTS = 4;
+import { getFfiLib } from '../ffi';
+import { VERIFY_PROVIDER_RESPONSE } from '../ffi/types';
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
-  ffiLib.pactffiInitWithLogLevel(opts.logLevel);
+  const ffi = getFfiLib(opts.logLevel);
   if (opts.logLevel) {
     setLogLevel(opts.logLevel);
   }
@@ -26,7 +19,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     logger.debug('sending arguments to FFI:');
     logger.debug(request);
 
-    ffiLib.pactffiVerify(request, (err: Error, res: number) => {
+    ffi.pactffiVerify(request, (err: Error, res: number) => {
       logger.debug(`response from verifier: ${err}, ${res}`);
       if (err) {
         if (typeof err === 'string') {
@@ -41,15 +34,15 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
         reject(err);
       } else {
         switch (res) {
-          case VERIFICATION_SUCCESSFUL:
+          case VERIFY_PROVIDER_RESPONSE.VERIFICATION_SUCCESSFUL:
             logger.info('Verification successful');
             resolve(`finished: ${res}`);
             break;
-          case VERIFICATION_FAILED:
+          case VERIFY_PROVIDER_RESPONSE.VERIFICATION_FAILED:
             logger.error('Verification unsuccessful');
             reject(new Error('Verfication failed'));
             break;
-          case INVALID_ARGUMENTS:
+          case VERIFY_PROVIDER_RESPONSE.INVALID_ARGUMENTS:
             logger.pactCrash(
               'The underlying pact core was invoked incorrectly.'
             );

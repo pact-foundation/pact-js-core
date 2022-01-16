@@ -12,7 +12,6 @@ import {
   logErrorAndThrow,
 } from '../logger';
 import { wrapAllWithCheck, wrapWithCheck } from './checkErrors';
-import bindings = require('bindings');
 
 import {
   ConsumerInteraction,
@@ -20,6 +19,7 @@ import {
   MatchingResult,
   Mismatch,
 } from './types';
+import { getFfiLib } from '../ffi';
 
 export const makeConsumerPact = (
   consumer: string,
@@ -27,17 +27,13 @@ export const makeConsumerPact = (
   version: FfiSpecificationVersion = 3,
   logLevel = getLogLevel()
 ): ConsumerPact => {
-  // TODO: types
-  const lib = bindings('pact.node');
-
-  // TODO: move this back into getFfiLib(logLevel)
-  lib.pactffiInitWithLogLevel(logLevel);
+  const ffi = getFfiLib(logLevel);
   if (logLevel) {
     setLogLevel(logLevel);
   }
 
-  const pactPtr = lib.pactffiNewPact(consumer, provider);
-  if (!lib.pactffiWithSpecification(pactPtr, version)) {
+  const pactPtr = ffi.pactffiNewPact(consumer, provider);
+  if (!ffi.pactffiWithSpecification(pactPtr, version)) {
     throw new Error(
       `Unable to set core spec version. The pact FfiSpecificationVersion '${version}' may be invalid (note this is not the same as the pact spec version)`
     );
@@ -49,7 +45,7 @@ export const makeConsumerPact = (
       requestedPort?: number,
       tls = false
     ) => {
-      const port = lib.pactffiCreateMockServerForPact(
+      const port = ffi.pactffiCreateMockServerForPact(
         pactPtr,
         `${address}:${requestedPort ? requestedPort : 0}`,
         tls
@@ -82,11 +78,11 @@ export const makeConsumerPact = (
     },
 
     mockServerMatchedSuccessfully: (port: number) => {
-      return lib.pactffiMockServerMatched(port);
+      return ffi.pactffiMockServerMatched(port);
     },
     mockServerMismatches: (port: number): MatchingResult[] => {
       const results: MatchingResult[] = JSON.parse(
-        lib.pactffiMockServerMismatches(port)
+        ffi.pactffiMockServerMismatches(port)
       );
       return results.map((result: MatchingResult) => ({
         ...result,
@@ -101,12 +97,12 @@ export const makeConsumerPact = (
     },
     cleanupMockServer: (port: number): boolean => {
       return wrapWithCheck<(port: number) => boolean>(
-        (port: number): boolean => lib.pactffiCleanupMockServer(port),
+        (port: number): boolean => ffi.pactffiCleanupMockServer(port),
         'cleanupMockServer'
       )(port);
     },
     writePactFile: (port: number, dir: string, merge = true) => {
-      const result = lib.pactffiWritePactFile(port, dir, !merge);
+      const result = ffi.pactffiWritePactFile(port, dir, !merge);
       switch (result) {
         case FfiWritePactResponse.SUCCESS:
           return;
@@ -127,26 +123,26 @@ export const makeConsumerPact = (
       }
     },
     addMetadata: (namespace: string, name: string, value: string): boolean => {
-      return lib.pactffiWithPactMetadata(pactPtr, namespace, name, value);
+      return ffi.pactffiWithPactMetadata(pactPtr, namespace, name, value);
     },
     newInteraction: (description: string): ConsumerInteraction => {
-      const interactionPtr = lib.pactffiNewInteraction(pactPtr, description);
+      const interactionPtr = ffi.pactffiNewInteraction(pactPtr, description);
 
       return wrapAllWithCheck<ConsumerInteraction>({
         uponReceiving: (description: string) => {
-          return lib.pactffiUponReceiving(interactionPtr, description);
+          return ffi.pactffiUponReceiving(interactionPtr, description);
         },
         given: (state: string) => {
-          return lib.pactffiGiven(interactionPtr, state);
+          return ffi.pactffiGiven(interactionPtr, state);
         },
         givenWithParam: (state: string, name: string, value: string) => {
-          return lib.pactffiGivenWithParam(interactionPtr, state, name, value);
+          return ffi.pactffiGivenWithParam(interactionPtr, state, name, value);
         },
         withRequest: (method: string, path: string) => {
-          return lib.pactffiWithRequest(interactionPtr, method, path);
+          return ffi.pactffiWithRequest(interactionPtr, method, path);
         },
         withQuery: (name: string, index: number, value: string) => {
-          return lib.pactffiWithQueryParameter(
+          return ffi.pactffiWithQueryParameter(
             interactionPtr,
             name,
             index,
@@ -154,7 +150,7 @@ export const makeConsumerPact = (
           );
         },
         withRequestHeader: (name: string, index: number, value: string) => {
-          return lib.pactffiWithHeader(
+          return ffi.pactffiWithHeader(
             interactionPtr,
             INTERACTION_PART_REQUEST,
             name,
@@ -163,7 +159,7 @@ export const makeConsumerPact = (
           );
         },
         withRequestBody: (body: string, contentType: string) => {
-          return lib.pactffiWithBody(
+          return ffi.pactffiWithBody(
             interactionPtr,
             INTERACTION_PART_REQUEST,
             contentType,
@@ -171,7 +167,7 @@ export const makeConsumerPact = (
           );
         },
         withRequestBinaryBody: (body: Buffer, contentType: string) => {
-          return lib.pactffiWithBinaryFile(
+          return ffi.pactffiWithBinaryFile(
             interactionPtr,
             INTERACTION_PART_REQUEST,
             contentType,
@@ -185,7 +181,7 @@ export const makeConsumerPact = (
           mimePartName: string
         ) => {
           return (
-            lib.pactffiWithMultipartFile(
+            ffi.pactffiWithMultipartFile(
               interactionPtr,
               INTERACTION_PART_REQUEST,
               contentType,
@@ -195,7 +191,7 @@ export const makeConsumerPact = (
           );
         },
         withResponseHeader: (name: string, index: number, value: string) => {
-          return lib.pactffiWithHeader(
+          return ffi.pactffiWithHeader(
             interactionPtr,
             INTERACTION_PART_RESPONSE,
             name,
@@ -204,7 +200,7 @@ export const makeConsumerPact = (
           );
         },
         withResponseBody: (body: string, contentType: string) => {
-          return lib.pactffiWithBody(
+          return ffi.pactffiWithBody(
             interactionPtr,
             INTERACTION_PART_RESPONSE,
             contentType,
@@ -212,7 +208,7 @@ export const makeConsumerPact = (
           );
         },
         withResponseBinaryBody: (body: Buffer, contentType: string) => {
-          return lib.pactffiWithBinaryFile(
+          return ffi.pactffiWithBinaryFile(
             interactionPtr,
             INTERACTION_PART_RESPONSE,
             contentType,
@@ -226,7 +222,7 @@ export const makeConsumerPact = (
           mimePartName: string
         ) => {
           return (
-            lib.pactffiWithMultipartFile(
+            ffi.pactffiWithMultipartFile(
               interactionPtr,
               INTERACTION_PART_RESPONSE,
               contentType,
@@ -236,7 +232,7 @@ export const makeConsumerPact = (
           );
         },
         withStatus: (status: number) => {
-          return lib.pactffiResponseStatus(interactionPtr, status);
+          return ffi.pactffiResponseStatus(interactionPtr, status);
         },
       });
     },
