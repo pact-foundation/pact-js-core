@@ -183,7 +183,10 @@ describe('Integration like test for the consumer API', () => {
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
       interaction.withQuery('someParam', 0, 'someValue');
-      interaction.withRequestBinaryBody(bytes, 'application/gzip');
+      interaction.withRequestBinaryBody(
+        bytes,
+        isWin || isCI ? 'application/octet-stream' : 'application/gzip'
+      );
       interaction.withResponseBody(
         JSON.stringify({
           name: like('fido'),
@@ -203,8 +206,7 @@ describe('Integration like test for the consumer API', () => {
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
-            'content-type':
-              isWin || isCI ? 'application/gzip' : 'application/octet-stream',
+            'content-type': 'application/octet-stream',
             Accept: 'application/json',
             'x-special-header': 'header',
           },
