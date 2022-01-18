@@ -169,6 +169,10 @@ describe('Integration like test for the consumer API', () => {
   });
 
   // See https://github.com/pact-foundation/pact-reference/issues/171 for why we have an OS switch here
+  // Windows: does not have magic mime matcher, uses content-type
+  // OSX on CI: does not magic mime matcher, uses content-type
+  // OSX: has magic mime matcher, sniffs content
+  // Linux: has magic mime matcher, sniffs content
   describe('with binary data', () => {
     beforeEach(() => {
       pact = makeConsumerPact(
@@ -190,7 +194,6 @@ describe('Integration like test for the consumer API', () => {
           ? 'application/octet-stream'
           : 'application/gzip'
       );
-      // ubuntu: Expected binary contents to have content type 'application/octet-stream' but detected contents was 'application/gzip'
       interaction.withResponseBody(
         JSON.stringify({
           name: like('fido'),
@@ -205,7 +208,7 @@ describe('Integration like test for the consumer API', () => {
       port = pact.createMockServer(HOST);
     });
 
-    it.only('generates a pact with success', () => {
+    it('generates a pact with success', () => {
       return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
