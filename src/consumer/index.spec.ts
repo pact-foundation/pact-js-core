@@ -16,6 +16,8 @@ const expect = chai.expect;
 
 const HOST = '127.0.0.1';
 
+const isWin = process.platform === 'win32';
+
 describe('Integration like test for the consumer API', () => {
   setLogLevel('trace');
 
@@ -164,11 +166,8 @@ describe('Integration like test for the consumer API', () => {
     });
   });
 
-  // binary data is flakey on CI. If I set everything to application/gzip, it complains about it not being application/octet-stream and vice-versa
-  // Haven't looked to hard to get to the bottom of it, but it might be axios sending different headers across OS/node versions or it might be the
-  //  way rust sniffs binary payloads?
-  // e.g. https://github.com/pact-foundation/pact-js-core/runs/4812910376?check_suite_focus=true#step:4:360
-  describe.skip('with binary data', () => {
+  // See https://github.com/pact-foundation/pact-reference/issues/171 for why we have an OS switch here
+  describe('with binary data', () => {
     beforeEach(() => {
       pact = makeConsumerPact(
         'foo-consumer',
@@ -203,7 +202,9 @@ describe('Integration like test for the consumer API', () => {
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
-            'content-type': 'application/octet-stream',
+            'content-type': isWin
+              ? 'application/gzip'
+              : 'application/octet-stream',
             Accept: 'application/json',
             'x-special-header': 'header',
           },
