@@ -17,6 +17,7 @@ const expect = chai.expect;
 const HOST = '127.0.0.1';
 
 const isWin = process.platform === 'win32';
+const isOSX = process.platform === 'darwin';
 const isCI = process.env.CI === 'true';
 
 describe('Integration like test for the consumer API', () => {
@@ -185,8 +186,11 @@ describe('Integration like test for the consumer API', () => {
       interaction.withQuery('someParam', 0, 'someValue');
       interaction.withRequestBinaryBody(
         bytes,
-        isWin || isCI ? 'application/octet-stream' : 'application/gzip'
+        isWin || (isOSX && isCI)
+          ? 'application/octet-stream'
+          : 'application/gzip'
       );
+      // ubuntu: Expected binary contents to have content type 'application/octet-stream' but detected contents was 'application/gzip'
       interaction.withResponseBody(
         JSON.stringify({
           name: like('fido'),
