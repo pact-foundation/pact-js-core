@@ -17,6 +17,7 @@ const expect = chai.expect;
 const HOST = '127.0.0.1';
 
 const isWin = process.platform === 'win32';
+const isCI = process.env.CI === 'true';
 
 describe('Integration like test for the consumer API', () => {
   setLogLevel('trace');
@@ -197,14 +198,13 @@ describe('Integration like test for the consumer API', () => {
       port = pact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', () => {
+    it.only('generates a pact with success', () => {
       return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
-            'content-type': isWin
-              ? 'application/gzip'
-              : 'application/octet-stream',
+            'content-type':
+              isWin || isCI ? 'application/gzip' : 'application/octet-stream',
             Accept: 'application/json',
             'x-special-header': 'header',
           },
