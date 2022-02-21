@@ -31,7 +31,18 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiResponseStatus"), Napi::Function::New(env, PactffiResponseStatus));
 
   // Provider
-  exports.Set(Napi::String::New(env, "pactffiVerify"), Napi::Function::New(env, PactffiVerify));
+  exports.Set(Napi::String::New(env, "pactffiVerifierNewForApplication"), Napi::Function::New(env, PactffiVerifierNewForApplication));
+  exports.Set(Napi::String::New(env, "pactffiVerifierExecute"), Napi::Function::New(env, PactffiVerifierExecute));
+  exports.Set(Napi::String::New(env, "pactffiVerifierShutdown"), Napi::Function::New(env, PactffiVerifierShutdown));
+  exports.Set(Napi::String::New(env, "pactffiVerifierSetProviderInfo"), Napi::Function::New(env, PactffiVerifierSetProviderInfo));
+  exports.Set(Napi::String::New(env, "pactffiVerifierSetFilterInfo"), Napi::Function::New(env, PactffiVerifierSetFilterInfo));
+  exports.Set(Napi::String::New(env, "pactffiVerifierSetProviderState"), Napi::Function::New(env, PactffiVerifierSetProviderState));
+  exports.Set(Napi::String::New(env, "pactffiVerifierSetConsumerFilters"), Napi::Function::New(env, PactffiVerifierSetConsumerFilters));
+  exports.Set(Napi::String::New(env, "pactffiVerifierAddFileSource"), Napi::Function::New(env, PactffiVerifierAddFileSource));
+  exports.Set(Napi::String::New(env, "pactffiVerifierAddDirectorySource"), Napi::Function::New(env, PactffiVerifierAddDirectorySource));
+  exports.Set(Napi::String::New(env, "pactffiVerifierUrlSource"), Napi::Function::New(env, PactffiVerifierUrlSource));
+  exports.Set(Napi::String::New(env, "pactffiVerifierBrokerSource"), Napi::Function::New(env, PactffiVerifierBrokerSource));
+  exports.Set(Napi::String::New(env, "pactffiVerifierBrokerSourceWithSelectors"), Napi::Function::New(env, PactffiVerifierBrokerSourceWithSelectors));
 
   return exports;
 }

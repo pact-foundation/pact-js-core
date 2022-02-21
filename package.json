@@ -1,6 +1,6 @@
 {
   "name": "@pact-foundation/pact-core",
-  "version": "13.4.1-beta.11",
+  "version": "13.4.1-beta.13",
   "description": "Core of @pact-foundation/pact. You almost certainly don't want to depend on this directly.",
   "main": "src/index.js",
   "homepage": "https://github.com/pact-foundation/pact-js-core#readme",
@@ -39,9 +39,9 @@
     "provider",
     "verifier"
   ],
-  "author": "Michel Boudreau <michelboudreau@gmail.com> (codinghitchhiker.com)",
+  "author": "Matt Fellows <m@onegeek.com.au> (http://www.onegeek.com.au)",
   "contributors": [
-    "Matt Fellows <m@onegeek.com.au> (http://www.onegeek.com.au)"
+    "Michel Boudreau <michelboudreau@gmail.com> (codinghitchhiker.com)"
   ],
   "license": "MIT",
   "bugs": {

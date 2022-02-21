@@ -281,7 +281,7 @@ const char *pactffi_version();
  *
  * # Safety
  *
- * Exported functions are inherently unsafe.
+ * log_env_var must be a valid NULL terminated UTF-8 string.
  */
 void pactffi_init(const char *log_env_var);
 
@@ -293,6 +293,15 @@ void pactffi_init(const char *log_env_var);
  * Exported functions are inherently unsafe.
  */
 void pactffi_init_with_log_level(const char *level);
+
+/**
+ * Enable ANSI coloured output on Windows. On non-Windows platforms, this function is a no-op.
+ *
+ * # Safety
+ *
+ * This function is safe.
+ */
+void pactffi_enable_ansi_support();
 
 /**
  * Log using the shared core logging facility.
@@ -1946,7 +1955,7 @@ VerifierHandle *pactffi_verifier_new();
  *
  * Returns NULL on error.
  */
-VerifierHandle *pactffi_verifier_new_for_application(const char *name, const char *scheme);
+VerifierHandle *pactffi_verifier_new_for_application(const char *name, const char *version);
 
 /**
  * Shutdown the verifier and release all resources
@@ -2006,9 +2015,8 @@ void pactffi_verifier_set_provider_state(VerifierHandle *handle,
                                          unsigned char body);
 
 /**
- * Set the verification options for the Pact verifier.
+ * Set the options used by the verifier when calling the provider
  *
- * `publish` is a boolean value. Set it to greater than zero to turn the option on.
  * `disable_ssl_verification` is a boolean value. Set it to greater than zero to turn the option on.
  *
  * # Safety
@@ -2018,13 +2026,33 @@ void pactffi_verifier_set_provider_state(VerifierHandle *handle,
  *
  */
 int pactffi_verifier_set_verification_options(VerifierHandle *handle,
-                                              unsigned char publish,
-                                              const char *provider_version,
-                                              const char *build_url,
                                               unsigned char disable_ssl_verification,
-                                              unsigned long request_timeout,
-                                              const char *const *provider_tags,
-                                              unsigned short provider_tags_len);
+                                              unsigned long request_timeout);
+
+/**
+ * Set the options used when publishing verification results to the Pact Broker
+ *
+ * # Args
+ *
+ * - `handle` - The pact verifier handle to update
+ * - `provider_version` - Version of the provider to publish
+ * - `build_url` - URL to the build which ran the verification
+ * - `provider_tags` - Collection of tags for the provider
+ * - `provider_tags_len` - Number of provider tags supplied
+ * - `provider_branch` - Name of the branch used for verification
+ *
+ * # Safety
+ *
+ * All string fields must contain valid UTF-8. Invalid UTF-8
+ * will be replaced with U+FFFD REPLACEMENT CHARACTER.
+ *
+ */
+int pactffi_verifier_set_publish_options(VerifierHandle *handle,
+                                         const char *provider_version,
+                                         const char *build_url,
+                                         const char *const *provider_tags,
+                                         unsigned short provider_tags_len,
+                                         const char *provider_branch);
 
 /**
  * Set the consumer filters for the Pact verifier.
@@ -2095,7 +2123,6 @@ void pactffi_verifier_url_source(VerifierHandle *handle,
  */
 void pactffi_verifier_broker_source(VerifierHandle *handle,
                                     const char *url,
-                                    const char *provider_name,
                                     const char *username,
                                     const char *password,
                                     const char *token);
@@ -2123,7 +2150,6 @@ void pactffi_verifier_broker_source(VerifierHandle *handle,
  */
 void pactffi_verifier_broker_source_with_selectors(VerifierHandle *handle,
                                                    const char *url,
-                                                   const char *provider_name,
                                                    const char *username,
                                                    const char *password,
                                                    const char *token,
@@ -2214,6 +2240,25 @@ const char *pactffi_verifier_logs(const VerifierHandle *handle);
  * Will return a NULL pointer if the logs for the verification can not be retrieved.
  */
 const char *pactffi_verifier_logs_for_provider(const char *provider_name);
+
+/**
+ * Extracts the standard output for the verification run. The returned string will need to be
+ * freed with the `free_string` function call to avoid leaking memory.
+ *
+ * * `strip_ansi` - This parameter controls ANSI escape codes. Setting it to a non-zero value
+ * will cause the ANSI control codes to be stripped from the output.
+ *
+ * Will return a NULL pointer if the handle is invalid.
+ */
+const char *pactffi_verifier_output(const VerifierHandle *handle, unsigned char strip_ansi);
+
+/**
+ * Extracts the verification result as a JSON document. The returned string will need to be
+ * freed with the `free_string` function call to avoid leaking memory.
+ *
+ * Will return a NULL pointer if the handle is invalid.
+ */
+const char *pactffi_verifier_json(const VerifierHandle *handle);
 
 /**
  * Add a plugin to be used by the test. The plugin needs to be installed correctly for this
