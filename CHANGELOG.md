@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.5.0](https://github.com/pact-foundation/pact-js-core/compare/v13.4.1...v13.5.0) (2022-02-21)
+
+
+### Features
+
+* collect usage telemetry data ([f97e114](https://github.com/pact-foundation/pact-js-core/commit/f97e1149d0612574374f70e9b0a1857149abbf69))
+
+
+### Fixes and Improvements
+
+* prettier ([8f4e364](https://github.com/pact-foundation/pact-js-core/commit/8f4e364950f38c9f8750f3a072a12b1ff54231cc))
+* update standalone to 1.88.82 ([1946ada](https://github.com/pact-foundation/pact-js-core/commit/1946ada84b52ac62f332c2d7e421c8efced13753))
+
 ### [13.4.1](https://github.com/pact-foundation/pact-js-core/compare/v13.4.0...v13.4.1) (2021-12-16)
 
 
