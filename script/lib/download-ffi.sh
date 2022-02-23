@@ -66,6 +66,7 @@ download_ffi "windows-x86_64.dll.gz" "" "pact_ffi.dll.gz"
 download_ffi "windows-x86_64.dll.lib.gz" "" "pact_ffi.dll.lib.gz"
 
 download_ffi_file "pact.h" "pact.h"
+download_ffi_file "pact-cpp.h" "pact-cpp.h"
 
 # Write readme in the ffi folder
 cat << EOF > "$FFI_DIR/README.md"

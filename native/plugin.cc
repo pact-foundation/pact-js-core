@@ -1,5 +1,5 @@
 #include <napi.h>
-#include "pact.h"
+#include "pact-cpp.h"
 
 using namespace Napi;
 

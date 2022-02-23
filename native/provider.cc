@@ -1,6 +1,6 @@
 #include <napi.h>
 #include <map>
-#include "pact.h"
+#include "pact-cpp.h"
 #include <vector>
 #include <iostream>
 
