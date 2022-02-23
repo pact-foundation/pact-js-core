@@ -34,11 +34,19 @@ export const ignoreOptionCombinations: IgnoreOptionCombinations<VerifierOptions>
   };
 
 export const argMapping: ArgMapping<InternalPactVerifierOptions> = {
+  buildUrl: { arg: '--build-url', mapper: 'string' },
+  providerBranch: { arg: '--provider-branch', mapper: 'string' },
   providerBaseUrl: (providerBaseUrl: string) => {
     const u = url.parse(providerBaseUrl);
     return u && u.port && u.hostname
       ? ['--port', u.port, '--hostname', u.hostname]
       : [];
+  },
+  providerStatesSetupBody: {
+    warningMessage: 'providerStatesSetupBody is not valid for the CLI',
+  },
+  providerStatesSetupTeardown: {
+    warningMessage: 'providerStatesSetupTeardown is not valid for the CLI',
   },
   logLevel: (logLevel: LogLevel) => ['--loglevel', logLevel],
   provider: { arg: '--provider-name', mapper: 'string' },

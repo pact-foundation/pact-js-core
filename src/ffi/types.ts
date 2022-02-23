@@ -221,7 +221,6 @@ export type Ffi = {
   pactffiVerifierBrokerSourceWithSelectors(
     handle: FfiVerifierHandle,
     url: string,
-    providerName: string,
     username: string,
     password: string,
     token: string,

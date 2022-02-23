@@ -109,7 +109,6 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     ffi.pactffiVerifierBrokerSourceWithSelectors(
       handle,
       opts.pactBrokerUrl,
-      opts.provider,
       opts.pactBrokerUsername || '',
       opts.pactBrokerPassword || '',
       opts.pactBrokerToken || '',
@@ -127,6 +126,10 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
   // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
     ffi.pactffiVerifierExecute(handle, (err: Error, res: number) => {
+      logger.debug(`shutting down verifier with handle ${handle}`);
+
+      ffi.pactffiVerifierShutdown(handle);
+
       logger.debug(`response from verifier: ${err}, ${res}`);
       if (err) {
         if (typeof err === 'string') {
