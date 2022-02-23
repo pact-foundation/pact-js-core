@@ -2,7 +2,6 @@
 #include <map>
 #include "pact-cpp.h"
 #include <vector>
-#include <iostream>
 
 using namespace Napi;
 
@@ -13,7 +12,6 @@ std::map<int, VerifierHandle*> handles;
   std::vector<const char*> cVec;
   for(size_t i = 0; i < arr.Length(); i++) {
       std::string tag = arr.Get(i).As<Napi::String>().Utf8Value();
-      std::cout << "element: " << tag.c_str() << "\n";
       char *cstr = strdup(tag.c_str());
       cVec.push_back(cstr);
   }
@@ -109,8 +107,6 @@ Napi::Value PactffiVerifierNewForApplication(const Napi::CallbackInfo& info) {
 Napi::Value PactffiVerifierExecute(const Napi::CallbackInfo& info) {
   Napi::Env env = info.Env();
 
-  std::cout << "Pactffiverifierexecute \n";
-
   if (info.Length() < 1) {
     throw Napi::Error::New(env, "PactffiInit(arguments) received < 1 argument");
   }
@@ -119,18 +115,13 @@ Napi::Value PactffiVerifierExecute(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiInit(arguments) expected a number");
   }
 
-  std::cout << "Pactffiverifierexecute 1 \n";
   // Extract arguments to verifier
   size_t handle = info[0].As<Napi::Number>().Uint32Value();
-  std::cout << "Pactffiverifierexecute 2 \n";
 
   // Execute the function asynchronously
   Napi::Function callback = info[1].As<Napi::Function>();
-  std::cout << "Pactffiverifierexecute 3 \n";
   VerificationWorker* verificationWorker = new VerificationWorker(callback, handle);
-  std::cout << "Pactffiverifierexecute 4 \n";
   verificationWorker->Queue();
-  std::cout << "Pactffiverifierexecute 5 \n";
 
   return info.Env().Undefined();
 }

@@ -43,20 +43,33 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     );
   }
 
+  const filterDescription = process.env.PACT_DESCRIPTION || '';
+  const filterState = process.env.PACT_PROVIDER_STATE || '';
+  const filterNoState = process.env.PACT_PROVIDER_NO_STATE ? true : false;
+
+  ffi.pactffiVerifierSetFilterInfo(
+    handle,
+    filterDescription,
+    filterState,
+    filterNoState
+  );
+
   if (opts.pactUrls) {
     opts.pactUrls.forEach((file) => {
       logger.debug(`checking source type of given pactUrl: ${file}`);
       try {
-        new URL(file);
-        logger.debug(`adding ${file} as a Url source`);
+        const u = new URL(file);
 
-        ffi.pactffiVerifierUrlSource(
-          handle,
-          file,
-          opts.pactBrokerUsername || '',
-          opts.pactBrokerPassword || '',
-          opts.pactBrokerToken || ''
-        );
+        if (u.hostname) {
+          logger.debug(`adding ${file} as a Url source`);
+          ffi.pactffiVerifierUrlSource(
+            handle,
+            file,
+            opts.pactBrokerUsername || '',
+            opts.pactBrokerPassword || '',
+            opts.pactBrokerToken || ''
+          );
+        }
       } catch {
         logger.debug(`${file} is not a URI`);
       }
@@ -90,7 +103,6 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
   if (
     opts.publishVerificationResult ||
     opts.providerVersion ||
-    opts.publishVerificationResult ||
     opts.buildUrl ||
     opts.disableSslVerification ||
     opts.timeout ||
@@ -105,13 +117,15 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     );
   }
 
-  if (opts.pactBrokerUrl && opts.provider) {
+  const brokerUrl = opts.pactBrokerUrl || process.env.PACT_BROKER_BASE_URL;
+
+  if (brokerUrl && opts.provider) {
     ffi.pactffiVerifierBrokerSourceWithSelectors(
       handle,
-      opts.pactBrokerUrl,
-      opts.pactBrokerUsername || '',
-      opts.pactBrokerPassword || '',
-      opts.pactBrokerToken || '',
+      brokerUrl,
+      opts.pactBrokerUsername || process.env.PACT_BROKER_USERNAME || '',
+      opts.pactBrokerPassword || process.env.PACT_BROKER_PASSWORD || '',
+      opts.pactBrokerToken || process.env.PACT_BROKER_TOKEN || '',
       opts.enablePending || false,
       opts.includeWipPactsSince || '',
       opts.providerVersionTags || [],

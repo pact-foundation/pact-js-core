@@ -180,8 +180,8 @@ export type Ffi = {
   pactffiVerifierSetFilterInfo(
     handle: FfiVerifierHandle,
     description: string,
-    filterState: string,
-    filterNoState: boolean
+    state: string,
+    noState: boolean
   ): void;
   pactffiVerifierSetProviderState(
     handle: FfiVerifierHandle,
