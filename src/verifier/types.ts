@@ -22,9 +22,12 @@ export interface VerifierOptions {
   pactBrokerUsername?: string;
   pactBrokerPassword?: string;
   pactBrokerToken?: string;
-  consumerVersionTags?: string | string[];
-  providerVersionTags?: string | string[];
+  consumerVersionTags?: string[];
+  providerVersionTags?: string[];
+  providerBranch?: string;
   providerStatesSetupUrl?: string;
+  providerStatesSetupTeardown?: boolean;
+  providerStatesSetupBody?: boolean;
   publishVerificationResult?: boolean;
   providerVersion?: string;
   enablePending?: boolean;
@@ -33,6 +36,7 @@ export interface VerifierOptions {
   timeout?: number;
   logLevel?: LogLevel;
   disableSslVerification?: boolean;
+  buildUrl?: string;
 }
 
 /** These are the deprecated verifier options, removed prior to this verison,

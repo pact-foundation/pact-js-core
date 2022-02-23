@@ -321,89 +321,118 @@ Napi::Value PactffiVerifierSetProviderState(const Napi::CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
-// Deprecated in favour of pactffi_verifier_broker_source_with_selectors
-// /**
-//  * Set the verification options for the Pact verifier.
-//  *
-//  * `publish` is a boolean value. Set it to greater than zero to turn the option on.
-//  * `disable_ssl_verification` is a boolean value. Set it to greater than zero to turn the option on.
-//  *
-//  * # Safety
-//  *
-//  * All string fields must contain valid UTF-8. Invalid UTF-8
-//  * will be replaced with U+FFFD REPLACEMENT CHARACTER.
-//  *
-//  * C interface:
-//  *
-//  *    int pactffi_verifier_set_verification_options(VerifierHandle *handle,
-//  *                                                  unsigned char publish,
-//  *                                                  const char *provider_version,
-//  *                                                  const char *build_url,
-//  *                                                  unsigned char disable_ssl_verification,
-//  *                                                  unsigned long request_timeout,
-//  *                                                  const char *const *provider_tags,
-//  *                                                  unsigned short provider_tags_len);
-//  *
-//  */
-// Napi::Value PactffiVerifierSetVerificationOptions(const Napi::CallbackInfo& info) {
-//   Napi::Env env = info.Env();
-//   if (info.Length() < 7) {
-//     throw Napi::Error::New(env, "PactffiVerifierSetVerificationOptions received < 7 arguments");
-//   }
+/**
+ * Set the verification options for the Pact verifier.
+ *
+ * `disable_ssl_verification` is a boolean value. Set it to greater than zero to turn the option on.
+ *
+ * # Safety
+ *
+ * All string fields must contain valid UTF-8. Invalid UTF-8
+ * will be replaced with U+FFFD REPLACEMENT CHARACTER.
+ *
+ * C interface:
+ *
+ *    int pactffi_verifier_set_verification_options(VerifierHandle *handle,
+ *                                                  unsigned char disable_ssl_verification,
+ *                                                  unsigned long request_timeout);
+ */
+Napi::Value PactffiVerifierSetVerificationOptions(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiVerifierSetVerificationOptions received < 3 arguments");
+  }
 
-//   if (!info[0].IsNumber()) {
-//     throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 0) expected a VerifierHandle");
-//   }
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 0) expected a VerifierHandle");
+  }
 
-//   if (!info[1].IsBoolean()) {
-//     throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 1) expected a boolean");
-//   }
+  if (!info[1].IsBoolean()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 1) expected a boolean");
+  }
 
-//   if (!info[2].IsString()) {
-//     throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 2 expected a string");
-//   }
+  if (!info[2].IsNumber()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 2) expected a number");
+  }
 
-//   if (!info[3].IsString()) {
-//     throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 3 expected a string");
-//   }
+  uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
+  bool disableSslVerification = info[1].As<Napi::Boolean>().Value();
+  uint32_t requestTimeout = info[2].As<Napi::Number>().Uint32Value();
 
-//   if (!info[4].IsBoolean()) {
-//     throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 4) expected a boolean");
-//   }
+  pactffi_verifier_set_verification_options(handles[handleId],
+                                          disableSslVerification,
+                                          requestTimeout);
 
-//   if (!info[5].IsNumber()) {
-//     throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 5) expected a number");
-//   }
+  return info.Env().Undefined();
+}
 
-//   if (!info[6].IsArray()) {
-//     throw Napi::Error::New(env, "pactffiVerifierSetVerificationOptions(arg 6) expected an array of strings");
-//   }
+/**
+ * Set the options used when publishing verification results to the Pact Broker
+ *
+ * # Args
+ *
+ * - `handle` - The pact verifier handle to update
+ * - `provider_version` - Version of the provider to publish
+ * - `build_url` - URL to the build which ran the verification
+ * - `provider_tags` - Collection of tags for the provider
+ * - `provider_tags_len` - Number of provider tags supplied
+ * - `provider_branch` - Name of the branch used for verification
+ *
+ * # Safety
+ *
+ * All string fields must contain valid UTF-8. Invalid UTF-8
+ * will be replaced with U+FFFD REPLACEMENT CHARACTER.
+ *
+ * C interface:
+ *
+ *    int pactffi_verifier_set_publish_options(VerifierHandle *handle,
+ *                                             const char *provider_version,
+ *                                             const char *build_url,
+ *                                             const char *const *provider_tags,
+ *                                             unsigned short provider_tags_len,
+ *                                             const char *provider_branch);
+ */
+Napi::Value PactffiVerifierSetPublishOptions(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 5) {
+    throw Napi::Error::New(env, "PactffiVerifierSetPublishOptions received < 5 arguments");
+  }
 
-//   uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
-//   bool publish = info[1].As<Napi::Boolean>().Value();
-//   std::string providerVersion = info[2].As<Napi::String>().Utf8Value();
-//   std::string buildUrl = info[3].As<Napi::String>().Utf8Value();
-//   bool disableSslVerification = info[4].As<Napi::Boolean>().Value();
-//   uint32_t requestTimeout = info[5].As<Napi::Number>().Uint32Value(); //   Napi::Array providerTagsRaw = info[6].As<Napi::Array>();
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetPublishOptions(arg 0) expected a VerifierHandle");
+  }
 
-//   const char *providerTags[providerTagsRaw.Length()];
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetPublishOptions(arg 1 expected a string");
+  }
 
-//   for(int i = 0; i < providerTags.Length(); i++) {
-//       std::string tag = providerTagsRaw[i].As<Napi::String>().Utf8Value();
-//       providerTags[i] = tag.c_str();
-//   }
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetPublishOptions(arg 2 expected a string");
+  }
 
-//   pactffi_verifier_set_verification_options(handles[handleId],
-//                                           publish,
-//                                           providerVersion.c_str(),
-//                                           buildUrl.c_str(),
-//                                           disableSslVerification,
-//                                           requestTimeout,
-//                                           providerTags,
-//                                           providerTagsRaw.Length());
+  if (!info[3].IsArray()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetPublishOptions(arg 3) expected an array of strings");
+  }
 
-//   return info.Env().Undefined();
-// }
+  if (!info[4].IsString()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetPublishOptions(arg 3 expected a string");
+  }
+
+  uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
+  std::string providerVersion = info[1].As<Napi::String>().Utf8Value();
+  std::string buildUrl = info[2].As<Napi::String>().Utf8Value();
+  Napi::Array providerTagsRaw = info[3].As<Napi::Array>();
+  std::string providerBranch = info[4].As<Napi::String>().Utf8Value();
+
+  pactffi_verifier_set_publish_options(handles[handleId],
+                                          providerVersion.c_str(),
+                                          buildUrl.c_str(),
+                                          &NapiArrayToCStringVector(providerTagsRaw)[0],
+                                          providerTagsRaw.Length(),
+                                          providerBranch.c_str());
+
+  return info.Env().Undefined();
+}
 
 /**
  * Set the consumer filters for the Pact verifier.
@@ -569,63 +598,64 @@ Napi::Value PactffiVerifierUrlSource(const Napi::CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
-/**
- * Adds a Pact broker as a source to verify. This will fetch all the pact files from the broker
- * that match the provider name.
- *
- * If a username and password is given, then basic authentication will be used when fetching
- * the pact file. If a token is provided, then bearer token authentication will be used.
- *
- * # Safety
- *
- * All string fields must contain valid UTF-8. Invalid UTF-8
- * will be replaced with U+FFFD REPLACEMENT CHARACTER.
- *
- * C interface:
- *
- *    void pactffi_verifier_broker_source(VerifierHandle *handle,
- *                                        const char *url,
- *                                        const char *provider_name,
- *                                        const char *username,
- *                                        const char *password,
- *                                        const char *token);
- */
-Napi::Value PactffiVerifierBrokerSource(const Napi::CallbackInfo& info) {
-  Napi::Env env = info.Env();
-  if (info.Length() < 5) {
-    throw Napi::Error::New(env, "PactffiVerifierUrlSource received < 5 arguments");
-  }
+// Deprecated
+// /**
+//  * Adds a Pact broker as a source to verify. This will fetch all the pact files from the broker
+//  * that match the provider name.
+//  *
+//  * If a username and password is given, then basic authentication will be used when fetching
+//  * the pact file. If a token is provided, then bearer token authentication will be used.
+//  *
+//  * # Safety
+//  *
+//  * All string fields must contain valid UTF-8. Invalid UTF-8
+//  * will be replaced with U+FFFD REPLACEMENT CHARACTER.
+//  *
+//  * C interface:
+//  *
+//  *    void pactffi_verifier_broker_source(VerifierHandle *handle,
+//  *                                        const char *url,
+//  *                                        const char *provider_name,
+//  *                                        const char *username,
+//  *                                        const char *password,
+//  *                                        const char *token);
+//  */
+// Napi::Value PactffiVerifierBrokerSource(const Napi::CallbackInfo& info) {
+//   Napi::Env env = info.Env();
+//   if (info.Length() < 5) {
+//     throw Napi::Error::New(env, "PactffiVerifierUrlSource received < 5 arguments");
+//   }
 
-  if (!info[0].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 0) expected a VerifierHandle");
-  }
+//   if (!info[0].IsNumber()) {
+//     throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 0) expected a VerifierHandle");
+//   }
 
-  if (!info[1].IsString()) {
-    throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 1) expected a string");
-  }
+//   if (!info[1].IsString()) {
+//     throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 1) expected a string");
+//   }
 
-  if (!info[2].IsString()) {
-    throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 2) expected a string");
-  }
+//   if (!info[2].IsString()) {
+//     throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 2) expected a string");
+//   }
 
-  if (!info[3].IsString()) {
-    throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 3) expected a string");
-  }
+//   if (!info[3].IsString()) {
+//     throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 3) expected a string");
+//   }
 
-  if (!info[4].IsString()) {
-    throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 4) expected a string");
-  }
+//   if (!info[4].IsString()) {
+//     throw Napi::Error::New(env, "PactffiVerifierUrlSource(arg 4) expected a string");
+//   }
 
-  uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
-  std::string url = info[1].As<Napi::String>().Utf8Value();
-  std::string username = info[2].As<Napi::String>().Utf8Value();
-  std::string password = info[3].As<Napi::String>().Utf8Value();
-  std::string token = info[4].As<Napi::String>().Utf8Value();
+//   uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
+//   std::string url = info[1].As<Napi::String>().Utf8Value();
+//   std::string username = info[2].As<Napi::String>().Utf8Value();
+//   std::string password = info[3].As<Napi::String>().Utf8Value();
+//   std::string token = info[4].As<Napi::String>().Utf8Value();
 
-  pactffi_verifier_broker_source(handles[handleId], url.c_str(), username.c_str(), password.c_str(), token.c_str());
+//   pactffi_verifier_broker_source(handles[handleId], url.c_str(), username.c_str(), password.c_str(), token.c_str());
 
-  return info.Env().Undefined();
-}
+//   return info.Env().Undefined();
+// }
 
 /**
  * Adds a Pact broker as a source to verify. This will fetch all the pact files from the broker

@@ -1,5 +1,4 @@
 import logger from '../logger';
-
 import { VerifierOptions } from './types';
 import { verify } from './nativeVerifier';
 import { validateOptions } from './validateOptions';
@@ -17,6 +16,9 @@ export class Verifier {
     this.options = validateOptions(applyDefaults(options));
   }
 
+  // Deprecated?
+  // This might be hard to validate, given the new FFI interface
+  // and potential extensions
   public verify(): Promise<string> {
     logger.info('Verifying Pact Files');
 

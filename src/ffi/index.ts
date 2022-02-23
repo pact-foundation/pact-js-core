@@ -7,13 +7,10 @@ const ffiLib: Ffi = bindings('pact.node');
 
 export const PACT_FFI_VERSION = '0.2.2';
 
-// let ffi: Omit<FfiBinding<FfiDeclarations>, 'pactffi_init'>;
 let ffi: typeof ffiLib;
 let ffiLogLevel: LogLevel;
 
-// TODO: revisit types
-// const initialiseFfi = (logLevel: LogLevel): FfiBinding<FfiDeclarations> => {
-const initialiseFfi = (logLevel: LogLevel): typeof ffiLib => {
+const initialiseFfi = (logLevel: LogLevel): typeof ffi => {
   logger.debug(`Initalising native core at log level '${logLevel}'`);
   ffiLogLevel = logLevel;
   ffiLib.pactffiInitWithLogLevel(logLevel);
@@ -23,8 +20,7 @@ const initialiseFfi = (logLevel: LogLevel): typeof ffiLib => {
 
 export const getFfiLib = (
   logLevel: LogLevel = DEFAULT_LOG_LEVEL
-  // ): typeof ffi => {
-): typeof ffiLib => {
+): typeof ffi => {
   if (!ffi) {
     logger.trace('Initiliasing ffi for the first time');
     ffi = initialiseFfi(logLevel);

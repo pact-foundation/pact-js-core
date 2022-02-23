@@ -239,18 +239,6 @@ describe('Verifier argument validator', () => {
     });
   });
 
-  context('when consumerVersionTags is provided as a string', () => {
-    it('should not fail', () => {
-      expect(() =>
-        validateOptions({
-          providerBaseUrl: 'http://localhost',
-          pactUrls: [path.dirname(currentDir)],
-          consumerVersionTags: 'tag-1',
-        })
-      ).to.not.throw(Error);
-    });
-  });
-
   context('when consumerVersionTags is provided as an array', () => {
     it('should not fail', () => {
       expect(() =>
@@ -269,18 +257,6 @@ describe('Verifier argument validator', () => {
         validateOptions({
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
-        })
-      ).to.not.throw(Error);
-    });
-  });
-
-  context('when providerVersionTags is provided as a string', () => {
-    it('should not fail', () => {
-      expect(() =>
-        validateOptions({
-          providerBaseUrl: 'http://localhost',
-          pactUrls: [path.dirname(currentDir)],
-          providerVersionTags: 'tag-1',
         })
       ).to.not.throw(Error);
     });

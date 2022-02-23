@@ -32,6 +32,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
 
   // Provider
   exports.Set(Napi::String::New(env, "pactffiVerifierNewForApplication"), Napi::Function::New(env, PactffiVerifierNewForApplication));
+  exports.Set(Napi::String::New(env, "pactffiVerifierSetVerificationOptions"), Napi::Function::New(env, PactffiVerifierSetVerificationOptions));
+  exports.Set(Napi::String::New(env, "pactffiVerifierSetPublishOptions"), Napi::Function::New(env, PactffiVerifierSetPublishOptions));
   exports.Set(Napi::String::New(env, "pactffiVerifierExecute"), Napi::Function::New(env, PactffiVerifierExecute));
   exports.Set(Napi::String::New(env, "pactffiVerifierShutdown"), Napi::Function::New(env, PactffiVerifierShutdown));
   exports.Set(Napi::String::New(env, "pactffiVerifierSetProviderInfo"), Napi::Function::New(env, PactffiVerifierSetProviderInfo));
@@ -41,7 +43,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiVerifierAddFileSource"), Napi::Function::New(env, PactffiVerifierAddFileSource));
   exports.Set(Napi::String::New(env, "pactffiVerifierAddDirectorySource"), Napi::Function::New(env, PactffiVerifierAddDirectorySource));
   exports.Set(Napi::String::New(env, "pactffiVerifierUrlSource"), Napi::Function::New(env, PactffiVerifierUrlSource));
-  exports.Set(Napi::String::New(env, "pactffiVerifierBrokerSource"), Napi::Function::New(env, PactffiVerifierBrokerSource));
   exports.Set(Napi::String::New(env, "pactffiVerifierBrokerSourceWithSelectors"), Napi::Function::New(env, PactffiVerifierBrokerSourceWithSelectors));
 
   return exports;

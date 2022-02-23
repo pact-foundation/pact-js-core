@@ -1,5 +1,6 @@
 export type FfiPactHandle = number;
 export type FfiInteractionHandle = number;
+export type FfiVerifierHandle = number;
 
 export type FfiSpecificationVersion = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -77,10 +78,6 @@ export enum FfiLogLevelFilter {
 export type Ffi = {
   pactffiInit(logLevel: string): string;
   pactffiVersion(): string;
-  pactffiVerify(
-    args: string,
-    callback: (e: Error, res: number) => void
-  ): number;
   pactffiCreateMockServerForPact(
     handle: FfiPactHandle,
     address: string,
@@ -162,4 +159,77 @@ export type Ffi = {
   pactffiLogToStdout(level: FfiLogLevelFilter): number;
   pactffiLogToFile(fileName: string, level: FfiLogLevelFilter): number;
   pactffiFetchLogBuffer(logId: number): string;
+
+  pactffiVerifierNewForApplication(
+    libraryName: string,
+    version: string
+  ): FfiVerifierHandle;
+  pactffiVerifierExecute(
+    handle: FfiVerifierHandle,
+    callback: (e: Error, res: number) => void
+  ): number;
+  pactffiVerifierShutdown(handle: FfiVerifierHandle): void;
+  pactffiVerifierSetProviderInfo(
+    handle: FfiVerifierHandle,
+    providerName: string,
+    scheme: string,
+    host: string,
+    port: number,
+    path: string
+  ): void;
+  pactffiVerifierSetFilterInfo(
+    handle: FfiVerifierHandle,
+    description: string,
+    filterState: string,
+    filterNoState: boolean
+  ): void;
+  pactffiVerifierSetProviderState(
+    handle: FfiVerifierHandle,
+    url: string,
+    teardown: boolean,
+    body: boolean
+  ): void;
+  pactffiVerifierSetVerificationOptions(
+    handle: FfiVerifierHandle,
+    disableSslVerification: boolean,
+    requestTimeout: number
+  ): void;
+  pactffiVerifierSetPublishOptions(
+    handle: FfiVerifierHandle,
+    providerVersion: string,
+    buildUrl: string,
+    providerTags: string[],
+    providerBranch: string
+  ): void;
+  pactffiVerifierSetConsumerFilters(
+    handle: FfiVerifierHandle,
+    consumers: string[]
+  ): void;
+  pactffiVerifierAddFileSource(handle: FfiVerifierHandle, file: string): void;
+  pactffiVerifierAddDirectorySource(
+    handle: FfiVerifierHandle,
+    dir: string
+  ): void;
+  pactffiVerifierUrlSource(
+    handle: FfiVerifierHandle,
+    url: string,
+    username: string,
+    password: string,
+    token: string
+  ): void;
+  // pactffiVerifierBrokerSource(handle: FfiVerifierHandle): void;
+  pactffiVerifierBrokerSourceWithSelectors(
+    handle: FfiVerifierHandle,
+    url: string,
+    providerName: string,
+    username: string,
+    password: string,
+    token: string,
+    enablePending: boolean,
+    includeWipPactsSince: string,
+    providerTags: string[],
+    providerBranch: string,
+    consumerVersionSelectors: string[],
+    consumerVersionTags: string[]
+  ): void;
 };
