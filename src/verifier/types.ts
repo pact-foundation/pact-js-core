@@ -14,6 +14,10 @@ export interface ConsumerVersionSelector {
   matchingBranch?: boolean;
 }
 
+export type CustomHeaders = {
+  [header: string]: string;
+};
+
 export interface VerifierOptions {
   providerBaseUrl: string;
   provider?: string;
@@ -37,6 +41,7 @@ export interface VerifierOptions {
   logLevel?: LogLevel;
   disableSslVerification?: boolean;
   buildUrl?: string;
+  customProviderHeaders?: CustomHeaders;
 }
 
 /** These are the deprecated verifier options, removed prior to this verison,
@@ -45,7 +50,6 @@ export interface VerifierOptions {
 type DeprecatedVerifierOptions = {
   format?: 'json' | 'xml' | 'progress' | 'RspecJunitFormatter';
   out?: string;
-  customProviderHeaders?: string[];
   verbose?: boolean;
   monkeypatch?: string;
   logDir?: string;

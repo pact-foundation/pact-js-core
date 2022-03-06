@@ -465,6 +465,50 @@ Napi::Value PactffiVerifierSetConsumerFilters(const Napi::CallbackInfo& info) {
 }
 
 /**
+ * Adds a custom header to be added to the requests made to the provider.
+ *
+ * # Safety
+ *
+ * The header name and value must point to a valid NULL terminated string and must contain
+ * valid UTF-8.
+ *
+ * C interface:
+ *
+ *    void pactffi_verifier_add_custom_header(VerifierHandle *handle,
+ *                                            const char *header_name,
+ *                                            const char *header_value);
+ *
+ */
+Napi::Value PactffiVerifierAddCustomHeader(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiVerifierAddCustomHeader received < 3 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiVerifierAddCustomHeader(arg 0) expected a VerifierHandle");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiVerifierAddCustomHeader(arg 1 expected a string");
+  }
+
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "PactffiVerifierAddCustomHeader(arg 2 expected a string");
+  }
+
+  uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
+  std::string name = info[1].As<Napi::String>().Utf8Value();
+  std::string value = info[2].As<Napi::String>().Utf8Value();
+
+  pactffi_verifier_add_custom_header(handles[handleId],
+                                        name.c_str(),
+                                        value.c_str());
+
+  return info.Env().Undefined();
+}
+
+/**
  * Adds a Pact file as a source to verify.
  *
  * # Safety

@@ -35,7 +35,7 @@ function download_ffi_file {
   URL="${BASEURL}/libpact_ffi-${FFI_VERSION}/${FFI_FILENAME}"
   DOWNLOAD_LOCATION="$FFI_DIR/${OUTPUT_FILENAME}"
 
-  log "Downloading ffi $FFI_VERSION for $SUFFIX"
+  log "Downloading ffi $FFI_VERSION for $FFI_FILENAME"
   download_to "$URL" "$DOWNLOAD_LOCATION"
   debug_log " ... downloaded to '$DOWNLOAD_LOCATION'"
 }

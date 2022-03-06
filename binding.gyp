@@ -11,7 +11,8 @@
       ],
       "include_dirs": [
         "<!(node -p \"require('node-addon-api').include_dir\")",
-        "<(module_root_dir)/native"
+        "<(module_root_dir)/native",
+        "<(module_root_dir)/ffi",
       ],
       "conditions": [
         [

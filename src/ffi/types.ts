@@ -234,6 +234,11 @@ export type Ffi = {
     handle: FfiVerifierHandle,
     consumers: string[]
   ): void;
+  pactFfiVerifierAddCustomHeader(
+    handle: FfiVerifierHandle,
+    header: string,
+    value: string
+  ): void;
   pactffiVerifierAddFileSource(handle: FfiVerifierHandle, file: string): void;
   pactffiVerifierAddDirectorySource(
     handle: FfiVerifierHandle,

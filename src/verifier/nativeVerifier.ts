@@ -39,9 +39,13 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
       handle,
       opts.providerStatesSetupUrl,
       opts.providerStatesSetupTeardown || true,
-      opts.providerStatesSetupBody || true
+      opts.providerStatesSetupBody || true // dumb, this means they are always set!
     );
   }
+
+  Object.keys(opts.customProviderHeaders || {}).forEach((key, _, obj) =>
+    ffi.pactFfiVerifierAddCustomHeader(handle, key, obj[key])
+  );
 
   const filterDescription = process.env.PACT_DESCRIPTION || '';
   const filterState = process.env.PACT_PROVIDER_STATE || '';
