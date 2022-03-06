@@ -29,6 +29,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiWithBinaryFile"), Napi::Function::New(env, PactffiWithBinaryFile));
   exports.Set(Napi::String::New(env, "pactffiWithMultipartFile"), Napi::Function::New(env, PactffiWithMultipartFile));
   exports.Set(Napi::String::New(env, "pactffiResponseStatus"), Napi::Function::New(env, PactffiResponseStatus));
+  exports.Set(Napi::String::New(env, "pactFfiUsingPlugin"), Napi::Function::New(env, PactFfiUsingPlugin));
+  exports.Set(Napi::String::New(env, "pactFfiCleanupPlugins"), Napi::Function::New(env, PactFfiCleanupPlugins));
+  exports.Set(Napi::String::New(env, "pactFfiPluginInteractionContents"), Napi::Function::New(env, PactFfiPluginInteractionContents));
 
   // Provider
   exports.Set(Napi::String::New(env, "pactffiVerifierNewForApplication"), Napi::Function::New(env, PactffiVerifierNewForApplication));

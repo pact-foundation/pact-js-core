@@ -23,6 +23,33 @@ export const FfiWritePactResponse: Record<string, FfiWritePactResponse> = {
   MOCK_SERVER_NOT_FOUND: 3,
 };
 
+export type FfiConfigurePluginResponse = 0 | 1 | 2 | 3;
+
+export const FfiConfigurePluginResponse: Record<
+  string,
+  FfiConfigurePluginResponse
+> = {
+  SUCCESS: 0,
+  GENERAL_PANIC: 1,
+  FAILED_TO_LOAD_PLUGIN: 2,
+  PACT_HANDLE_INVALID: 3,
+};
+
+export type FfiConfigurePluginInteraction = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+
+export const FfiConfigurePluginInteraction: Record<
+  string,
+  FfiConfigurePluginInteraction
+> = {
+  SUCCESS: 0,
+  A_GENERAL_PANIC_WAS_CAUGHT: 1,
+  MOCK_SERVER_HAS_ALREADY_BEEN_STARTED: 2,
+  INTERACTION_HANDLE_IS_INVALID: 3,
+  CONTENT_TYPE_IS_NOT_VALID: 4,
+  CONTENTS_JSON_IS_NOT_VALID_JSON: 5,
+  PLUGIN_RETURNED_AN_ERROR: 6,
+};
+
 export type FfiInteractionPart = 0 | 1;
 
 export const INTERACTION_PART_REQUEST: FfiInteractionPart = 0;
@@ -159,7 +186,9 @@ export type Ffi = {
   pactffiLogToStdout(level: FfiLogLevelFilter): number;
   pactffiLogToFile(fileName: string, level: FfiLogLevelFilter): number;
   pactffiFetchLogBuffer(logId: number): string;
-
+  pactFfiUsingPlugin(handle: FfiPactHandle): number;
+  pactFfiCleanupPlugins(handle: FfiPactHandle): void;
+  pactFfiPluginInteractionContents(): number;
   pactffiVerifierNewForApplication(
     libraryName: string,
     version: string

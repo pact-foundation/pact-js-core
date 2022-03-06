@@ -501,7 +501,7 @@ Napi::Value PactffiGivenWithParam(const Napi::CallbackInfo& info) {
   }
 
   if (!info[3].IsString()) {
-    throw Napi::Error::New(env, "PactffiGivenWithParam(arg 2) expected a string");
+    throw Napi::Error::New(env, "PactffiGivenWithParam(arg 3) expected a string");
   }
 
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
@@ -1113,3 +1113,167 @@ Napi::Value PactffiNewSyncMessageInteraction(const Napi::CallbackInfo& info) {
 }
 
 */
+
+/**
+ * Extracts the verification result as a JSON document. The returned string will need to be
+ * freed with the `free_string` function call to avoid leaking memory.
+ *
+ * Will return a NULL pointer if the handle is invalid.
+ *
+ * C interface:
+ *
+ *     const char *pactffi_verifier_json(const VerifierHandle *handle);
+ */
+
+/**
+ * Add a plugin to be used by the test. The plugin needs to be installed correctly for this
+ * function to work.
+ *
+ * * `plugin_name` is the name of the plugin to load.
+ * * `plugin_version` is the version of the plugin to load. It is optional, and can be NULL.
+ *
+ * Returns zero on success, and a positive integer value on failure.
+ *
+ * Note that plugins run as separate processes, so will need to be cleaned up afterwards by
+ * calling `pactffi_cleanup_plugins` otherwise you have plugin processes left running.
+ *
+ * # Safety
+ *
+ * `plugin_name` must be a valid pointer to a NULL terminated string. `plugin_version` may be null,
+ * and if not NULL must also be a valid pointer to a NULL terminated string.
+ *
+ * # Errors
+ *
+ * * `1` - A general panic was caught.
+ * * `2` - Failed to load the plugin.
+ * * `3` - Pact Handle is not valid.
+ *
+ * When an error errors, LAST_ERROR will contain the error message.
+ *
+ * C interface:
+ *
+ *    unsigned int pactffi_using_plugin(PactHandle pact,
+ *                                      const char *plugin_name,
+ *                                      const char *plugin_version);
+ */
+Napi::Value PactFfiUsingPlugin(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin received < 3 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin(arg 0) expected a PactHandle (uint16_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin(arg 1) expected a string");
+  }
+
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin(arg 2) expected a string");
+  }
+
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
+  std::string name = info[1].As<Napi::String>().Utf8Value();
+  std::string version = info[2].As<Napi::String>().Utf8Value();
+
+  uint16_t result = pactffi_using_plugin(pact, name.c_str(), version.c_str());
+
+  return Number::New(env, result);
+}
+/**
+ * Decrement the access count on any plugins that are loaded for the Pact. This will shutdown
+ * any plugins that are no longer required (access count is zero).
+ *
+ * C interface:
+ *
+ *    void pactffi_cleanup_plugins(PactHandle pact);
+ */
+Napi::Value PactFfiCleanupPlugins(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin received < 1 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin(arg 0) expected a PactHandle (uint16_t)");
+  }
+
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
+
+  pactffi_cleanup_plugins(pact);
+
+  return env.Undefined();
+}
+
+/**
+ * Setup the interaction part using a plugin. The contents is a JSON string that will be passed on to
+ * the plugin to configure the interaction part. Refer to the plugin documentation on the format
+ * of the JSON contents.
+ *
+ * Returns zero on success, and a positive integer value on failure.
+ *
+ * * `interaction` - Handle to the interaction to configure.
+ * * `part` - The part of the interaction to configure (request or response). It is ignored for messages.
+ * * `content_type` - NULL terminated C string of the content type of the part.
+ * * `contents` - NULL terminated C string of the JSON contents that gets passed to the plugin.
+ *
+ * # Safety
+ *
+ * `content_type` and `contents` must be a valid pointers to NULL terminated strings.
+ *
+ * # Errors
+ *
+ * * `1` - A general panic was caught.
+ * * `2` - The mock server has already been started.
+ * * `3` - The interaction handle is invalid.
+ * * `4` - The content type is not valid.
+ * * `5` - The contents JSON is not valid JSON.
+ * * `6` - The plugin returned an error.
+ *
+ * When an error errors, LAST_ERROR will contain the error message.
+ *
+ * C interface:
+ *
+ * unsigned int pactffi_interaction_contents(InteractionHandle interaction,
+ *                                           InteractionPart part,
+ *                                           const char *content_type,
+ *                                           const char *contents);
+ */
+Napi::Value PactFfiPluginInteractionContents(const Napi::CallbackInfo& info) {
+   // return: bool
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 4) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin received < 4 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin(arg 0) expected a InteractionHandle (uint32_t)");
+  }
+
+  if (!info[1].IsNumber()) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin(arg 1) expected an InteractionPart (uint32_t)");
+  }
+
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin(arg 2) expected a string");
+  }
+
+  if (!info[3].IsString()) {
+    throw Napi::Error::New(env, "PactFfiUsingPlugin(arg 3) expected a string");
+  }
+
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
+  InteractionPart part = integerToInteractionPart(env, partNumber);
+  std::string contentType = info[2].As<Napi::String>().Utf8Value();
+  std::string contents = info[3].As<Napi::String>().Utf8Value();
+
+  bool res = pactffi_interaction_contents(interaction, part, contentType.c_str(), contents.c_str());
+
+  return Napi::Boolean::New(env, res);
+}

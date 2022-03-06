@@ -36,6 +36,10 @@ Napi::Value PactffiMessageSetDescription(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageWithContents(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageWithMetadata(const Napi::CallbackInfo& info);
 
+// Plugins
+Napi::Value PactFfiUsingPlugin(const Napi::CallbackInfo& info);
+Napi::Value PactFfiCleanupPlugins(const Napi::CallbackInfo& info);
+Napi::Value PactFfiPluginInteractionContents(const Napi::CallbackInfo& info);
 
 // Unimplemented
 Napi::Value PactffiConsumerGetName(const Napi::CallbackInfo& info);
