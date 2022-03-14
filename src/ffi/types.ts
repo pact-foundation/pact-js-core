@@ -1,6 +1,8 @@
 export type FfiPactHandle = number;
 export type FfiInteractionHandle = number;
 export type FfiVerifierHandle = number;
+export type FfiMessagePactHandle = number;
+export type FfiMessageHandle = number;
 
 export type FfiSpecificationVersion = 0 | 1 | 2 | 3 | 4 | 5;
 
@@ -23,6 +25,17 @@ export const FfiWritePactResponse: Record<string, FfiWritePactResponse> = {
   MOCK_SERVER_NOT_FOUND: 3,
 };
 
+export type FfiWriteMessagePactResponse = 0 | 1 | 2;
+
+export const FfiWriteMessagePactResponse: Record<
+  string,
+  FfiWriteMessagePactResponse
+> = {
+  SUCCESS: 0,
+  UNABLE_TO_WRITE_PACT_FILE: 1,
+  MESSAGE_HANDLE_INVALID: 2,
+};
+
 export type FfiConfigurePluginResponse = 0 | 1 | 2 | 3;
 
 export const FfiConfigurePluginResponse: Record<
@@ -35,11 +48,11 @@ export const FfiConfigurePluginResponse: Record<
   PACT_HANDLE_INVALID: 3,
 };
 
-export type FfiConfigurePluginInteraction = 0 | 1 | 2 | 3 | 4 | 5 | 6;
+export type FfiPluginInteractionResponse = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-export const FfiConfigurePluginInteraction: Record<
+export const FfiPluginInteractionResponse: Record<
   string,
-  FfiConfigurePluginInteraction
+  FfiPluginInteractionResponse
 > = {
   SUCCESS: 0,
   A_GENERAL_PANIC_WAS_CAUGHT: 1,
@@ -175,7 +188,11 @@ export type Ffi = {
     partName: string
   ): void;
   pactffiResponseStatus(handle: FfiInteractionHandle, status: number): boolean;
-  pactffiWritePactFile(port: number, dir: string, overwrite: boolean): number;
+  pactffiWritePactFile(
+    port: number,
+    dir: string,
+    overwrite: boolean
+  ): FfiWritePactResponse;
   pactffiCleanupMockServer(port: number): boolean;
   pactffiMockServerMatched(port: number): boolean;
   pactffiMockServerMismatches(port: number): string;
@@ -186,21 +203,51 @@ export type Ffi = {
   pactffiLogToStdout(level: FfiLogLevelFilter): number;
   pactffiLogToFile(fileName: string, level: FfiLogLevelFilter): number;
   pactffiFetchLogBuffer(logId: number): string;
-  pactFfiUsingPlugin(handle: FfiPactHandle): number;
-  pactFfiCleanupPlugins(handle: FfiPactHandle): void;
-  pactFfiPluginInteractionContents(): number;
-
-  // pactffiNewMessage
-  // pactffiNewMessageInteraction
-  // pactffiNewSyncMessageInteraction
-  // pactffiNewMessagePact
-  // pactffiMessageReify
-  // pactffiMessageGiven
-  // pactffiMessageGivenWithParam
-  // pactffiMessageSetDescription
-  // pactffiMessageWithContents
-  // pactffiMessageWithMetadata
-
+  pactffiUsingPlugin(handle: FfiPactHandle): FfiConfigurePluginResponse;
+  pactffiCleanupPlugins(handle: FfiPactHandle): void;
+  pactffiPluginInteractionContents(): FfiPluginInteractionResponse;
+  pactffiNewMessagePact(
+    consumer: string,
+    provider: string
+  ): FfiMessagePactHandle;
+  pactffiWithMessagePactMetadata(
+    handle: FfiMessagePactHandle,
+    namespace: string,
+    key: string,
+    value: string
+  ): void;
+  pactffiWriteMessagePactFile(
+    handle: FfiMessagePactHandle,
+    dir: string,
+    overwrite: boolean
+  ): FfiWriteMessagePactResponse;
+  pactffiNewMessage(
+    handle: FfiMessagePactHandle,
+    description: string
+  ): FfiMessageHandle;
+  pactffiMessageExpectsToReceive(
+    handle: FfiMessageHandle,
+    description: string
+  ): void;
+  pactffiMessageGiven(handle: FfiMessageHandle, description: string): void;
+  pactffiMessageGivenWithParam(
+    handle: FfiMessageHandle,
+    description: string,
+    key: string,
+    value: string
+  ): void;
+  pactffiMessageWithContents(
+    handle: FfiMessageHandle,
+    contentType: string,
+    data: Buffer,
+    size: number
+  ): void;
+  pactffiMessageWithMetadata(
+    handle: FfiMessageHandle,
+    key: string,
+    value: string
+  ): void;
+  pactffiMessageReify(handle: FfiMessageHandle): string;
   pactffiVerifierNewForApplication(
     libraryName: string,
     version: string
@@ -246,7 +293,7 @@ export type Ffi = {
     handle: FfiVerifierHandle,
     consumers: string[]
   ): void;
-  pactFfiVerifierAddCustomHeader(
+  pactffiVerifierAddCustomHeader(
     handle: FfiVerifierHandle,
     header: string,
     value: string

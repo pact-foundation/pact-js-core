@@ -44,7 +44,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
   }
 
   Object.keys(opts.customProviderHeaders || {}).forEach((key, _, obj) =>
-    ffi.pactFfiVerifierAddCustomHeader(handle, key, obj[key])
+    ffi.pactffiVerifierAddCustomHeader(handle, key, obj[key])
   );
 
   const filterDescription = process.env.PACT_DESCRIPTION || '';

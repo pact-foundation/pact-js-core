@@ -10,7 +10,6 @@ Napi::Value PactffiWithPactMetadata(const Napi::CallbackInfo& info);
 Napi::Value PactffiWithQueryParameter(const Napi::CallbackInfo& info);
 Napi::Value PactffiWithRequest(const Napi::CallbackInfo& info);
 Napi::Value PactffiWithSpecification(const Napi::CallbackInfo& info);
-Napi::Value PactffiWriteMessagePactFile(const Napi::CallbackInfo& info);
 Napi::Value PactffiWritePactFile(const Napi::CallbackInfo& info);
 Napi::Value PactffiCleanupMockServer(const Napi::CallbackInfo& info);
 Napi::Value PactffiCreateMockServerForPact(const Napi::CallbackInfo& info);
@@ -35,6 +34,8 @@ Napi::Value PactffiMessageGivenWithParam(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageSetDescription(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageWithContents(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageWithMetadata(const Napi::CallbackInfo& info);
+Napi::Value PactffiMessageExpectsToReceive(const Napi::CallbackInfo& info);
+Napi::Value PactffiWriteMessagePactFile(const Napi::CallbackInfo& info);
 
 // Plugins
 Napi::Value PactffiUsingPlugin(const Napi::CallbackInfo& info);
@@ -52,7 +53,6 @@ Napi::Value PactffiGetTlsCaCertificate(const Napi::CallbackInfo& info);
 Napi::Value PactffiInteractionTestName(const Napi::CallbackInfo& info);
 Napi::Value PactffiMatchMessage(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageDelete(const Napi::CallbackInfo& info);
-Napi::Value PactffiMessageExpectsToReceive(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageFindMetadata(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageGetContents(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageGetContentsBin(const Napi::CallbackInfo& info);

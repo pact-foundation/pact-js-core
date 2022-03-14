@@ -237,7 +237,6 @@ Napi::Value PactffiCreateMockServerForPact(const Napi::CallbackInfo& info) {
   return Number::New(env, result);
 }
 
-
 /**
  * External interface to cleanup a mock server. This function will try terminate the mock server
  * with the given port number and cleanup any memory allocated for it. Returns true, unless a
@@ -833,7 +832,6 @@ Napi::Value PactffiWithBinaryFile(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, res);
 }
 
-
 /**
  * Adds a binary file as the body as a MIME multipart with the expected content type and example contents. Will use
  * a mime type matcher to match the body. Returns an error if the interaction or Pact can't be
@@ -1077,6 +1075,41 @@ Napi::Value PactffiNewMessagePact(const Napi::CallbackInfo& info) {
 }
 
 /**
+ * Creates a new Message and returns a handle to it.
+ *
+ * * `description` - The message description. It needs to be unique for each Message.
+ *
+ * Returns a new `MessageHandle`.
+ *
+ * C interface:
+ *
+ *    MessageHandle pactffi_new_message(MessagePactHandle pact, const char *description);
+ *
+ */
+Napi::Value PactffiNewMessage(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiNewMessage received < 2 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiNewMessage(arg 0) expected a MessagePactHandle (uint32_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiNewMessage(arg 1) expected a string");
+  }
+
+  MessagePactHandle handle = info[0].As<Napi::Number>().Uint32Value();
+  std::string desc = info[1].As<Napi::String>().Utf8Value();
+
+  MessageHandle res = pactffi_new_message(handle, desc.c_str());
+
+  return Napi::Number::New(env, res);
+}
+
+/**
  * Sets the description for the Message.
  *
  * * `description` - The message description. It needs to be unique for each message.
@@ -1099,6 +1132,7 @@ Napi::Value PactffiMessageExpectsToReceive(const Napi::CallbackInfo& info) {
   if (!info[1].IsString()) {
     throw Napi::Error::New(env, "PactffiMessageExpectsToReceive(arg 1) expected a string");
   }
+
   MessageHandle handle = info[0].As<Napi::Number>().Uint32Value();
   std::string desc = info[1].As<Napi::String>().Utf8Value();
 
@@ -1139,6 +1173,7 @@ Napi::Value PactffiMessageGiven(const Napi::CallbackInfo& info) {
 
   return env.Undefined();
 }
+
 /**
  * Adds a provider state to the Message with a parameter key and value.
  *
@@ -1256,19 +1291,19 @@ Napi::Value PactffiMessageWithMetadata(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
 
   if (info.Length() < 3) {
-    throw Napi::Error::New(env, "PactffiWithMessagePactMetadata received < 3 arguments");
+    throw Napi::Error::New(env, "PactffiMessageWithMetadata received < 3 arguments");
   }
 
   if (!info[0].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 0) expected a MessageHandle (uint32_t)");
+    throw Napi::Error::New(env, "PactffiMessageWithMetadata(arg 0) expected a MessageHandle (uint32_t)");
   }
 
   if (!info[1].IsString()) {
-    throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 1) expected a string");
+    throw Napi::Error::New(env, "PactffiMessageWithMetadata(arg 1) expected a string");
   }
 
   if (!info[2].IsString()) {
-    throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 2) expected a string");
+    throw Napi::Error::New(env, "PactffiMessageWithMetadata(arg 2) expected a string");
   }
 
   MessageHandle handle = info[0].As<Napi::Number>().Uint32Value();
@@ -1279,7 +1314,6 @@ Napi::Value PactffiMessageWithMetadata(const Napi::CallbackInfo& info) {
 
   return env.Undefined();
 }
-
 
 /**
  * Reifies the given message
@@ -1340,7 +1374,7 @@ Napi::Value PactffiMessageReify(const Napi::CallbackInfo& info) {
  *                                      const char *plugin_name,
  *                                      const char *plugin_version);
  */
-Napi::Value PacfFfiUsingPlugin(const Napi::CallbackInfo& info) {
+Napi::Value PactffiUsingPlugin(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
 
   if (info.Length() < 3) {
@@ -1367,6 +1401,7 @@ Napi::Value PacfFfiUsingPlugin(const Napi::CallbackInfo& info) {
 
   return Number::New(env, result);
 }
+
 /**
  * Decrement the access count on any plugins that are loaded for the Pact. This will shutdown
  * any plugins that are no longer required (access count is zero).
@@ -1431,23 +1466,23 @@ Napi::Value PactffiPluginInteractionContents(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
 
   if (info.Length() < 4) {
-    throw Napi::Error::New(env, "PactffiUsingPlugin received < 4 arguments");
+    throw Napi::Error::New(env, "PactffiPluginInteractionContents received < 4 arguments");
   }
 
   if (!info[0].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiUsingPlugin(arg 0) expected a InteractionHandle (uint32_t)");
+    throw Napi::Error::New(env, "PactffiPluginInteractionContents(arg 0) expected a InteractionHandle (uint32_t)");
   }
 
   if (!info[1].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiUsingPlugin(arg 1) expected an InteractionPart (uint32_t)");
+    throw Napi::Error::New(env, "PactffiPluginInteractionContents(arg 1) expected an InteractionPart (uint32_t)");
   }
 
   if (!info[2].IsString()) {
-    throw Napi::Error::New(env, "PactffiUsingPlugin(arg 2) expected a string");
+    throw Napi::Error::New(env, "PactffiPluginInteractionContents(arg 2) expected a string");
   }
 
   if (!info[3].IsString()) {
-    throw Napi::Error::New(env, "PactffiUsingPlugin(arg 3) expected a string");
+    throw Napi::Error::New(env, "PactffiPluginInteractionContents(arg 3) expected a string");
   }
 
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
