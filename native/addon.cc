@@ -33,6 +33,18 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactFfiCleanupPlugins"), Napi::Function::New(env, PactFfiCleanupPlugins));
   exports.Set(Napi::String::New(env, "pactFfiPluginInteractionContents"), Napi::Function::New(env, PactFfiPluginInteractionContents));
 
+
+
+  exports.set(Napi::String::New(env, "pactffiNewMessage"), Napi::Function::New(env, PactffiNewMessage));
+  exports.set(Napi::String::New(env, "pactffiNewMessageInteraction"), Napi::Function::New(env, PactffiNewMessageInteraction));
+  exports.set(Napi::String::New(env, "pactffiNewMessagePact"), Napi::Function::New(env, PactffiNewMessagePact));
+  exports.set(Napi::String::New(env, "pactffiMessageReify"), Napi::Function::New(env, PactffiMessageReify));
+  exports.set(Napi::String::New(env, "pactffiMessageGiven"), Napi::Function::New(env, PactffiMessageGiven));
+  exports.set(Napi::String::New(env, "pactffiMessageGivenWithParam"), Napi::Function::New(env, PactffiMessageGivenWithParam));
+  exports.set(Napi::String::New(env, "pactffiMessageSetDescription"), Napi::Function::New(env, PactffiMessageSetDescription));
+  exports.set(Napi::String::New(env, "pactffiMessageWithContents"), Napi::Function::New(env, PactffiMessageWithContents));
+  exports.set(Napi::String::New(env, "pactffiMessageWithMetadata"), Napi::Function::New(env, PactffiMessageWithMetadata));
+
   // Provider
   exports.Set(Napi::String::New(env, "pactffiVerifierNewForApplication"), Napi::Function::New(env, PactffiVerifierNewForApplication));
   exports.Set(Napi::String::New(env, "pactffiVerifierSetVerificationOptions"), Napi::Function::New(env, PactffiVerifierSetVerificationOptions));

@@ -958,172 +958,230 @@ Napi::Value PactffiResponseStatus(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, res);
 }
 
-/*
-
-Napi::Value PactffiMessageExpectsToReceive(const Napi::CallbackInfo& info) {
-   // return: void
-   Napi::Env env = info.Env();
-
-  if (info.Length() < 1) {
-    throw Napi::Error::New(env, "PactffiMessageExpectsToReceive received < 1 arguments");
-  }
-
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiMessageExpectsToReceive(arg 0) expected a string");
-  }
-
-  std::string arg0 = info[0].As<Napi::String>().Utf8Value();
-
-  pactffi_message_expects_to_receive(MessageHandle message, const char *description);
-
-  return info.Env().Undefined();
-}
-
-Napi::Value PactffiMessageGiven(const Napi::CallbackInfo& info) {
-   // return: void
-   Napi::Env env = info.Env();
-
-  if (info.Length() < 1) {
-    throw Napi::Error::New(env, "PactffiMessageGiven received < 1 arguments");
-  }
-
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiMessageGiven(arg 0) expected a string");
-  }
-
-  std::string arg0 = info[0].As<Napi::String>().Utf8Value();
-
-  pactffi_message_given(MessageHandle message, const char *description);
-
-  return info.Env().Undefined();
-}
-
-Napi::Value PactffiMessageReify(const Napi::CallbackInfo& info) {
-   // return: const
-   Napi::Env env = info.Env();
-
-  if (info.Length() < 1) {
-    throw Napi::Error::New(env, "PactffiMessageReify received < 1 arguments");
-  }
-
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiMessageReify(arg 0) expected a string");
-  }
-
-  std::string arg0 = info[0].As<Napi::String>().Utf8Value();
-
-  pactffi_message_reify(MessageHandle message_handle);
-
-  return info.Env().Undefined();
-}
-
-Napi::Value PactffiVerifierLogs(const Napi::CallbackInfo& info) {
-   // return: const
-   Napi::Env env = info.Env();
-
-  if (info.Length() < 1) {
-    throw Napi::Error::New(env, "PactffiVerifierLogs received < 1 arguments");
-  }
-
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiVerifierLogs(arg 0) expected a string");
-  }
-
-  std::string arg0 = info[0].As<Napi::String>().Utf8Value();
-
-  pactffi_verifier_logs(const VerifierHandle *handle);
-
-  return info.Env().Undefined();
-}
-
-Napi::Value PactffiVerifierLogsForProvider(const Napi::CallbackInfo& info) {
-   // return: const
-   Napi::Env env = info.Env();
-
-  if (info.Length() < 1) {
-    throw Napi::Error::New(env, "PactffiVerifierLogsForProvider received < 1 arguments");
-  }
-
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiVerifierLogsForProvider(arg 0) expected a string");
-  }
-
-  std::string arg0 = info[0].As<Napi::String>().Utf8Value();
-
-  pactffi_verifier_logs_for_provider(const char *provider_name);
-
-  return info.Env().Undefined();
-}
-
-Napi::Value PactffiMockServerLogs(const Napi::CallbackInfo& info) {
-   // return: const
-   Napi::Env env = info.Env();
-
-  if (info.Length() < 1) {
-    throw Napi::Error::New(env, "PactffiMockServerLogs received < 1 arguments");
-  }
-
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiMockServerLogs(arg 0) expected a string");
-  }
-
-  std::string arg0 = info[0].As<Napi::String>().Utf8Value();
-
-  pactffi_mock_server_logs(int32_t mock_server_port);
-
-  return info.Env().Undefined();
-}
-
-Napi::Value PactffiNewMessageInteraction(const Napi::CallbackInfo& info) {
-   // return: InteractionHandle
-   Napi::Env env = info.Env();
-
-  if (info.Length() < 1) {
-    throw Napi::Error::New(env, "PactffiNewMessageInteraction received < 1 arguments");
-  }
-
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiNewMessageInteraction(arg 0) expected a string");
-  }
-
-  std::string arg0 = info[0].As<Napi::String>().Utf8Value();
-
-  pactffi_new_message_interaction(PactHandle pact, const char *description);
-
-  return info.Env().Undefined();
-}
-
-Napi::Value PactffiNewSyncMessageInteraction(const Napi::CallbackInfo& info) {
-   // return: InteractionHandle
-   Napi::Env env = info.Env();
-
-  if (info.Length() < 1) {
-    throw Napi::Error::New(env, "PactffiNewSyncMessageInteraction received < 1 arguments");
-  }
-
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiNewSyncMessageInteraction(arg 0) expected a string");
-  }
-
-  std::string arg0 = info[0].As<Napi::String>().Utf8Value();
-
-  pactffi_new_sync_message_interaction(PactHandle pact, const char *description);
-
-  return info.Env().Undefined();
-}
-
-*/
-
 /**
- * Extracts the verification result as a JSON document. The returned string will need to be
- * freed with the `free_string` function call to avoid leaking memory.
+ * External interface to write out the message pact file. This function should
+ * be called if all the consumer tests have passed. The directory to write the file to is passed
+ * as the second parameter. If a NULL pointer is passed, the current working directory is used.
  *
- * Will return a NULL pointer if the handle is invalid.
+ * If overwrite is true, the file will be overwritten with the contents of the current pact.
+ * Otherwise, it will be merged with any existing pact file.
+ *
+ * Returns 0 if the pact file was successfully written. Returns a positive code if the file can
+ * not be written, or there is no mock server running on that port or the function panics.
+ *
+ * # Errors
+ *
+ * Errors are returned as positive values.
+ *
+ * | Error | Description |
+ * |-------|-------------|
+ * | 1 | The pact file was not able to be written |
+ * | 2 | The message pact for the given handle was not found |
  *
  * C interface:
  *
- *     const char *pactffi_verifier_json(const VerifierHandle *handle);
+ *    int32_t pactffi_write_message_pact_file(MessagePactHandle pact,
+ *                                            const char *directory,
+ *                                            bool overwrite);
  */
+
+Napi::Value PactffiWriteMessagePactFile(const Napi::CallbackInfo& info) {
+   // return: bool
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 4) {
+    throw Napi::Error::New(env, "PactffiWriteMessagePactFile received < 4 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiWriteMessagePactFile(arg 0) expected a MessagePactHandle (uint32_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiWriteMessagePactFile(arg 1) expected a string");
+  }
+
+  if (!info[2].IsBoolean()) {
+    throw Napi::Error::New(env, "PactffiWriteMessagePactFile(arg 2) expected a boolean");
+  }
+
+  MessagePactHandle hadle = info[0].As<Napi::Number>().Uint32Value();
+  std::string dir = info[1].As<Napi::String>().Utf8Value();
+  bool overwrite = info[2].As<Napi::Boolean>().Value();
+
+  bool res = pactffi_write_message_pact_file(hadle, dir.c_str(),  overwrite);
+
+  return Napi::Number::New(env, res);
+}
+
+/**
+ * Creates a new V4 asynchronous message and returns a handle to it.
+ *
+ * * `description` - The message description. It needs to be unique for each Message.
+ *
+ * Returns a new `MessageHandle`.
+ *
+ * C interface:
+ *
+ *    MessageHandle pactffi_new_async_message(PactHandle pact, const char *description);
+ */
+
+/**
+ * Sets the additional metadata on the Pact file. Common uses are to add the client library details such as the name and version
+ *
+ * * `pact` - Handle to a Pact model
+ * * `namespace` - the top level metadat key to set any key values on
+ * * `name` - the key to set
+ * * `value` - the value to set
+ *
+ * C interface:
+ *
+ *    void pactffi_with_message_pact_metadata(MessagePactHandle pact,
+ *                                            const char *namespace_,
+ *                                            const char *name,
+ *                                            const char *value);
+ */
+
+/**
+ * Creates a new Pact Message model and returns a handle to it.
+ *
+ * * `consumer_name` - The name of the consumer for the pact.
+ * * `provider_name` - The name of the provider for the pact.
+ *
+ * Returns a new `MessagePactHandle`. The handle will need to be freed with the `pactffi_free_message_pact_handle`
+ * function to release its resources.
+ *
+ * C interface:
+ *
+ *    MessagePactHandle pactffi_new_message_pact(const char *consumer_name,
+ *                                               const char *provider_name);
+ *
+
+/**
+ * Sets the description for the Message.
+ *
+ * * `description` - The message description. It needs to be unique for each message.
+ *
+ * C interface:
+ *
+ * void pactffi_message_expects_to_receive(MessageHandle message, const char *description);
+ */
+
+/**
+ * Adds a provider state to the Interaction.
+ *
+ * C interface:
+ *
+ * * `description` - The provider state description. It needs to be unique for each message
+ *
+ * C interface:
+ *
+ *    void pactffi_message_given(MessageHandle message, const char *description);
+ */
+
+/**
+ * Adds a provider state to the Message with a parameter key and value.
+ *
+ * * `description` - The provider state description. It needs to be unique.
+ * * `name` - Parameter name.
+ * * `value` - Parameter value.
+ *
+ * C interface:
+ *
+ *     void pactffi_message_given_with_param(MessageHandle message,
+ *                                           const char *description,
+ *                                           const char *name,
+ *                                           const char *value);
+ */
+
+/**
+ * Adds the contents of the Message.
+ *
+ * Accepts JSON, binary and other payload types. Binary data will be base64 encoded when serialised.
+ *
+ * Note: For text bodies (plain text, JSON or XML), you can pass in a C string (NULL terminated)
+ * and the size of the body is not required (it will be ignored). For binary bodies, you need to
+ * specify the number of bytes in the body.
+ *
+ * * `content_type` - The content type of the body. Defaults to `text/plain`, supports JSON structures with matchers and binary data.
+ * * `body` - The body contents as bytes. For text payloads (JSON, XML, etc.), a C string can be used and matching rules can be embedded in the body.
+ * * `content_type` - Expected content type (e.g. application/json, application/octet-stream)
+ * * `size` - number of bytes in the message body to read. This is not required for text bodies (JSON, XML, etc.).
+ *
+ * C interface:
+ *
+ *     void pactffi_message_with_contents(MessageHandle message_handle,
+ *                                        const char *content_type,
+ *                                        const uint8_t *body,
+ *                                        size_t size);
+ */
+
+/**
+ * Adds expected metadata to the Message
+ *
+ * * `key` - metadata key
+ * * `value` - metadata value.
+ *
+ * C interface:
+ *
+ * void pactffi_message_with_metadata(MessageHandle message_handle,
+ *                                    const char *key,
+ *                                    const char *value);
+ */
+
+/**
+ * Reifies the given message
+ *
+ * Reification is the process of stripping away any matchers, and returning the original contents.
+ * NOTE: the returned string needs to be deallocated with the `free_string` function
+ *
+ * C interface:
+ *
+ *    const char *pactffi_message_reify(MessageHandle message_handle);
+ */
+
+/**
+ * External interface to write out the message pact file. This function should
+ * be called if all the consumer tests have passed. The directory to write the file to is passed
+ * as the second parameter. If a NULL pointer is passed, the current working directory is used.
+ *
+ * If overwrite is true, the file will be overwritten with the contents of the current pact.
+ * Otherwise, it will be merged with any existing pact file.
+ *
+ * Returns 0 if the pact file was successfully written. Returns a positive code if the file can
+ * not be written, or there is no mock server running on that port or the function panics.
+ *
+ * # Errors
+ *
+ * Errors are returned as positive values.
+ *
+ * | Error | Description |
+ * |-------|-------------|
+ * | 1 | The pact file was not able to be written |
+ * | 2 | The message pact for the given handle was not found |
+ *
+ * C interface:
+ *
+ *    int32_t pactffi_write_message_pact_file(MessagePactHandle pact,
+ *                                            const char *directory,
+ *                                            bool overwrite);
+ */
+
+/**
+ * Sets the additional metadata on the Pact file. Common uses are to add the client library details such as the name and version
+ *
+ * * `pact` - Handle to a Pact model
+ * * `namespace` - the top level metadat key to set any key values on
+ * * `name` - the key to set
+ * * `value` - the value to set
+ *
+ * C interface:
+ *
+ *    void pactffi_with_message_pact_metadata(MessagePactHandle pact,
+ *                                            const char *namespace_,
+ *                                            const char *name,
+ *                                            const char *value);
+
 
 /**
  * Add a plugin to be used by the test. The plugin needs to be installed correctly for this

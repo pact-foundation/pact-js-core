@@ -189,6 +189,18 @@ export type Ffi = {
   pactFfiUsingPlugin(handle: FfiPactHandle): number;
   pactFfiCleanupPlugins(handle: FfiPactHandle): void;
   pactFfiPluginInteractionContents(): number;
+
+  // pactffiNewMessage
+  // pactffiNewMessageInteraction
+  // pactffiNewSyncMessageInteraction
+  // pactffiNewMessagePact
+  // pactffiMessageReify
+  // pactffiMessageGiven
+  // pactffiMessageGivenWithParam
+  // pactffiMessageSetDescription
+  // pactffiMessageWithContents
+  // pactffiMessageWithMetadata
+
   pactffiVerifierNewForApplication(
     libraryName: string,
     version: string
