@@ -1,5 +1,5 @@
 {
-  "version": "10.17.1",
+  "version": "10.17.2",
   "name": "@pact-foundation/pact-node",
   "description": "Core of @pact-foundation/pact. You almost certainly don't want to depend on this directly.",
   "main": "src/index.js",
