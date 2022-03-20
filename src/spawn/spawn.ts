@@ -17,6 +17,10 @@ export class Spawn {
     argMapping: { [id: string]: string } = {}
   ): ChildProcess {
     const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
+
+    envVars['PACT_EXECUTING_LANGUAGE'] = 'node.js';
+    envVars['PACT_EXECUTING_LANGUAGE_VERSION'] = process.versions.node;
+
     // Remove environment variable if there
     // This is a hack to prevent some weird Travelling Ruby behaviour with Gems
     // https://github.com/pact-foundation/pact-mock-service-npm/issues/16
