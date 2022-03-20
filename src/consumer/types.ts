@@ -110,7 +110,23 @@ export type RequestMismatch = {
   body?: string;
 };
 
-export type ConsumerInteraction = {
+export type PluginInteraction = {
+  withPluginRequestInteractionContents: (
+    contentType: string,
+    contents: string
+  ) => boolean;
+  withPluginResponseInteractionContents: (
+    contentType: string,
+    contents: string
+  ) => boolean;
+};
+
+export type PluginPact = {
+  addPlugin: (plugin: string, version: string) => void;
+  cleanupPlugins: () => void;
+};
+
+export type ConsumerInteraction = PluginInteraction & {
   uponReceiving: (description: string) => boolean;
   given: (state: string) => boolean;
   givenWithParam: (state: string, name: string, value: string) => boolean;
@@ -133,9 +149,17 @@ export type ConsumerInteraction = {
     filename: string,
     mimePartName: string
   ) => boolean;
+  withPluginRequestInteractionContents: (
+    contentType: string,
+    contents: string
+  ) => void;
+  withPluginResponseInteractionContents: (
+    contentType: string,
+    contents: string
+  ) => void;
 };
 
-export type ConsumerPact = {
+export type ConsumerPact = PluginPact & {
   newInteraction: (description: string) => ConsumerInteraction;
   createMockServer: (address: string, port?: number, tls?: boolean) => number;
   mockServerMismatches: (port: number) => MatchingResult[];
@@ -161,7 +185,7 @@ export type ConsumerPact = {
   addMetadata: (namespace: string, name: string, value: string) => boolean;
 };
 
-export type ConsumerMessage = {
+export type ConsumerMessage = PluginInteraction & {
   given: (state: string) => void;
   givenWithParam: (state: string, name: string, value: string) => void;
   expectsToReceive: (description: string) => void;
@@ -170,7 +194,7 @@ export type ConsumerMessage = {
   reifyMessage: () => string;
 };
 
-export type ConsumerMessagePact = {
+export type ConsumerMessagePact = PluginPact & {
   newMessage: (description: string) => ConsumerMessage;
   /**
    * This function writes the pact file, regardless of whether or not the test was successful.

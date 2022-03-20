@@ -44,6 +44,12 @@ export const makeConsumerPact = (
   }
 
   return {
+    addPlugin: (name: string, version: string) => {
+      ffi.pactffiUsingPlugin(pactPtr, name, version);
+    },
+    cleanupPlugins: () => {
+      ffi.pactffiCleanupPlugins(pactPtr);
+    },
     createMockServer: (
       address: string,
       requestedPort?: number,
@@ -80,7 +86,6 @@ export const makeConsumerPact = (
       }
       return port;
     },
-
     mockServerMatchedSuccessfully: (port: number) => {
       return ffi.pactffiMockServerMatched(port);
     },
@@ -219,6 +224,31 @@ export const makeConsumerPact = (
         withStatus: (status: number) => {
           return ffi.pactffiResponseStatus(interactionPtr, status);
         },
+        withPluginRequestInteractionContents: (
+          contentType: string,
+          contents: string
+        ) => {
+          ffi.pactffiPluginInteractionContents(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            contentType,
+            contents
+          );
+
+          return true;
+        },
+        withPluginResponseInteractionContents: (
+          contentType: string,
+          contents: string
+        ) => {
+          ffi.pactffiPluginInteractionContents(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            contentType,
+            contents
+          );
+          return true;
+        },
       });
     },
   };
@@ -243,6 +273,12 @@ export const makeConsumerAsyncMessagePact = (
   }
 
   return {
+    addPlugin: (name: string, version: string) => {
+      ffi.pactffiUsingPlugin(pactPtr, name, version);
+    },
+    cleanupPlugins: () => {
+      ffi.pactffiCleanupPlugins(pactPtr);
+    },
     writePactFile: (dir: string, merge = true) =>
       writePact(ffi, pactPtr, dir, merge),
     addMetadata: (namespace: string, name: string, value: string): boolean => {
@@ -252,6 +288,30 @@ export const makeConsumerAsyncMessagePact = (
       const interactionPtr = ffi.pactffiNewAsyncMessage(pactPtr, description);
 
       return {
+        withPluginRequestInteractionContents: (
+          contentType: string,
+          contents: string
+        ) => {
+          ffi.pactffiPluginInteractionContents(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            contentType,
+            contents
+          );
+          return true;
+        },
+        withPluginResponseInteractionContents: (
+          contentType: string,
+          contents: string
+        ) => {
+          ffi.pactffiPluginInteractionContents(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            contentType,
+            contents
+          );
+          return true;
+        },
         expectsToReceive: (description: string) => {
           return ffi.pactffiMessageExpectsToReceive(
             interactionPtr,

@@ -203,9 +203,28 @@ export type Ffi = {
   pactffiLogToStdout(level: FfiLogLevelFilter): number;
   pactffiLogToFile(fileName: string, level: FfiLogLevelFilter): number;
   pactffiFetchLogBuffer(logId: number): string;
-  pactffiUsingPlugin(handle: FfiPactHandle): FfiConfigurePluginResponse;
+  pactffiUsingPlugin(
+    handle: FfiPactHandle,
+    name: string,
+    version: string
+  ): FfiConfigurePluginResponse;
   pactffiCleanupPlugins(handle: FfiPactHandle): void;
-  pactffiPluginInteractionContents(): FfiPluginInteractionResponse;
+  pactffiPluginInteractionContents(
+    handle: FfiInteractionHandle,
+    part: FfiInteractionPart,
+    contentType: string,
+    contents: string
+  ): void;
+  pactffiNewAsyncMessage(
+    handle: FfiPactHandle,
+    description: string
+  ): FfiMessageHandle;
+  // TODO: not sure how to use this given the return type, commenting out for now
+  // pactffiNewSyncMessage(
+  //   handle: FfiPactHandle,
+  //   description: string
+  // ): FfiInteractionHandle;
+  // TODO: removing the old "FfiMessagePactHandle" based methods
   // pactffiNewMessagePact(
   //   consumer: string,
   //   provider: string
@@ -221,15 +240,6 @@ export type Ffi = {
   //   dir: string,
   //   overwrite: boolean
   // ): FfiWriteMessagePactResponse;
-  pactffiNewAsyncMessage(
-    handle: FfiPactHandle,
-    description: string
-  ): FfiMessageHandle;
-  pactffiNewSyncMessage(
-    handle: FfiPactHandle,
-    description: string
-  ): FfiInteractionHandle;
-  // This uses the MessagePactHandle
   // pactffiNewMessage(
   //   handle: FfiMessagePactHandle,
   //   description: string
