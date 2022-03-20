@@ -189,7 +189,7 @@ export type Ffi = {
   ): void;
   pactffiResponseStatus(handle: FfiInteractionHandle, status: number): boolean;
   pactffiWritePactFile(
-    port: number,
+    handle: FfiPactHandle,
     dir: string,
     overwrite: boolean
   ): FfiWritePactResponse;
@@ -206,25 +206,34 @@ export type Ffi = {
   pactffiUsingPlugin(handle: FfiPactHandle): FfiConfigurePluginResponse;
   pactffiCleanupPlugins(handle: FfiPactHandle): void;
   pactffiPluginInteractionContents(): FfiPluginInteractionResponse;
-  pactffiNewMessagePact(
-    consumer: string,
-    provider: string
-  ): FfiMessagePactHandle;
-  pactffiWithMessagePactMetadata(
-    handle: FfiMessagePactHandle,
-    namespace: string,
-    key: string,
-    value: string
-  ): void;
-  pactffiWriteMessagePactFile(
-    handle: FfiMessagePactHandle,
-    dir: string,
-    overwrite: boolean
-  ): FfiWriteMessagePactResponse;
-  pactffiNewMessage(
-    handle: FfiMessagePactHandle,
+  // pactffiNewMessagePact(
+  //   consumer: string,
+  //   provider: string
+  // ): FfiMessagePactHandle;
+  // pactffiWithMessagePactMetadata(
+  //   handle: FfiMessagePactHandle,
+  //   namespace: string,
+  //   key: string,
+  //   value: string
+  // ): void;
+  // pactffiWriteMessagePactFile(
+  //   handle: FfiMessagePactHandle,
+  //   dir: string,
+  //   overwrite: boolean
+  // ): FfiWriteMessagePactResponse;
+  pactffiNewAsyncMessage(
+    handle: FfiPactHandle,
     description: string
   ): FfiMessageHandle;
+  pactffiNewSyncMessage(
+    handle: FfiPactHandle,
+    description: string
+  ): FfiInteractionHandle;
+  // This uses the MessagePactHandle
+  // pactffiNewMessage(
+  //   handle: FfiMessagePactHandle,
+  //   description: string
+  // ): FfiMessageHandle;
   pactffiMessageExpectsToReceive(
     handle: FfiMessageHandle,
     description: string

@@ -33,10 +33,12 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiCleanupPlugins"), Napi::Function::New(env, PactffiCleanupPlugins));
   exports.Set(Napi::String::New(env, "pactffiPluginInteractionContents"), Napi::Function::New(env, PactffiPluginInteractionContents));
 
-  exports.Set(Napi::String::New(env, "pactffiNewMessagePact"), Napi::Function::New(env, PactffiNewMessagePact));
-  exports.Set(Napi::String::New(env, "pactffiWriteMessagePactFile"), Napi::Function::New(env, PactffiWriteMessagePactFile));
-  exports.Set(Napi::String::New(env, "pactffiWithMessagePactMetadata"), Napi::Function::New(env, PactffiWithMessagePactMetadata));
-  exports.Set(Napi::String::New(env, "pactffiNewMessage"), Napi::Function::New(env, PactffiNewMessage));
+  // exports.Set(Napi::String::New(env, "pactffiNewMessagePact"), Napi::Function::New(env, PactffiNewMessagePact));
+  // exports.Set(Napi::String::New(env, "pactffiWriteMessagePactFile"), Napi::Function::New(env, PactffiWriteMessagePactFile));
+  // exports.Set(Napi::String::New(env, "pactffiWithMessagePactMetadata"), Napi::Function::New(env, PactffiWithMessagePactMetadata));
+  exports.Set(Napi::String::New(env, "pactffiNewAsyncMessage"), Napi::Function::New(env, PactffiNewAsyncMessage));
+  exports.Set(Napi::String::New(env, "pactffiNewSyncMessage"), Napi::Function::New(env, PactffiNewSyncMessage));
+  // exports.Set(Napi::String::New(env, "pactffiNewMessage"), Napi::Function::New(env, PactffiNewMessage));
   exports.Set(Napi::String::New(env, "pactffiMessageReify"), Napi::Function::New(env, PactffiMessageReify));
   exports.Set(Napi::String::New(env, "pactffiMessageGiven"), Napi::Function::New(env, PactffiMessageGiven));
   exports.Set(Napi::String::New(env, "pactffiMessageGivenWithParam"), Napi::Function::New(env, PactffiMessageGivenWithParam));

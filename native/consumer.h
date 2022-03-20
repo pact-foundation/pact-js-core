@@ -24,10 +24,12 @@ Napi::Value PactffiNewInteraction(const Napi::CallbackInfo& info);
 Napi::Value PactffiNewPact(const Napi::CallbackInfo& info);
 
 // Message Pact
-Napi::Value PactffiNewMessage(const Napi::CallbackInfo& info);
-Napi::Value PactffiNewSyncMessageInteraction(const Napi::CallbackInfo& info);
-Napi::Value PactffiNewMessageInteraction(const Napi::CallbackInfo& info);
-Napi::Value PactffiNewMessagePact(const Napi::CallbackInfo& info);
+Napi::Value PactffiNewAsyncMessage(const Napi::CallbackInfo& info);
+Napi::Value PactffiNewSyncMessage(const Napi::CallbackInfo& info);
+// Napi::Value PactffiNewMessage(const Napi::CallbackInfo& info);
+// Napi::Value PactffiNewSyncMessageInteraction(const Napi::CallbackInfo& info);
+// Napi::Value PactffiNewMessageInteraction(const Napi::CallbackInfo& info);
+// Napi::Value PactffiNewMessagePact(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageReify(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageGiven(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageGivenWithParam(const Napi::CallbackInfo& info);

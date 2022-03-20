@@ -17,3 +17,5 @@ export * from './stub';
 export * from './can-deploy';
 
 export * from './consumer';
+
+export * from './ffi';

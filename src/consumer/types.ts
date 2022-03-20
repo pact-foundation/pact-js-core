@@ -148,7 +148,7 @@ export type ConsumerPact = {
    * @param dir the directory to write the pact file to
    * @param merge whether or not to merge the pact file contents (default true)
    */
-  writePactFile: (port: number, dir: string, merge?: boolean) => void;
+  writePactFile: (dir: string, merge?: boolean) => void;
   /**
    * Check if a mock server has matched all its requests.
    *
@@ -158,5 +158,27 @@ export type ConsumerPact = {
    * the method panics.
    */
   mockServerMatchedSuccessfully: (port: number) => boolean;
+  addMetadata: (namespace: string, name: string, value: string) => boolean;
+};
+
+export type ConsumerMessage = {
+  given: (state: string) => void;
+  givenWithParam: (state: string, name: string, value: string) => void;
+  expectsToReceive: (description: string) => void;
+  withMetadata: (name: string, value: string) => void;
+  withContents: (body: Buffer, contentType: string) => void;
+  reifyMessage: () => string;
+};
+
+export type ConsumerMessagePact = {
+  newMessage: (description: string) => ConsumerMessage;
+  /**
+   * This function writes the pact file, regardless of whether or not the test was successful.
+   * Do not call it without checking that the tests were successful, unless you want to write the wrong pact contents.
+   *
+   * @param dir the directory to write the pact file to
+   * @param overwrite whether or not to overwrite the pact file contents (default true)
+   */
+  writePactFile: (dir: string, overwrite?: boolean) => void;
   addMetadata: (namespace: string, name: string, value: string) => boolean;
 };

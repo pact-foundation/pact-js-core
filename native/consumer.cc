@@ -265,7 +265,7 @@ Napi::Value PactffiCleanupMockServer(const Napi::CallbackInfo& info) {
 }
 
 /**
- * External interface to trigger a mock server to write out its pact file. This function should
+ * External interface to write out the pact file. This function should
  * be called if all the consumer tests have passed. The directory to write the file to is passed
  * as the second parameter. If a NULL pointer is passed, the current working directory is used.
  *
@@ -273,7 +273,11 @@ Napi::Value PactffiCleanupMockServer(const Napi::CallbackInfo& info) {
  * Otherwise, it will be merged with any existing pact file.
  *
  * Returns 0 if the pact file was successfully written. Returns a positive code if the file can
- * not be written, or there is no mock server running on that port or the function panics.
+ * not be written or the function panics.
+ *
+ * # Safety
+ *
+ * The directory parameter must either be NULL or point to a valid NULL terminated string.
  *
  * # Errors
  *
@@ -281,13 +285,13 @@ Napi::Value PactffiCleanupMockServer(const Napi::CallbackInfo& info) {
  *
  * | Error | Description |
  * |-------|-------------|
- * | 1 | A general panic was caught |
- * | 2 | The pact file was not able to be written |
- * | 3 | A mock server with the provided port was not found |
+ * | 1 | The function panicked. |
+ * | 2 | The pact file was not able to be written. |
+ * | 3 | The pact for the given handle was not found. |
  *
- * C interface:
+ * C Interface:
  *
- *    int32_t pactffi_write_pact_file(int32_t mock_server_port, const char *directory, bool overwrite);
+ *     int32_t pactffi_pact_handle_write_file(PactHandle pact, const char *directory, bool overwrite);
  */
 Napi::Value PactffiWritePactFile(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
@@ -297,7 +301,7 @@ Napi::Value PactffiWritePactFile(const Napi::CallbackInfo& info) {
   }
 
   if (!info[0].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiWritePactFile(arg 0) expected a number");
+    throw Napi::Error::New(env, "PactffiWritePactFile(arg 0) expected a PactHandle (uint16_t");
   }
 
   if (!info[1].IsString()) {
@@ -308,11 +312,11 @@ Napi::Value PactffiWritePactFile(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiWritePactFile(arg 2) expected a boolean");
   }
 
-  int32_t port = info[0].As<Napi::Number>().Int32Value();
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
   std::string dir = info[1].As<Napi::String>().Utf8Value();
   bool overwrite = info[2].As<Napi::Boolean>().Value();
 
-  int32_t res = pactffi_write_pact_file(port, dir.c_str(), overwrite);
+  int32_t res = pactffi_pact_handle_write_file(pact, dir.c_str(), overwrite);
 
   return Number::New(env, res);
 }
@@ -960,33 +964,33 @@ Napi::Value PactffiResponseStatus(const Napi::CallbackInfo& info) {
  *                                            bool overwrite);
  */
 
-Napi::Value PactffiWriteMessagePactFile(const Napi::CallbackInfo& info) {
-   Napi::Env env = info.Env();
+// Napi::Value PactffiWriteMessagePactFile(const Napi::CallbackInfo& info) {
+//    Napi::Env env = info.Env();
 
-  if (info.Length() < 3) {
-    throw Napi::Error::New(env, "PactffiWriteMessagePactFile received < 3 arguments");
-  }
+//   if (info.Length() < 3) {
+//     throw Napi::Error::New(env, "PactffiWriteMessagePactFile received < 3 arguments");
+//   }
 
-  if (!info[0].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiWriteMessagePactFile(arg 0) expected a MessagePactHandle (uint32_t)");
-  }
+//   if (!info[0].IsNumber()) {
+//     throw Napi::Error::New(env, "PactffiWriteMessagePactFile(arg 0) expected a MessagePactHandle (uint32_t)");
+//   }
 
-  if (!info[1].IsString()) {
-    throw Napi::Error::New(env, "PactffiWriteMessagePactFile(arg 1) expected a string");
-  }
+//   if (!info[1].IsString()) {
+//     throw Napi::Error::New(env, "PactffiWriteMessagePactFile(arg 1) expected a string");
+//   }
 
-  if (!info[2].IsBoolean()) {
-    throw Napi::Error::New(env, "PactffiWriteMessagePactFile(arg 2) expected a boolean");
-  }
+//   if (!info[2].IsBoolean()) {
+//     throw Napi::Error::New(env, "PactffiWriteMessagePactFile(arg 2) expected a boolean");
+//   }
 
-  MessagePactHandle handle = info[0].As<Napi::Number>().Uint32Value();
-  std::string dir = info[1].As<Napi::String>().Utf8Value();
-  bool overwrite = info[2].As<Napi::Boolean>().Value();
+//   MessagePactHandle handle = info[0].As<Napi::Number>().Uint32Value();
+//   std::string dir = info[1].As<Napi::String>().Utf8Value();
+//   bool overwrite = info[2].As<Napi::Boolean>().Value();
 
-  bool res = pactffi_write_message_pact_file(handle, dir.c_str(),  overwrite);
+//   bool res = pactffi_write_message_pact_file(handle, dir.c_str(),  overwrite);
 
-  return Napi::Number::New(env, res);
-}
+//   return Napi::Number::New(env, res);
+// }
 
 /**
  * Sets the additional metadata on the Pact file. Common uses are to add the client library details such as the name and version
@@ -1003,38 +1007,38 @@ Napi::Value PactffiWriteMessagePactFile(const Napi::CallbackInfo& info) {
  *                                            const char *name,
  *                                            const char *value);
  */
-Napi::Value PactffiWithMessagePactMetadata(const Napi::CallbackInfo& info) {
-   Napi::Env env = info.Env();
+// Napi::Value PactffiWithMessagePactMetadata(const Napi::CallbackInfo& info) {
+//    Napi::Env env = info.Env();
 
-  if (info.Length() < 4) {
-    throw Napi::Error::New(env, "PactffiWithMessagePactMetadata received < 4 arguments");
-  }
+//   if (info.Length() < 4) {
+//     throw Napi::Error::New(env, "PactffiWithMessagePactMetadata received < 4 arguments");
+//   }
 
-  if (!info[0].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 0) expected a MessagePactHandle (uint32_t)");
-  }
+//   if (!info[0].IsNumber()) {
+//     throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 0) expected a MessagePactHandle (uint32_t)");
+//   }
 
-  if (!info[1].IsString()) {
-    throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 1) expected a string");
-  }
+//   if (!info[1].IsString()) {
+//     throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 1) expected a string");
+//   }
 
-  if (!info[2].IsString()) {
-    throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 2) expected a string");
-  }
+//   if (!info[2].IsString()) {
+//     throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 2) expected a string");
+//   }
 
-  if (!info[3].IsString()) {
-    throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 3) expected a string");
-  }
+//   if (!info[3].IsString()) {
+//     throw Napi::Error::New(env, "PactffiWithMessagePactMetadata(arg 3) expected a string");
+//   }
 
-  MessagePactHandle handle = info[0].As<Napi::Number>().Uint32Value();
-  std::string ns = info[1].As<Napi::String>().Utf8Value();
-  std::string name = info[2].As<Napi::String>().Utf8Value();
-  std::string value = info[3].As<Napi::String>().Utf8Value();
+//   MessagePactHandle handle = info[0].As<Napi::Number>().Uint32Value();
+//   std::string ns = info[1].As<Napi::String>().Utf8Value();
+//   std::string name = info[2].As<Napi::String>().Utf8Value();
+//   std::string value = info[3].As<Napi::String>().Utf8Value();
 
-  pactffi_with_message_pact_metadata(handle, ns.c_str(), name.c_str(), value.c_str());
+//   pactffi_with_message_pact_metadata(handle, ns.c_str(), name.c_str(), value.c_str());
 
-  return env.Undefined();
-}
+//   return env.Undefined();
+// }
 
 /**
  * Creates a new Pact Message model and returns a handle to it.
@@ -1051,25 +1055,94 @@ Napi::Value PactffiWithMessagePactMetadata(const Napi::CallbackInfo& info) {
  *                                               const char *provider_name);
  *
  */
-Napi::Value PactffiNewMessagePact(const Napi::CallbackInfo& info) {
+// Napi::Value PactffiNewMessagePact(const Napi::CallbackInfo& info) {
+//    Napi::Env env = info.Env();
+
+//   if (info.Length() < 2) {
+//     throw Napi::Error::New(env, "PactffiNewMessagePact received < 2 arguments");
+//   }
+
+//   if (!info[0].IsString()) {
+//     throw Napi::Error::New(env, "PactffiNewMessagePact(arg 0) expected a string");
+//   }
+
+//   if (!info[1].IsString()) {
+//     throw Napi::Error::New(env, "PactffiNewMessagePact(arg 1) expected a string");
+//   }
+
+//   std::string consumer = info[0].As<Napi::String>().Utf8Value();
+//   std::string provider = info[1].As<Napi::String>().Utf8Value();
+
+//   MessagePactHandle handle = pactffi_new_message_pact(consumer.c_str(), provider.c_str());
+
+//   return Napi::Number::New(env, handle);
+// }
+
+/**
+ * Creates a new V4 asynchronous message and returns a handle to it.
+ *
+ * * `description` - The message description. It needs to be unique for each Message.
+ *
+ * Returns a new `MessageHandle`.
+ *
+ * C interface:
+ *
+ *     MessageHandle pactffi_new_async_message(PactHandle pact, const char *description);
+ *
+ */
+Napi::Value PactffiNewAsyncMessage(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
 
-  if (info.Length() < 2) {
-    throw Napi::Error::New(env, "PactffiNewMessagePact received < 2 arguments");
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "PactffiNewAsyncMessage received < 2 arguments");
   }
 
-  if (!info[0].IsString()) {
-    throw Napi::Error::New(env, "PactffiNewMessagePact(arg 0) expected a string");
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiNewAsyncMessage(arg 0) expected a PactHandle (uint16_t)");
   }
 
   if (!info[1].IsString()) {
-    throw Napi::Error::New(env, "PactffiNewMessagePact(arg 1) expected a string");
+    throw Napi::Error::New(env, "PactffiNewAsyncMessage(arg 1) expected a string");
   }
 
-  std::string consumer = info[0].As<Napi::String>().Utf8Value();
-  std::string provider = info[1].As<Napi::String>().Utf8Value();
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
+  std::string description = info[1].As<Napi::String>().Utf8Value();
 
-  MessagePactHandle handle = pactffi_new_message_pact(consumer.c_str(), provider.c_str());
+  MessageHandle handle = pactffi_new_async_message(pact, description.c_str());
+
+  return Napi::Number::New(env, handle);
+}
+
+/**
+ * Creates a new synchronous message interaction (request/response) and return a handle to it
+ * * `description` - The interaction description. It needs to be unique for each interaction.
+ *
+ * Returns a new `InteractionHandle`.
+ *
+ * C interface:
+ *
+ *    InteractionHandle pactffi_new_sync_message_interaction(PactHandle pact, const char *description);
+ *
+ */
+Napi::Value PactffiNewSyncMessage(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "PactffiNewSyncMessage received < 2 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiNewSyncMessage(arg 0) expected a PactHandle (uint16_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiNewSyncMessage(arg 1) expected a string");
+  }
+
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
+  std::string description = info[1].As<Napi::String>().Utf8Value();
+
+  InteractionHandle handle = pactffi_new_sync_message_interaction(pact, description.c_str());
 
   return Napi::Number::New(env, handle);
 }
@@ -1086,28 +1159,28 @@ Napi::Value PactffiNewMessagePact(const Napi::CallbackInfo& info) {
  *    MessageHandle pactffi_new_message(MessagePactHandle pact, const char *description);
  *
  */
-Napi::Value PactffiNewMessage(const Napi::CallbackInfo& info) {
-   Napi::Env env = info.Env();
+// Napi::Value PactffiNewMessage(const Napi::CallbackInfo& info) {
+//    Napi::Env env = info.Env();
 
-  if (info.Length() < 2) {
-    throw Napi::Error::New(env, "PactffiNewMessage received < 2 arguments");
-  }
+//   if (info.Length() < 2) {
+//     throw Napi::Error::New(env, "PactffiNewMessage received < 2 arguments");
+//   }
 
-  if (!info[0].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiNewMessage(arg 0) expected a MessagePactHandle (uint32_t)");
-  }
+//   if (!info[0].IsNumber()) {
+//     throw Napi::Error::New(env, "PactffiNewMessage(arg 0) expected a MessagePactHandle (uint32_t)");
+//   }
 
-  if (!info[1].IsString()) {
-    throw Napi::Error::New(env, "PactffiNewMessage(arg 1) expected a string");
-  }
+//   if (!info[1].IsString()) {
+//     throw Napi::Error::New(env, "PactffiNewMessage(arg 1) expected a string");
+//   }
 
-  MessagePactHandle handle = info[0].As<Napi::Number>().Uint32Value();
-  std::string desc = info[1].As<Napi::String>().Utf8Value();
+//   MessagePactHandle handle = info[0].As<Napi::Number>().Uint32Value();
+//   std::string desc = info[1].As<Napi::String>().Utf8Value();
 
-  MessageHandle res = pactffi_new_message(handle, desc.c_str());
+//   MessageHandle res = pactffi_new_message(handle, desc.c_str());
 
-  return Napi::Number::New(env, res);
-}
+//   return Napi::Number::New(env, res);
+// }
 
 /**
  * Sets the description for the Message.
