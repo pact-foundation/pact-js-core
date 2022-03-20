@@ -13,6 +13,7 @@ import {
   MatchingResultRequestMismatch,
 } from '../src/consumer';
 import { FfiSpecificationVersion } from '../src/ffi/types';
+import { load } from 'protobufjs';
 
 chai.use(chaiAsPromised);
 const expect = chai.expect;
@@ -233,6 +234,80 @@ describe('FFI integration test for the HTTP Consumer API', () => {
             age: 23,
             alive: true,
           });
+        })
+        .then(() => {
+          expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
+        })
+        .then(() => {
+          // You don't have to call this, it's just here to check it works
+          const mismatches = pact.mockServerMismatches(port);
+          expect(mismatches).to.have.length(0);
+        })
+        .then(() => {
+          pact.writePactFile(path.join(__dirname, '__testoutput__'));
+        })
+        .then(() => {
+          pact.cleanupMockServer(port);
+        });
+    });
+  });
+
+  // Should only run this if the plugin is installed
+  describe.skip('using a plugin (protobufs)', () => {
+    const protoFile = `${__dirname}/integration/plugin.proto`;
+
+    beforeEach(() => {
+      pact = makeConsumerPact(
+        'foo-consumer',
+        'bar-provider',
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V3
+      );
+      pact.addPlugin('protobuf', '0.0.3');
+
+      const interaction = pact.newInteraction('some description');
+      const protobufContents = {
+        'pact:proto': protoFile,
+        'pact:message-type': 'InitPluginRequest',
+        'pact:content-type': 'application/protobuf',
+        implementation: "notEmpty('pact-js-driver')",
+        version: "matching(semver, '0.0.0')",
+      };
+
+      interaction.uponReceiving('a request to get a protobuf');
+      interaction.given('protobuf state');
+      interaction.withRequest('GET', '/protobuf');
+      interaction.withPluginResponseInteractionContents(
+        'application/protobuf',
+        JSON.stringify(protobufContents)
+      );
+      interaction.withStatus(200);
+
+      port = pact.createMockServer(HOST);
+    });
+
+    afterEach(() => {
+      pact.cleanupPlugins();
+    });
+
+    it('generates a pact with success', async () => {
+      const root = await load(protoFile);
+
+      // Obtain a message type
+      const InitPluginRequest = root.lookupType(
+        'io.pact.plugin.InitPluginRequest'
+      );
+
+      return axios
+        .request({
+          baseURL: `http://${HOST}:${port}`,
+          method: 'GET',
+          url: '/protobuf',
+          responseType: 'arraybuffer',
+        })
+        .then((res) => {
+          const message: any = InitPluginRequest.decode(res.data);
+          expect(message.implementation).to.equal('pact-js-driver');
+          expect(message.version).to.equal('0.0.0');
         })
         .then(() => {
           expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
