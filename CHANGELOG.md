@@ -2,6 +2,30 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.6.0](https://github.com/pact-foundation/pact-js-core/compare/v13.5.1...v13.6.0) (2022-03-21)
+
+
+### Features
+
+* add plugin consumer native methods ([aeef054](https://github.com/pact-foundation/pact-js-core/commit/aeef0545d558485dffb29a2621649d393be12dd2))
+* add plugin to consumer interfaces ([ea0f536](https://github.com/pact-foundation/pact-js-core/commit/ea0f5367a5ec909ccdfcb930f47ee4d867190784))
+* add test for protobufs/plugin ([6bf78d8](https://github.com/pact-foundation/pact-js-core/commit/6bf78d89d1cd4ec6e41daaed73bf19b037a0d0e7))
+* bump native version to 0.1.6 ([d59d1a6](https://github.com/pact-foundation/pact-js-core/commit/d59d1a6cb155acb3e831a9754cc6afee0a00a780))
+* message pact interface ([76baab8](https://github.com/pact-foundation/pact-js-core/commit/76baab873fad0d9fd6f8cfdb7fe1667441fc1454))
+* support custom provider headers in verification ([d63e1a9](https://github.com/pact-foundation/pact-js-core/commit/d63e1a90975434416985d8d9046a2c633dc9f130))
+
+
+### Fixes and Improvements
+
+* correct arguments for source with selectors ([dd7ef00](https://github.com/pact-foundation/pact-js-core/commit/dd7ef007eb2b68083d39020d7c92058fce692cf8))
+* download cpp header and c header ([bbc2321](https://github.com/pact-foundation/pact-js-core/commit/bbc2321c9eae77a543d132c9d39509df11f7b142))
+* native builds failing on windows ([4e27713](https://github.com/pact-foundation/pact-js-core/commit/4e27713ec393c1bf140212faa3dd778b7077865c))
+* remove dead code, fix bug in URL vs file handling ([dcd53e0](https://github.com/pact-foundation/pact-js-core/commit/dcd53e08e0dfa6dc3be71ea0bbc95eb327939225))
+* remove overall verification timeout (see https://github.com/pact-foundation/pact-js/issues/761) ([bb52158](https://github.com/pact-foundation/pact-js-core/commit/bb521587d7c411ea78520733c3178dd92945b89b))
+* update rust core to 0.2.4 ([7407333](https://github.com/pact-foundation/pact-js-core/commit/7407333a0382ae4a6f1d90d427e5f76ea4bbc506))
+* upgrade to ffi 0.2.2 ([6e4b758](https://github.com/pact-foundation/pact-js-core/commit/6e4b75814c7e8a32598e5a08d871f99b77e203b9))
+* x-platform binary consumer spec ([1a81ed4](https://github.com/pact-foundation/pact-js-core/commit/1a81ed408b916ddd4c63c31b8580780382955e2a))
+
 ### [13.5.1](https://github.com/pact-foundation/pact-js-core/compare/v13.5.0...v13.5.1) (2022-03-15)
 
 
