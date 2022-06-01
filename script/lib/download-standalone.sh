@@ -48,7 +48,6 @@ download_standalone "pact-${STANDALONE_VERSION}-win32.zip"            "win32-${S
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
   download_standalone "pact-${STANDALONE_VERSION}-osx.tar.gz"           "darwin-${STANDALONE_VERSION}.tar.gz"
   download_standalone "pact-${STANDALONE_VERSION}-linux-x86_64.tar.gz"  "linux-x64-${STANDALONE_VERSION}.tar.gz"
-  download_standalone "pact-${STANDALONE_VERSION}-linux-x86.tar.gz"     "linux-ia32-${STANDALONE_VERSION}.tar.gz"
 fi
 
 # Write readme in the ffi folder
