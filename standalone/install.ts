@@ -81,14 +81,6 @@ export function createConfig(location: string = process.cwd()): Config {
         downloadLocation: PACT_BINARY_LOCATION,
         folderName: `linux-x64-${PACT_STANDALONE_VERSION}`,
       },
-      {
-        platform: 'linux',
-        arch: 'ia32',
-        binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz`,
-        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz${CHECKSUM_SUFFIX}`,
-        downloadLocation: PACT_BINARY_LOCATION,
-        folderName: `linux-ia32-${PACT_STANDALONE_VERSION}`,
-      },
     ],
   };
 }
