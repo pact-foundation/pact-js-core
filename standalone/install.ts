@@ -3,7 +3,7 @@ import path = require('path');
 import fs = require('fs');
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = '1.88.83';
+export const PACT_STANDALONE_VERSION = '1.88.91-rc2';
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
 
