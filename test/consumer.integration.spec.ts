@@ -21,8 +21,6 @@ const expect = chai.expect;
 const HOST = '127.0.0.1';
 
 const isWin = process.platform === 'win32';
-const isOSX = process.platform === 'darwin';
-const isCI = process.env.CI === 'true';
 
 describe('FFI integration test for the HTTP Consumer API', () => {
   setLogLevel('trace');
@@ -194,9 +192,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       interaction.withQuery('someParam', 0, 'someValue');
       interaction.withRequestBinaryBody(
         bytes,
-        isWin || (isOSX && isCI)
-          ? 'application/octet-stream'
-          : 'application/gzip'
+        isWin ? 'application/octet-stream' : 'application/gzip'
       );
       interaction.withResponseBody(
         JSON.stringify({
