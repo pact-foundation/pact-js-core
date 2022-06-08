@@ -3,7 +3,7 @@ import path = require('path');
 import fs = require('fs');
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = '1.88.83';
+export const PACT_STANDALONE_VERSION = '1.88.91-rc5';
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
 
@@ -80,14 +80,6 @@ export function createConfig(location: string = process.cwd()): Config {
         binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${CHECKSUM_SUFFIX}`,
         downloadLocation: PACT_BINARY_LOCATION,
         folderName: `linux-x64-${PACT_STANDALONE_VERSION}`,
-      },
-      {
-        platform: 'linux',
-        arch: 'ia32',
-        binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz`,
-        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86.tar.gz${CHECKSUM_SUFFIX}`,
-        downloadLocation: PACT_BINARY_LOCATION,
-        folderName: `linux-ia32-${PACT_STANDALONE_VERSION}`,
       },
     ],
   };
