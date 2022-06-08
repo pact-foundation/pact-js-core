@@ -333,7 +333,7 @@ export const makeConsumerAsyncMessagePact = (
           return ffi.pactffiMessageWithContents(
             interactionPtr,
             contentType,
-            body,
+            body
           );
         },
         withBinaryContents: (body: Buffer, contentType: string) => {

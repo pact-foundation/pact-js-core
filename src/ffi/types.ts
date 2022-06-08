@@ -258,7 +258,7 @@ export type Ffi = {
   pactffiMessageWithContents(
     handle: FfiMessageHandle,
     contentType: string,
-    data: string,
+    data: string
   ): void;
   pactffiMessageWithBinaryContents(
     handle: FfiMessageHandle,
