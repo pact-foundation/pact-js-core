@@ -40,7 +40,7 @@ describe('FFI integration test for the Message Consumer API', () => {
       message.expectsToReceive('a product event');
       message.given('some state');
       message.givenWithParam('some state 2', 'state2 key', 'state2 val');
-      message.withContents(Buffer.from(`{"foo": "bar"}`), 'application/json');
+      message.withContents(JSON.stringify({"foo": "bar"}), 'application/json');
       message.withMetadata('meta-key', 'meta-val');
 
       const reified = message.reifyMessage();
@@ -62,7 +62,7 @@ describe('FFI integration test for the Message Consumer API', () => {
       message.expectsToReceive('a binary event');
       message.given('some state');
       message.givenWithParam('some state 2', 'state2 key', 'state2 val');
-      message.withContents(
+      message.withBinaryContents(
         bytes,
         isWin || (isOSX && isCI)
           ? 'application/octet-stream'

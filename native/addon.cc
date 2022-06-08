@@ -42,6 +42,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiMessageReify"), Napi::Function::New(env, PactffiMessageReify));
   exports.Set(Napi::String::New(env, "pactffiMessageGiven"), Napi::Function::New(env, PactffiMessageGiven));
   exports.Set(Napi::String::New(env, "pactffiMessageGivenWithParam"), Napi::Function::New(env, PactffiMessageGivenWithParam));
+  exports.Set(Napi::String::New(env, "pactffiMessageWithBinaryContents"), Napi::Function::New(env, PactffiMessageWithBinaryContents));
   exports.Set(Napi::String::New(env, "pactffiMessageWithContents"), Napi::Function::New(env, PactffiMessageWithContents));
   exports.Set(Napi::String::New(env, "pactffiMessageWithMetadata"), Napi::Function::New(env, PactffiMessageWithMetadata));
   exports.Set(Napi::String::New(env, "pactffiMessageExpectsToReceive"), Napi::Function::New(env, PactffiMessageExpectsToReceive));

@@ -190,7 +190,8 @@ export type ConsumerMessage = PluginInteraction & {
   givenWithParam: (state: string, name: string, value: string) => void;
   expectsToReceive: (description: string) => void;
   withMetadata: (name: string, value: string) => void;
-  withContents: (body: Buffer, contentType: string) => void;
+  withContents: (body: string, contentType: string) => void;
+  withBinaryContents: (body: Buffer, contentType: string) => void;
   reifyMessage: () => string;
 };
 

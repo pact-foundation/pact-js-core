@@ -826,11 +826,10 @@ Napi::Value PactffiWithBinaryFile(const Napi::CallbackInfo& info) {
   uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
   InteractionPart part = integerToInteractionPart(env, partNumber);
 
-  // uint32_t part = info[1].As<Napi::Number>().Uint32Value();
   std::string contentType = info[2].As<Napi::String>().Utf8Value();
   Napi::Buffer<uint8_t> buffer = info[3].As<Napi::Buffer<uint8_t>>();
   size_t size = info[4].As<Napi::Number>().Uint32Value();
-
+  
   bool res = pactffi_with_binary_file(interaction, part, contentType.c_str(), buffer.Data(), size);
 
   return Napi::Boolean::New(env, res);
@@ -1315,11 +1314,62 @@ Napi::Value PactffiMessageGivenWithParam(const Napi::CallbackInfo& info) {
  *                                        const uint8_t *body,
  *                                        size_t size);
  */
-Napi::Value PactffiMessageWithContents(const Napi::CallbackInfo& info) {
+Napi::Value PactffiMessageWithBinaryContents(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
 
   if (info.Length() < 4) {
-    throw Napi::Error::New(env, "PactffiMessageWithContents received < 4 arguments");
+    throw Napi::Error::New(env, "PactffiMessageWithBinaryContents received < 4 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiMessageWithBinaryContents(arg 0) expected a MessageHandle (uint32_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiMessageWithBinaryContents(arg 1) expected a string");
+  }
+
+  if (!info[2].IsBuffer()) {
+    throw Napi::Error::New(env, "PactffiMessageWithBinaryContents(arg 2) expected a Buffer");
+  }
+
+  if (!info[3].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiMessageWithBinaryContents(arg 3) expected a number");
+  }
+
+  MessageHandle handle = info[0].As<Napi::Number>().Uint32Value();
+  std::string contentType = info[1].As<Napi::String>().Utf8Value();
+  Napi::Buffer<uint8_t> buffer = info[2].As<Napi::Buffer<uint8_t>>();
+  size_t size = info[3].As<Napi::Number>().Uint32Value();
+   
+  pactffi_message_with_contents(handle, contentType.c_str(), buffer.Data(), size);
+
+  return env.Undefined();
+}
+
+/**
+ * Adds the contents of the Message.
+ *
+ * Accepts text bodies (plain text, JSON or XML). Bodies must be a valid C string (NULL terminated)
+ * and the size of the body is not required (it will be ignored). 
+ *
+ * * `content_type` - The content type of the body. Defaults to `text/plain`, supports JSON structures with matchers and binary data.
+ * * `body` - The body contents as bytes. For text payloads (JSON, XML, etc.), a C string can be used and matching rules can be embedded in the body.
+ * * `content_type` - Expected content type (e.g. application/json, application/octet-stream)
+ * * `size` - number of bytes in the message body to read. This is not required for text bodies (JSON, XML, etc.).
+ *
+ * C interface:
+ *
+ *     void pactffi_message_with_contents(MessageHandle message_handle,
+ *                                        const char *content_type,
+ *                                        const uint8_t *body,
+ *                                        size_t size);
+ */
+Napi::Value PactffiMessageWithContents(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiMessageWithContents received < 3 arguments");
   }
 
   if (!info[0].IsNumber()) {
@@ -1330,20 +1380,15 @@ Napi::Value PactffiMessageWithContents(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiMessageWithContents(arg 1) expected a string");
   }
 
-  if (!info[2].IsBuffer()) {
-    throw Napi::Error::New(env, "PactffiMessageWithContents(arg 2) expected a Buffer");
-  }
-
-  if (!info[3].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiMessageWithContents(arg 3) expected a number");
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "PactffiMessageWithContents(arg 2) expected a string");
   }
 
   MessageHandle handle = info[0].As<Napi::Number>().Uint32Value();
   std::string contentType = info[1].As<Napi::String>().Utf8Value();
-  Napi::Buffer<uint8_t> buffer = info[2].As<Napi::Buffer<uint8_t>>();
-  size_t size = info[3].As<Napi::Number>().Uint32Value();
+  std::string buffer = info[2].As<Napi::String>().Utf8Value();
 
-  pactffi_message_with_contents(handle, contentType.c_str(), buffer.Data(), size);
+  pactffi_message_with_contents(handle, contentType.c_str(), (unsigned char *)buffer.c_str(), 0);
 
   return env.Undefined();
 }

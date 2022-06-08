@@ -35,6 +35,7 @@ Napi::Value PactffiMessageGiven(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageGivenWithParam(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageSetDescription(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageWithContents(const Napi::CallbackInfo& info);
+Napi::Value PactffiMessageWithBinaryContents(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageWithMetadata(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageExpectsToReceive(const Napi::CallbackInfo& info);
 Napi::Value PactffiWriteMessagePactFile(const Napi::CallbackInfo& info);
