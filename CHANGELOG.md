@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.6.1](https://github.com/pact-foundation/pact-js-core/compare/v13.6.0...v13.6.1) (2022-07-04)
+
+
+### Fixes and Improvements
+
+* send NUL terminated strings to pactffi_message_with_contents for non-binary payloads ([ac4557c](https://github.com/pact-foundation/pact-js-core/commit/ac4557c23f5ea2af1ec3b8e384ea8765dc3bbdb6))
+* update standalone to 1.88.91-rc4 ([#378](https://github.com/pact-foundation/pact-js-core/issues/378)) ([f9344ea](https://github.com/pact-foundation/pact-js-core/commit/f9344ea65bd6aecab08660a209dd04a8b757ceb4))
+* update standalone to 1.89.01-rc1 ([#381](https://github.com/pact-foundation/pact-js-core/issues/381)) ([8f70fa3](https://github.com/pact-foundation/pact-js-core/commit/8f70fa3f40efeffe9eb88ec63f34dacb845cd49f))
+
 ## [13.6.0](https://github.com/pact-foundation/pact-js-core/compare/v13.5.1...v13.6.0) (2022-03-21)
 
 
