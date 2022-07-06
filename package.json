@@ -1,5 +1,5 @@
 {
-  "version": "10.17.4",
+  "version": "10.17.5",
   "name": "@pact-foundation/pact-node",
   "description": "Core of @pact-foundation/pact. You almost certainly don't want to depend on this directly.",
   "main": "src/index.js",
@@ -132,7 +132,6 @@
     "build": "npm run clean && tsc",
     "start": "npm run watch",
     "download-checksums": "node download-checksums.js",
-    "prerelease": "npm i && npm t && npm run snyk-protect",
     "release": "standard-version",
     "snyk-protect": "snyk protect",
     "prettier:base": "prettier --parser typescript",
