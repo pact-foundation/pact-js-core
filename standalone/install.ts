@@ -106,7 +106,7 @@ export function createConfig(location: string = process.cwd()): Config {
         binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${CHECKSUM_SUFFIX}`,
         downloadLocation: PACT_BINARY_LOCATION,
         folderName: `linux-x64-${PACT_STANDALONE_VERSION}`,
-      }
+      },
     ],
   };
 }

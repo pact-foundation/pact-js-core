@@ -106,19 +106,19 @@ describe('Install', () => {
   describe('Skip install binary', () => {
     it('Should not download it', async () => {
       process.env.PACT_SKIP_BINARY_INSTALL = 'true';
-      const { binaryInstallSkipped } = await install('linux', 'ia32');
+      const { binaryInstallSkipped } = await install('linux', 'x64');
       expect(binaryInstallSkipped).toBeTruthy();
     });
 
     it('Should download it', async () => {
-      const { binaryChecksum, binary } = getBinaryEntry('linux', 'ia32');
+      const { binaryChecksum, binary } = getBinaryEntry('linux', 'x64');
       ((fs as unknown) as FS).initFS({
         [path.join(__dirname, binary)]: 'mock binary',
         [path.join(__dirname, binaryChecksum)]: 'mock binary checksum',
       });
 
       process.env.PACT_SKIP_BINARY_INSTALL = 'false';
-      const { binaryInstallSkipped } = await install('linux', 'ia32');
+      const { binaryInstallSkipped } = await install('linux', 'x64');
       expect(binaryInstallSkipped).toBeFalsy();
     });
   });
