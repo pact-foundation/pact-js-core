@@ -30,9 +30,11 @@ function download_standalone {
   download_to "$URL" "$DOWNLOAD_LOCATION"
   if [ "${STANDALONE_FILENAME%zip}" != "${STANDALONE_FILENAME}" ]; then
     unzip -qo "$DOWNLOAD_LOCATION" -d "${DOWNLOAD_LOCATION%.*}"
+    rm "${DOWNLOAD_LOCATION%.*}"
   else
     mkdir -p "${DOWNLOAD_LOCATION%.tar.gz}"
     tar -xf "$DOWNLOAD_LOCATION" -C "${DOWNLOAD_LOCATION%.tar.gz}"
+    rm "${DOWNLOAD_LOCATION%.tar.gz}"
   fi
 }
 
