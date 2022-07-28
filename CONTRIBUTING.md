@@ -1,5 +1,10 @@
 # Contributing
 
+## Key Branches
+
+* `master` - this is the current main version supporting the 10.x.x release line of Pact JS. Most investment will be here, inclruding major new features, enhancements, bug fixes, security patches etc.
+* `pact-node` - this is the previous major version supporting the 9.x.x release line of Pact JS. Critical security patches and bug fixes will be provided as a priority.
+* 
 ## Raising issues
 
 Before raising an issue, make sure you have checked the open and closed issues to see if an answer is provided there.
