@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.7.1](https://github.com/pact-foundation/pact-js-core/compare/v13.7.0...v13.7.1) (2022-08-09)
+
+
+### Fixes and Improvements
+
+* map pactflow command to correct binary / add tests ([31f4df9](https://github.com/pact-foundation/pact-js-core/commit/31f4df935fcb92d2b8ab0f473ca282a8aa3fa76c))
+
 ## [13.7.0](https://github.com/pact-foundation/pact-js-core/compare/v13.6.2...v13.7.0) (2022-08-09)
 
 
