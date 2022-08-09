@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.7.0](https://github.com/pact-foundation/pact-js-core/compare/v13.6.2...v13.7.0) (2022-08-09)
+
+
+### Features
+
+* expose pactflow pact-ruby-standalone command ([d9f9fc7](https://github.com/pact-foundation/pact-js-core/commit/d9f9fc7508f5c2dbcb61f6ed0c32e7acb1d4bd9e))
+
 ### [13.6.2](https://github.com/pact-foundation/pact-js-core/compare/v13.6.1...v13.6.2) (2022-07-06)
 
 
