@@ -1,5 +1,9 @@
 <img src="https://raw.githubusercontent.com/pact-foundation/pact-logo/master/media/logo-black.png" width="200">
 
+| :information_source:  |
+|-----------------------------------------|
+| This is a core library, designed for use in the bowels of another package. Unless you are wanting to develop tools for the pact ecosystem, you almost certainly want to install [`@pact-foundation/pact`](https://github.com/pact-foundation/pact-js/) instead|
+
 ![Build and test](https://github.com/pact-foundation/pact-js-core/workflows/Build%20and%20test/badge.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/pact-foundation/pact-js-core/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pact-foundation/pact-js-core?targetFile=package.json)
 [![npm](https://img.shields.io/npm/v/@pact-foundation/pact-core.svg)](https://www.npmjs.com/package/@pact-foundation/pact-core)
@@ -9,11 +13,7 @@
 
 # Pact-JS Core
 
-**This is the core of pact-js. Unless you are wanting to develop tools for the pact ecosystem, you almost certainly want to install [`@pact-foundation/pact`](https://github.com/pact-foundation/pact-js/) instead**.
-
 A wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
-
-***If you are new to Pact and are wanting to get started with contract testing, you almost certainly don't want to use this package. Head over to [Pact JS](https://github.com/pact-foundation/pact-js/) instead.**
 
 <!-- TOC -->
 
