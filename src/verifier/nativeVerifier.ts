@@ -43,9 +43,11 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     );
   }
 
-  Object.keys(opts.customProviderHeaders || {}).forEach((key, _, obj) =>
-    ffi.pactffiVerifierAddCustomHeader(handle, key, obj[key])
-  );
+  if (opts.customProviderHeaders) {
+    Object.entries(opts.customProviderHeaders).forEach(([key, value]) => {
+      ffi.pactffiVerifierAddCustomHeader(handle, key, value);
+    });
+  }
 
   const filterDescription = process.env.PACT_DESCRIPTION || '';
   const filterState = process.env.PACT_PROVIDER_STATE || '';
