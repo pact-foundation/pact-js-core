@@ -70,6 +70,7 @@
   },
   "devDependencies": {
     "@pact-foundation/pact-js-prettier-config": "^1.0.0",
+    "@tsconfig/node14": "^1.0.3",
     "@types/basic-auth": "^1.1.2",
     "@types/bindings": "^1.5.1",
     "@types/chai": "4.1.2",
