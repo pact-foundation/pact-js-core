@@ -1,3 +1,4 @@
+export type FfiHandle = number;
 export type FfiPactHandle = number;
 export type FfiInteractionHandle = number;
 export type FfiVerifierHandle = number;
@@ -118,6 +119,10 @@ export enum FfiLogLevelFilter {
 export type Ffi = {
   pactffiInit(logLevel: string): string;
   pactffiVersion(): string;
+} & FfiConsumerFunctions &
+  FfiVerificationFunctions;
+
+export type FfiConsumerFunctions = {
   pactffiCreateMockServerForPact(
     handle: FfiPactHandle,
     address: string,
@@ -272,6 +277,9 @@ export type Ffi = {
     value: string
   ): void;
   pactffiMessageReify(handle: FfiMessageHandle): string;
+};
+
+export type FfiVerificationFunctions = {
   pactffiVerifierNewForApplication(
     libraryName: string,
     version: string

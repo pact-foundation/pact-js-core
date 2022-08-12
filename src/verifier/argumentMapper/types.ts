@@ -1,24 +1,35 @@
-type BasicMapping = {
-  arg: string;
-  mapper: 'string' | 'flag';
+import logger from '../../logger';
+
+export const deprecatedFunction = (_: any, property: string): boolean => {
+  logger.warn(`${property} is deprecated and no longer has any effect`);
+
+  return true;
+};
+import { Ffi, FfiHandle } from '../../ffi/types';
+
+export type FnObject = {
+  [key: string]: (...args: any) => any;
 };
 
-type IgnoreAndWarn = {
-  warningMessage: string;
+export type FnMapping<T extends FnObject, O> = {
+  [Key in keyof T]: FnArgumentMapping<Key, T, O>;
 };
 
-/** @internal */
-export type FunctionMapping<T> = (arg: NonNullable<T>) => string[];
+export enum FnValidationStatus {
+  SUCCESS = 0,
+  IGNORE = 1,
+  FAIL = 2,
+}
 
-/** @internal */
-export type ArgMapping<PactOptions> = {
-  [Key in keyof PactOptions]-?:
-    | BasicMapping
-    | IgnoreAndWarn
-    | FunctionMapping<PactOptions[Key]>;
+export type FnValidationResult = {
+  status: FnValidationStatus;
+  messages?: string[];
 };
 
-/** @internal */
-export type IgnoreOptionCombinations<T> = {
-  [Key in keyof Partial<T>]: { ifNotSet: keyof T };
+export type FnArgumentMapping<K extends keyof T, T extends FnObject, O> = {
+  validateAndExecute: (
+    ffi: Ffi,
+    handle: FfiHandle,
+    options: O
+  ) => FnValidationResult;
 };

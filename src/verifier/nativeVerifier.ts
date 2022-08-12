@@ -2,16 +2,11 @@ import { VerifierOptions } from './types';
 import logger, { setLogLevel } from '../logger';
 import { getFfiLib } from '../ffi';
 import { VERIFY_PROVIDER_RESPONSE } from '../ffi/types';
-import { URL } from 'url';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../../package.json');
 
-import fs = require('fs');
-
-const objArrayToStringArray = (obj: unknown[]) => {
-  return obj.map((o) => JSON.stringify(o));
-};
+import { setupVerification } from './argumentMapper';
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
   const ffi = getFfiLib(opts.logLevel);
@@ -23,127 +18,9 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     pkg.name.split('/')[1],
     pkg.version
   );
-  const uri = new URL(opts.providerBaseUrl);
 
-  ffi.pactffiVerifierSetProviderInfo(
-    handle,
-    opts.provider || '',
-    uri.protocol.split(':')[0],
-    uri.hostname,
-    parseInt(uri.port, 10),
-    uri.pathname
-  );
+  setupVerification(ffi, handle, opts);
 
-  if (opts.providerStatesSetupUrl) {
-    ffi.pactffiVerifierSetProviderState(
-      handle,
-      opts.providerStatesSetupUrl,
-      opts.providerStatesSetupTeardown || true,
-      opts.providerStatesSetupBody || true // dumb, this means they are always set!
-    );
-  }
-
-  if (opts.customProviderHeaders) {
-    Object.entries(opts.customProviderHeaders).forEach(([key, value]) => {
-      ffi.pactffiVerifierAddCustomHeader(handle, key, value);
-    });
-  }
-
-  const filterDescription = process.env.PACT_DESCRIPTION || '';
-  const filterState = process.env.PACT_PROVIDER_STATE || '';
-  const filterNoState = process.env.PACT_PROVIDER_NO_STATE ? true : false;
-
-  ffi.pactffiVerifierSetFilterInfo(
-    handle,
-    filterDescription,
-    filterState,
-    filterNoState
-  );
-
-  if (opts.pactUrls) {
-    opts.pactUrls.forEach((file) => {
-      logger.debug(`checking source type of given pactUrl: ${file}`);
-      try {
-        const u = new URL(file);
-
-        if (u.hostname) {
-          logger.debug(`adding ${file} as a Url source`);
-          ffi.pactffiVerifierUrlSource(
-            handle,
-            file,
-            opts.pactBrokerUsername || '',
-            opts.pactBrokerPassword || '',
-            opts.pactBrokerToken || ''
-          );
-        }
-      } catch {
-        logger.debug(`${file} is not a URI`);
-      }
-
-      try {
-        const f = fs.lstatSync(file);
-
-        if (f.isDirectory()) {
-          logger.debug(`adding ${file} as Directory source`);
-          ffi.pactffiVerifierAddDirectorySource(handle, file);
-        } else if (f.isFile() || f.isSymbolicLink()) {
-          logger.debug(`adding ${file} as File source`);
-          ffi.pactffiVerifierAddFileSource(handle, file);
-        }
-      } catch {
-        logger.debug(`${file} is not a file`);
-      }
-    });
-  }
-
-  // TODO: extract these options into its own subtype, and check keyof
-  if (opts.disableSslVerification || opts.timeout) {
-    ffi.pactffiVerifierSetVerificationOptions(
-      handle,
-      opts.disableSslVerification || false,
-      opts.timeout || 30000
-    );
-  }
-
-  // TODO: extract these options into its own subtype, and check keyof
-  if (
-    opts.publishVerificationResult ||
-    opts.providerVersion ||
-    opts.buildUrl ||
-    opts.disableSslVerification ||
-    opts.timeout ||
-    opts.providerVersionTags
-  ) {
-    ffi.pactffiVerifierSetPublishOptions(
-      handle,
-      opts.providerVersion || '',
-      opts.buildUrl || '',
-      opts.providerVersionTags || [],
-      opts.providerBranch || ''
-    );
-  }
-
-  const brokerUrl = opts.pactBrokerUrl || process.env.PACT_BROKER_BASE_URL;
-
-  if (brokerUrl && opts.provider) {
-    ffi.pactffiVerifierBrokerSourceWithSelectors(
-      handle,
-      brokerUrl,
-      opts.pactBrokerUsername || process.env.PACT_BROKER_USERNAME || '',
-      opts.pactBrokerPassword || process.env.PACT_BROKER_PASSWORD || '',
-      opts.pactBrokerToken || process.env.PACT_BROKER_TOKEN || '',
-      opts.enablePending || false,
-      opts.includeWipPactsSince || '',
-      opts.providerVersionTags || [],
-      opts.providerBranch || '',
-      opts.consumerVersionSelectors
-        ? objArrayToStringArray(opts.consumerVersionSelectors)
-        : [],
-      opts.consumerVersionTags || []
-    );
-  }
-
-  // Todo: probably separate out the sections of this logic into separate promises
   return new Promise<string>((resolve, reject) => {
     ffi.pactffiVerifierExecute(handle, (err: Error, res: number) => {
       logger.debug(`shutting down verifier with handle ${handle}`);
