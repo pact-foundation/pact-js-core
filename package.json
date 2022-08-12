@@ -155,7 +155,7 @@
       },
       {
         "type": "refactor",
-        "hidden": true
+        "section": "Fixes and Improvements"
       },
       {
         "type": "perf",
