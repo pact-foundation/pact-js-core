@@ -21,18 +21,11 @@ describe('Verifier argument validator', () => {
     expect(validateOptions(options)).to.deep.equal(options);
   };
 
-  context('when automatically finding pacts from a broker', () => {
-    context('when not given --pact-urls and only --provider', () => {
-      it('should fail with an error because pactUrls or pactBrokerUrl is required', () => {
-        expect(() =>
-          validateOptions({
-            providerBaseUrl: 'http://localhost',
-            provider: 'someprovider',
-          })
-        ).to.throw(Error);
-      });
-    });
+  beforeEach(() => {
+    sinon.restore();
+  });
 
+  context('when automatically finding pacts from a broker', () => {
     context('when not given --pact-urls and only --pact-broker-url', () => {
       it('should fail with an error because provider is missing', () => {
         expect(() =>
@@ -40,7 +33,7 @@ describe('Verifier argument validator', () => {
             providerBaseUrl: 'http://localhost',
             pactBrokerUrl: 'http://foo.com',
           })
-        ).to.throw(Error);
+        ).to.throw(/pactBrokerUrl requires the following properties/);
       });
     });
 
@@ -49,6 +42,7 @@ describe('Verifier argument validator', () => {
         expectSuccessWith({
           providerBaseUrl: 'http://localhost',
           pactBrokerUrl: 'http://foo.com',
+          pactUrls: ['http://idontexist'],
           provider: 'someprovider',
         });
       });
@@ -58,16 +52,6 @@ describe('Verifier argument validator', () => {
   context('when not given --pact-urls or --provider-base-url', () => {
     it('should fail with an error', () => {
       expect(() => validateOptions({} as VerifierOptions)).to.throw(Error);
-    });
-  });
-
-  context('when given --provider-states-setup-url', () => {
-    it('should fail with an error', () => {
-      expect(() =>
-        validateOptions({
-          providerStatesSetupUrl: 'http://foo/provider-states/setup',
-        } as VerifierOptions)
-      ).to.throw(Error);
     });
   });
 
@@ -134,7 +118,9 @@ describe('Verifier argument validator', () => {
               pactUrls: ['http://idontexist'],
               publishVerificationResult: true,
             })
-          ).to.throw(Error);
+          ).to.throw(
+            /publishVerificationResult requires the following properties/
+          );
         });
       });
     }
@@ -210,6 +196,7 @@ describe('Verifier argument validator', () => {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
+          provider: 'provider',
           pactUrls: [path.dirname(currentDir)],
         })
       ).to.not.throw(Error);
@@ -223,6 +210,7 @@ describe('Verifier argument validator', () => {
           providerBaseUrl: 'http://localhost',
           pactUrls: [path.dirname(currentDir)],
           pactBrokerUrl: 'http://localhost',
+          provider: 'provider',
         })
       ).to.not.throw(Error);
     });
@@ -299,16 +287,22 @@ describe('Verifier argument validator', () => {
 
   context('when providing consumerVersionSelectors', () => {
     context('and an unsupported selector is specified', () => {
-      it('should fail with an error', () => {
-        expect(() =>
-          validateOptions({
-            providerBaseUrl: 'http://localhost',
-            pactUrls: ['http://idontexist'],
-            consumerVersionSelectors: [
-              { unsupportedFlag: true } as ConsumerVersionSelector,
-            ],
-          })
-        ).to.throw(Error);
+      it('should log out a warning that the selector is unknown', () => {
+        const warnSpy = sinon.spy(logger, 'warn');
+
+        expectSuccessWith({
+          providerBaseUrl: 'http://localhost',
+          pactUrls: ['http://idontexist'],
+          consumerVersionSelectors: [
+            { unsupportedFlag: true } as ConsumerVersionSelector,
+          ],
+        });
+
+        expect(
+          warnSpy.calledWithMatch(
+            "The consumer version selector 'unsupportedFlag'"
+          )
+        ).to.be.ok;
       });
     });
   });

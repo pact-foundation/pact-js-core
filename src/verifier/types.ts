@@ -42,6 +42,7 @@ export interface VerifierOptions {
   disableSslVerification?: boolean;
   buildUrl?: string;
   customProviderHeaders?: CustomHeaders;
+  consumerFilters?: string[];
 }
 
 /** These are the deprecated verifier options, removed prior to this verison,

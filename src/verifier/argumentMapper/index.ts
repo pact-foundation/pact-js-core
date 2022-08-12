@@ -1,88 +1,40 @@
-import { FunctionMapping } from './types';
-import logger from '../../logger';
+import { FnValidationStatus } from './types';
+import logger, { logCrashAndThrow, logErrorAndThrow } from '../../logger';
 import { InternalPactVerifierOptions } from '../types';
-import {
-  argMapping,
-  ignoredArguments,
-  ignoreOptionCombinations,
-} from './arguments';
+import { ffiFnMapping, RequiredFfiVerificationFunctions } from './arguments';
+import { Ffi, FfiVerifierHandle } from '../../ffi/types';
 
-/**
- * This function maps arguments from the Verifier to the Rust core's verifier arguments
- *
- * @internal
- *
- * @param options The actual options passed by the user
- * @returns An array of strings to past to the Rust core verifier
- */
-export const argumentMapper = (
+export const setupVerification = (
+  ffi: Ffi,
+  handle: FfiVerifierHandle,
   options: InternalPactVerifierOptions
-): string[] =>
-  (Object.keys(options) as Array<keyof InternalPactVerifierOptions>)
-    .filter((k) => {
-      const ignoreCondition = ignoreOptionCombinations[k];
-      if (ignoreCondition !== undefined) {
-        logger.trace(
-          `The argument mapper has an ignored combination for '${k}'`
-        );
-        // We might have multiple ways to ignore option combinations in the future
-        if (
-          ignoreCondition.ifNotSet &&
-          options[ignoreCondition.ifNotSet] === undefined
-        ) {
-          logger.warn(
-            `Ignoring option '${k}' because it is invalid without '${ignoreCondition.ifNotSet}' also being set. This may indicate an error in your configuration`
-          );
-          return false;
-        }
-        logger.trace(`But it was not ignored: '${k}'`);
-      }
-      return true;
-    })
-    .map((key: keyof InternalPactVerifierOptions) => {
-      // We pull these out, because TypeScript doesn't like to
-      // reason that argMapping[key] is a constant value.
-      // So, we need to pull it out to be able to say
-      // `if('someKey' in thisMapping)` and retain type checking
-      const thisMapping = argMapping[key];
-      const thisValue = options[key];
+): void => {
+  (
+    Object.keys(ffiFnMapping) as Array<keyof RequiredFfiVerificationFunctions>
+  ).map((k) => {
+    const validation = ffiFnMapping[k].validateAndExecute(ffi, handle, options);
 
-      if (!thisMapping) {
-        if (!ignoredArguments.includes(key)) {
-          logger.error(`Pact-core is ignoring unknown option '${key}'`);
-        }
-        return [];
-      }
-      if (thisValue === undefined) {
-        logger.warn(
-          `The Verifier option '${key}' was was explicitly set to undefined and will be ignored. This may indicate an error in your config. Remove the option entirely to prevent this warning`
+    switch (validation.status) {
+      case FnValidationStatus.FAIL:
+        logErrorAndThrow(
+          `the required ffi function '${k}' failed validation with errors: ${
+            validation.messages || [].join(',')
+          }`
         );
-        return [];
-      }
-      if ('warningMessage' in thisMapping) {
-        logger.warn(thisMapping.warningMessage);
-        return [];
-      }
-      if ('arg' in thisMapping) {
-        switch (thisMapping.mapper) {
-          case 'string':
-            return [thisMapping.arg, `${thisValue}`];
-          case 'flag':
-            return thisValue ? [thisMapping.arg] : [];
-          default:
-            logger.pactCrash(
-              `Option mapper for '${key}' maps to '${thisMapping.arg}' with unknown mapper type '${thisMapping.mapper}'`
-            );
-            return [];
-        }
-      }
-      if (typeof thisMapping === 'function') {
-        return (thisMapping as FunctionMapping<unknown>)(thisValue);
-      }
-      logger.pactCrash(
-        `The option mapper completely failed to find a mapping for '${key}'.`
-      );
-      return [];
-    })
-    // This can be replaced with .flat() when node 10 is EOL
-    .reduce((acc: string[], current: string[]) => [...acc, ...current], []);
+        break;
+      case FnValidationStatus.IGNORE:
+        logger.debug(
+          `the optional ffi function '${k}' was not executed as it had non-fatal validation errors: ${
+            validation.messages || [].join(',')
+          }`
+        );
+        break;
+      case FnValidationStatus.SUCCESS:
+        break;
+      default:
+        logCrashAndThrow(
+          `the ffi function '${k}' returned the following unrecognised validation signal: '${validation.status}'`
+        );
+    }
+  });
+};

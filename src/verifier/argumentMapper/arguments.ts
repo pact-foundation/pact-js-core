@@ -1,120 +1,225 @@
-import url = require('url');
+import logger from '../../logger';
+import fs = require('fs');
 
-import { ArgMapping, IgnoreOptionCombinations } from './types';
-import {
-  ConsumerVersionSelector,
-  InternalPactVerifierOptions,
-  VerifierOptions,
-} from '../types';
+import { FnMapping, FnValidationStatus } from './types';
+import { InternalPactVerifierOptions } from '../types';
 
-import { getUriType } from '../filesystem';
-import { LogLevel } from '../../logger/types';
+import { FfiVerificationFunctions } from '../../ffi/types';
+import { URL } from 'url';
 
-/**
- * These are arguments that are on the PactJS object that we don't need to use
- * An array of strings for options to ignore (typed as strings and not `keyof VerifierOptions`,
- * because pact-js puts extra options on the object that aren't in the core VerifierOptions)
- */
-export const ignoredArguments: Array<string> = [
-  'requestFilter',
-  'stateHandlers',
-  'messageProviders',
-  'changeOrigin',
-  'beforeEach',
-  'afterEach',
-  'validateSSL',
-];
+const DEFAULT_TIMEOUT = 30000;
 
-export const ignoreOptionCombinations: IgnoreOptionCombinations<VerifierOptions> =
-  {
-    enablePending: { ifNotSet: 'pactBrokerUrl' },
-    consumerVersionSelectors: { ifNotSet: 'pactBrokerUrl' },
-    consumerVersionTags: { ifNotSet: 'pactBrokerUrl' },
-    publishVerificationResult: { ifNotSet: 'pactBrokerUrl' },
-  };
+const objArrayToStringArray = (obj: unknown[]) => {
+  return obj.map((o) => JSON.stringify(o));
+};
 
-export const argMapping: ArgMapping<InternalPactVerifierOptions> = {
-  buildUrl: { arg: '--build-url', mapper: 'string' },
-  providerBranch: { arg: '--provider-branch', mapper: 'string' },
-  providerBaseUrl: (providerBaseUrl: string) => {
-    const u = url.parse(providerBaseUrl);
-    return u && u.port && u.hostname
-      ? ['--port', u.port, '--hostname', u.hostname]
-      : [];
-  },
-  providerStatesSetupBody: {
-    warningMessage: 'providerStatesSetupBody is not valid for the CLI',
-  },
-  providerStatesSetupTeardown: {
-    warningMessage: 'providerStatesSetupTeardown is not valid for the CLI',
-  },
-  logLevel: (logLevel: LogLevel) => ['--loglevel', logLevel],
-  provider: { arg: '--provider-name', mapper: 'string' },
-  pactUrls: (pactUrls: string[]) =>
-    pactUrls.reduce<Array<string>>((acc: Array<string>, uri: string) => {
-      switch (getUriType(uri)) {
-        case 'URL':
-          return [...acc, '--url', uri];
-        case 'DIRECTORY':
-          return [...acc, '--dir', uri];
-        case 'FILE':
-          return [...acc, '--file', uri];
-        default:
-          return acc;
+export type IgnoredFfiFunctions = {
+  pactffiVerifierNewForApplication: 1;
+  pactffiVerifierExecute: 1;
+  pactffiVerifierShutdown: 1;
+};
+
+export type MergedFfiSourceFunctions = {
+  pactffiVerifierAddFileSource: 1;
+  pactffiVerifierUrlSource: 1;
+};
+
+export type RequiredFfiVerificationFunctions = Omit<
+  FfiVerificationFunctions,
+  keyof (IgnoredFfiFunctions & MergedFfiSourceFunctions)
+>;
+
+export const ffiFnMapping: FnMapping<
+  RequiredFfiVerificationFunctions,
+  InternalPactVerifierOptions
+> = {
+  pactffiVerifierAddCustomHeader: {
+    validateAndExecute(ffi, handle, options) {
+      if (options.customProviderHeaders) {
+        if (options.customProviderHeaders) {
+          Object.entries(options.customProviderHeaders).forEach(
+            ([key, value]) => {
+              ffi.pactffiVerifierAddCustomHeader(handle, key, value);
+            }
+          );
+        }
+        return { status: FnValidationStatus.SUCCESS };
       }
-    }, []),
-  pactBrokerUrl: { arg: '--broker-url', mapper: 'string' },
-  pactBrokerUsername: { arg: '--user', mapper: 'string' },
-  pactBrokerPassword: { arg: '--password', mapper: 'string' },
-  pactBrokerToken: { arg: '--token', mapper: 'string' },
-  consumerVersionTags: (tags: string | string[]) => [
-    '--consumer-version-tags',
-    Array.isArray(tags) ? tags.join(',') : tags,
-  ],
-  providerVersionTags: (tags: string | string[]) => [
-    '--provider-tags',
-    Array.isArray(tags) ? tags.join(',') : tags,
-  ],
-  providerStatesSetupUrl: { arg: '--state-change-url', mapper: 'string' },
 
-  providerVersion: { arg: '--provider-version', mapper: 'string' },
+      return { status: FnValidationStatus.IGNORE };
+    },
+  },
+  pactffiVerifierAddDirectorySource: {
+    validateAndExecute(ffi, handle, options) {
+      const messages: string[] = [];
 
-  includeWipPactsSince: { arg: '--include-wip-pacts-since', mapper: 'string' },
-  consumerVersionSelectors: (selectors: ConsumerVersionSelector[]) =>
-    selectors
-      .map((s: ConsumerVersionSelector) => [
-        '--consumer-version-selectors',
-        JSON.stringify(s),
-      ]) // This reduce can be replaced simply with .flat() when node 10 is EOL
-      .reduce((acc: string[], current: string[]) => [...acc, ...current], []),
-  publishVerificationResult: { arg: '--publish', mapper: 'flag' },
-  enablePending: { arg: '--enable-pending', mapper: 'flag' },
-  timeout: { arg: '--request-timeout', mapper: 'string' },
-  disableSslVerification: { arg: '--disable-ssl-verification', mapper: 'flag' },
-  // We should support these in the future, I think
-  format: {
-    warningMessage:
-      "All output is now on standard out, setting 'format' has no effect",
+      if (options.pactUrls) {
+        options.pactUrls.forEach((file) => {
+          logger.debug(`checking source type of given pactUrl: ${file}`);
+          try {
+            const u = new URL(file);
+
+            if (u.hostname) {
+              logger.debug(`adding ${file} as a Url source`);
+              ffi.pactffiVerifierUrlSource(
+                handle,
+                file,
+                options.pactBrokerUsername ||
+                  process.env.PACT_BROKER_USERNAME ||
+                  '',
+                options.pactBrokerPassword ||
+                  process.env.PACT_BROKER_PASSWORD ||
+                  '',
+                options.pactBrokerToken || process.env.PACT_BROKER_TOKEN || ''
+              );
+            }
+          } catch {
+            messages.push(`${file} is not a valid URL`);
+          }
+
+          try {
+            const f = fs.lstatSync(file);
+
+            if (f.isDirectory()) {
+              logger.debug(`adding ${file} as Directory source`);
+              ffi.pactffiVerifierAddDirectorySource(handle, file);
+            } else if (f.isFile() || f.isSymbolicLink()) {
+              logger.debug(`adding ${file} as File source`);
+              ffi.pactffiVerifierAddFileSource(handle, file);
+            }
+          } catch {
+            messages.push(
+              `'${file}' does not exist, or is not a file or directory`
+            );
+          }
+        });
+
+        return { status: FnValidationStatus.SUCCESS };
+      }
+
+      if (messages.length > 0) {
+        return { status: FnValidationStatus.FAIL, messages };
+      }
+
+      return { status: FnValidationStatus.IGNORE };
+    },
   },
-  out: {
-    warningMessage:
-      "All output is now on standard out, setting 'out' has no effect",
+  pactffiVerifierBrokerSourceWithSelectors: {
+    validateAndExecute(ffi, handle, opts) {
+      const brokerUrl = opts.pactBrokerUrl || process.env.PACT_BROKER_BASE_URL;
+
+      if (brokerUrl && opts.provider) {
+        ffi.pactffiVerifierBrokerSourceWithSelectors(
+          handle,
+          brokerUrl,
+          opts.pactBrokerUsername || process.env.PACT_BROKER_USERNAME || '',
+          opts.pactBrokerPassword || process.env.PACT_BROKER_PASSWORD || '',
+          opts.pactBrokerToken || process.env.PACT_BROKER_TOKEN || '',
+          opts.enablePending || false,
+          opts.includeWipPactsSince || '',
+          opts.providerVersionTags || [],
+          opts.providerBranch || '',
+          opts.consumerVersionSelectors
+            ? objArrayToStringArray(opts.consumerVersionSelectors)
+            : [],
+          opts.consumerVersionTags || []
+        );
+        return { status: FnValidationStatus.SUCCESS };
+      }
+      return { status: FnValidationStatus.IGNORE };
+    },
   },
-  // Deprecate
-  logDir: {
-    warningMessage:
-      'Setting logDir is deprecated as all logs are now on standard out',
+  pactffiVerifierSetConsumerFilters: {
+    validateAndExecute(ffi, handle, options) {
+      if (options.consumerFilters && options.consumerFilters.length > 0) {
+        ffi.pactffiVerifierSetConsumerFilters(handle, options.consumerFilters);
+        return { status: FnValidationStatus.SUCCESS };
+      }
+      return { status: FnValidationStatus.IGNORE };
+    },
   },
-  verbose: {
-    warningMessage:
-      "Verbose mode is deprecated and has no effect, please use logLevel: 'DEBUG' instead",
+  pactffiVerifierSetFilterInfo: {
+    validateAndExecute(ffi, handle, options) {
+      if (
+        process.env.PACT_DESCRIPTION ||
+        process.env.PACT_PROVIDER_STATE ||
+        process.env.PACT_PROVIDER_NO_STATE
+      ) {
+        const filterDescription = process.env.PACT_DESCRIPTION || '';
+        const filterState = process.env.PACT_PROVIDER_STATE || '';
+        const filterNoState = process.env.PACT_PROVIDER_NO_STATE ? true : false;
+
+        ffi.pactffiVerifierSetFilterInfo(
+          handle,
+          filterDescription,
+          filterState,
+          filterNoState
+        );
+
+        return { status: FnValidationStatus.SUCCESS };
+      }
+
+      return { status: FnValidationStatus.IGNORE };
+    },
   },
-  monkeypatch: {
-    warningMessage:
-      'The undocumented feature monkeypatch is no more, please file an issue if you were using it and need this functionality',
+  pactffiVerifierSetProviderInfo: {
+    validateAndExecute(ffi, handle, options) {
+      const uri = new URL(options.providerBaseUrl);
+
+      ffi.pactffiVerifierSetProviderInfo(
+        handle,
+        options.provider || '',
+        uri.protocol.split(':')[0],
+        uri.hostname,
+        parseInt(uri.port, 10),
+        uri.pathname
+      );
+
+      return { status: FnValidationStatus.SUCCESS };
+    },
   },
-  customProviderHeaders: {
-    warningMessage:
-      'customProviderHeaders have been removed. This functionality is provided by request filters in a much more flexible way',
+  pactffiVerifierSetProviderState: {
+    validateAndExecute(ffi, handle, options) {
+      if (options.providerStatesSetupUrl) {
+        ffi.pactffiVerifierSetProviderState(
+          handle,
+          options.providerStatesSetupUrl,
+          true,
+          true
+        );
+        return { status: FnValidationStatus.SUCCESS };
+      }
+
+      return { status: FnValidationStatus.IGNORE };
+    },
+  },
+  pactffiVerifierSetPublishOptions: {
+    validateAndExecute(ffi, handle, options) {
+      if (options.publishVerificationResult && options.providerVersion) {
+        ffi.pactffiVerifierSetPublishOptions(
+          handle,
+          options.providerVersion,
+          options.buildUrl || '',
+          options.providerVersionTags || [],
+          options.providerBranch || ''
+        );
+        return { status: FnValidationStatus.SUCCESS };
+      }
+      return { status: FnValidationStatus.IGNORE };
+    },
+  },
+  pactffiVerifierSetVerificationOptions: {
+    validateAndExecute(ffi, handle, opts) {
+      if (opts.disableSslVerification || opts.timeout) {
+        ffi.pactffiVerifierSetVerificationOptions(
+          handle,
+          opts.disableSslVerification || false,
+          opts.timeout || DEFAULT_TIMEOUT
+        );
+        return { status: FnValidationStatus.SUCCESS };
+      }
+
+      return { status: FnValidationStatus.IGNORE };
+    },
   },
 };
