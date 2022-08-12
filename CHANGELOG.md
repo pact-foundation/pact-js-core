@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.7.3](https://github.com/pact-foundation/pact-js-core/compare/v13.7.2...v13.7.3) (2022-08-12)
+
+
+### Fixes and Improvements
+
+* update the argument validation and function mapping for ffi verification ([#391](https://github.com/pact-foundation/pact-js-core/issues/391)) ([fee85e1](https://github.com/pact-foundation/pact-js-core/commit/fee85e1d1fcd63b81c3d2d0f86ab9691975873e6))
+
 ### [13.7.2](https://github.com/pact-foundation/pact-js-core/compare/v13.7.1...v13.7.2) (2022-08-11)
 
 
