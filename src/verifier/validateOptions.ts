@@ -175,7 +175,7 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
     buildUrl: [wrapCheckType(checkTypes.assert.nonEmptyString)],
     consumerVersionSelectors: [consumerVersionSelectorValidator],
     consumerVersionTags: [consumerVersionTagsValidator],
-    customProviderHeaders: [wrapCheckType(checkTypes.assert.nonEmptyString)],
+    customProviderHeaders: [wrapCheckType(checkTypes.assert.nonEmptyObject)],
     disableSslVerification: [wrapCheckType(checkTypes.assert.boolean)],
     enablePending: [wrapCheckType(checkTypes.assert.boolean)],
     format: [deprecatedFunction],
