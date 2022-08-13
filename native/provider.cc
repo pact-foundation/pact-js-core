@@ -413,14 +413,14 @@ Napi::Value PactffiVerifierSetPublishOptions(const Napi::CallbackInfo& info) {
   std::string providerVersion = info[1].As<Napi::String>().Utf8Value();
   std::string buildUrl = info[2].As<Napi::String>().Utf8Value();
   Napi::Array providerTagsRaw = info[3].As<Napi::Array>();
-  std::string providerBranch = info[4].As<Napi::String>().Utf8Value();
+  std::string providerVersionBranch = info[4].As<Napi::String>().Utf8Value();
 
   pactffi_verifier_set_publish_options(handles[handleId],
                                           providerVersion.c_str(),
                                           buildUrl.c_str(),
                                           &NapiArrayToCStringVector(providerTagsRaw)[0],
                                           providerTagsRaw.Length(),
-                                          providerBranch.c_str());
+                                          providerVersionBranch.c_str());
 
   return info.Env().Undefined();
 }
@@ -788,7 +788,7 @@ Napi::Value PactffiVerifierBrokerSourceWithSelectors(const Napi::CallbackInfo& i
   bool enablePending = info[5].As<Napi::Boolean>().Value();
   std::string includeWipPactsSince = info[6].As<Napi::String>().Utf8Value();
   Napi::Array providerTags = info[7].As<Napi::Array>();
-  std::string providerBranch = info[8].As<Napi::String>().Utf8Value();
+  std::string providerVersionBranch = info[8].As<Napi::String>().Utf8Value();
   Napi::Array consumerVersionSelectors = info[9].As<Napi::Array>();
   Napi::Array consumerVersionTags = info[10].As<Napi::Array>();
 
@@ -805,7 +805,7 @@ Napi::Value PactffiVerifierBrokerSourceWithSelectors(const Napi::CallbackInfo& i
                                               includeWipPactsSince.c_str(),
                                               &cProviderTags[0],
                                               providerTags.Length(),
-                                              providerBranch.c_str(),
+                                              providerVersionBranch.c_str(),
                                               &cConsumerVersionSelectors[0],
                                               consumerVersionSelectors.Length(),
                                               &cConsumerVersionTags[0],

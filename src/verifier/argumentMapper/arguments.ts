@@ -137,7 +137,7 @@ export const ffiFnMapping: FnMapping<
           opts.enablePending || false,
           opts.includeWipPactsSince || '',
           opts.providerVersionTags || [],
-          opts.providerBranch || '',
+          opts.providerVersionBranch || opts.providerBranch || '',
           opts.consumerVersionSelectors
             ? objArrayToStringArray(opts.consumerVersionSelectors)
             : [],
@@ -220,7 +220,7 @@ export const ffiFnMapping: FnMapping<
           options.providerVersion,
           options.buildUrl || '',
           options.providerVersionTags || [],
-          options.providerBranch || ''
+          options.providerVersionBranch || options.providerBranch || ''
         );
         return { status: FnValidationStatus.SUCCESS };
       }

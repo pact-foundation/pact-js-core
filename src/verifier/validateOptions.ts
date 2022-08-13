@@ -16,6 +16,15 @@ export const deprecatedFunction =
     return true;
   };
 
+export const deprecatedBy =
+  (preferredOption: string) =>
+  () =>
+  (_: any, property: string): boolean => {
+    logger.warn(`${property} is deprecated, use ${preferredOption} instead`);
+
+    return true;
+  };
+
 export const incompatibleWith =
   (keys: (keyof InternalPactVerifierOptions)[]) =>
   (options: InternalPactVerifierOptions) =>
@@ -214,7 +223,11 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
       incompatibleWith(['pactBrokerUsername', 'pactBrokerPassword']),
     ],
     providerVersionTags: [wrapCheckType(checkTypes.assert.nonEmptyString)],
-    providerBranch: [wrapCheckType(checkTypes.assert.nonEmptyString)],
+    providerBranch: [
+      wrapCheckType(checkTypes.assert.nonEmptyString),
+      deprecatedBy('providerVersionBranch'),
+    ],
+    providerVersionBranch: [wrapCheckType(checkTypes.assert.nonEmptyString)],
     providerStatesSetupUrl: [wrapCheckType(checkTypes.assert.nonEmptyString)],
     providerStatesSetupTeardown: [wrapCheckType(checkTypes.assert.boolean)],
     providerStatesSetupBody: [wrapCheckType(checkTypes.assert.boolean)],

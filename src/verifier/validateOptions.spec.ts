@@ -351,7 +351,7 @@ describe('Verifier argument validator', () => {
     });
   });
 
-  context.only('when given customProviderHeaders', () => {
+  context('when given customProviderHeaders', () => {
     context('using the object notation', () => {
       it('should pass through to the Pact Verifier', () => {
         expect(() =>
@@ -383,6 +383,17 @@ describe('Verifier argument validator', () => {
           ).to.throw(Error);
         });
       });
+    });
+  });
+
+  context('when given providerBranch', () => {
+    it('should not throw an error', () => {
+      expect(() =>
+        validateOptions({
+          providerBaseUrl: 'http://localhost',
+          providerVersionBranch: 'blah',
+        })
+      ).to.not.throw(Error);
     });
   });
 });
