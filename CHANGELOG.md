@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.7.4](https://github.com/pact-foundation/pact-js-core/compare/v13.7.3...v13.7.4) (2022-08-13)
+
+
+### Fixes and Improvements
+
+* corrects customProviderHeaders validation (pact-foundation/pact-js-core[#392](https://github.com/pact-foundation/pact-js-core/issues/392)) ([#393](https://github.com/pact-foundation/pact-js-core/issues/393)) ([f77dd65](https://github.com/pact-foundation/pact-js-core/commit/f77dd654a5546705f1b0b859f18eaa04879a3915))
+
 ### [13.7.3](https://github.com/pact-foundation/pact-js-core/compare/v13.7.2...v13.7.3) (2022-08-12)
 
 
