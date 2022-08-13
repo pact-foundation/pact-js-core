@@ -19,6 +19,22 @@ export type IgnoredFfiFunctions = {
   pactffiVerifierShutdown: 1;
 };
 
+export type OrderedExecution = {
+  [Key in keyof RequiredFfiVerificationFunctions]: number;
+};
+
+export const orderOfExecution: OrderedExecution = {
+  pactffiVerifierSetProviderInfo: 1,
+  pactffiVerifierSetFilterInfo: 2,
+  pactffiVerifierSetProviderState: 3,
+  pactffiVerifierSetVerificationOptions: 4,
+  pactffiVerifierSetPublishOptions: 5,
+  pactffiVerifierSetConsumerFilters: 6,
+  pactffiVerifierAddCustomHeader: 7,
+  pactffiVerifierAddDirectorySource: 8,
+  pactffiVerifierBrokerSourceWithSelectors: 9,
+};
+
 export type MergedFfiSourceFunctions = {
   pactffiVerifierAddFileSource: 1;
   pactffiVerifierUrlSource: 1;
