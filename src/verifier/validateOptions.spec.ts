@@ -350,4 +350,15 @@ describe('Verifier argument validator', () => {
       });
     });
   });
+
+  context('when given customProviderHeaders that are defined', () => {
+    it('should pass through to the Pact Verifier', () => {
+      expect(() =>
+        validateOptions({
+          providerBaseUrl: 'http://localhost',
+          customProviderHeaders: { my: 'header' },
+        })
+      ).to.not.throw(Error);
+    });
+  });
 });
