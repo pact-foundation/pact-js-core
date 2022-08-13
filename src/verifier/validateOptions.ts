@@ -165,6 +165,20 @@ const consumerVersionTagsValidator =
     return true;
   };
 
+const customProviderHeadersValidator =
+  (options: InternalPactVerifierOptions) =>
+  (): boolean => {
+    if (options.customProviderHeaders) {
+      if (Array.isArray(options.customProviderHeaders)) {
+        checkTypes.assert.array.of.string(options.customProviderHeaders);
+      } else {
+        checkTypes.assert.nonEmptyObject(options.customProviderHeaders);
+      }
+    }
+
+    return true;
+  };
+
 export type ArgumentValidationRules<T> = {
   [Key in keyof T]-?: ((options: T) => AssertFunction)[];
 };
@@ -175,7 +189,7 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
     buildUrl: [wrapCheckType(checkTypes.assert.nonEmptyString)],
     consumerVersionSelectors: [consumerVersionSelectorValidator],
     consumerVersionTags: [consumerVersionTagsValidator],
-    customProviderHeaders: [wrapCheckType(checkTypes.assert.nonEmptyObject)],
+    customProviderHeaders: [customProviderHeadersValidator],
     disableSslVerification: [wrapCheckType(checkTypes.assert.boolean)],
     enablePending: [wrapCheckType(checkTypes.assert.boolean)],
     format: [deprecatedFunction],

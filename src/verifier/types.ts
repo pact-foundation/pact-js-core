@@ -41,7 +41,7 @@ export interface VerifierOptions {
   logLevel?: LogLevel;
   disableSslVerification?: boolean;
   buildUrl?: string;
-  customProviderHeaders?: CustomHeaders;
+  customProviderHeaders?: CustomHeaders | string[];
   consumerFilters?: string[];
 }
 

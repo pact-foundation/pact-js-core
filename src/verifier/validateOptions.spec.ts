@@ -351,14 +351,38 @@ describe('Verifier argument validator', () => {
     });
   });
 
-  context('when given customProviderHeaders that are defined', () => {
-    it('should pass through to the Pact Verifier', () => {
-      expect(() =>
-        validateOptions({
-          providerBaseUrl: 'http://localhost',
-          customProviderHeaders: { my: 'header' },
-        })
-      ).to.not.throw(Error);
+  context.only('when given customProviderHeaders', () => {
+    context('using the object notation', () => {
+      it('should pass through to the Pact Verifier', () => {
+        expect(() =>
+          validateOptions({
+            providerBaseUrl: 'http://localhost',
+            customProviderHeaders: { my: 'header' },
+          })
+        ).to.not.throw(Error);
+      });
+    });
+
+    context('using the legacy array notation', () => {
+      it('should pass through to the Pact Verifier', () => {
+        expect(() =>
+          validateOptions({
+            providerBaseUrl: 'http://localhost',
+            customProviderHeaders: ['My: Header'],
+          })
+        ).to.not.throw(Error);
+      });
+
+      context('and the format is incorrect', () => {
+        it('should throw an error', () => {
+          expect(() =>
+            validateOptions({
+              providerBaseUrl: 'http://localhost',
+              customProviderHeaders: [1 as unknown as string],
+            })
+          ).to.throw(Error);
+        });
+      });
     });
   });
 });

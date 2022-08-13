@@ -35,14 +35,33 @@ export const ffiFnMapping: FnMapping<
 > = {
   pactffiVerifierAddCustomHeader: {
     validateAndExecute(ffi, handle, options) {
+      const messages: string[] = [];
+
       if (options.customProviderHeaders) {
-        if (options.customProviderHeaders) {
-          Object.entries(options.customProviderHeaders).forEach(
-            ([key, value]) => {
-              ffi.pactffiVerifierAddCustomHeader(handle, key, value);
+        if (Array.isArray(options.customProviderHeaders)) {
+          options.customProviderHeaders.forEach((item) => {
+            const parts = item.split(':');
+            if (parts.length !== 2) {
+              messages.push(
+                `${item} is not a valid custom header. Must be in the format 'Header-Name: Value'`
+              );
+            } else {
+              ffi.pactffiVerifierAddCustomHeader(handle, parts[0], parts[1]);
             }
-          );
+          });
+        } else {
+          if (options.customProviderHeaders) {
+            Object.entries(options.customProviderHeaders).forEach(
+              ([key, value]) => {
+                ffi.pactffiVerifierAddCustomHeader(handle, key, value);
+              }
+            );
+          }
         }
+        if (messages.length > 0) {
+          return { status: FnValidationStatus.FAIL };
+        }
+
         return { status: FnValidationStatus.SUCCESS };
       }
 
