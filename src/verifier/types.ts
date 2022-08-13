@@ -28,7 +28,7 @@ export interface VerifierOptions {
   pactBrokerToken?: string;
   consumerVersionTags?: string[];
   providerVersionTags?: string[];
-  providerBranch?: string;
+  providerVersionBranch?: string;
   providerStatesSetupUrl?: string;
   providerStatesSetupTeardown?: boolean;
   providerStatesSetupBody?: boolean;
@@ -41,8 +41,12 @@ export interface VerifierOptions {
   logLevel?: LogLevel;
   disableSslVerification?: boolean;
   buildUrl?: string;
-  customProviderHeaders?: CustomHeaders;
+  customProviderHeaders?: CustomHeaders | string[];
   consumerFilters?: string[];
+  /**
+   * @deprecated use providerVersionBranch instead
+   */
+  providerBranch?: string;
 }
 
 /** These are the deprecated verifier options, removed prior to this verison,

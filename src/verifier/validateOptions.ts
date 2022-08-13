@@ -9,9 +9,18 @@ import {
 } from './types';
 
 export const deprecatedFunction =
-  (_: InternalPactVerifierOptions) =>
+  () =>
   (_: any, property: string): boolean => {
     logger.warn(`${property} is deprecated and no longer has any effect`);
+
+    return true;
+  };
+
+export const deprecatedBy =
+  (preferredOption: string) =>
+  () =>
+  (_: any, property: string): boolean => {
+    logger.warn(`${property} is deprecated, use ${preferredOption} instead`);
 
     return true;
   };
@@ -70,15 +79,12 @@ export const requiresOneOf =
 
 export type AssertFunction = (a: any, ...args: any) => boolean;
 
-export const wrapCheckType =
-  (fn: AssertFunction) =>
-  (_: InternalPactVerifierOptions): AssertFunction =>
-    fn;
+export const wrapCheckType = (fn: AssertFunction) => (): AssertFunction => fn;
 
 const LogLevels: LogLevel[] = ['debug', 'error', 'info', 'trace', 'warn'];
 
 const logLevelValidator =
-  (_: InternalPactVerifierOptions) =>
+  () =>
   (l: LogLevel): boolean => {
     if (LogLevels.includes(l.toLowerCase() as LogLevel)) {
       l = l.toLowerCase() as LogLevel;
@@ -93,8 +99,7 @@ const logLevelValidator =
   };
 
 const consumerVersionSelectorValidator =
-  (options: InternalPactVerifierOptions) =>
-  (l: LogLevel): boolean => {
+  (options: InternalPactVerifierOptions) => (): boolean => {
     if (
       options.consumerVersionSelectors &&
       Array.isArray(options.consumerVersionSelectors)
@@ -139,8 +144,7 @@ const consumerVersionSelectorValidator =
   };
 
 const consumerVersionTagsValidator =
-  (options: InternalPactVerifierOptions) =>
-  (l: LogLevel): boolean => {
+  (options: InternalPactVerifierOptions) => (): boolean => {
     if (options.consumerVersionTags) {
       if (
         !checkTypes.string(options.consumerVersionTags) &&
@@ -165,6 +169,19 @@ const consumerVersionTagsValidator =
     return true;
   };
 
+const customProviderHeadersValidator =
+  (options: InternalPactVerifierOptions) => (): boolean => {
+    if (options.customProviderHeaders) {
+      if (Array.isArray(options.customProviderHeaders)) {
+        checkTypes.assert.array.of.string(options.customProviderHeaders);
+      } else {
+        checkTypes.assert.nonEmptyObject(options.customProviderHeaders);
+      }
+    }
+
+    return true;
+  };
+
 export type ArgumentValidationRules<T> = {
   [Key in keyof T]-?: ((options: T) => AssertFunction)[];
 };
@@ -175,7 +192,7 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
     buildUrl: [wrapCheckType(checkTypes.assert.nonEmptyString)],
     consumerVersionSelectors: [consumerVersionSelectorValidator],
     consumerVersionTags: [consumerVersionTagsValidator],
-    customProviderHeaders: [wrapCheckType(checkTypes.assert.nonEmptyObject)],
+    customProviderHeaders: [customProviderHeadersValidator],
     disableSslVerification: [wrapCheckType(checkTypes.assert.boolean)],
     enablePending: [wrapCheckType(checkTypes.assert.boolean)],
     format: [deprecatedFunction],
@@ -206,7 +223,11 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
       incompatibleWith(['pactBrokerUsername', 'pactBrokerPassword']),
     ],
     providerVersionTags: [wrapCheckType(checkTypes.assert.nonEmptyString)],
-    providerBranch: [wrapCheckType(checkTypes.assert.nonEmptyString)],
+    providerBranch: [
+      wrapCheckType(checkTypes.assert.nonEmptyString),
+      deprecatedBy('providerVersionBranch'),
+    ],
+    providerVersionBranch: [wrapCheckType(checkTypes.assert.nonEmptyString)],
     providerStatesSetupUrl: [wrapCheckType(checkTypes.assert.nonEmptyString)],
     providerStatesSetupTeardown: [wrapCheckType(checkTypes.assert.boolean)],
     providerStatesSetupBody: [wrapCheckType(checkTypes.assert.boolean)],

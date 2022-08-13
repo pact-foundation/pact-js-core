@@ -35,14 +35,33 @@ export const ffiFnMapping: FnMapping<
 > = {
   pactffiVerifierAddCustomHeader: {
     validateAndExecute(ffi, handle, options) {
+      const messages: string[] = [];
+
       if (options.customProviderHeaders) {
-        if (options.customProviderHeaders) {
-          Object.entries(options.customProviderHeaders).forEach(
-            ([key, value]) => {
-              ffi.pactffiVerifierAddCustomHeader(handle, key, value);
+        if (Array.isArray(options.customProviderHeaders)) {
+          options.customProviderHeaders.forEach((item) => {
+            const parts = item.split(':');
+            if (parts.length !== 2) {
+              messages.push(
+                `${item} is not a valid custom header. Must be in the format 'Header-Name: Value'`
+              );
+            } else {
+              ffi.pactffiVerifierAddCustomHeader(handle, parts[0], parts[1]);
             }
-          );
+          });
+        } else {
+          if (options.customProviderHeaders) {
+            Object.entries(options.customProviderHeaders).forEach(
+              ([key, value]) => {
+                ffi.pactffiVerifierAddCustomHeader(handle, key, value);
+              }
+            );
+          }
         }
+        if (messages.length > 0) {
+          return { status: FnValidationStatus.FAIL };
+        }
+
         return { status: FnValidationStatus.SUCCESS };
       }
 
@@ -118,7 +137,7 @@ export const ffiFnMapping: FnMapping<
           opts.enablePending || false,
           opts.includeWipPactsSince || '',
           opts.providerVersionTags || [],
-          opts.providerBranch || '',
+          opts.providerVersionBranch || opts.providerBranch || '',
           opts.consumerVersionSelectors
             ? objArrayToStringArray(opts.consumerVersionSelectors)
             : [],
@@ -139,7 +158,7 @@ export const ffiFnMapping: FnMapping<
     },
   },
   pactffiVerifierSetFilterInfo: {
-    validateAndExecute(ffi, handle, options) {
+    validateAndExecute(ffi, handle) {
       if (
         process.env.PACT_DESCRIPTION ||
         process.env.PACT_PROVIDER_STATE ||
@@ -201,7 +220,7 @@ export const ffiFnMapping: FnMapping<
           options.providerVersion,
           options.buildUrl || '',
           options.providerVersionTags || [],
-          options.providerBranch || ''
+          options.providerVersionBranch || options.providerBranch || ''
         );
         return { status: FnValidationStatus.SUCCESS };
       }

@@ -7,7 +7,7 @@ function throwError(msg: string): never {
   throw new Error(chalk.red(`Error while locating pact binary: ${msg}`));
 }
 
-export function createConfig(location: string = process.cwd()): Config {
+export function createConfig(): Config {
   const CHECKSUM_SUFFIX = '.checksum';
 
   return {

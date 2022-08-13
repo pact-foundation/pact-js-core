@@ -319,7 +319,7 @@ export type FfiVerificationFunctions = {
     providerVersion: string,
     buildUrl: string,
     providerTags: string[],
-    providerBranch: string
+    providerVersionBranch: string
   ): void;
   pactffiVerifierSetConsumerFilters(
     handle: FfiVerifierHandle,
@@ -342,7 +342,6 @@ export type FfiVerificationFunctions = {
     password: string,
     token: string
   ): void;
-  // pactffiVerifierBrokerSource(handle: FfiVerifierHandle): void;
   pactffiVerifierBrokerSourceWithSelectors(
     handle: FfiVerifierHandle,
     url: string,
@@ -352,7 +351,7 @@ export type FfiVerificationFunctions = {
     enablePending: boolean,
     includeWipPactsSince: string,
     providerTags: string[],
-    providerBranch: string,
+    providerVersionBranch: string,
     consumerVersionSelectors: string[],
     consumerVersionTags: string[]
   ): void;
