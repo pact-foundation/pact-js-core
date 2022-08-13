@@ -158,7 +158,7 @@ export const ffiFnMapping: FnMapping<
     },
   },
   pactffiVerifierSetFilterInfo: {
-    validateAndExecute(ffi, handle, options) {
+    validateAndExecute(ffi, handle) {
       if (
         process.env.PACT_DESCRIPTION ||
         process.env.PACT_PROVIDER_STATE ||

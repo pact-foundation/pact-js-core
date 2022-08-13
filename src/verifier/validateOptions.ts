@@ -9,7 +9,7 @@ import {
 } from './types';
 
 export const deprecatedFunction =
-  (_: InternalPactVerifierOptions) =>
+  () =>
   (_: any, property: string): boolean => {
     logger.warn(`${property} is deprecated and no longer has any effect`);
 
@@ -70,15 +70,12 @@ export const requiresOneOf =
 
 export type AssertFunction = (a: any, ...args: any) => boolean;
 
-export const wrapCheckType =
-  (fn: AssertFunction) =>
-  (_: InternalPactVerifierOptions): AssertFunction =>
-    fn;
+export const wrapCheckType = (fn: AssertFunction) => (): AssertFunction => fn;
 
 const LogLevels: LogLevel[] = ['debug', 'error', 'info', 'trace', 'warn'];
 
 const logLevelValidator =
-  (_: InternalPactVerifierOptions) =>
+  () =>
   (l: LogLevel): boolean => {
     if (LogLevels.includes(l.toLowerCase() as LogLevel)) {
       l = l.toLowerCase() as LogLevel;
@@ -93,8 +90,7 @@ const logLevelValidator =
   };
 
 const consumerVersionSelectorValidator =
-  (options: InternalPactVerifierOptions) =>
-  (l: LogLevel): boolean => {
+  (options: InternalPactVerifierOptions) => (): boolean => {
     if (
       options.consumerVersionSelectors &&
       Array.isArray(options.consumerVersionSelectors)
@@ -139,8 +135,7 @@ const consumerVersionSelectorValidator =
   };
 
 const consumerVersionTagsValidator =
-  (options: InternalPactVerifierOptions) =>
-  (l: LogLevel): boolean => {
+  (options: InternalPactVerifierOptions) => (): boolean => {
     if (options.consumerVersionTags) {
       if (
         !checkTypes.string(options.consumerVersionTags) &&
@@ -166,8 +161,7 @@ const consumerVersionTagsValidator =
   };
 
 const customProviderHeadersValidator =
-  (options: InternalPactVerifierOptions) =>
-  (): boolean => {
+  (options: InternalPactVerifierOptions) => (): boolean => {
     if (options.customProviderHeaders) {
       if (Array.isArray(options.customProviderHeaders)) {
         checkTypes.assert.array.of.string(options.customProviderHeaders);

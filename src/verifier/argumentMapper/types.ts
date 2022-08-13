@@ -12,7 +12,7 @@ export type FnObject = {
 };
 
 export type FnMapping<T extends FnObject, O> = {
-  [Key in keyof T]: FnArgumentMapping<Key, T, O>;
+  [Key in keyof T]: FnArgumentMapping<O>;
 };
 
 export enum FnValidationStatus {
@@ -26,7 +26,7 @@ export type FnValidationResult = {
   messages?: string[];
 };
 
-export type FnArgumentMapping<K extends keyof T, T extends FnObject, O> = {
+export type FnArgumentMapping<O> = {
   validateAndExecute: (
     ffi: Ffi,
     handle: FfiHandle,
