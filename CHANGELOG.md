@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.7.5](https://github.com/pact-foundation/pact-js-core/compare/v13.7.4...v13.7.5) (2022-08-13)
+
+
+### Fixes and Improvements
+
+* restore providerVersionBranch ([c155f94](https://github.com/pact-foundation/pact-js-core/commit/c155f943a5bb9beb33c2b1fab35f4d8a7cfb7d24))
+* support customProviderHeaders as a string[] ([171cfd0](https://github.com/pact-foundation/pact-js-core/commit/171cfd0478406eb6126d437c4e45d0b4968afbea))
+
 ### [13.7.4](https://github.com/pact-foundation/pact-js-core/compare/v13.7.3...v13.7.4) (2022-08-13)
 
 
