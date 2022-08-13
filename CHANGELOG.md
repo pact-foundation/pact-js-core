@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.7.6](https://github.com/pact-foundation/pact-js-core/compare/v13.7.5...v13.7.6) (2022-08-13)
+
+
+### Fixes and Improvements
+
+* validateOptions should ignore unknown properties ([8e2af40](https://github.com/pact-foundation/pact-js-core/commit/8e2af408628db88dccfeca49d1bf161232b6242d))
+
 ### [13.7.5](https://github.com/pact-foundation/pact-js-core/compare/v13.7.4...v13.7.5) (2022-08-13)
 
 
