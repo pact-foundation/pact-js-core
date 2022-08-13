@@ -396,4 +396,15 @@ describe('Verifier argument validator', () => {
       ).to.not.throw(Error);
     });
   });
+
+  context('when given unknown properties', () => {
+    it('should ignore them and not throw an error', () => {
+      expect(() =>
+        validateOptions({
+          providerBaseUrl: 'http://localhost',
+          randomobjectwithnorules: 'poop',
+        } as any as VerifierOptions)
+      ).to.not.throw(Error);
+    });
+  });
 });

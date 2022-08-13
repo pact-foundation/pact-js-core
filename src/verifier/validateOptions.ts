@@ -262,7 +262,7 @@ export const validateOptions = (options: VerifierOptions): VerifierOptions => {
         });
       });
     } else {
-      rules.map((rule) => {
+      (rules || []).map((rule) => {
         rule(options)(options[k], k);
       });
     }
