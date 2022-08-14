@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.7.7](https://github.com/pact-foundation/pact-js-core/compare/v13.7.6...v13.7.7) (2022-08-14)
+
+
+### Fixes and Improvements
+
+* update FFI core and fix order of verifier FFI calls ([3a70f2e](https://github.com/pact-foundation/pact-js-core/commit/3a70f2e657ff42b3e86a9b8cce1fb65ef46f9b2a))
+
 ### [13.7.6](https://github.com/pact-foundation/pact-js-core/compare/v13.7.5...v13.7.6) (2022-08-13)
 
 
