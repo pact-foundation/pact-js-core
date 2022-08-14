@@ -284,11 +284,6 @@ export type FfiVerificationFunctions = {
     libraryName: string,
     version: string
   ): FfiVerifierHandle;
-  pactffiVerifierExecute(
-    handle: FfiVerifierHandle,
-    callback: (e: Error, res: number) => void
-  ): number;
-  pactffiVerifierShutdown(handle: FfiVerifierHandle): void;
   pactffiVerifierSetProviderInfo(
     handle: FfiVerifierHandle,
     providerName: string,
@@ -355,4 +350,9 @@ export type FfiVerificationFunctions = {
     consumerVersionSelectors: string[],
     consumerVersionTags: string[]
   ): void;
+  pactffiVerifierExecute(
+    handle: FfiVerifierHandle,
+    callback: (e: Error, res: number) => void
+  ): number;
+  pactffiVerifierShutdown(handle: FfiVerifierHandle): void;
 };

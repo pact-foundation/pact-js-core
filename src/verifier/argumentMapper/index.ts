@@ -1,18 +1,24 @@
 import { FnValidationStatus } from './types';
 import logger, { logCrashAndThrow, logErrorAndThrow } from '../../logger';
 import { InternalPactVerifierOptions } from '../types';
-import { ffiFnMapping, RequiredFfiVerificationFunctions } from './arguments';
+import { ffiFnMapping, orderOfExecution } from './arguments';
 import { Ffi, FfiVerifierHandle } from '../../ffi/types';
+import { values, invert } from 'underscore';
 
 export const setupVerification = (
   ffi: Ffi,
   handle: FfiVerifierHandle,
   options: InternalPactVerifierOptions
 ): void => {
-  (
-    Object.keys(ffiFnMapping) as Array<keyof RequiredFfiVerificationFunctions>
-  ).map((k) => {
-    const validation = ffiFnMapping[k].validateAndExecute(ffi, handle, options);
+  const order = values(orderOfExecution).sort((a, b) => a - b);
+  const functionsToCall = invert(orderOfExecution);
+
+  order.map((k) => {
+    const validation = ffiFnMapping[functionsToCall[k]].validateAndExecute(
+      ffi,
+      handle,
+      options
+    );
 
     switch (validation.status) {
       case FnValidationStatus.FAIL:
