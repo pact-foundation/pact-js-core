@@ -210,12 +210,14 @@ describe('FFI integration test for the HTTP Consumer API', () => {
 
     // TODO: find out what's going on here. Suspect binary matching has changed in the core?
     // See https://github.com/pact-foundation/pact-reference/issues/171
-    it.skip('generates a pact with success', () => {
+    it('generates a pact with success', () => {
       return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
-            'content-type': 'application/octet-stream',
+            'content-type': isWin
+              ? 'application/octet-stream'
+              : 'application/gzip',
             Accept: 'application/json',
             'x-special-header': 'header',
           },
