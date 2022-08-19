@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.7.8](https://github.com/pact-foundation/pact-js-core/compare/v13.7.7...v13.7.8) (2022-08-19)
+
+
+### Fixes and Improvements
+
+* correct binary matching behaviour ([5794c74](https://github.com/pact-foundation/pact-js-core/commit/5794c74366ea57b101f6bfa4fd21c843b36b69cb))
+
 ### [13.7.7](https://github.com/pact-foundation/pact-js-core/compare/v13.7.6...v13.7.7) (2022-08-14)
 
 
