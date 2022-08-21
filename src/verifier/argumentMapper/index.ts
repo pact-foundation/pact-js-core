@@ -14,7 +14,8 @@ export const setupVerification = (
   const functionsToCall = invert(orderOfExecution);
 
   order.map((k) => {
-    const validation = ffiFnMapping[functionsToCall[k]].validateAndExecute(
+    const fn = functionsToCall[k];
+    const validation = ffiFnMapping[fn].validateAndExecute(
       ffi,
       handle,
       options
@@ -23,14 +24,14 @@ export const setupVerification = (
     switch (validation.status) {
       case FnValidationStatus.FAIL:
         logErrorAndThrow(
-          `the required ffi function '${k}' failed validation with errors: ${
+          `the required ffi function '${fn}' failed validation with errors: ${
             validation.messages || [].join(',')
           }`
         );
         break;
       case FnValidationStatus.IGNORE:
         logger.debug(
-          `the optional ffi function '${k}' was not executed as it had non-fatal validation errors: ${
+          `the optional ffi function '${fn}' was not executed as it had non-fatal validation errors: ${
             validation.messages || [].join(',')
           }`
         );
@@ -39,7 +40,7 @@ export const setupVerification = (
         break;
       default:
         logCrashAndThrow(
-          `the ffi function '${k}' returned the following unrecognised validation signal: '${validation.status}'`
+          `the ffi function '${fn}' returned the following unrecognised validation signal: '${validation.status}'`
         );
     }
   });
