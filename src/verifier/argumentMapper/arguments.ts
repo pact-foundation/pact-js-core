@@ -1,5 +1,6 @@
 import logger from '../../logger';
 import fs = require('fs');
+import url = require('url');
 
 import { FnMapping, FnValidationStatus } from './types';
 import { InternalPactVerifierOptions } from '../types';
@@ -91,49 +92,52 @@ export const ffiFnMapping: FnMapping<
       if (options.pactUrls) {
         options.pactUrls.forEach((file) => {
           logger.debug(`checking source type of given pactUrl: ${file}`);
-          try {
-            const u = new URL(file);
 
-            if (u.hostname) {
-              logger.debug(`adding ${file} as a Url source`);
-              ffi.pactffiVerifierUrlSource(
-                handle,
-                file,
-                options.pactBrokerUsername ||
-                  process.env.PACT_BROKER_USERNAME ||
-                  '',
-                options.pactBrokerPassword ||
-                  process.env.PACT_BROKER_PASSWORD ||
-                  '',
-                options.pactBrokerToken || process.env.PACT_BROKER_TOKEN || ''
+          if (/https?:/.test(url.parse(file).protocol || '')) {
+            try {
+              const u = new URL(file);
+
+              if (u.hostname) {
+                logger.debug(`adding ${file} as a Url source`);
+                ffi.pactffiVerifierUrlSource(
+                  handle,
+                  file,
+                  options.pactBrokerUsername ||
+                    process.env.PACT_BROKER_USERNAME ||
+                    '',
+                  options.pactBrokerPassword ||
+                    process.env.PACT_BROKER_PASSWORD ||
+                    '',
+                  options.pactBrokerToken || process.env.PACT_BROKER_TOKEN || ''
+                );
+              }
+            } catch {
+              messages.push(`${file} is not a valid URL`);
+            }
+          } else {
+            try {
+              const f = fs.lstatSync(file);
+
+              if (f.isDirectory()) {
+                logger.debug(`adding ${file} as Directory source`);
+                ffi.pactffiVerifierAddDirectorySource(handle, file);
+              } else if (f.isFile() || f.isSymbolicLink()) {
+                logger.debug(`adding ${file} as File source`);
+                ffi.pactffiVerifierAddFileSource(handle, file);
+              }
+            } catch {
+              messages.push(
+                `'${file}' does not exist, or is not a file or directory`
               );
             }
-          } catch {
-            messages.push(`${file} is not a valid URL`);
-          }
-
-          try {
-            const f = fs.lstatSync(file);
-
-            if (f.isDirectory()) {
-              logger.debug(`adding ${file} as Directory source`);
-              ffi.pactffiVerifierAddDirectorySource(handle, file);
-            } else if (f.isFile() || f.isSymbolicLink()) {
-              logger.debug(`adding ${file} as File source`);
-              ffi.pactffiVerifierAddFileSource(handle, file);
-            }
-          } catch {
-            messages.push(
-              `'${file}' does not exist, or is not a file or directory`
-            );
           }
         });
 
-        return { status: FnValidationStatus.SUCCESS };
-      }
+        if (messages.length > 0) {
+          return { status: FnValidationStatus.FAIL, messages };
+        }
 
-      if (messages.length > 0) {
-        return { status: FnValidationStatus.FAIL, messages };
+        return { status: FnValidationStatus.SUCCESS };
       }
 
       return { status: FnValidationStatus.IGNORE };
