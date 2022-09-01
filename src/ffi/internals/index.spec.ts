@@ -10,9 +10,14 @@ describe('ffi names', () => {
       'v0.0.1-pact_ffi-windows-x86_64.dll'
     );
   });
-  it('has the correct name for linux', () => {
+  it('has the correct name for linux intel', () => {
     expect(libName('pact_ffi', 'v0.0.1', 'x64', 'linux')).to.be.equal(
       'v0.0.1-libpact_ffi-linux-x86_64.so'
+    );
+  });
+  it('has the correct name for linux arm', () => {
+    expect(libName('pact_ffi', 'v0.0.1', 'arm64', 'linux')).to.be.equal(
+      'v0.0.1-libpact_ffi-linux-aarch64.so'
     );
   });
   it('has the correct name for osx intel', () => {
@@ -22,7 +27,7 @@ describe('ffi names', () => {
   });
   it('has the correct name for osx arm', () => {
     expect(libName('pact_ffi', 'v0.0.1', 'arm64', 'darwin')).to.be.equal(
-      'v0.0.1-libpact_ffi-osx-aarch64-apple-darwin.dylib'
+      'v0.0.1-libpact_ffi-osx-aarch64.dylib'
     );
   });
 });

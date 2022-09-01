@@ -16,14 +16,15 @@ const LIBNAME_PREFIX_LOOKUP = {
 
 // This is a lookup between process.arch and
 // the architecture names used in pact-reference
-const ARCH_LOOKUP = { x64: 'x86_64', arm64: 'aarch64-apple-darwin' };
+const ARCH_LOOKUP = { x64: 'x86_64', arm64: 'aarch64' };
 
 // This is a lookup between "${platform}-${arch}" and
 // the file extensions to link on that platform/arch combination
 const EXTENSION_LOOKUP = {
   'osx-x86_64': 'dylib',
-  'osx-aarch64-apple-darwin': 'dylib',
+  'osx-aarch64': 'dylib',
   'linux-x86_64': 'so',
+  'linux-aarch64': 'so',
   'windows-x86_64': 'dll',
 };
 

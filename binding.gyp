@@ -70,13 +70,25 @@
           }
         ],
         [
-          "OS==\"linux\"",
+          "OS==\"linux\" and target_arch ==\"x64\"",
           {
             "link_settings": {
               "libraries": [
                 "-lpact_ffi",
                 "-L<(module_root_dir)/ffi",
                 "-Wl,-rpath,'$$ORIGIN'"
+              ]
+            }
+          }
+        ],
+        [
+          "OS==\"linux\" and target_arch ==\"arm64\"",
+          {
+            "link_settings": {
+              "libraries": [
+                "-lpact_ffi",
+                "-L<(module_root_dir)/ffi/linuxaarch64",
+                "-Wl,-rpath,'$$ORIGIN'/linuxaarch64"
               ]
             }
           }
@@ -113,6 +125,12 @@
             "<(module_root_dir)/ffi/osxaarch64/libpact_ffi.dylib",
           ],
           "destination": "<(PRODUCT_DIR)/osxaarch64"
+        },
+        {
+          "files": [
+            "<(module_root_dir)/ffi/linuxaarch64/libpact_ffi.so",
+          ],
+          "destination": "<(PRODUCT_DIR)/linuxaarch64"
         }
       ]
     },
