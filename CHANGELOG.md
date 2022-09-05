@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.8.0](https://github.com/pact-foundation/pact-js-core/compare/v13.7.9...v13.8.0) (2022-09-05)
+
+
+### Features
+
+* Add Linux/arm64 support ([a174d7b](https://github.com/pact-foundation/pact-js-core/commit/a174d7b89105043b21522e56efa1a35f8c8222c4))
+
 ### [13.7.9](https://github.com/pact-foundation/pact-js-core/compare/v13.7.8...v13.7.9) (2022-08-30)
 
 
