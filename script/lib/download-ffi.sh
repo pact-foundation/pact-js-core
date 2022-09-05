@@ -19,6 +19,7 @@ fi
 warn "Cleaning ffi directory $FFI_DIR"
 rm -rf "${FFI_DIR:?}/*"
 mkdir -p "$FFI_DIR/osxaarch64"
+mkdir -p "$FFI_DIR/linuxaarch64"
 
 function download_ffi_file {
   if [ -z "${1:-}" ]; then
@@ -56,6 +57,7 @@ function download_ffi {
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
   download_ffi "linux-x86_64.so.gz" "lib" "libpact_ffi.so.gz"
+  download_ffi "linux-aarch64.so.gz" "lib" "linuxaarch64/libpact_ffi.so.gz"
   download_ffi "osx-x86_64.dylib.gz" "lib" "libpact_ffi.dylib.gz"
   download_ffi "osx-aarch64-apple-darwin.dylib.gz" "lib" "osxaarch64/libpact_ffi.dylib.gz"
 else

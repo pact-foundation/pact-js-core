@@ -65,6 +65,7 @@ log
 reports
 tmp
 .tmp
+test/__testoutput__
 
 # jest config
 !jest.config.js
