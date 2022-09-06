@@ -234,7 +234,11 @@ export const ffiFnMapping: FnMapping<
   },
   pactffiVerifierSetPublishOptions: {
     validateAndExecute(ffi, handle, options) {
-      if (options.publishVerificationResult && options.providerVersion) {
+      if (
+        (options.publishVerificationResult ||
+          process.env.PACT_BROKER_PUBLISH_VERIFICATION_RESULTS) &&
+        options.providerVersion
+      ) {
         ffi.pactffiVerifierSetPublishOptions(
           handle,
           options.providerVersion,
