@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.9.0](https://github.com/pact-foundation/pact-js-core/compare/v13.8.0...v13.9.0) (2022-09-07)
+
+
+### Features
+
+* support PACT_BROKER_PUBLISH_VERIFICATION_RESULTS ([64872ae](https://github.com/pact-foundation/pact-js-core/commit/64872ae7a82193d785e378942dacae96e5deca34))
+
+
+### Fixes and Improvements
+
+* update standalone to 1.91.0 ([c6d747f](https://github.com/pact-foundation/pact-js-core/commit/c6d747ff726ffc5a3438aaa91d041c2d93a22cb7))
+* upgrade to ffi 0.3.11 ([550e4b3](https://github.com/pact-foundation/pact-js-core/commit/550e4b37a9617e52f8f8f2b9d2301318ea7711a1))
+
 ## [13.8.0](https://github.com/pact-foundation/pact-js-core/compare/v13.7.9...v13.8.0) (2022-09-05)
 
 
