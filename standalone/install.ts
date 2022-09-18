@@ -26,7 +26,6 @@ export function createConfig(): Config {
       },
       {
         platform: 'linux',
-        arch: 'x64',
         binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`,
         binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${CHECKSUM_SUFFIX}`,
         folderName: `linux-x64-${PACT_STANDALONE_VERSION}`,
