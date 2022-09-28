@@ -19,6 +19,8 @@ export class Publisher {
     consumerVersion: '--consumer-app-version',
     verbose: '--verbose',
     buildUrl: '--build-url',
+    branch: '--branch',
+    autoDetectVersionProperties: '--auto-detect-version-properties',
   };
 
   constructor(options: PublisherOptions) {
@@ -93,6 +95,14 @@ export class Publisher {
       );
     }
 
+    if (options.branch) {
+      checkTypes.assert.string(options.branch);
+    }
+
+    if (options.autoDetectVersionProperties) {
+      checkTypes.assert.boolean(options.autoDetectVersionProperties);
+    }
+
     this.options = options;
   }
 
@@ -150,4 +160,6 @@ export interface PublisherOptions {
   verbose?: boolean;
   timeout?: number;
   buildUrl?: string;
+  branch?: string;
+  autoDetectVersionProperties?: boolean;
 }

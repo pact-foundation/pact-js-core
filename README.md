@@ -55,12 +55,12 @@ In order to get better statistics as to who is using Pact, we have an anonymous 
 
 ```json
 {
-	"name": "some-project",
-	...
-	"config": {
-		"pact_do_not_track": true
-	},
-	...
+ "name": "some-project",
+ ...
+ "config": {
+  "pact_do_not_track": true
+ },
+ ...
 }
 ```
 
@@ -87,7 +87,7 @@ Simply require the library and call the create function to start the mock servic
 var pact = require("@pact-foundation/pact-core");
 var server = pact.createServer({ port: 9999 });
 server.start().then(function() {
-	// Do your testing/development here
+ // Do your testing/development here
 });
 ```
 
@@ -97,7 +97,7 @@ Or if you're using Typescript instead of plain old Javascript
 import pact from "@pact-foundation/pact-core";
 const server = pact.createServer({ port: 9999 });
 server.start().then(() => {
-	// Do your testing/development here
+ // Do your testing/development here
 });
 ```
 
@@ -127,7 +127,7 @@ Mock servers are used by Pact to record interactions and create pact contracts.
 ```js
 var pact = require('@pact-foundation/pact-core');
 var server = pact.createServer({
-	...
+ ...
 });
 ```
 
@@ -138,7 +138,7 @@ var server = pact.createServer({
 | `port`              | false     | number                             | Port number that the server runs on, defaults to random available port                                                               |
 | `host`              | false     | string                             | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
 | `log`               | false     | string                             | File to log output on relative to current working directory, defaults to none                                                        |
-| `logLevel`		  | false     | LogLevel (string)				   | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
+| `logLevel`    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
 | `ssl`               | false     | boolean                            | Create a self-signed SSL cert to run the server over HTTPS , defaults to `false`                                                     |
 | `sslcert`           | false     | string                             | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option, defaults to none                    |
 | `sslkey`            | false     | string                             | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this, defaults to none                  |
@@ -178,10 +178,10 @@ Start the current server.
 ```js
 var pact = require("@pact-foundation/pact-core");
 pact.createServer()
-	.start()
-	.then(function() {
-		// Do something after it started
-	});
+ .start()
+ .then(function() {
+  // Do something after it started
+ });
 ```
 
 #### Stop a Mock server
@@ -191,10 +191,10 @@ Stop the current server.
 ```js
 var pact = require("@pact-foundation/pact-core");
 pact.createServer()
-	.stop()
-	.then(function() {
-		// Do something after it stopped
-	});
+ .stop()
+ .then(function() {
+  // Do something after it stopped
+ });
 ```
 
 #### Delete a Mock server
@@ -204,10 +204,10 @@ Stop the current server and deletes it from the list.
 ```js
 var pact = require("@pact-foundation/pact-core");
 pact.createServer()
-	.delete()
-	.then(function() {
-		// Do something after it was killed
-	});
+ .delete()
+ .then(function() {
+  // Do something after it was killed
+ });
 ```
 
 #### Check if a Mock server is running
@@ -225,13 +225,13 @@ There's 3 different events available, 'start', 'stop' and 'delete'. They can be 
 var pact = require("@pact-foundation/pact-core");
 var server = pact.createServer();
 server.on("start", function() {
-	console.log("started");
+ console.log("started");
 });
 server.on("stop", function() {
-	console.log("stopped");
+ console.log("stopped");
 });
 server.on("delete", function() {
-	console.log("deleted");
+ console.log("deleted");
 });
 ```
 
@@ -243,7 +243,7 @@ Read more about [Verify Pacts](https://github.com/realestate-com-au/pact/wiki/Ve
 var pact = require('@pact-foundation/pact-core');
 
 pact.verifyPacts({
-	...
+ ...
 });
 ```
 
@@ -294,11 +294,11 @@ See the [Pact Broker documentation on selectors](https://docs.pact.io/pact_broke
 ```js
 var pact = require('@pact-foundation/pact-core');
 var opts = {
-	...
+ ...
 };
 
 pact.publishPacts(opts).then(function () {
-	// do something
+ // do something
 });
 ```
 
@@ -313,6 +313,8 @@ pact.publishPacts(opts).then(function () {
 | `pactBrokerPassword` | false     | string | Password for Pact Broker basic authentication. Optional             |
 | `pactBrokerToken`    | false     | string | Bearer token for Pact Broker authentication. Optional               |
 | `tags`               | false     | array  | An array of Strings to tag the Pacts being published. Optional      |
+| `branch`               | false     | string  | The branch to associate with the published pacts. Optional but recommended      |
+| `autoDetectVersionProperties`               | false     | boolean  | Automatically detect the repository branch from known CI environment variables or git CLI. Supports Buildkite, Circle CI, Travis CI, GitHub Actions, Jenkins, Hudson, AppVeyor, GitLab, CodeShip, Bitbucket and Azure DevOps. Optional      |
 | `buildUrl`           | false     | string | The build URL that created the pact. Optional                       |
 | `verbose`           |  false  | boolean | Enables verbose output for underlying pact binary. |
 
@@ -321,30 +323,30 @@ pact.publishPacts(opts).then(function () {
 ```js
 var pact = require('@pact-foundation/pact-core');
 var opts = {
-	...
+ ...
 };
 
 pact.canDeploy(opts)
-	.then(function (result) {
-		// You can deploy this
+ .then(function (result) {
+  // You can deploy this
     // If output is not specified or is json, result describes the result of the check.
     // If outout is 'table', it is the human readable string returned by the check
-	})
-	.catch(function(error) {
-		// You can't deploy this
+ })
+ .catch(function(error) {
+  // You can't deploy this
     // if output is not specified, or is json, error will be an object describing
     // the result of the check (if the check failed),
     // if output is 'table', then the error will be a string describing the output from the binary,
 
     // In both cases, `error` will be an Error object if something went wrong during the check.
-	});
+ });
 ```
 
 **Options**:
 
 | Parameter            | Required? | Type        | Description                                                                         |
 | -------------------- | --------- | ----------- | ----------------------------------------------------------------------------------- |
-| `pacticipants`       | true      | []objects	     | An array of version [selectors](docs.pact.io/selectors) in the form `{ name: String, latest?: string | boolean, version?: string }` |
+| `pacticipants`       | true      | []objects      | An array of version [selectors](docs.pact.io/selectors) in the form `{ name: String, latest?: string | boolean, version?: string }` |
 |                      |           |             | specify a tag, use the tagname with latest. Specify one of these per pacticipant    |
 |                      |           |             | that you want to deploy                                                             |
 | `pactBroker`         | true      | string      | URL of the Pact Broker to query about deployment. Required.                         |
@@ -368,7 +370,7 @@ The interface is comparable to the Mock Server API.
 ```js
 var pact = require('@pact-foundation/pact-core');
 var server = pact.createStub({
-	...
+ ...
 });
 ```
 
@@ -380,13 +382,12 @@ var server = pact.createStub({
 | port      | false     | number  | Port number that the server runs on, defaults to random available port                                                               |
 | host      | false     | string  | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
 | log       | false     | string  | File to log output on relative to current working directory, defaults to none                                                        |
-| logLevel		  | false     | LogLevel (string)				   | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
+| logLevel    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
 | ssl       | false     | boolean | Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'                                                     |
 | sslcert   | false     | string  | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults false                      | to none |
 | sslkey    | false     | string  | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this option false. Defaults to none     |
 | cors      | false     | boolean | Allow CORS OPTION requests to be accepted, defaults to 'false'                                                                       |
 | timeout               | false     | number                             | How long to wait for the stub server to start up (in milliseconds). Defaults to 30000 (30 seconds)                                                      |
-
 
 ### Message Pacts
 
@@ -395,7 +396,7 @@ var server = pact.createStub({
 ```js
 var pact = require('@pact-foundation/pact-core');
 var message = pact.createMessage({
-	...
+ ...
 });
 ```
 
@@ -412,15 +413,15 @@ var message = pact.createMessage({
 
 ```js
 const messageFactory = messageFactory({
-	consumer: "consumer",
-	provider: "provider",
-	dir: dirname(`${__filename}/pacts`),
-	content: `{
-		"description": "a test mesage",
-		"content": {
-			"name": "Mary"
-		}
-	}`
+ consumer: "consumer",
+ provider: "provider",
+ dir: dirname(`${__filename}/pacts`),
+ content: `{
+  "description": "a test mesage",
+  "content": {
+   "name": "Mary"
+  }
+ }`
 });
 
 messageFactory.createMessage();
@@ -453,12 +454,12 @@ The verification between the latest version of Banana Service (1.0.0) and versio
 
 The following are the binaries currently made available:
 
-* `pact-mock-service`
-* `pact-broker`
-* `pact-stub-service`
-* `pact-message`
-* `pact-provider-verifier`
-* `pact`
+- `pact-mock-service`
+- `pact-broker`
+- `pact-stub-service`
+- `pact-message`
+- `pact-provider-verifier`
+- `pact`
 
 ## Windows Issues
 
