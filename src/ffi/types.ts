@@ -320,6 +320,10 @@ export type FfiVerificationFunctions = {
     handle: FfiVerifierHandle,
     consumers: string[]
   ): void;
+  pactffiVerifierSetFailIfNoPactsFound(
+    handle: FfiVerifierHandle,
+    failIfNoPactsFound: boolean
+  ): void;
   pactffiVerifierAddCustomHeader(
     handle: FfiVerifierHandle,
     header: string,

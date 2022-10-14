@@ -47,6 +47,7 @@ export interface VerifierOptions {
    * @deprecated use providerVersionBranch instead
    */
   providerBranch?: string;
+  failIfNoPactsFound?: boolean;
 }
 
 /** These are the deprecated verifier options, removed prior to this verison,

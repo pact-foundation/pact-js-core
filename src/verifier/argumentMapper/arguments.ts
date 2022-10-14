@@ -31,9 +31,10 @@ export const orderOfExecution: OrderedExecution = {
   pactffiVerifierSetVerificationOptions: 4,
   pactffiVerifierSetPublishOptions: 5,
   pactffiVerifierSetConsumerFilters: 6,
-  pactffiVerifierAddCustomHeader: 7,
-  pactffiVerifierAddDirectorySource: 8,
-  pactffiVerifierBrokerSourceWithSelectors: 9,
+  pactffiVerifierSetFailIfNoPactsFound: 7,
+  pactffiVerifierAddCustomHeader: 8,
+  pactffiVerifierAddDirectorySource: 9,
+  pactffiVerifierBrokerSourceWithSelectors: 10,
 };
 
 export type MergedFfiSourceFunctions = {
@@ -172,6 +173,18 @@ export const ffiFnMapping: FnMapping<
     validateAndExecute(ffi, handle, options) {
       if (options.consumerFilters && options.consumerFilters.length > 0) {
         ffi.pactffiVerifierSetConsumerFilters(handle, options.consumerFilters);
+        return { status: FnValidationStatus.SUCCESS };
+      }
+      return { status: FnValidationStatus.IGNORE };
+    },
+  },
+  pactffiVerifierSetFailIfNoPactsFound: {
+    validateAndExecute(ffi, handle, options) {
+      if (options.failIfNoPactsFound) {
+        ffi.pactffiVerifierSetFailIfNoPactsFound(
+          handle,
+          options.failIfNoPactsFound
+        );
         return { status: FnValidationStatus.SUCCESS };
       }
       return { status: FnValidationStatus.IGNORE };
