@@ -180,7 +180,7 @@ export const ffiFnMapping: FnMapping<
   },
   pactffiVerifierSetFailIfNoPactsFound: {
     validateAndExecute(ffi, handle, options) {
-      if (options.failIfNoPactsFound) {
+      if (options.failIfNoPactsFound !== undefined) {
         ffi.pactffiVerifierSetFailIfNoPactsFound(
           handle,
           options.failIfNoPactsFound
