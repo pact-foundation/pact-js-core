@@ -464,6 +464,39 @@ Napi::Value PactffiVerifierSetConsumerFilters(const Napi::CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
+
+/**
+ * Set the provider to fail or pass if no pacts can be found.
+ *
+ * C interface:
+ *
+ *     void pactffi_verifier_set_no_pacts_is_error(VerifierHandle *handle,
+ *                                                 unsigned char is_error);
+ *
+ */
+Napi::Value PactffiVerifierSetFailIfNoPactsFound(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiVerifierSetFailIfNoPactsFound received < 2 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetFailIfNoPactsFound(arg 0) expected a VerifierHandle");
+  }
+
+  if (!info[1].IsBoolean()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetFailIfNoPactsFound(arg 1) expected a boolean");
+  }
+
+  uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
+  bool failIfNoPactsFound = info[1].As<Napi::Boolean>().Value();
+
+  pactffi_verifier_set_no_pacts_is_error(handles[handleId], failIfNoPactsFound);
+
+  return info.Env().Undefined();
+}
+
+
 /**
  * Adds a custom header to be added to the requests made to the provider.
  *

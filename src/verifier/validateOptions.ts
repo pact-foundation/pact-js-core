@@ -243,6 +243,7 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
     monkeypatch: [deprecatedFunction],
     logDir: [deprecatedFunction],
     consumerFilters: [wrapCheckType(checkTypes.assert.nonEmptyString)],
+    failIfNoPactsFound: [wrapCheckType(checkTypes.assert.boolean)],
   };
 
 export const validateOptions = (options: VerifierOptions): VerifierOptions => {

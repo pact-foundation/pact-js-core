@@ -57,6 +57,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiVerifierSetFilterInfo"), Napi::Function::New(env, PactffiVerifierSetFilterInfo));
   exports.Set(Napi::String::New(env, "pactffiVerifierSetProviderState"), Napi::Function::New(env, PactffiVerifierSetProviderState));
   exports.Set(Napi::String::New(env, "pactffiVerifierSetConsumerFilters"), Napi::Function::New(env, PactffiVerifierSetConsumerFilters));
+  exports.Set(Napi::String::New(env, "pactffiVerifierSetFailIfNoPactsFound"), Napi::Function::New(env, PactffiVerifierSetFailIfNoPactsFound));
   exports.Set(Napi::String::New(env, "pactffiVerifierAddCustomHeader"), Napi::Function::New(env, PactffiVerifierAddCustomHeader));
   exports.Set(Napi::String::New(env, "pactffiVerifierAddFileSource"), Napi::Function::New(env, PactffiVerifierAddFileSource));
   exports.Set(Napi::String::New(env, "pactffiVerifierAddDirectorySource"), Napi::Function::New(env, PactffiVerifierAddDirectorySource));
