@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.10.0](https://github.com/pact-foundation/pact-js-core/compare/v13.9.1...v13.10.0) (2022-10-18)
+
+
+### Features
+
+* expose faiIfNoPactsFound on the VerifierOptions ([72eeb08](https://github.com/pact-foundation/pact-js-core/commit/72eeb08ab50f64364e5fba38d5d18a5b3e9e5489))
+
+
+### Fixes and Improvements
+
+* only set failIfNoPactsFound if set by user ([577e49f](https://github.com/pact-foundation/pact-js-core/commit/577e49f41927a48808005da1b7b317f0be9b9ad2))
+
 ### [13.9.1](https://github.com/pact-foundation/pact-js-core/compare/v13.9.0...v13.9.1) (2022-09-28)
 
 
