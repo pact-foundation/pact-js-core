@@ -24,16 +24,12 @@ export const setupVerification = (
     switch (validation.status) {
       case FnValidationStatus.FAIL:
         logErrorAndThrow(
-          `the required ffi function '${fn}' failed validation with errors: ${
-            validation.messages || [].join(',')
-          }`
+          `the required ffi function '${fn}' failed validation with errors: ${validation.messages}`
         );
         break;
       case FnValidationStatus.IGNORE:
         logger.debug(
-          `the optional ffi function '${fn}' was not executed as it had non-fatal validation errors: ${
-            validation.messages || [].join(',')
-          }`
+          `the optional ffi function '${fn}' was not executed as it had non-fatal validation errors: ${validation.messages}`
         );
         break;
       case FnValidationStatus.SUCCESS:

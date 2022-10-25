@@ -10,7 +10,7 @@ import {
 
 export const deprecatedFunction =
   () =>
-  (_: any, property: string): boolean => {
+  (_: unknown, property: string): boolean => {
     logger.warn(`${property} is deprecated and no longer has any effect`);
 
     return true;
@@ -19,7 +19,7 @@ export const deprecatedFunction =
 export const deprecatedBy =
   (preferredOption: string) =>
   () =>
-  (_: any, property: string): boolean => {
+  (_: unknown, property: string): boolean => {
     logger.warn(`${property} is deprecated, use ${preferredOption} instead`);
 
     return true;
@@ -28,7 +28,7 @@ export const deprecatedBy =
 export const incompatibleWith =
   (keys: (keyof InternalPactVerifierOptions)[]) =>
   (options: InternalPactVerifierOptions) =>
-  (_: any, property: string): boolean => {
+  (_: unknown, property: string): boolean => {
     const incompatibilities = pick(options, keys);
 
     if (Object.keys(incompatibilities).length > 0) {
@@ -46,7 +46,7 @@ export const incompatibleWith =
 export const requires =
   (keys: (keyof InternalPactVerifierOptions)[]) =>
   (options: InternalPactVerifierOptions) =>
-  (_: any, property: string): boolean => {
+  (_: unknown, property: string): boolean => {
     const required = pick(options, keys);
 
     if (keys.length !== Object.keys(required).length) {
@@ -62,7 +62,7 @@ export const requires =
 export const requiresOneOf =
   (keys: (keyof InternalPactVerifierOptions)[]) =>
   (options: InternalPactVerifierOptions) =>
-  (_: any, property: string): boolean => {
+  (_: unknown, property: string): boolean => {
     const required = pick(options, keys);
 
     if (Object.keys(required).length === 0) {
@@ -77,25 +77,34 @@ export const requiresOneOf =
     return true;
   };
 
-export type AssertFunction = (a: any, ...args: any) => boolean;
+type AssertFunction = (a: unknown, property: string) => boolean;
 
-export const wrapCheckType = (fn: AssertFunction) => (): AssertFunction => fn;
+const assertNonEmptyString =
+  (): AssertFunction => (a: unknown, property: string) =>
+    checkTypes.assert.nonEmptyString(a as string, property);
+
+const assertBoolean = (): AssertFunction => (a: unknown, property: string) =>
+  checkTypes.assert.boolean(a as boolean, property);
+
+const assertPositive = (): AssertFunction => (a: unknown, property: string) =>
+  checkTypes.assert.positive(a as number, property);
 
 const LogLevels: LogLevel[] = ['debug', 'error', 'info', 'trace', 'warn'];
 
 const logLevelValidator =
   () =>
-  (l: LogLevel): boolean => {
-    if (LogLevels.includes(l.toLowerCase() as LogLevel)) {
-      l = l.toLowerCase() as LogLevel;
-    } else {
-      throw new Error(
-        `The logLevel '${l}' is not a valid logLevel. The valid options are: ${LogLevels.join(
-          ', '
-        )}`
-      );
+  (l: unknown): boolean => {
+    if (typeof l === 'string') {
+      if (LogLevels.includes(l.toLowerCase() as LogLevel)) {
+        l = l.toLowerCase() as LogLevel;
+        return true;
+      }
     }
-    return true;
+    throw new Error(
+      `The logLevel '${l}' is not a valid logLevel. The valid options are: ${LogLevels.join(
+        ', '
+      )}`
+    );
   };
 
 const consumerVersionSelectorValidator =
@@ -188,19 +197,19 @@ export type ArgumentValidationRules<T> = {
 
 export const validationRules: ArgumentValidationRules<InternalPactVerifierOptions> =
   {
-    providerBaseUrl: [wrapCheckType(checkTypes.assert.nonEmptyString)],
-    buildUrl: [wrapCheckType(checkTypes.assert.nonEmptyString)],
+    providerBaseUrl: [assertNonEmptyString],
+    buildUrl: [assertNonEmptyString],
     consumerVersionSelectors: [consumerVersionSelectorValidator],
     consumerVersionTags: [consumerVersionTagsValidator],
     customProviderHeaders: [customProviderHeadersValidator],
-    disableSslVerification: [wrapCheckType(checkTypes.assert.boolean)],
-    enablePending: [wrapCheckType(checkTypes.assert.boolean)],
+    disableSslVerification: [assertBoolean],
+    enablePending: [assertBoolean],
     format: [deprecatedFunction],
-    includeWipPactsSince: [wrapCheckType(checkTypes.assert.nonEmptyString)],
-    provider: [wrapCheckType(checkTypes.assert.nonEmptyString)],
-    pactUrls: [wrapCheckType(checkTypes.assert.nonEmptyString)],
+    includeWipPactsSince: [assertNonEmptyString],
+    provider: [assertNonEmptyString],
+    pactUrls: [assertNonEmptyString],
     pactBrokerUrl: [
-      wrapCheckType(checkTypes.assert.nonEmptyString),
+      assertNonEmptyString,
       requires(['provider']),
       requiresOneOf([
         'pactUrls',
@@ -209,41 +218,38 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
       ]),
     ],
     pactBrokerUsername: [
-      wrapCheckType(checkTypes.assert.nonEmptyString),
+      assertNonEmptyString,
       incompatibleWith(['pactBrokerToken']),
       requires(['pactBrokerPassword']),
     ],
     pactBrokerPassword: [
-      wrapCheckType(checkTypes.assert.nonEmptyString),
+      assertNonEmptyString,
       incompatibleWith(['pactBrokerToken']),
       requires(['pactBrokerUsername']),
     ],
     pactBrokerToken: [
-      wrapCheckType(checkTypes.assert.nonEmptyString),
+      assertNonEmptyString,
       incompatibleWith(['pactBrokerUsername', 'pactBrokerPassword']),
     ],
-    providerVersionTags: [wrapCheckType(checkTypes.assert.nonEmptyString)],
+    providerVersionTags: [assertNonEmptyString],
     providerBranch: [
-      wrapCheckType(checkTypes.assert.nonEmptyString),
+      assertNonEmptyString,
       deprecatedBy('providerVersionBranch'),
     ],
-    providerVersionBranch: [wrapCheckType(checkTypes.assert.nonEmptyString)],
-    providerStatesSetupUrl: [wrapCheckType(checkTypes.assert.nonEmptyString)],
-    providerStatesSetupTeardown: [wrapCheckType(checkTypes.assert.boolean)],
-    providerStatesSetupBody: [wrapCheckType(checkTypes.assert.boolean)],
-    publishVerificationResult: [
-      wrapCheckType(checkTypes.assert.boolean),
-      requires(['providerVersion']),
-    ],
-    providerVersion: [wrapCheckType(checkTypes.assert.nonEmptyString)],
-    timeout: [wrapCheckType(checkTypes.assert.positive)],
+    providerVersionBranch: [assertNonEmptyString],
+    providerStatesSetupUrl: [assertNonEmptyString],
+    providerStatesSetupTeardown: [assertBoolean],
+    providerStatesSetupBody: [assertBoolean],
+    publishVerificationResult: [assertBoolean, requires(['providerVersion'])],
+    providerVersion: [assertNonEmptyString],
+    timeout: [assertPositive],
     logLevel: [logLevelValidator],
     out: [deprecatedFunction],
     verbose: [deprecatedFunction],
     monkeypatch: [deprecatedFunction],
     logDir: [deprecatedFunction],
-    consumerFilters: [wrapCheckType(checkTypes.assert.nonEmptyString)],
-    failIfNoPactsFound: [wrapCheckType(checkTypes.assert.boolean)],
+    consumerFilters: [assertNonEmptyString],
+    failIfNoPactsFound: [assertBoolean],
   };
 
 export const validateOptions = (options: VerifierOptions): VerifierOptions => {
@@ -256,7 +262,7 @@ export const validateOptions = (options: VerifierOptions): VerifierOptions => {
 
     // get type of parameter (if an array, we apply the rule to each item of the array instead)
     if (Array.isArray(options[k])) {
-      (options[k] as Array<any>).map((item) => {
+      options[k].map((item: unknown) => {
         rules.map((rule) => {
           // rule(item)  // If the messages aren't clear, we can do this
           rule(options)(item, k);
