@@ -14,13 +14,23 @@ const objArrayToStringArray = (obj: unknown[]) => {
   return obj.map((o) => JSON.stringify(o));
 };
 
-export type IgnoredFfiFunctions = {
+type IgnoredFfiFunctions = {
   pactffiVerifierNewForApplication: 1;
   pactffiVerifierExecute: 1;
   pactffiVerifierShutdown: 1;
 };
 
-export type OrderedExecution = {
+type MergedFfiSourceFunctions = {
+  pactffiVerifierAddFileSource: 1;
+  pactffiVerifierUrlSource: 1;
+};
+
+type RequiredFfiVerificationFunctions = Omit<
+  FfiVerificationFunctions,
+  keyof (IgnoredFfiFunctions & MergedFfiSourceFunctions)
+>;
+
+type OrderedExecution = {
   [Key in keyof RequiredFfiVerificationFunctions]: number;
 };
 
@@ -36,16 +46,6 @@ export const orderOfExecution: OrderedExecution = {
   pactffiVerifierAddDirectorySource: 9,
   pactffiVerifierBrokerSourceWithSelectors: 10,
 };
-
-export type MergedFfiSourceFunctions = {
-  pactffiVerifierAddFileSource: 1;
-  pactffiVerifierUrlSource: 1;
-};
-
-export type RequiredFfiVerificationFunctions = Omit<
-  FfiVerificationFunctions,
-  keyof (IgnoredFfiFunctions & MergedFfiSourceFunctions)
->;
 
 export const ffiFnMapping: FnMapping<
   RequiredFfiVerificationFunctions,
