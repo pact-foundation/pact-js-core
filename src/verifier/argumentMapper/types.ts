@@ -29,7 +29,21 @@ export enum FnValidationStatus {
   FAIL = 2,
 }
 
-type FnValidationResult = {
-  status: FnValidationStatus;
-  messages?: string[];
+type FnValidationResultSuccess = {
+  status: FnValidationStatus.SUCCESS;
 };
+
+type FnValidationResultFail = {
+  status: FnValidationStatus.FAIL;
+  messages: string[];
+};
+
+type FnValidationResultIgnore = {
+  status: FnValidationStatus.IGNORE;
+  messages: string[];
+};
+
+export type FnValidationResult =
+  | FnValidationResultSuccess
+  | FnValidationResultFail
+  | FnValidationResultIgnore;
