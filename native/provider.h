@@ -13,6 +13,8 @@ Napi::Value PactffiVerifierAddCustomHeader(const Napi::CallbackInfo& info);
 Napi::Value PactffiVerifierAddFileSource(const Napi::CallbackInfo& info);
 Napi::Value PactffiVerifierAddDirectorySource(const Napi::CallbackInfo& info);
 Napi::Value PactffiVerifierUrlSource(const Napi::CallbackInfo& info);
+Napi::Value PactffiVerifierAddProviderTransport(const Napi::CallbackInfo& info);
+Napi::Value PactffiVerifierSetNoPactsIsError(const Napi::CallbackInfo& info);
 // Napi::Value PactffiVerifierBrokerSource(const Napi::CallbackInfo& info);
 Napi::Value PactffiVerifierBrokerSourceWithSelectors(const Napi::CallbackInfo& info);
 Napi::Value PactffiVerifierSetFailIfNoPactsFound(const Napi::CallbackInfo& info);

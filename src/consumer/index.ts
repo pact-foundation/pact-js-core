@@ -16,12 +16,13 @@ import {
 import { wrapAllWithCheck, wrapWithCheck } from './checkErrors';
 
 import {
+  AsynchronousMessage,
   ConsumerInteraction,
-  ConsumerMessage,
   ConsumerMessagePact,
   ConsumerPact,
   MatchingResult,
   Mismatch,
+  SynchronousMessage,
 } from './types';
 import { getFfiLib } from '../ffi';
 
@@ -237,6 +238,19 @@ export const makeConsumerPact = (
 
           return true;
         },
+        withPluginRequestResponseInteractionContents: (
+          contentType: string,
+          contents: string
+        ) => {
+          ffi.pactffiPluginInteractionContents(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            contentType,
+            contents
+          );
+
+          return true;
+        },
         withPluginResponseInteractionContents: (
           contentType: string,
           contents: string
@@ -254,7 +268,7 @@ export const makeConsumerPact = (
   };
 };
 
-export const makeConsumerAsyncMessagePact = (
+export const makeConsumerMessagePact = (
   consumer: string,
   provider: string,
   version: FfiSpecificationVersion = 4,
@@ -279,12 +293,20 @@ export const makeConsumerAsyncMessagePact = (
     cleanupPlugins: () => {
       ffi.pactffiCleanupPlugins(pactPtr);
     },
+    cleanupMockServer: (port: number): boolean => {
+      return wrapWithCheck<(port: number) => boolean>(
+        (port: number): boolean => ffi.pactffiCleanupMockServer(port),
+        'cleanupMockServer'
+      )(port);
+    },
     writePactFile: (dir: string, merge = true) =>
       writePact(ffi, pactPtr, dir, merge),
+    writePactFileForPluginServer: (port: number, dir: string, merge = true) =>
+      writePact(ffi, pactPtr, dir, merge, port),
     addMetadata: (namespace: string, name: string, value: string): boolean => {
       return ffi.pactffiWithPactMetadata(pactPtr, namespace, name, value);
     },
-    newMessage: (description: string): ConsumerMessage => {
+    newAsynchronousMessage: (description: string): AsynchronousMessage => {
       const interactionPtr = ffi.pactffiNewAsyncMessage(pactPtr, description);
 
       return {
@@ -295,18 +317,6 @@ export const makeConsumerAsyncMessagePact = (
           ffi.pactffiPluginInteractionContents(
             interactionPtr,
             INTERACTION_PART_REQUEST,
-            contentType,
-            contents
-          );
-          return true;
-        },
-        withPluginResponseInteractionContents: (
-          contentType: string,
-          contents: string
-        ) => {
-          ffi.pactffiPluginInteractionContents(
-            interactionPtr,
-            INTERACTION_PART_RESPONSE,
             contentType,
             contents
           );
@@ -352,6 +362,124 @@ export const makeConsumerAsyncMessagePact = (
         },
       };
     },
+    newSynchronousMessage: (description: string): SynchronousMessage => {
+      // TODO: will this automatically set the correct spec version?
+      const interactionPtr = ffi.pactffiNewSyncMessage(pactPtr, description);
+
+      return {
+        withPluginRequestInteractionContents: (
+          contentType: string,
+          contents: string
+        ) => {
+          ffi.pactffiPluginInteractionContents(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            contentType,
+            contents
+          );
+          return true;
+        },
+        withPluginResponseInteractionContents: (
+          contentType: string,
+          contents: string
+        ) => {
+          ffi.pactffiPluginInteractionContents(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            contentType,
+            contents
+          );
+          return true;
+        },
+        withPluginRequestResponseInteractionContents: (
+          contentType: string,
+          contents: string
+        ) => {
+          ffi.pactffiPluginInteractionContents(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            contentType,
+            contents
+          );
+          return true;
+        },
+        given: (state: string) => {
+          return ffi.pactffiGiven(interactionPtr, state);
+        },
+        givenWithParam: (state: string, name: string, value: string) => {
+          return ffi.pactffiGivenWithParam(interactionPtr, state, name, value);
+        },
+        withRequestContents: (body: string, contentType: string) => {
+          return ffi.pactffiWithBody(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            contentType,
+            body
+          );
+        },
+        withResponseContents: (body: string, contentType: string) => {
+          return ffi.pactffiWithBody(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            contentType,
+            body
+          );
+        },
+        withRequestBinaryContents: (body: Buffer, contentType: string) => {
+          return ffi.pactffiWithBinaryFile(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            contentType,
+            body,
+            body.length
+          );
+        },
+        withResponseBinaryContents: (body: Buffer, contentType: string) => {
+          return ffi.pactffiWithBinaryFile(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            contentType,
+            body,
+            body.length
+          );
+        },
+        withMetadata: (name: string, value: string) => {
+          return ffi.pactffiMessageWithMetadata(interactionPtr, name, value);
+        },
+      };
+    },
+    pactffiCreateMockServerForTransport(
+      address: string,
+      transport: string,
+      config: string,
+      port?: number
+    ) {
+      return ffi.pactffiCreateMockServerForTransport(
+        pactPtr,
+        address,
+        port || 0,
+        transport,
+        config
+      );
+    },
+    mockServerMatchedSuccessfully: (port: number) => {
+      return ffi.pactffiMockServerMatched(port);
+    },
+    mockServerMismatches: (port: number): MatchingResult[] => {
+      const results: MatchingResult[] = JSON.parse(
+        ffi.pactffiMockServerMismatches(port)
+      );
+      return results.map((result: MatchingResult) => ({
+        ...result,
+        ...('mismatches' in result
+          ? {
+              mismatches: result.mismatches.map((m: string | Mismatch) =>
+                typeof m === 'string' ? JSON.parse(m) : m
+              ),
+            }
+          : {}),
+      }));
+    },
   };
 };
 
@@ -359,9 +487,17 @@ const writePact = (
   ffi: Ffi,
   pactPtr: FfiPactHandle,
   dir: string,
-  merge = true
+  merge = true,
+  port = 0
 ) => {
-  const result = ffi.pactffiWritePactFile(pactPtr, dir, !merge);
+  let result: FfiWritePactResponse;
+
+  if (port != 0) {
+    result = ffi.pactffiWritePactFileByPort(port, dir, !merge);
+  } else {
+    result = ffi.pactffiWritePactFile(pactPtr, dir, !merge);
+  }
+
   switch (result) {
     case FfiWritePactResponse.SUCCESS:
       return;

@@ -13,8 +13,10 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiMockServerMatched"), Napi::Function::New(env, PactffiMockServerMatched));
   exports.Set(Napi::String::New(env, "pactffiMockServerMismatches"), Napi::Function::New(env, PactffiMockServerMismatches));
   exports.Set(Napi::String::New(env, "pactffiCreateMockServerForPact"), Napi::Function::New(env, PactffiCreateMockServerForPact));
+  exports.Set(Napi::String::New(env, "pactffiCreateMockServerForTransport"), Napi::Function::New(env, PactffiCreateMockServerForTransport));
   exports.Set(Napi::String::New(env, "pactffiCleanupMockServer"), Napi::Function::New(env, PactffiCleanupMockServer));
   exports.Set(Napi::String::New(env, "pactffiWritePactFile"), Napi::Function::New(env, PactffiWritePactFile));
+  exports.Set(Napi::String::New(env, "pactffiWritePactFileByPort"), Napi::Function::New(env, PactffiWritePactFileByPort));
   exports.Set(Napi::String::New(env, "pactffiNewPact"), Napi::Function::New(env, PactffiNewPact));
   exports.Set(Napi::String::New(env, "pactffiNewInteraction"), Napi::Function::New(env, PactffiNewInteraction));
   exports.Set(Napi::String::New(env, "pactffiUponReceiving"), Napi::Function::New(env, PactffiUponReceiving));
@@ -38,6 +40,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   // exports.Set(Napi::String::New(env, "pactffiWithMessagePactMetadata"), Napi::Function::New(env, PactffiWithMessagePactMetadata));
   exports.Set(Napi::String::New(env, "pactffiNewAsyncMessage"), Napi::Function::New(env, PactffiNewAsyncMessage));
   exports.Set(Napi::String::New(env, "pactffiNewSyncMessage"), Napi::Function::New(env, PactffiNewSyncMessage));
+  // exports.Set(Napi::String::New(env, "pactffiSyncMessageSetDescription"), Napi::Function::New(env, PactffiSyncMessageSetDescription));
   // exports.Set(Napi::String::New(env, "pactffiNewMessage"), Napi::Function::New(env, PactffiNewMessage));
   exports.Set(Napi::String::New(env, "pactffiMessageReify"), Napi::Function::New(env, PactffiMessageReify));
   exports.Set(Napi::String::New(env, "pactffiMessageGiven"), Napi::Function::New(env, PactffiMessageGiven));
@@ -63,6 +66,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiVerifierAddDirectorySource"), Napi::Function::New(env, PactffiVerifierAddDirectorySource));
   exports.Set(Napi::String::New(env, "pactffiVerifierUrlSource"), Napi::Function::New(env, PactffiVerifierUrlSource));
   exports.Set(Napi::String::New(env, "pactffiVerifierBrokerSourceWithSelectors"), Napi::Function::New(env, PactffiVerifierBrokerSourceWithSelectors));
+  exports.Set(Napi::String::New(env, "pactffiVerifierAddProviderTransport"), Napi::Function::New(env, PactffiVerifierAddProviderTransport));
+  exports.Set(Napi::String::New(env, "pactffiVerifierSetNoPactsIsError"), Napi::Function::New(env, PactffiVerifierSetNoPactsIsError));
 
   return exports;
 }

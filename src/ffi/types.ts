@@ -128,6 +128,13 @@ export type FfiConsumerFunctions = {
     address: string,
     tls: boolean
   ): number;
+  pactffiCreateMockServerForTransport(
+    handle: FfiPactHandle,
+    address: string,
+    port: number,
+    transport: string,
+    config: string
+  ): number;
   pactffiNewPact(consumer: string, provider: string): FfiPactHandle;
   pactffiWithSpecification(
     handle: FfiPactHandle,
@@ -198,6 +205,11 @@ export type FfiConsumerFunctions = {
     dir: string,
     overwrite: boolean
   ): FfiWritePactResponse;
+  pactffiWritePactFileByPort(
+    port: number,
+    dir: string,
+    overwrite: boolean
+  ): FfiWritePactResponse;
   pactffiCleanupMockServer(port: number): boolean;
   pactffiMockServerMatched(port: number): boolean;
   pactffiMockServerMismatches(port: number): string;
@@ -224,8 +236,12 @@ export type FfiConsumerFunctions = {
     handle: FfiPactHandle,
     description: string
   ): FfiMessageHandle;
-  // TODO: not sure how to use this given the return type, commenting out for now
-  // pactffiNewSyncMessage(
+  pactffiNewSyncMessage(
+    handle: FfiPactHandle,
+    description: string
+  ): FfiInteractionHandle;
+  // TODO: need to look at how we return and handle a synchronous message
+  // pactffiSyncMessageSetDescription(
   //   handle: FfiPactHandle,
   //   description: string
   // ): FfiInteractionHandle;
@@ -359,4 +375,11 @@ export type FfiVerificationFunctions = {
     callback: (e: Error, res: number) => void
   ): number;
   pactffiVerifierShutdown(handle: FfiVerifierHandle): void;
+  pactffiVerifierAddProviderTransport(
+    handle: FfiVerifierHandle,
+    protocol: string,
+    port: number,
+    path: string,
+    scheme: string
+  ): void;
 };

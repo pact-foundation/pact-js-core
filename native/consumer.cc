@@ -238,6 +238,83 @@ Napi::Value PactffiCreateMockServerForPact(const Napi::CallbackInfo& info) {
 }
 
 /**
+ * Create a mock server for the provided Pact handle and transport. If the transport is not
+ * provided (it is a NULL pointer or an empty string), will default to an HTTP transport. The
+ * address is the interface bind to, and will default to the loopback adapter if not specified.
+ * Specifying a value of zero for the port will result in the operating system allocating the port.
+ *
+ * Parameters:
+ * * `pact` - Handle to a Pact model created with created with `pactffi_new_pact`.
+ * * `addr` - Address to bind to (i.e. `127.0.0.1` or `[::1]`). Must be a valid UTF-8 NULL-terminated string, or NULL or empty, in which case the loopback adapter is used.
+ * * `port` - Port number to bind to. A value of zero will result in the operating system allocating an available port.
+ * * `transport` - The transport to use (i.e. http, https, grpc). Must be a valid UTF-8 NULL-terminated string, or NULL or empty, in which case http will be used.
+ * * `transport_config` - (OPTIONAL) Configuration for the transport as a valid JSON string. Set to NULL or empty if not required.
+ *
+ * The port of the mock server is returned.
+ *
+ * # Safety
+ * NULL pointers or empty strings can be passed in for the address, transport and transport_config,
+ * in which case a default value will be used. Passing in an invalid pointer will result in undefined behaviour.
+ *
+ * # Errors
+ *
+ * Errors are returned as negative values.
+ *
+ * | Error | Description |
+ * |-------|-------------|
+ * | -1 | An invalid handle was received. Handles should be created with `pactffi_new_pact` |
+ * | -2 | transport_config is not valid JSON |
+ * | -3 | The mock server could not be started |
+ * | -4 | The method panicked |
+ * | -5 | The address is not valid |
+ *
+ * C interface:
+ *
+ *    int32_t pactffi_create_mock_server_for_transport(PactHandle pact,
+ *                                                     const char *addr,
+ *                                                     uint16_t port,
+ *                                                     const char *transport,
+ *                                                     const char *transport_config);
+ */
+Napi::Value PactffiCreateMockServerForTransport(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 5) {
+    throw Napi::Error::New(env, "PactffiCreateMockServerForTransport received < 5 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiCreateMockServerForTransport(arg 0) expected a PactHandle (uint16_t)");
+  }
+  
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiCreateMockServerForTransport(arg 1) expected a string");
+  }
+
+  if (!info[2].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiCleanupMockServer(arg 2) expected a number");
+  }
+
+  if (!info[3].IsString()) {
+    throw Napi::Error::New(env, "PactffiCreateMockServerForTransport(arg 3) expected a string");
+  }
+
+  if (!info[4].IsString()) {
+    throw Napi::Error::New(env, "PactffiCreateMockServerForTransport(arg 4) expected a string");
+  }
+
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
+  std::string addr = info[1].As<Napi::String>().Utf8Value();
+  uint32_t port = info[2].As<Napi::Number>().Int32Value();
+  std::string transport = info[3].As<Napi::String>().Utf8Value();
+  std::string config = info[4].As<Napi::String>().Utf8Value();
+
+  uint16_t result = pactffi_create_mock_server_for_transport(pact, addr.c_str(), port, transport.c_str(), config.c_str());
+
+  return Number::New(env, result);
+}
+
+/**
  * External interface to cleanup a mock server. This function will try terminate the mock server
  * with the given port number and cleanup any memory allocated for it. Returns true, unless a
  * mock server with the given port number does not exist, or the function panics.
@@ -317,6 +394,59 @@ Napi::Value PactffiWritePactFile(const Napi::CallbackInfo& info) {
   bool overwrite = info[2].As<Napi::Boolean>().Value();
 
   int32_t res = pactffi_pact_handle_write_file(pact, dir.c_str(), overwrite);
+
+  return Number::New(env, res);
+}
+
+/**
+ * External interface to trigger a mock server to write out its pact file. This function should
+ * be called if all the consumer tests have passed. The directory to write the file to is passed
+ * as the second parameter. If a NULL pointer is passed, the current working directory is used.
+ *
+ * If overwrite is true, the file will be overwritten with the contents of the current pact.
+ * Otherwise, it will be merged with any existing pact file.
+ *
+ * Returns 0 if the pact file was successfully written. Returns a positive code if the file can
+ * not be written, or there is no mock server running on that port or the function panics.
+ *
+ * # Errors
+ *
+ * Errors are returned as positive values.
+ *
+ * | Error | Description |
+ * |-------|-------------|
+ * | 1 | A general panic was caught |
+ * | 2 | The pact file was not able to be written |
+ * | 3 | A mock server with the provided port was not found |
+ *
+ * C Interface:
+ *
+ *    int32_t pactffi_write_pact_file(int32_t mock_server_port, const char *directory, bool overwrite);
+ */
+Napi::Value PactffiWritePactFileByPort(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiWritePactFileByPort received < 3 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiWritePactFileByPort(arg 0) expected a number");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiWritePactFileByPort(arg 1) expected a string");
+  }
+
+  if (!info[2].IsBoolean()) {
+    throw Napi::Error::New(env, "PactffiWritePactFileByPort(arg 2) expected a boolean");
+  }
+
+  int32_t port = info[0].As<Napi::Number>().Int32Value();
+  std::string dir = info[1].As<Napi::String>().Utf8Value();
+  bool overwrite = info[2].As<Napi::Boolean>().Value();
+
+  int32_t res = pactffi_write_pact_file(port, dir.c_str(), overwrite);
 
   return Number::New(env, res);
 }
@@ -456,6 +586,49 @@ Napi::Value PactffiGiven(const Napi::CallbackInfo& info) {
 
   return Napi::Boolean::New(env, res);
 }
+
+/**
+ * Write the `description` field on the `SynchronousMessage`.
+ *
+ * # Safety
+ *
+ * `description` must contain valid UTF-8. Invalid UTF-8
+ * will be replaced with U+FFFD REPLACEMENT CHARACTER.
+ *
+ * This function will only reallocate if the new string
+ * does not fit in the existing buffer.
+ *
+ * # Error Handling
+ *
+ * Errors will be reported with a non-zero return value.
+ *
+ * C interface:
+ *
+ *    int pactffi_sync_message_set_description(struct SynchronousMessage *message,
+ *                                            const char *description);
+ */
+// Napi::Value PactffiSyncMessageSetDescription(const Napi::CallbackInfo& info) {
+//    Napi::Env env = info.Env();
+
+//   if (info.Length() < 2) {
+//     throw Napi::Error::New(env, "PactffiSyncMessageSetDescription received < 2 arguments");
+//   }
+
+//   if (!info[0].IsNumber()) {
+//     throw Napi::Error::New(env, "PactffiSyncMessageSetDescription(arg 0) expected a InteractionHandle (uint32_t)");
+//   }
+
+//   if (!info[1].IsString()) {
+//     throw Napi::Error::New(env, "PactffiSyncMessageSetDescription(arg 1) expected a string");
+//   }
+
+//   SynchronousMessage interaction = info[0].As<Napi::Number>().Uint32Value();
+//   std::string description = info[1].As<Napi::String>().Utf8Value();
+
+//   int res = pactffi_sync_message_set_description(interaction, description.c_str());
+
+//   return Number::New(env, res);
+// }
 
 /**
  * Adds a provider state to the Interaction with a parameter key and value. Returns false if the interaction or Pact can't be
@@ -1613,3 +1786,209 @@ Napi::Value PactffiPluginInteractionContents(const Napi::CallbackInfo& info) {
 
   return Napi::Boolean::New(env, res);
 }
+
+/*
+// GetMessageContents retreives the binary contents of the request for a given message
+// any matchers are stripped away if given
+// if the contents is from a plugin, the byte[] representation of the parsed
+// plugin data is returned, again, with any matchers etc. removed
+func (m *Message) GetMessageRequestContents() ([]byte, error) {
+	log.Println("[DEBUG] GetMessageRequestContents")
+	if m.messageType == MESSAGE_TYPE_ASYNC {
+		iter := C.pactffi_pact_handle_get_message_iter(m.pact.handle)
+		log.Println("[DEBUG] pactffi_pact_handle_get_message_iter")
+		if iter == nil {
+			return nil, errors.New("unable to get a message iterator")
+		}
+		log.Println("[DEBUG] pactffi_pact_handle_get_message_iter - OK")
+
+		///////
+		// TODO: some debugging in here to see what's exploding.......
+		///////
+
+		log.Println("[DEBUG] pactffi_pact_handle_get_message_iter - len", len(m.server.messages))
+
+		for i := 0; i < len(m.server.messages); i++ {
+			log.Println("[DEBUG] pactffi_pact_handle_get_message_iter - index", i)
+			message := C.pactffi_pact_message_iter_next(iter)
+			log.Println("[DEBUG] pactffi_pact_message_iter_next - message", message)
+
+			if i == m.index {
+				log.Println("[DEBUG] pactffi_pact_message_iter_next - index match", message)
+
+				if message == nil {
+					return nil, errors.New("retreived a null message pointer")
+				}
+
+				len := C.pactffi_message_get_contents_length(message)
+				log.Println("[DEBUG] pactffi_message_get_contents_length - len", len)
+				if len == 0 {
+					return nil, errors.New("retreived an empty message")
+				}
+				data := C.pactffi_message_get_contents_bin(message)
+				log.Println("[DEBUG] pactffi_message_get_contents_bin - data", data)
+				if data == nil {
+					return nil, errors.New("retreived an empty pointer to the message contents")
+				}
+				ptr := unsafe.Pointer(data)
+				bytes := C.GoBytes(ptr, C.int(len))
+
+				return bytes, nil
+			}
+		}
+
+	} else {
+		iter := C.pactffi_pact_handle_get_sync_message_iter(m.pact.handle)
+		if iter == nil {
+			return nil, errors.New("unable to get a message iterator")
+		}
+
+		for i := 0; i < len(m.server.messages); i++ {
+			message := C.pactffi_pact_sync_message_iter_next(iter)
+
+			if i == m.index {
+				if message == nil {
+					return nil, errors.New("retreived a null message pointer")
+				}
+
+				len := C.pactffi_sync_message_get_request_contents_length(message)
+				if len == 0 {
+					return nil, errors.New("retreived an empty message")
+				}
+				data := C.pactffi_sync_message_get_request_contents_bin(message)
+				if data == nil {
+					return nil, errors.New("retreived an empty pointer to the message contents")
+				}
+				ptr := unsafe.Pointer(data)
+				bytes := C.GoBytes(ptr, C.int(len))
+
+				return bytes, nil
+			}
+		}
+	}
+
+	return nil, errors.New("unable to find the message")
+}
+
+// GetMessageResponseContents retreives the binary contents of the response for a given message
+// any matchers are stripped away if given
+// if the contents is from a plugin, the byte[] representation of the parsed
+// plugin data is returned, again, with any matchers etc. removed
+func (m *Message) GetMessageResponseContents() ([][]byte, error) {
+
+	responses := make([][]byte, len(m.server.messages))
+	if m.messageType == MESSAGE_TYPE_ASYNC {
+		return nil, errors.New("invalid request: asynchronous messages do not have response")
+	}
+	iter := C.pactffi_pact_handle_get_sync_message_iter(m.pact.handle)
+	if iter == nil {
+		return nil, errors.New("unable to get a message iterator")
+	}
+
+	for i := 0; i < len(m.server.messages); i++ {
+		message := C.pactffi_pact_sync_message_iter_next(iter)
+
+		if message == nil {
+			return nil, errors.New("retreived a null message pointer")
+		}
+
+		// Get Response body
+		len := C.pactffi_sync_message_get_response_contents_length(message, C.ulong(i))
+		if len == 0 {
+			return nil, errors.New("retreived an empty message")
+		}
+		data := C.pactffi_sync_message_get_response_contents_bin(message, C.ulong(i))
+		if data == nil {
+			return nil, errors.New("retreived an empty pointer to the message contents")
+		}
+		ptr := unsafe.Pointer(data)
+		bytes := C.GoBytes(ptr, C.int(len))
+
+		responses[i] = bytes
+	}
+
+	return responses, nil
+}
+
+// StartTransport starts up a mock server on the given address:port for the given transport
+// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/fn.pactffi_create_mock_server_for_transport.html
+func (m *MessageServer) StartTransport(transport string, address string, port int, config map[string][]interface{}) (int, error) {
+	if len(m.messages) == 0 {
+		return 0, ErrNoInteractions
+	}
+
+	log.Println("[DEBUG] mock server starting on address:", address, port)
+	cAddress := C.CString(address)
+	defer free(cAddress)
+
+	cTransport := C.CString(transport)
+	defer free(cTransport)
+
+	configJson := stringFromInterface(config)
+	cConfig := C.CString(configJson)
+	defer free(cConfig)
+
+	p := C.pactffi_create_mock_server_for_transport(m.messagePact.handle, cAddress, C.int(port), cTransport, cConfig)
+
+	// | Error | Description
+	// |-------|-------------
+	// | -1	   | An invalid handle was received. Handles should be created with pactffi_new_pact
+	// | -2	   | transport_config is not valid JSON
+	// | -3	   | The mock server could not be started
+	// | -4	   | The method panicked
+	// | -5	   | The address is not valid
+	msPort := int(p)
+	switch msPort {
+	case -1:
+		return 0, ErrInvalidMockServerConfig
+	case -2:
+		return 0, ErrInvalidMockServerConfig
+	case -3:
+		return 0, ErrMockServerUnableToStart
+	case -4:
+		return 0, ErrMockServerPanic
+	case -5:
+		return 0, ErrInvalidAddress
+	default:
+		if msPort > 0 {
+			log.Println("[DEBUG] mock server running on port:", msPort)
+			return msPort, nil
+		}
+		return msPort, fmt.Errorf("an unknown error (code: %v) occurred when starting a mock server for the test", msPort)
+	}
+}
+
+// Get the length of the request contents of a `SynchronousMessage`.
+size_t pactffi_sync_message_get_request_contents_length(SynchronousMessage *message);
+struct PactSyncMessageIterator *pactffi_pact_handle_get_sync_message_iter(PactHandle pact);
+struct SynchronousMessage *pactffi_pact_sync_message_iter_next(struct PactSyncMessageIterator *iter);
+
+// Async
+// Get the length of the contents of a `Message`.
+size_t pactffi_message_get_contents_length(Message *message);
+
+//  Get the contents of a `Message` as a pointer to an array of bytes.
+const unsigned char *pactffi_message_get_contents_bin(const Message *message);
+struct PactMessageIterator *pactffi_pact_handle_get_message_iter(PactHandle pact);
+struct Message *pactffi_pact_message_iter_next(struct PactMessageIterator *iter);
+
+// Need the index of the body to get
+const unsigned char *pactffi_sync_message_get_response_contents_bin(const struct SynchronousMessage *message, size_t index);
+size_t pactffi_sync_message_get_response_contents_length(const struct SynchronousMessage *message, size_t index);
+
+// Sync
+// Get the request contents of a `SynchronousMessage` as a pointer to an array of bytes.
+// The number of bytes in the buffer will be returned by `pactffi_sync_message_get_request_contents_length`.
+const unsigned char *pactffi_sync_message_get_request_contents_bin(SynchronousMessage *message);
+// Set Sync message request body - non binary
+void pactffi_sync_message_set_request_contents(InteractionHandle *message, const char *contents, const char *content_type);
+
+// Set Sync message request body - binary
+void pactffi_sync_message_set_request_contents_bin(InteractionHandle *message, const unsigned char *contents, size_t len, const char *content_type);
+
+// Set sync message response contents - non binary
+void pactffi_sync_message_set_response_contents(InteractionHandle *message, size_t index, const char *contents, const char *content_type);
+
+// Set sync message response contents - binary
+void pactffi_sync_message_set_response_contents_bin(InteractionHandle *message, size_t index, const unsigned char *contents, size_t len, const char *content_type);
+*/

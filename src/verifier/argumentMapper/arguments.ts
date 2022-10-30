@@ -45,6 +45,7 @@ export const orderOfExecution: OrderedExecution = {
   pactffiVerifierAddCustomHeader: 8,
   pactffiVerifierAddDirectorySource: 9,
   pactffiVerifierBrokerSourceWithSelectors: 10,
+  pactffiVerifierAddProviderTransport: 11,
 };
 
 export const ffiFnMapping: FnMapping<
@@ -310,6 +311,26 @@ export const ffiFnMapping: FnMapping<
       return {
         status: FnValidationStatus.IGNORE,
         messages: ['No disableSslVerification or timeout set'],
+      };
+    },
+  },
+  pactffiVerifierAddProviderTransport: {
+    validateAndExecute(ffi, handle, options) {
+      if (Array.isArray(options.transports)) {
+        options.transports.forEach((transport) => {
+          ffi.pactffiVerifierAddProviderTransport(
+            handle,
+            transport.protocol,
+            transport.port,
+            transport.path || '',
+            transport.scheme || ''
+          );
+        });
+        return { status: FnValidationStatus.SUCCESS };
+      }
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: ['No additional provider transports provided'],
       };
     },
   },

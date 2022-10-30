@@ -110,12 +110,26 @@ export type RequestMismatch = {
   body?: string;
 };
 
-export type PluginInteraction = {
+export type PluginInteraction = RequestPluginInteraction &
+  ResponsePluginInteraction &
+  RequestResponsePluginInteraction;
+
+export type RequestPluginInteraction = {
   withPluginRequestInteractionContents: (
     contentType: string,
     contents: string
   ) => boolean;
+};
+
+export type ResponsePluginInteraction = {
   withPluginResponseInteractionContents: (
+    contentType: string,
+    contents: string
+  ) => boolean;
+};
+
+export type RequestResponsePluginInteraction = {
+  withPluginRequestResponseInteractionContents: (
     contentType: string,
     contents: string
   ) => boolean;
@@ -124,6 +138,7 @@ export type PluginInteraction = {
 export type PluginPact = {
   addPlugin: (plugin: string, version: string) => void;
   cleanupPlugins: () => void;
+  cleanupMockServer: (port: number) => boolean;
 };
 
 export type ConsumerInteraction = PluginInteraction & {
@@ -149,14 +164,6 @@ export type ConsumerInteraction = PluginInteraction & {
     filename: string,
     mimePartName: string
   ) => boolean;
-  withPluginRequestInteractionContents: (
-    contentType: string,
-    contents: string
-  ) => void;
-  withPluginResponseInteractionContents: (
-    contentType: string,
-    contents: string
-  ) => void;
 };
 
 export type ConsumerPact = PluginPact & {
@@ -185,7 +192,7 @@ export type ConsumerPact = PluginPact & {
   addMetadata: (namespace: string, name: string, value: string) => boolean;
 };
 
-export type ConsumerMessage = PluginInteraction & {
+export type AsynchronousMessage = RequestPluginInteraction & {
   given: (state: string) => void;
   givenWithParam: (state: string, name: string, value: string) => void;
   expectsToReceive: (description: string) => void;
@@ -195,15 +202,59 @@ export type ConsumerMessage = PluginInteraction & {
   reifyMessage: () => string;
 };
 
+export type SynchronousMessage = PluginInteraction & {
+  given: (state: string) => void;
+  givenWithParam: (state: string, name: string, value: string) => void;
+  withMetadata: (name: string, value: string) => void;
+  withRequestContents: (body: string, contentType: string) => void;
+  withResponseContents: (body: string, contentType: string) => void;
+  withRequestBinaryContents: (body: Buffer, contentType: string) => void;
+  withResponseBinaryContents: (body: Buffer, contentType: string) => void;
+  // TODO: need a type to return the contents back to the test
+  //       reify could be the way to do it
+  // reifyMessage: () => string;
+};
+
 export type ConsumerMessagePact = PluginPact & {
-  newMessage: (description: string) => ConsumerMessage;
+  newAsynchronousMessage: (description: string) => AsynchronousMessage;
+  newSynchronousMessage: (description: string) => SynchronousMessage;
+  pactffiCreateMockServerForTransport: (
+    address: string,
+    transport: string,
+    config: string,
+    port?: number
+  ) => number;
   /**
    * This function writes the pact file, regardless of whether or not the test was successful.
    * Do not call it without checking that the tests were successful, unless you want to write the wrong pact contents.
    *
    * @param dir the directory to write the pact file to
-   * @param overwrite whether or not to overwrite the pact file contents (default true)
+   * @param merge whether or not to merge the pact file contents with previous test runs (default true)
    */
-  writePactFile: (dir: string, overwrite?: boolean) => void;
+  writePactFile: (dir: string, merge?: boolean) => void;
+  /**
+   * This function writes the pact file, using the given plugin transport port.
+   * If you are using plugins in your test, you must use this method
+   *
+   * @param port The port that identifies the custom mock server
+   * @param dir The directory to write the pact file to
+   * @param merge whether or not to merge the pact file contents with previous test runs (default true)
+   * @returns
+   */
+  writePactFileForPluginServer: (
+    port: number,
+    dir: string,
+    merge?: boolean
+  ) => void;
   addMetadata: (namespace: string, name: string, value: string) => boolean;
+  mockServerMismatches: (port: number) => MatchingResult[];
+  /**
+   * Check if a mock server has matched all its requests.
+   *
+   * @param port the port number the mock server is running on.
+   * @returns {boolean} true if all requests have been matched. False if there
+   * is no mock server on the given port, or if any request has not been successfully matched, or
+   * the method panics.
+   */
+  mockServerMatchedSuccessfully: (port: number) => boolean;
 };

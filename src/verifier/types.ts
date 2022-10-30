@@ -18,6 +18,13 @@ export type CustomHeaders = {
   [header: string]: string;
 };
 
+export interface Transport {
+  protocol: string;
+  port: number;
+  scheme?: string;
+  path?: string;
+}
+
 export interface VerifierOptions {
   providerBaseUrl: string;
   provider?: string;
@@ -43,6 +50,7 @@ export interface VerifierOptions {
   buildUrl?: string;
   customProviderHeaders?: CustomHeaders | string[];
   consumerFilters?: string[];
+  transports?: Transport[];
   /**
    * @deprecated use providerVersionBranch instead
    */

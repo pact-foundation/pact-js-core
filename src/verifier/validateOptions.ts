@@ -250,6 +250,7 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
     logDir: [deprecatedFunction],
     consumerFilters: [assertNonEmptyString],
     failIfNoPactsFound: [assertBoolean],
+    transports: [],
   };
 
 export const validateOptions = (options: VerifierOptions): VerifierOptions => {

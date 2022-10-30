@@ -152,7 +152,6 @@ Napi::Value PactffiVerifierShutdown(const Napi::CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
-
 /**
  * Set the provider details for the Pact verifier. Passing a NULL for any field will
  * use the default value for that field.
@@ -210,6 +209,105 @@ Napi::Value PactffiVerifierSetProviderInfo(const Napi::CallbackInfo& info) {
   std::string path = info[5].As<Napi::String>().Utf8Value();
 
   pactffi_verifier_set_provider_info(handles[handleId], name.c_str(), scheme.c_str(), host.c_str(), port, path.c_str());
+
+  return info.Env().Undefined();
+}
+
+
+/**
+ * Adds a new transport for the given provider. Passing a NULL for any field will
+ * use the default value for that field.
+ *
+ * For non-plugin based message interactions, set protocol to "message" and set scheme
+ * to an empty string or "https" if secure HTTP is required. Communication to the calling
+ * application will be over HTTP to the default provider hostname.
+ *
+ * # Safety
+ *
+ * All string fields must contain valid UTF-8. Invalid UTF-8
+ * will be replaced with U+FFFD REPLACEMENT CHARACTER.
+ *
+ * C interface:
+ *
+ * 
+ *    void pactffi_verifier_add_provider_transport(VerifierHandle *handle,
+ *                                           const char *protocol,
+ *                                           unsigned short port,
+ *                                           const char *path
+ *                                           const char *scheme);
+ *
+ * */
+Napi::Value PactffiVerifierAddProviderTransport(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 5) {
+    throw Napi::Error::New(env, "PactffiVerifierAddProviderTransport received < 6 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiVerifierAddProviderTransport(arg 0) expected a VerifierHandle");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiVerifierAddProviderTransport(arg 1) expected a string");
+  }
+
+  if (!info[2].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiVerifierAddProviderTransport(arg 2) expected a number");
+  }
+
+  if (!info[3].IsString()) {
+    throw Napi::Error::New(env, "PactffiVerifierAddProviderTransport(arg 3) expected a string");
+  }
+
+  if (!info[4].IsString()) {
+    throw Napi::Error::New(env, "PactffiVerifierAddProviderTransport(arg 4) expected a string");
+  }
+
+  uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
+  std::string protocol = info[1].As<Napi::String>().Utf8Value();
+  uint32_t port = info[2].As<Napi::Number>().Uint32Value();
+  std::string path = info[3].As<Napi::String>().Utf8Value();
+  std::string scheme = info[4].As<Napi::String>().Utf8Value();
+
+  pactffi_verifier_add_provider_transport(handles[handleId], protocol.c_str(), port, path.c_str(), scheme.c_str());
+
+  return info.Env().Undefined();
+}
+
+/**
+ * Enables or disables if no pacts are found to verify results in an error.
+ *
+ * `is_error` is a boolean value. Set it to greater than zero to enable an error when no pacts
+ * are found to verify, and set it to zero to disable this.
+ *
+ * # Safety
+ *
+ * This function is safe as long as the handle pointer points to a valid handle.
+ *
+ * C interface:
+ *
+ * 
+ *    int pactffi_verifier_set_no_pacts_is_error(struct VerifierHandle *handle, unsigned char is_error);
+ *
+ * */
+Napi::Value PactffiVerifierSetNoPactsIsError(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiVerifierSetProviderInfo received < 2 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetProviderInfo(arg 0) expected a VerifierHandle");
+  }
+
+  if (!info[1].IsBoolean()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetProviderInfo(arg 1 expected a boolean");
+  }
+
+  uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
+  bool isError = info[1].As<Napi::Boolean>().Value();
+
+  pactffi_verifier_set_no_pacts_is_error(handles[handleId], isError);
 
   return info.Env().Undefined();
 }
