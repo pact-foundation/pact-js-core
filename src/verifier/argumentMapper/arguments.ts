@@ -14,13 +14,23 @@ const objArrayToStringArray = (obj: unknown[]) => {
   return obj.map((o) => JSON.stringify(o));
 };
 
-export type IgnoredFfiFunctions = {
+type IgnoredFfiFunctions = {
   pactffiVerifierNewForApplication: 1;
   pactffiVerifierExecute: 1;
   pactffiVerifierShutdown: 1;
 };
 
-export type OrderedExecution = {
+type MergedFfiSourceFunctions = {
+  pactffiVerifierAddFileSource: 1;
+  pactffiVerifierUrlSource: 1;
+};
+
+type RequiredFfiVerificationFunctions = Omit<
+  FfiVerificationFunctions,
+  keyof (IgnoredFfiFunctions & MergedFfiSourceFunctions)
+>;
+
+type OrderedExecution = {
   [Key in keyof RequiredFfiVerificationFunctions]: number;
 };
 
@@ -36,16 +46,6 @@ export const orderOfExecution: OrderedExecution = {
   pactffiVerifierAddDirectorySource: 9,
   pactffiVerifierBrokerSourceWithSelectors: 10,
 };
-
-export type MergedFfiSourceFunctions = {
-  pactffiVerifierAddFileSource: 1;
-  pactffiVerifierUrlSource: 1;
-};
-
-export type RequiredFfiVerificationFunctions = Omit<
-  FfiVerificationFunctions,
-  keyof (IgnoredFfiFunctions & MergedFfiSourceFunctions)
->;
 
 export const ffiFnMapping: FnMapping<
   RequiredFfiVerificationFunctions,
@@ -77,13 +77,16 @@ export const ffiFnMapping: FnMapping<
           }
         }
         if (messages.length > 0) {
-          return { status: FnValidationStatus.FAIL };
+          return { status: FnValidationStatus.FAIL, messages };
         }
 
         return { status: FnValidationStatus.SUCCESS };
       }
 
-      return { status: FnValidationStatus.IGNORE };
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: ['No customProviderHeaders option provided'],
+      };
     },
   },
   pactffiVerifierAddDirectorySource: {
@@ -141,7 +144,10 @@ export const ffiFnMapping: FnMapping<
         return { status: FnValidationStatus.SUCCESS };
       }
 
-      return { status: FnValidationStatus.IGNORE };
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: ['No pactUrls option provided'],
+      };
     },
   },
   pactffiVerifierBrokerSourceWithSelectors: {
@@ -166,7 +172,12 @@ export const ffiFnMapping: FnMapping<
         );
         return { status: FnValidationStatus.SUCCESS };
       }
-      return { status: FnValidationStatus.IGNORE };
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: [
+          'No pactBrokerUrl option / PACT_BROKER_BASE_URL set, or no provider option set',
+        ],
+      };
     },
   },
   pactffiVerifierSetConsumerFilters: {
@@ -175,7 +186,12 @@ export const ffiFnMapping: FnMapping<
         ffi.pactffiVerifierSetConsumerFilters(handle, options.consumerFilters);
         return { status: FnValidationStatus.SUCCESS };
       }
-      return { status: FnValidationStatus.IGNORE };
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: [
+          'Either no consumerFilters option provided, or the array was empty',
+        ],
+      };
     },
   },
   pactffiVerifierSetFailIfNoPactsFound: {
@@ -187,7 +203,10 @@ export const ffiFnMapping: FnMapping<
         );
         return { status: FnValidationStatus.SUCCESS };
       }
-      return { status: FnValidationStatus.IGNORE };
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: ['No failIfNoPactsFound option provided'],
+      };
     },
   },
   pactffiVerifierSetFilterInfo: {
@@ -211,7 +230,12 @@ export const ffiFnMapping: FnMapping<
         return { status: FnValidationStatus.SUCCESS };
       }
 
-      return { status: FnValidationStatus.IGNORE };
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: [
+          'None of PACT_DESCRIPTION, PACT_PROVIDER_STATE or PACT_PROVIDER_NO_STATE were set in the environment',
+        ],
+      };
     },
   },
   pactffiVerifierSetProviderInfo: {
@@ -242,7 +266,10 @@ export const ffiFnMapping: FnMapping<
         return { status: FnValidationStatus.SUCCESS };
       }
 
-      return { status: FnValidationStatus.IGNORE };
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: ['No failIfNoPactsFound option provided'],
+      };
     },
   },
   pactffiVerifierSetPublishOptions: {
@@ -261,7 +288,12 @@ export const ffiFnMapping: FnMapping<
         );
         return { status: FnValidationStatus.SUCCESS };
       }
-      return { status: FnValidationStatus.IGNORE };
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: [
+          'No publishVerificationResult option / PACT_BROKER_PUBLISH_VERIFICATION_RESULTS set, or no providerVersion option',
+        ],
+      };
     },
   },
   pactffiVerifierSetVerificationOptions: {
@@ -275,7 +307,10 @@ export const ffiFnMapping: FnMapping<
         return { status: FnValidationStatus.SUCCESS };
       }
 
-      return { status: FnValidationStatus.IGNORE };
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: ['No disableSslVerification or timeout set'],
+      };
     },
   },
 };

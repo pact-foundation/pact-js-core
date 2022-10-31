@@ -1,4 +1,4 @@
-import { FnValidationStatus } from './types';
+import { FnValidationResult, FnValidationStatus } from './types';
 import logger, { logCrashAndThrow, logErrorAndThrow } from '../../logger';
 import { InternalPactVerifierOptions } from '../types';
 import { ffiFnMapping, orderOfExecution } from './arguments';
@@ -15,7 +15,7 @@ export const setupVerification = (
 
   order.map((k) => {
     const fn = functionsToCall[k];
-    const validation = ffiFnMapping[fn].validateAndExecute(
+    const validation: FnValidationResult = ffiFnMapping[fn].validateAndExecute(
       ffi,
       handle,
       options
@@ -24,23 +24,21 @@ export const setupVerification = (
     switch (validation.status) {
       case FnValidationStatus.FAIL:
         logErrorAndThrow(
-          `the required ffi function '${fn}' failed validation with errors: ${
-            validation.messages || [].join(',')
-          }`
+          `the required ffi function '${fn}' failed validation with errors: ${validation.messages}`
         );
         break;
       case FnValidationStatus.IGNORE:
         logger.debug(
-          `the optional ffi function '${fn}' was not executed as it had non-fatal validation errors: ${
-            validation.messages || [].join(',')
-          }`
+          `the optional ffi function '${fn}' was not executed as it had non-fatal validation errors: ${validation.messages}`
         );
         break;
       case FnValidationStatus.SUCCESS:
         break;
       default:
         logCrashAndThrow(
-          `the ffi function '${fn}' returned the following unrecognised validation signal: '${validation.status}'`
+          `the ffi function '${fn}' returned the following unrecognised validation signal: '${
+            (validation as FnValidationResult).status
+          }'`
         );
     }
   });

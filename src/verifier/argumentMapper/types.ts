@@ -1,17 +1,25 @@
 import logger from '../../logger';
+import { Ffi, FfiHandle } from '../../ffi/types';
 
-export const deprecatedFunction = (_: any, property: string): boolean => {
+export const deprecatedFunction = (_: unknown, property: string): boolean => {
   logger.warn(`${property} is deprecated and no longer has any effect`);
 
   return true;
 };
-import { Ffi, FfiHandle } from '../../ffi/types';
 
-export type FnObject = {
-  [key: string]: (...args: any) => any;
+type KeyedObject = {
+  [key: string]: unknown;
 };
 
-export type FnMapping<T extends FnObject, O> = {
+type FnArgumentMapping<O> = {
+  validateAndExecute: (
+    ffi: Ffi,
+    handle: FfiHandle,
+    options: O
+  ) => FnValidationResult;
+};
+
+export type FnMapping<T extends KeyedObject, O> = {
   [Key in keyof T]: FnArgumentMapping<O>;
 };
 
@@ -21,15 +29,21 @@ export enum FnValidationStatus {
   FAIL = 2,
 }
 
-export type FnValidationResult = {
-  status: FnValidationStatus;
-  messages?: string[];
+type FnValidationResultSuccess = {
+  status: FnValidationStatus.SUCCESS;
 };
 
-export type FnArgumentMapping<O> = {
-  validateAndExecute: (
-    ffi: Ffi,
-    handle: FfiHandle,
-    options: O
-  ) => FnValidationResult;
+type FnValidationResultFail = {
+  status: FnValidationStatus.FAIL;
+  messages: string[];
 };
+
+type FnValidationResultIgnore = {
+  status: FnValidationStatus.IGNORE;
+  messages: string[];
+};
+
+export type FnValidationResult =
+  | FnValidationResultSuccess
+  | FnValidationResultFail
+  | FnValidationResultIgnore;
