@@ -9,7 +9,7 @@ import * as http from 'http';
 
 chai.use(chaiAsPromised);
 
-describe.only('MATT protocol test', () => {
+describe.skip('MATT protocol test', () => {
   setLogLevel('info');
 
   describe('HTTP and TCP Provider', () => {

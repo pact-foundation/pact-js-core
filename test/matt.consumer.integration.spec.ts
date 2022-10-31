@@ -15,7 +15,7 @@ import { FfiSpecificationVersion } from '../src/ffi/types';
 chai.use(chaiAsPromised);
 const expect = chai.expect;
 
-describe('MATT protocol test', () => {
+describe.skip('MATT protocol test', () => {
   setLogLevel('trace');
 
   let provider: ConsumerPact;
