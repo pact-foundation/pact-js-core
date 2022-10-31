@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.11.0](https://github.com/pact-foundation/pact-js-core/compare/v13.10.0...v13.11.0) (2022-10-31)
+
+
+### Features
+
+* add additional FFI methods to support plugins ([246e86f](https://github.com/pact-foundation/pact-js-core/commit/246e86f8f41a2228ec656425447e28c6e4227433))
+* support branch/autoDetectVersionProperties when publishing pacts ([64ab2ea](https://github.com/pact-foundation/pact-js-core/commit/64ab2ea110ea78315fb4609ad92a5fb90e96ddc7))
+
+
+### Fixes and Improvements
+
+* Add error messages to the ignored option debug logs ([8c8386d](https://github.com/pact-foundation/pact-js-core/commit/8c8386ddc356f279f3f7b3c503b403bf9f3b912a))
+
 ## [13.10.0](https://github.com/pact-foundation/pact-js-core/compare/v13.9.1...v13.10.0) (2022-10-18)
 
 
