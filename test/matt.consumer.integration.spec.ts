@@ -91,8 +91,11 @@ describe('MATT protocol test', () => {
     });
     describe('with MATT protocol', async () => {
       afterEach(() => {
-        tcpProvider.writePactFileForPluginServer(port, path.join(__dirname, '__testoutput__'));
-        tcpProvider.cleanupPlugins()
+        tcpProvider.writePactFileForPluginServer(
+          port,
+          path.join(__dirname, '__testoutput__')
+        );
+        tcpProvider.cleanupPlugins();
         // tcpProvider.cleanupMockServer(port)
       });
 

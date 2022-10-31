@@ -33,20 +33,19 @@ describe('Verifier Integration Spec', () => {
               protocol: 'grpc',
             },
           ],
-          logLevel: "debug",
+          logLevel: 'debug',
           pactUrls: [`${__dirname}/integration/grpc/grpc.json`],
         }).verify();
 
         expect('').to.eq('');
       });
 
-
       it.skip('runs the grpc client', async () => {
         const protoFile = `${__dirname}/integration/grpc/route_guide.proto`;
         const feature = await getFeature(`127.0.0.1:${GRPC_PORT}`, protoFile);
 
-        console.log(feature)
-      })
+        console.log(feature);
+      });
     });
   });
 });
@@ -61,7 +60,7 @@ const getGRPCServer = () => {
     defaults: true,
     oneofs: true,
   };
-  var packageDefinition = loadSync(PROTO_PATH, options);
+  const packageDefinition = loadSync(PROTO_PATH, options);
   const routeguide: any =
     grpc.loadPackageDefinition(packageDefinition).routeguide;
 
@@ -70,7 +69,7 @@ const getGRPCServer = () => {
   server.addService(routeguide.RouteGuide.service, {
     getFeature: (_: unknown, callback: any) => {
       callback(null, {
-        name: "A place",
+        name: 'A place',
         latitude: 200,
         longitude: 180,
       });
@@ -110,30 +109,28 @@ const startHTTPServer = (port: number): Promise<http.Server> => {
   }).then(() => s);
 };
 
-
 const getFeature = async (address: string, protoFile: string) => {
-    const def = loadSync(protoFile);
-    const routeguide: any = grpc.loadPackageDefinition(def).routeguide;
-  
-    const client = new routeguide.RouteGuide(
-      address,
-      grpc.credentials.createInsecure()
-    );
-  
-    return new Promise<any>((resolve, reject) => {
-      client.GetFeature(
-        {
-          latitude: 180,
-          longitude: 200,
-        },
-        (e: Error, feature: any) => {
-          if (e) {
-            reject(e);
-          } else {
-            resolve(feature);
-          }
+  const def = loadSync(protoFile);
+  const routeguide: any = grpc.loadPackageDefinition(def).routeguide;
+
+  const client = new routeguide.RouteGuide(
+    address,
+    grpc.credentials.createInsecure()
+  );
+
+  return new Promise<any>((resolve, reject) => {
+    client.GetFeature(
+      {
+        latitude: 180,
+        longitude: 200,
+      },
+      (e: Error, feature: any) => {
+        if (e) {
+          reject(e);
+        } else {
+          resolve(feature);
         }
-      );
-    });
-  };
-  
+      }
+    );
+  });
+};
