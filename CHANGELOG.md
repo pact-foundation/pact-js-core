@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.11.1](https://github.com/pact-foundation/pact-js-core/compare/v13.11.0...v13.11.1) (2022-11-02)
+
+
+### Fixes and Improvements
+
+* restore makeConsumerAsyncMessagePact ([1c4a893](https://github.com/pact-foundation/pact-js-core/commit/1c4a8930f760aeaeb0cc146574af0785a46d18f4))
+
 ## [13.11.0](https://github.com/pact-foundation/pact-js-core/compare/v13.10.0...v13.11.0) (2022-10-31)
 
 
