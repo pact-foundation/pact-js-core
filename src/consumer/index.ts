@@ -306,61 +306,16 @@ export const makeConsumerMessagePact = (
     addMetadata: (namespace: string, name: string, value: string): boolean => {
       return ffi.pactffiWithPactMetadata(pactPtr, namespace, name, value);
     },
+    // Alias for newAsynchronousMessage
+    newMessage: (description: string): AsynchronousMessage => {
+      const interactionPtr = ffi.pactffiNewAsyncMessage(pactPtr, description);
+
+      return asyncMessage(ffi, interactionPtr);
+    },
     newAsynchronousMessage: (description: string): AsynchronousMessage => {
       const interactionPtr = ffi.pactffiNewAsyncMessage(pactPtr, description);
 
-      return {
-        withPluginRequestInteractionContents: (
-          contentType: string,
-          contents: string
-        ) => {
-          ffi.pactffiPluginInteractionContents(
-            interactionPtr,
-            INTERACTION_PART_REQUEST,
-            contentType,
-            contents
-          );
-          return true;
-        },
-        expectsToReceive: (description: string) => {
-          return ffi.pactffiMessageExpectsToReceive(
-            interactionPtr,
-            description
-          );
-        },
-        given: (state: string) => {
-          return ffi.pactffiMessageGiven(interactionPtr, state);
-        },
-        givenWithParam: (state: string, name: string, value: string) => {
-          return ffi.pactffiMessageGivenWithParam(
-            interactionPtr,
-            state,
-            name,
-            value
-          );
-        },
-        withContents: (body: string, contentType: string) => {
-          return ffi.pactffiMessageWithContents(
-            interactionPtr,
-            contentType,
-            body
-          );
-        },
-        withBinaryContents: (body: Buffer, contentType: string) => {
-          return ffi.pactffiMessageWithBinaryContents(
-            interactionPtr,
-            contentType,
-            body,
-            body.length
-          );
-        },
-        reifyMessage: () => {
-          return ffi.pactffiMessageReify(interactionPtr);
-        },
-        withMetadata: (name: string, value: string) => {
-          return ffi.pactffiMessageWithMetadata(interactionPtr, name, value);
-        },
-      };
+      return asyncMessage(ffi, interactionPtr);
     },
     newSynchronousMessage: (description: string): SynchronousMessage => {
       // TODO: will this automatically set the correct spec version?
@@ -483,6 +438,8 @@ export const makeConsumerMessagePact = (
   };
 };
 
+export const makeConsumerAsyncMessagePact = makeConsumerMessagePact;
+
 const writePact = (
   ffi: Ffi,
   pactPtr: FfiPactHandle,
@@ -515,5 +472,46 @@ const writePact = (
       );
   }
 };
+
+const asyncMessage = (ffi: Ffi, interactionPtr: number) => ({
+  withPluginRequestInteractionContents: (
+    contentType: string,
+    contents: string
+  ) => {
+    ffi.pactffiPluginInteractionContents(
+      interactionPtr,
+      INTERACTION_PART_REQUEST,
+      contentType,
+      contents
+    );
+    return true;
+  },
+  expectsToReceive: (description: string) => {
+    return ffi.pactffiMessageExpectsToReceive(interactionPtr, description);
+  },
+  given: (state: string) => {
+    return ffi.pactffiMessageGiven(interactionPtr, state);
+  },
+  givenWithParam: (state: string, name: string, value: string) => {
+    return ffi.pactffiMessageGivenWithParam(interactionPtr, state, name, value);
+  },
+  withContents: (body: string, contentType: string) => {
+    return ffi.pactffiMessageWithContents(interactionPtr, contentType, body);
+  },
+  withBinaryContents: (body: Buffer, contentType: string) => {
+    return ffi.pactffiMessageWithBinaryContents(
+      interactionPtr,
+      contentType,
+      body,
+      body.length
+    );
+  },
+  reifyMessage: () => {
+    return ffi.pactffiMessageReify(interactionPtr);
+  },
+  withMetadata: (name: string, value: string) => {
+    return ffi.pactffiMessageWithMetadata(interactionPtr, name, value);
+  },
+});
 
 export * from './types';

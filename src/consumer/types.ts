@@ -216,6 +216,7 @@ export type SynchronousMessage = PluginInteraction & {
 };
 
 export type ConsumerMessagePact = PluginPact & {
+  newMessage: (description: string) => AsynchronousMessage;
   newAsynchronousMessage: (description: string) => AsynchronousMessage;
   newSynchronousMessage: (description: string) => SynchronousMessage;
   pactffiCreateMockServerForTransport: (
