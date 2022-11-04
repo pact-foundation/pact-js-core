@@ -202,6 +202,8 @@ export type AsynchronousMessage = RequestPluginInteraction & {
   reifyMessage: () => string;
 };
 
+export type ConsumerMessage = AsynchronousMessage;
+
 export type SynchronousMessage = PluginInteraction & {
   given: (state: string) => void;
   givenWithParam: (state: string, name: string, value: string) => void;
