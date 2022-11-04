@@ -69,7 +69,7 @@ const startTCPServer = (host: string, port: number) => {
     sock.on('data', (data) => {
       const msg = parseMattMessage(data.toString());
 
-      if (msg === "hellotcp") {
+      if (msg === 'hellotcp') {
         sock.write(generateMattMessage('tcpworld'));
       } else {
         sock.write(generateMattMessage('message not understood'));

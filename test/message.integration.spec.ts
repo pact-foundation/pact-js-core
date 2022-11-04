@@ -24,7 +24,7 @@ describe('FFI integration test for the Message Consumer API', () => {
   const bytes: Buffer = zlib.gzipSync(secret);
 
   before(() => {
-    rimraf.sync(path.join(__dirname, '__testoutput__', 'message-consumer*'))
+    rimraf.sync(path.join(__dirname, '__testoutput__', 'message-consumer*'));
   });
 
   beforeEach(() => {
@@ -51,7 +51,10 @@ describe('FFI integration test for the Message Consumer API', () => {
 
         const reified = message.reifyMessage();
 
-        expect(JSON.parse(reified).contents.content).to.have.property('foo', 'bar');
+        expect(JSON.parse(reified).contents.content).to.have.property(
+          'foo',
+          'bar'
+        );
 
         pact.writePactFile(path.join(__dirname, '__testoutput__'));
       });
