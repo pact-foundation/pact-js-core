@@ -52,7 +52,6 @@ const startHTTPServer = (host: string, port: number): Promise<http.Server> => {
   const server: express.Express = express();
 
   server.post('/matt', (req, res) => {
-    console.log('received a /matt message', req.body);
     res.setHeader('content-type', 'application/matt');
     res.send(generateMattMessage('world'));
   });
@@ -67,13 +66,14 @@ const startTCPServer = (host: string, port: number) => {
   const server = net.createServer();
 
   server.on('connection', (sock) => {
-    console.log(`Connected to client ${sock.remoteAddress}:${sock.remotePort}`);
-
     sock.on('data', (data) => {
       const msg = parseMattMessage(data.toString());
-      console.log(`Received data from ${sock.remoteAddress}: ${msg}`);
 
-      sock.write(generateMattMessage('tcpworld'));
+      if (msg === "hellotcp") {
+        sock.write(generateMattMessage('tcpworld'));
+      } else {
+        sock.write(generateMattMessage('message not understood'));
+      }
       sock.write('\n');
     });
   });
@@ -82,7 +82,6 @@ const startTCPServer = (host: string, port: number) => {
     server.listen(port, host);
 
     server.on('listening', () => {
-      console.log('listening!');
       resolve(null);
     });
   });

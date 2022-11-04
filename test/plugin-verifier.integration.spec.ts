@@ -15,7 +15,7 @@ chai.use(chaiAsPromised);
 const HTTP_PORT = 50051;
 const GRPC_PORT = 50052;
 
-describe('Verifier Integration Spec', () => {
+describe.skip('Plugin Verifier Integration Spec', () => {
   context('plugin tests', () => {
     describe('grpc interaction', () => {
       before(async () => {
@@ -40,7 +40,7 @@ describe('Verifier Integration Spec', () => {
         expect('').to.eq('');
       });
 
-      it.skip('runs the grpc client', async () => {
+      it('runs the grpc client', async () => {
         const protoFile = `${__dirname}/integration/grpc/route_guide.proto`;
         const feature = await getFeature(`127.0.0.1:${GRPC_PORT}`, protoFile);
 

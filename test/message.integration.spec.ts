@@ -1,4 +1,5 @@
 import chai = require('chai');
+import path = require('path');
 import chaiAsPromised = require('chai-as-promised');
 import * as rimraf from 'rimraf';
 import zlib = require('zlib');
@@ -16,26 +17,26 @@ const isOSX = process.platform === 'darwin';
 const isCI = process.env.CI === 'true';
 
 describe('FFI integration test for the Message Consumer API', () => {
-  setLogLevel('trace');
+  setLogLevel('error');
 
   let pact: ConsumerMessagePact;
   const secret = 'this is an encoded string';
   const bytes: Buffer = zlib.gzipSync(secret);
 
+  before(() => {
+    rimraf.sync(path.join(__dirname, '__testoutput__', 'message-consumer*'))
+  });
+
   beforeEach(() => {
-    rimraf.sync('/tmp/pact/*.json');
+    pact = makeConsumerMessagePact(
+      'message-consumer',
+      'message-provider',
+      FfiSpecificationVersion.SPECIFICATION_VERSION_V4
+    );
   });
 
   describe('Asynchronous Messages', () => {
     describe('with JSON data', () => {
-      beforeEach(() => {
-        pact = makeConsumerMessagePact(
-          'message-consumer',
-          'message-provider',
-          FfiSpecificationVersion.SPECIFICATION_VERSION_V3
-        );
-      });
-
       it('generates a pact with success', () => {
         pact.addMetadata('pact-node', 'meta-key', 'meta-val');
         const message = pact.newAsynchronousMessage('');
@@ -50,9 +51,9 @@ describe('FFI integration test for the Message Consumer API', () => {
 
         const reified = message.reifyMessage();
 
-        expect(JSON.parse(reified).contents).to.have.property('foo', 'bar');
+        expect(JSON.parse(reified).contents.content).to.have.property('foo', 'bar');
 
-        pact.writePactFile('/tmp/pact');
+        pact.writePactFile(path.join(__dirname, '__testoutput__'));
       });
     });
 
@@ -79,22 +80,16 @@ describe('FFI integration test for the Message Consumer API', () => {
         const contents = JSON.parse(reified).contents;
 
         // Check the base64 encoded contents can be decoded, unzipped and equals the secret
-        const buf = Buffer.from(contents, 'base64');
+        const buf = Buffer.from(contents.content, 'base64');
         const deflated = zlib.gunzipSync(buf).toString('utf8');
         expect(deflated).to.equal(secret);
 
-        pact.writePactFile('/tmp/pact');
+        pact.writePactFile(path.join(__dirname, '__testoutput__'));
       });
     });
   });
+
   describe('Synchronous Messages', () => {
-    beforeEach(() => {
-      pact = makeConsumerMessagePact(
-        'message-consumer',
-        'message-provider',
-        FfiSpecificationVersion.SPECIFICATION_VERSION_V4
-      );
-    });
     describe('with JSON data', () => {
       it('generates a pact with success', () => {
         pact.addMetadata('pact-node', 'meta-key', 'meta-val');
@@ -115,7 +110,7 @@ describe('FFI integration test for the Message Consumer API', () => {
 
         // expect(JSON.parse(reified).contents).to.have.property('foo', 'bar');
 
-        pact.writePactFile('/tmp/pact');
+        pact.writePactFile(path.join(__dirname, '__testoutput__'));
       });
     });
 
@@ -152,14 +147,13 @@ describe('FFI integration test for the Message Consumer API', () => {
         pact.addMetadata('pact-node', 'meta-key', 'meta-val');
         pact.addPlugin('protobuf', '0.1.14');
 
-        const message = pact.newSynchronousMessage('a grpc test');
-        message.given('some state');
-        message.givenWithParam('some state 2', 'state2 key', 'state2 val');
+        const message = pact.newSynchronousMessage('a grpc test 1');
+        message.given('some state 1');
         message.withPluginRequestResponseInteractionContents(
           'application/protobuf',
           grpcInteraction
         );
-        message.withMetadata('meta-key', 'meta-val');
+        message.withMetadata('meta-key 1', 'meta-val 2');
 
         port = pact.pactffiCreateMockServerForTransport(
           '127.0.0.1',
@@ -178,7 +172,7 @@ describe('FFI integration test for the Message Consumer API', () => {
         const mismatches = pact.mockServerMismatches(port);
         expect(mismatches.length).to.eq(0);
 
-        pact.writePactFile('/tmp/pact');
+        pact.writePactFile(path.join(__dirname, '__testoutput__'));
       });
     });
   });

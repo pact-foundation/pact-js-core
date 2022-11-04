@@ -81,7 +81,7 @@ describe.skip('MATT protocol test', () => {
     });
   });
 
-  describe.only('TCP Messages', () => {
+  describe('TCP Messages', () => {
     beforeEach(() => {
       tcpProvider = makeConsumerMessagePact(
         'matt-tcp-consumer',
