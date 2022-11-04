@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.11.2](https://github.com/pact-foundation/pact-js-core/compare/v13.11.1...v13.11.2) (2022-11-04)
+
+
+### Fixes and Improvements
+
+* restore ConsumerMessage type (alias) ([f44283d](https://github.com/pact-foundation/pact-js-core/commit/f44283de63825c988ec44a36af75712f4f8fd0d9))
+
 ### [13.11.1](https://github.com/pact-foundation/pact-js-core/compare/v13.11.0...v13.11.1) (2022-11-02)
 
 
