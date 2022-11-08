@@ -168,6 +168,14 @@ export type ConsumerInteraction = PluginInteraction & {
 
 export type ConsumerPact = PluginPact & {
   newInteraction: (description: string) => ConsumerInteraction;
+  newAsynchronousMessage: (description: string) => AsynchronousMessage;
+  newSynchronousMessage: (description: string) => SynchronousMessage;
+  pactffiCreateMockServerForTransport: (
+    address: string,
+    transport: string,
+    config: string,
+    port?: number
+  ) => number;
   createMockServer: (address: string, port?: number, tls?: boolean) => number;
   mockServerMismatches: (port: number) => MatchingResult[];
   cleanupMockServer: (port: number) => boolean;
@@ -180,6 +188,20 @@ export type ConsumerPact = PluginPact & {
    * @param merge whether or not to merge the pact file contents (default true)
    */
   writePactFile: (dir: string, merge?: boolean) => void;
+  /**
+   * This function writes the pact file, using the given plugin transport port.
+   * If you are using plugins in your test, you must use this method
+   *
+   * @param port The port that identifies the custom mock server
+   * @param dir The directory to write the pact file to
+   * @param merge whether or not to merge the pact file contents with previous test runs (default true)
+   * @returns
+   */
+  writePactFileForPluginServer: (
+    port: number,
+    dir: string,
+    merge?: boolean
+  ) => void;
   /**
    * Check if a mock server has matched all its requests.
    *

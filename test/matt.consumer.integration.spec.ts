@@ -28,8 +28,12 @@ describe.skip('MATT protocol test', () => {
       const mattRequest = `{"request": {"body": "hello"}}`;
       const mattResponse = `{"response":{"body":"world"}}`;
 
-      provider = makeConsumerPact('matt-consumer', 'matt-provider');
-      provider.addPlugin('matt', '0.0.1');
+      provider = makeConsumerPact(
+        'matt-consumer',
+        'matt-provider',
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V4
+      );
+      provider.addPlugin('matt', '0.0.2');
 
       const interaction = provider.newInteraction('');
       interaction.uponReceiving('A request to communicate via MATT');
@@ -101,7 +105,7 @@ describe.skip('MATT protocol test', () => {
 
       beforeEach(() => {
         const mattMessage = `{"request": {"body": "hellotcp"}, "response":{"body":"tcpworld"}}`;
-        tcpProvider.addPlugin('matt', '0.0.1');
+        tcpProvider.addPlugin('matt', '0.0.2');
 
         const message = tcpProvider.newSynchronousMessage('a MATT message');
         message.withPluginRequestResponseInteractionContents(
