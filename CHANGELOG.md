@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.12.0](https://github.com/pact-foundation/pact-js-core/compare/v13.11.3...v13.12.0) (2022-11-08)
+
+
+### Features
+
+* support HTTP + non-HTTP in ConsumerPact ([56786f2](https://github.com/pact-foundation/pact-js-core/commit/56786f2f300821868f98086e1cd2ac6ee3e8180b))
+
 ### [13.11.3](https://github.com/pact-foundation/pact-js-core/compare/v13.11.2...v13.11.3) (2022-11-07)
 
 
