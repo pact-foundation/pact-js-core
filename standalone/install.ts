@@ -25,7 +25,7 @@ if (environmentProxy) {
 }
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = '1.89.02-rc1';
+export const PACT_STANDALONE_VERSION = '1.91.0';
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
 
