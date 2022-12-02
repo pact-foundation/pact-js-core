@@ -2,7 +2,8 @@ export type MatchingResult =
   | MatchingResultSuccess
   | MatchingResultRequestMismatch
   | MatchingResultRequestNotFound
-  | MatchingResultMissingRequest;
+  | MatchingResultMissingRequest
+  | MatchingResultPlugin;
 
 // As far as I can tell, MatchingResultSuccess is actually
 // never produced by the FFI lib
@@ -31,6 +32,12 @@ export type MatchingResultMissingRequest = {
   request: RequestMismatch;
 };
 
+export type MatchingResultPlugin = {
+  error: string;
+  path?: string;
+  mismatches: PluginContentMismatch[];
+};
+
 export type Mismatch =
   | MethodMismatch
   | PathMismatch
@@ -39,7 +46,8 @@ export type Mismatch =
   | HeaderMismatch
   | BodyTypeMismatch
   | BodyMismatch
-  | MetadataMismatch;
+  | MetadataMismatch
+  | PluginContentMismatch;
 
 export type MethodMismatch = {
   type: 'MethodMismatch';
@@ -108,6 +116,14 @@ export type RequestMismatch = {
   headers?: Record<string, Array<string>>;
   query?: Record<string, Array<string>>;
   body?: string;
+};
+
+export declare type PluginContentMismatch = {
+  path: string;
+  expected?: string;
+  actual?: string;
+  mismatch: string;
+  diff?: string;
 };
 
 export type PluginInteraction = RequestPluginInteraction &

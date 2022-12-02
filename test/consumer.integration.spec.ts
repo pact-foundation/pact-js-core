@@ -140,7 +140,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           const requestMismatches =
             mismatches[0] as MatchingResultRequestMismatch;
 
-          expect(mismatches[0].type).to.equal('request-mismatch');
+          expect(requestMismatches.type).to.equal('request-mismatch');
           expect(requestMismatches.method).to.equal('POST');
           expect(requestMismatches.path).to.equal('/dogs/1234');
           expect(requestMismatches.mismatches).to.deep.include({
