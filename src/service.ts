@@ -172,7 +172,7 @@ export abstract class AbstractService extends events.EventEmitter {
         const match = data.match(/port=([0-9]+)/);
         if (match && match[1]) {
           this.options.port = parseInt(match[1], 10);
-          if (this.__instance) {
+          if (this?.__instance?.stdout) {
             // __instance will never be undefined here because we just
             // read the port number from it
             this.__instance.stdout.removeListener('data', catchPort);
@@ -181,12 +181,16 @@ export abstract class AbstractService extends events.EventEmitter {
         }
       };
 
-      this.__instance.stdout.on('data', catchPort);
+      if (this?.__instance?.stdout) {
+        this.__instance.stdout.on('data', catchPort);
+      }
     }
 
-    this.__instance.stderr.on('data', (data) =>
-      logger.error(`Pact Binary Error: ${data}`)
-    );
+    if (this?.__instance?.stderr) {
+      this.__instance.stderr.on('data', (data) =>
+        logger.error(`Pact Binary Error: ${data}`)
+      );
+    }
 
     // check service is available
     return timeout(this.__waitForServiceUp(), getTimeout(this.options))

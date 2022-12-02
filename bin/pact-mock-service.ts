@@ -8,4 +8,4 @@ const status = childProcess.spawnSync(
   process.argv.slice(2),
   { stdio: 'inherit' }
 ).status;
-process.exit(status);
+process.exit(status as number);

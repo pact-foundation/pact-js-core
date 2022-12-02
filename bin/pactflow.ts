@@ -10,4 +10,4 @@ const status = childProcess.spawnSync(
     stdio: 'inherit',
   }
 ).status;
-process.exit(status);
+process.exit(status as number);
