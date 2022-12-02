@@ -309,7 +309,7 @@ Napi::Value PactffiCreateMockServerForTransport(const Napi::CallbackInfo& info) 
   std::string transport = info[3].As<Napi::String>().Utf8Value();
   std::string config = info[4].As<Napi::String>().Utf8Value();
 
-  uint16_t result = pactffi_create_mock_server_for_transport(pact, addr.c_str(), port, transport.c_str(), config.c_str());
+  uint32_t result = pactffi_create_mock_server_for_transport(pact, addr.c_str(), port, transport.c_str(), config.c_str());
 
   return Number::New(env, result);
 }
