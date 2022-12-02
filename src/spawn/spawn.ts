@@ -45,10 +45,12 @@ export class Spawn {
     logger.trace(`Environment: ${JSON.stringify(opts)}`);
     const instance = spawn(command, spawnArgs, opts);
 
-    instance.stdout.setEncoding('utf8');
-    instance.stderr.setEncoding('utf8');
-    instance.stdout.on('data', logger.debug.bind(logger));
-    instance.stderr.on('data', logger.debug.bind(logger));
+    if (instance.stderr && instance.stdout) {
+      instance.stdout.on('data', logger.debug.bind(logger));
+      instance.stdout.setEncoding('utf8');
+      instance.stderr.setEncoding('utf8');
+      instance.stderr.on('data', logger.debug.bind(logger));
+    }
     instance.on('error', logger.error.bind(logger));
     instance.once('close', (code) => {
       if (code !== 0) {
@@ -67,9 +69,11 @@ export class Spawn {
       binary.removeAllListeners();
       // Killing instance, since windows can't send signals, must kill process forcefully
       try {
-        pactEnvironment.isWindows()
-          ? cp.execSync(`taskkill /f /t /pid ${pid}`)
-          : process.kill(-pid, 'SIGINT');
+        if (pid) {
+          pactEnvironment.isWindows()
+            ? cp.execSync(`taskkill /f /t /pid ${pid}`)
+            : process.kill(-pid, 'SIGINT');
+        }
       } catch (e) {
         return false;
       }

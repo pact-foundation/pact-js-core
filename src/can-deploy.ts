@@ -107,8 +107,10 @@ export class CanDeploy {
           this.__argMapping
         );
         const output: Array<string | Buffer> = [];
-        instance.stdout.on('data', (l) => output.push(l));
-        instance.stderr.on('data', (l) => output.push(l));
+        if (instance.stdout && instance.stderr) {
+          instance.stdout.on('data', (l) => output.push(l));
+          instance.stderr.on('data', (l) => output.push(l));
+        }
         instance.once('close', (code) => {
           const result: string = output.join('\n');
 

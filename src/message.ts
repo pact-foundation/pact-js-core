@@ -87,10 +87,12 @@ export class Message {
         this.__argMapping
       );
       const output: Array<string | Buffer> = [];
-      instance.stdout.on('data', (l) => output.push(l));
-      instance.stderr.on('data', (l) => output.push(l));
-      instance.stdin.write(content);
-      instance.stdin.end();
+      if (instance.stdout && instance.stderr && instance.stdin) {
+        instance.stdout.on('data', (l) => output.push(l));
+        instance.stderr.on('data', (l) => output.push(l));
+        instance.stdin.write(content);
+        instance.stdin.end();
+      }
       instance.once('close', (code) => {
         const o = output.join('\n');
         logger.info(o);

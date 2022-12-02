@@ -117,8 +117,10 @@ export class Publisher {
           this.__argMapping
         );
         const output: Array<string | Buffer> = [];
-        instance.stdout.on('data', (l) => output.push(l));
-        instance.stderr.on('data', (l) => output.push(l));
+        if (instance.stderr && instance.stdout) {
+          instance.stdout.on('data', (l) => output.push(l));
+          instance.stderr.on('data', (l) => output.push(l));
+        }
         instance.once('close', (code) => {
           const o = output.join('\n');
           const pactUrls = /https?:\/\/.*\/pacts\/.*$/gim.exec(o);
