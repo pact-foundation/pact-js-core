@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [13.13.0](https://github.com/pact-foundation/pact-js-core/compare/v13.12.2...v13.13.0) (2022-12-02)
+
+
+### Features
+
+* new content mismatch types for plugins ([7cebccd](https://github.com/pact-foundation/pact-js-core/commit/7cebccdd412262011ae8fa33fbe1a0c26c65f10d))
+
+
+### Fixes and Improvements
+
+* pactffi_create_mock_server_for_transport returns uint32 ([8d85a81](https://github.com/pact-foundation/pact-js-core/commit/8d85a8186d1c960af780bc039bbf4793dc389e0d))
+
 ### [13.12.2](https://github.com/pact-foundation/pact-js-core/compare/v13.12.1...v13.12.2) (2022-11-28)
 
 
