@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.13.1](https://github.com/pact-foundation/pact-js-core/compare/v13.13.0...v13.13.1) (2022-12-19)
+
+
+### Fixes and Improvements
+
+* update rust core to 0.3.18 ([d178c27](https://github.com/pact-foundation/pact-js-core/commit/d178c2784bb31e2bfe12585ad8d6f8d65dddf62b))
+
 ## [13.13.0](https://github.com/pact-foundation/pact-js-core/compare/v13.12.2...v13.13.0) (2022-12-02)
 
 
