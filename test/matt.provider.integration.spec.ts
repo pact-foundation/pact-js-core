@@ -2,51 +2,16 @@ import path = require('path');
 import net = require('net');
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import { setLogLevel } from '../src/logger';
-import verifier from '../src/verifier';
 import express = require('express');
 import * as http from 'http';
+import { setLogLevel } from '../src/logger';
+import verifier from '../src/verifier';
 
 chai.use(chaiAsPromised);
 
-describe.skip('MATT protocol test', () => {
-  setLogLevel('info');
-
-  describe('HTTP and TCP Provider', () => {
-    const HOST = '127.0.0.1';
-    const HTTP_PORT = 8888;
-    const TCP_PORT = 8889;
-    beforeEach(async () => {
-      await startHTTPServer(HOST, HTTP_PORT);
-      await startTCPServer(HOST, TCP_PORT);
-    });
-
-    it('returns a valid MATT message over HTTP and TCP', () => {
-      return verifier({
-        providerBaseUrl: 'http://localhost:8888',
-        transports: [
-          {
-            port: TCP_PORT,
-            protocol: 'matt',
-            scheme: 'tcp',
-          },
-        ],
-        pactUrls: [
-          path.join(
-            __dirname,
-            '__testoutput__',
-            'matt-consumer-matt-provider.json'
-          ),
-          path.join(
-            __dirname,
-            '__testoutput__',
-            'matt-tcp-consumer-matt-tcp-provider.json'
-          ),
-        ],
-      }).verify();
-    });
-  });
-});
+const parseMattMessage = (raw: string): string =>
+  raw.replace(/(MATT)+/g, '').trim();
+const generateMattMessage = (raw: string): string => `MATT${raw}MATT`;
 
 const startHTTPServer = (host: string, port: number): Promise<http.Server> => {
   const server: express.Express = express();
@@ -78,7 +43,7 @@ const startTCPServer = (host: string, port: number) => {
     });
   });
 
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     server.listen(port, host);
 
     server.on('listening', () => {
@@ -87,9 +52,40 @@ const startTCPServer = (host: string, port: number) => {
   });
 };
 
-const parseMattMessage = (raw: string): string => {
-  return raw.replace(/(MATT)+/g, '').trim();
-};
-const generateMattMessage = (raw: string): string => {
-  return `MATT${raw}MATT`;
-};
+describe.skip('MATT protocol test', () => {
+  setLogLevel('info');
+
+  describe('HTTP and TCP Provider', () => {
+    const HOST = '127.0.0.1';
+    const HTTP_PORT = 8888;
+    const TCP_PORT = 8889;
+    beforeEach(async () => {
+      await startHTTPServer(HOST, HTTP_PORT);
+      await startTCPServer(HOST, TCP_PORT);
+    });
+
+    it('returns a valid MATT message over HTTP and TCP', () =>
+      verifier({
+        providerBaseUrl: 'http://localhost:8888',
+        transports: [
+          {
+            port: TCP_PORT,
+            protocol: 'matt',
+            scheme: 'tcp',
+          },
+        ],
+        pactUrls: [
+          path.join(
+            __dirname,
+            '__testoutput__',
+            'matt-consumer-matt-provider.json'
+          ),
+          path.join(
+            __dirname,
+            '__testoutput__',
+            'matt-tcp-consumer-matt-tcp-provider.json'
+          ),
+        ],
+      }).verify());
+  });
+});

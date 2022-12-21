@@ -1,8 +1,8 @@
 import express = require('express');
 import * as http from 'http';
-import { returnJson, returnJsonFile, auth } from './data-utils';
 import cors = require('cors');
 import bodyParser = require('body-parser');
+import { returnJson, returnJsonFile, auth } from './data-utils';
 
 export default (port: number): Promise<http.Server> => {
   const server: express.Express = express();
@@ -38,17 +38,17 @@ export default (port: number): Promise<http.Server> => {
     }
   );
 
-  server.get('/somestate', (req: express.Request, res: express.Response) => {
-    return res.json({
+  server.get('/somestate', (req: express.Request, res: express.Response) =>
+    res.json({
       greeting: stateData,
-    });
-  });
+    })
+  );
 
-  server.post('/', (req: express.Request, res: express.Response) => {
-    return res.json({
+  server.post('/', (req: express.Request, res: express.Response) =>
+    res.json({
       greeting: `Hello ${req.body.name}`,
-    });
-  });
+    })
+  );
 
   server.get(
     '/contract/:name',

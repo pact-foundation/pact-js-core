@@ -2,11 +2,11 @@ import chai = require('chai');
 import path = require('path');
 import chaiAsPromised = require('chai-as-promised');
 import fs = require('fs');
-import messageFactory from './message';
 import mkdirp = require('mkdirp');
 import rimraf = require('rimraf');
+import messageFactory from './message';
 
-const expect = chai.expect;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('Message Spec', () => {
@@ -105,7 +105,7 @@ describe('Message Spec', () => {
       return messageFactory({
         consumer: 'some-consumer',
         provider: 'a-provider',
-        dir: dir,
+        dir,
         content: validJSON,
       })
         .createMessage()
@@ -118,7 +118,7 @@ describe('Message Spec', () => {
         messageFactory({
           consumer: 'some-consumer',
           provider: 'a-provider',
-          dir: dir,
+          dir,
           content: validJSON,
         }).options.dir
       ).to.equal(path.resolve(__dirname, '..', dir));
@@ -129,7 +129,7 @@ describe('Message Spec', () => {
       return messageFactory({
         consumer: 'some-consumer',
         provider: 'a-provider',
-        dir: dir,
+        dir,
         content: validJSON,
       })
         .createMessage()

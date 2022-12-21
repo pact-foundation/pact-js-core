@@ -1,11 +1,11 @@
+import * as chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import * as fs from 'fs';
+import * as path from 'path';
 import stubFactory from './stub';
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-import fs = require('fs');
-import path = require('path');
 
 chai.use(chaiAsPromised);
-const expect = chai.expect;
+const { expect } = chai;
 
 describe('Stub Spec', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,7 +16,14 @@ describe('Stub Spec', () => {
     ],
   };
 
-  afterEach(() => (stub ? stub.delete().then(() => (stub = null)) : null));
+  afterEach(() =>
+    stub
+      ? stub.delete().then(() => {
+          stub = null;
+          return stub;
+        })
+      : null
+  );
 
   describe('Start stub', () => {
     context('when invalid options are set', () => {
@@ -62,31 +69,28 @@ describe('Stub Spec', () => {
     context('when valid options are set', () => {
       let dirPath: string;
 
-      beforeEach(
-        () =>
-          (dirPath = path.resolve(
-            __dirname,
-            `../.tmp/${Math.floor(Math.random() * 1000)}`
-          ))
-      );
+      beforeEach(() => {
+        dirPath = path.resolve(
+          __dirname,
+          `../.tmp/${Math.floor(Math.random() * 1000)}`
+        );
+      });
 
       afterEach(() => {
-        try {
-          if (fs.statSync(dirPath).isDirectory()) {
-            fs.rmdirSync(dirPath);
-          }
-        } catch (e) {}
+        if (fs.statSync(dirPath).isDirectory()) {
+          fs.rmdirSync(dirPath);
+        }
       });
 
       it('should start correctly when instance is delayed', () => {
         stub = stubFactory(validDefaults);
 
-        const waitForStubUp = stub['__waitForServiceUp'].bind(stub);
+        const waitForStubUp = stub.__waitForServiceUp.bind(stub);
         return Promise.all([
           waitForStubUp(stub.options),
-          new Promise((resolve) => setTimeout(resolve, 5000)).then(() =>
-            stub.start()
-          ),
+          new Promise((resolve) => {
+            setTimeout(resolve, 5000);
+          }).then(() => stub.start()),
         ]);
       });
 
@@ -143,14 +147,14 @@ describe('Stub Spec', () => {
 
       it('should start correctly with port', () => {
         const port = Math.floor(Math.random() * 999) + 9000;
-        stub = stubFactory({ ...validDefaults, port: port });
+        stub = stubFactory({ ...validDefaults, port });
         expect(stub.options.port).to.equal(port);
         return expect(stub.start()).to.eventually.be.fulfilled;
       });
 
       it('should start correctly with host', () => {
         const host = 'localhost';
-        stub = stubFactory({ ...validDefaults, host: host });
+        stub = stubFactory({ ...validDefaults, host });
         expect(stub.options.host).to.equal(host);
         return expect(stub.start()).to.eventually.be.fulfilled;
       });
@@ -171,7 +175,7 @@ describe('Stub Spec', () => {
 
     it('should change running state to true', () => {
       stub = stubFactory(validDefaults);
-      return stub.start().then(() => expect(stub['__running']).to.be.true);
+      return stub.start().then(() => expect(stub.__running).to.be.true);
     });
   });
 
@@ -193,7 +197,7 @@ describe('Stub Spec', () => {
         return stub
           .start()
           .then(() => stub.stop())
-          .then(() => expect(stub['__running']).to.be.false);
+          .then(() => expect(stub.__running).to.be.false);
       });
     });
   });
@@ -216,7 +220,7 @@ describe('Stub Spec', () => {
         return stub
           .start()
           .then(() => stub.delete())
-          .then(() => expect(stub['__running']).to.be.false);
+          .then(() => expect(stub.__running).to.be.false);
       });
     });
   });

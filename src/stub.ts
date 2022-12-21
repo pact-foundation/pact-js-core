@@ -1,15 +1,15 @@
+import checkTypes = require('check-types');
 import { DEFAULT_ARG } from './spawn';
 import { AbstractService } from './service';
 
 import pact from './pact-standalone';
-import checkTypes = require('check-types');
 import { LogLevel } from './logger/types';
 
 export class Stub extends AbstractService {
   public readonly options: StubOptions;
 
-  constructor(options?: StubOptions) {
-    options = options || {};
+  constructor(passedOptions: StubOptions = {}) {
+    const options = { ...passedOptions };
     options.pactUrls = options.pactUrls || [];
 
     if (options.pactUrls) {

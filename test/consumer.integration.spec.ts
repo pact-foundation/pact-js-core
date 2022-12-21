@@ -1,22 +1,22 @@
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
+import * as chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 
 import axios from 'axios';
 import path = require('path');
 import zlib = require('zlib');
 import FormData = require('form-data');
 import fs = require('fs');
+import { load } from 'protobufjs';
 import { setLogLevel } from '../src/logger';
 import {
   ConsumerPact,
   makeConsumerPact,
   MatchingResultRequestMismatch,
-} from '../src/consumer';
+} from '../src';
 import { FfiSpecificationVersion } from '../src/ffi/types';
-import { load } from 'protobufjs';
 
 chai.use(chaiAsPromised);
-const expect = chai.expect;
+const { expect } = chai;
 
 const HOST = '127.0.0.1';
 
@@ -28,12 +28,10 @@ describe('FFI integration test for the HTTP Consumer API', () => {
   let port: number;
   let pact: ConsumerPact;
   const bytes: Buffer = zlib.gzipSync('this is an encoded string');
-  const like = (value: unknown) => {
-    return {
-      'pact:matcher:type': 'type',
-      value,
-    };
-  };
+  const like = (value: unknown) => ({
+    'pact:matcher:type': 'type',
+    value,
+  });
 
   describe('with JSON data', () => {
     beforeEach(() => {
@@ -70,8 +68,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       port = pact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', () => {
-      return axios
+    it('generates a pact with success', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -108,11 +106,10 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
 
-    it('generates a pact with failure', () => {
-      return axios
+    it('generates a pact with failure', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -166,8 +163,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
   });
 
   // See https://github.com/pact-foundation/pact-reference/issues/171 for why we have an OS switch here
@@ -210,8 +206,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
 
     // TODO: find out what's going on here. Suspect binary matching has changed in the core?
     // See https://github.com/pact-foundation/pact-reference/issues/171
-    it('generates a pact with success', () => {
-      return axios
+    it('generates a pact with success', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -248,8 +244,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
   });
 
   // Should only run this if the plugin is installed
@@ -333,13 +328,13 @@ describe('FFI integration test for the HTTP Consumer API', () => {
     const formHeaders = form.getHeaders();
 
     beforeEach(() => {
-      const pact = makeConsumerPact(
+      const consumerPact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
         FfiSpecificationVersion.SPECIFICATION_VERSION_V3
       );
 
-      const interaction = pact.newInteraction('some description');
+      const interaction = consumerPact.newInteraction('some description');
 
       interaction.uponReceiving('a request to get a dog with multipart data');
       interaction.given('fido exists');
@@ -358,11 +353,11 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       interaction.withResponseHeader('x-special-header', 0, 'header');
       interaction.withStatus(200);
 
-      port = pact.createMockServer(HOST);
+      port = consumerPact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', () => {
-      return axios
+    it('generates a pact with success', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -399,7 +394,6 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
   });
 });

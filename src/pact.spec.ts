@@ -1,10 +1,10 @@
-import chai = require('chai');
-import path = require('path');
-import chaiAsPromised = require('chai-as-promised');
-import fs = require('fs');
+import * as chai from 'chai';
+import * as path from 'path';
+import chaiAsPromised from 'chai-as-promised';
+import * as fs from 'fs';
 import pact from './pact';
 
-const expect = chai.expect;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('Pact Spec', () => {
@@ -14,7 +14,9 @@ describe('Pact Spec', () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let originalLogLevel: any;
     // Reset log level after the tests
-    before(() => (originalLogLevel = pact.logLevel()));
+    before(() => {
+      originalLogLevel = pact.logLevel();
+    });
     after(() => pact.logLevel(originalLogLevel));
 
     context('when setting a log level', () => {
@@ -52,25 +54,22 @@ describe('Pact Spec', () => {
       '../test/monkeypatch.rb'
     );
 
-    beforeEach(
-      () =>
-        (dirPath = path.resolve(
-          __dirname,
-          `../.tmp/${Math.floor(Math.random() * 1000)}`
-        ))
-    );
+    beforeEach(() => {
+      dirPath = path.resolve(
+        __dirname,
+        `../.tmp/${Math.floor(Math.random() * 1000)}`
+      );
+    });
 
     afterEach(() => {
-      try {
-        if (fs.statSync(dirPath).isDirectory()) {
-          fs.rmdirSync(dirPath);
-        }
-      } catch (e) {}
+      if (fs.statSync(dirPath).isDirectory()) {
+        fs.rmdirSync(dirPath);
+      }
     });
 
     context('when no options are set', () => {
       it('should use defaults and return serverFactory', () => {
-        let server = pact.createServer();
+        const server = pact.createServer();
         expect(server).to.be.an('object');
         expect(server.options).to.be.an('object');
         expect(server.options).to.contain.all.keys([
@@ -87,7 +86,7 @@ describe('Pact Spec', () => {
 
     context('when user specifies valid options', () => {
       it('should return serverFactory using specified options', () => {
-        let options = {
+        const options = {
           port: 9500,
           host: 'localhost',
           dir: dirPath,
@@ -99,7 +98,7 @@ describe('Pact Spec', () => {
           provider: 'providerName',
           monkeypatch: monkeypatchFile,
         };
-        let server = pact.createServer(options);
+        const server = pact.createServer(options);
         expect(server).to.be.an('object');
         expect(server.options).to.be.an('object');
         expect(server.options.port).to.equal(options.port);

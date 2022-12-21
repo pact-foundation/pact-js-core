@@ -1,13 +1,13 @@
-import verifierFactory from '../src/verifier';
 import chai = require('chai');
 import path = require('path');
 import chaiAsPromised = require('chai-as-promised');
-import providerMock from './integration/provider-mock';
 import * as http from 'http';
+import providerMock from './integration/provider-mock';
+import verifierFactory from '../src/verifier';
 import { VerifierOptions } from '../src/verifier/types';
 import { LogLevel } from '../src/logger/types';
 
-const expect = chai.expect;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('Verifier Integration Spec', () => {
@@ -37,7 +37,7 @@ describe('Verifier Integration Spec', () => {
         expect(
           verifierFactory({
             ...DEFAULT_ARGS,
-            providerBaseUrl: providerBaseUrl,
+            providerBaseUrl,
             pactUrls: [
               path.resolve(
                 __dirname,
@@ -51,7 +51,7 @@ describe('Verifier Integration Spec', () => {
           expect(
             verifierFactory({
               ...DEFAULT_ARGS,
-              providerBaseUrl: providerBaseUrl,
+              providerBaseUrl,
               pactUrls: [
                 path.resolve(
                   __dirname,
@@ -72,7 +72,7 @@ describe('Verifier Integration Spec', () => {
       it('should return a successful promise', () =>
         expect(
           verifierFactory({
-            providerBaseUrl: providerBaseUrl,
+            providerBaseUrl,
             pactUrls: [
               path.resolve(__dirname, 'integration/me-they-success.json'),
             ],
@@ -84,11 +84,11 @@ describe('Verifier Integration Spec', () => {
       it('should return a successful promise', () =>
         expect(
           verifierFactory({
-            providerBaseUrl: providerBaseUrl,
+            providerBaseUrl,
             pactUrls: [
               path.resolve(__dirname, 'integration/me-they-states.json'),
             ],
-            providerStatesSetupUrl: providerStatesSetupUrl,
+            providerStatesSetupUrl,
           }).verify()
         ).to.eventually.be.fulfilled);
     });
@@ -97,7 +97,7 @@ describe('Verifier Integration Spec', () => {
       it('should return a successful promise', () =>
         expect(
           verifierFactory({
-            providerBaseUrl: providerBaseUrl,
+            providerBaseUrl,
             pactUrls: [
               path.resolve(__dirname, 'integration/me-they-post-success.json'),
             ],
@@ -109,7 +109,7 @@ describe('Verifier Integration Spec', () => {
       it('should return a successful promise', () =>
         expect(
           verifierFactory({
-            providerBaseUrl: providerBaseUrl,
+            providerBaseUrl,
             pactUrls: [
               path.resolve(
                 __dirname,
@@ -124,7 +124,7 @@ describe('Verifier Integration Spec', () => {
       it('should return a successful promise', () =>
         expect(
           verifierFactory({
-            providerBaseUrl: providerBaseUrl,
+            providerBaseUrl,
             pactUrls: [
               path.resolve(__dirname, 'integration/me-they-success.json'),
             ],
@@ -138,7 +138,7 @@ describe('Verifier Integration Spec', () => {
     it('should return a rejected promise', () =>
       expect(
         verifierFactory({
-          providerBaseUrl: providerBaseUrl,
+          providerBaseUrl,
           pactUrls: [path.resolve(__dirname, 'integration/me-they-fail.json')],
         }).verify()
       ).to.eventually.be.rejected);
@@ -148,9 +148,9 @@ describe('Verifier Integration Spec', () => {
     it('should return a successful promise', () =>
       expect(
         verifierFactory({
-          providerBaseUrl: providerBaseUrl,
+          providerBaseUrl,
           pactUrls: [path.resolve(__dirname, 'integration/me-they-multi.json')],
-          providerStatesSetupUrl: providerStatesSetupUrl,
+          providerStatesSetupUrl,
         }).verify()
       ).to.eventually.be.fulfilled);
   });
@@ -160,12 +160,12 @@ describe('Verifier Integration Spec', () => {
       it('should return a successful promise', () =>
         expect(
           verifierFactory({
-            providerBaseUrl: providerBaseUrl,
+            providerBaseUrl,
             pactUrls: [
               path.resolve(__dirname, 'integration/me-they-success.json'),
               path.resolve(__dirname, 'integration/me-they-multi.json'),
             ],
-            providerStatesSetupUrl: providerStatesSetupUrl,
+            providerStatesSetupUrl,
           }).verify()
         ).to.eventually.be.fulfilled);
     });
@@ -180,12 +180,12 @@ describe('Verifier Integration Spec', () => {
         it('should return a successful promise', () =>
           expect(
             verifierFactory({
-              providerBaseUrl: providerBaseUrl,
+              providerBaseUrl,
               pactUrls: [
                 `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/me/latest`,
                 `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/anotherclient/latest`,
               ],
-              providerStatesSetupUrl: providerStatesSetupUrl,
+              providerStatesSetupUrl,
             }).verify()
           ).to.eventually.be.fulfilled);
       });
@@ -195,12 +195,12 @@ describe('Verifier Integration Spec', () => {
           it('should return a successful promise', () =>
             expect(
               verifierFactory({
-                providerBaseUrl: providerBaseUrl,
+                providerBaseUrl,
                 pactUrls: [
                   `${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`,
                   `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`,
                 ],
-                providerStatesSetupUrl: providerStatesSetupUrl,
+                providerStatesSetupUrl,
                 pactBrokerUsername: 'foo',
                 pactBrokerPassword: 'bar',
               }).verify()
@@ -211,12 +211,12 @@ describe('Verifier Integration Spec', () => {
           it('should return a rejected promise', () =>
             expect(
               verifierFactory({
-                providerBaseUrl: providerBaseUrl,
+                providerBaseUrl,
                 pactUrls: [
                   `${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`,
                   `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`,
                 ],
-                providerStatesSetupUrl: providerStatesSetupUrl,
+                providerStatesSetupUrl,
                 pactBrokerUsername: 'foo',
                 pactBrokerPassword: 'baaoeur',
               }).verify()
@@ -225,12 +225,12 @@ describe('Verifier Integration Spec', () => {
           it('should return the verifier error output in the returned promise', () =>
             expect(
               verifierFactory({
-                providerBaseUrl: providerBaseUrl,
+                providerBaseUrl,
                 pactUrls: [
                   `${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`,
                   `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`,
                 ],
-                providerStatesSetupUrl: providerStatesSetupUrl,
+                providerStatesSetupUrl,
                 pactBrokerUsername: 'foo',
                 pactBrokerPassword: 'baaoeur',
               }).verify()
@@ -245,14 +245,14 @@ describe('Verifier Integration Spec', () => {
       it('should return a successful promise', () =>
         expect(
           verifierFactory({
-            providerBaseUrl: providerBaseUrl,
+            providerBaseUrl,
             pactUrls: [
               path.resolve(
                 __dirname,
                 'integration/publish-verification-example weird path-success.json'
               ),
             ],
-            providerStatesSetupUrl: providerStatesSetupUrl,
+            providerStatesSetupUrl,
           }).verify()
         ).to.eventually.be.fulfilled);
     });
@@ -263,14 +263,14 @@ describe('Verifier Integration Spec', () => {
         it('should return a successful promise', () =>
           expect(
             verifierFactory({
-              providerBaseUrl: providerBaseUrl,
+              providerBaseUrl,
               pactUrls: [
                 path.resolve(
                   __dirname,
                   'integration/publish-verification-example-success.json'
                 ),
               ],
-              providerStatesSetupUrl: providerStatesSetupUrl,
+              providerStatesSetupUrl,
             }).verify()
           ).to.eventually.be.fulfilled);
       }
@@ -282,14 +282,14 @@ describe('Verifier Integration Spec', () => {
         it('should fail with an error', () =>
           expect(
             verifierFactory({
-              providerBaseUrl: providerBaseUrl,
+              providerBaseUrl,
               pactUrls: [
                 path.resolve(
                   __dirname,
                   'integration/publish-verification-example-fail.json'
                 ),
               ],
-              providerStatesSetupUrl: providerStatesSetupUrl,
+              providerStatesSetupUrl,
             }).verify()
           ).to.eventually.be.fulfilled);
       }

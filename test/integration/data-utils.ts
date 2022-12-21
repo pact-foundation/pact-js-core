@@ -10,7 +10,7 @@ export function returnJson<T>(
 export function returnJsonFile(
   filename: string
 ): (req: express.Request, res: express.Response) => express.Response {
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  // eslint-disable-next-line @typescript-eslint/no-var-requires, import/no-dynamic-require, global-require
   return returnJson(require(filename));
 }
 

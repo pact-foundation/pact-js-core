@@ -1,4 +1,3 @@
-import serverFactory from './server';
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 import fs = require('fs');
@@ -6,9 +5,10 @@ import util = require('util');
 import path = require('path');
 import mkdirp = require('mkdirp');
 import rimraf = require('rimraf');
+import serverFactory from './server';
 
 chai.use(chaiAsPromised);
-const expect = chai.expect;
+const { expect } = chai;
 const rm = util.promisify(rimraf);
 
 describe('Server Spec', () => {
@@ -99,13 +99,13 @@ describe('Server Spec', () => {
       it('should start correctly when instance is delayed', () => {
         server = serverFactory();
 
-        const waitForServerUp = server['__waitForServiceUp'].bind(server);
+        const waitForServerUp = server.__waitForServiceUp.bind(server);
         return expect(
           Promise.all([
             waitForServerUp(server.options),
-            new Promise((resolve) => setTimeout(resolve, 5000)).then(() =>
-              server.start()
-            ),
+            new Promise((resolve) => {
+              setTimeout(resolve, 5000);
+            }).then(() => server.start()),
           ])
         ).to.eventually.be.fulfilled;
       });
@@ -144,14 +144,14 @@ describe('Server Spec', () => {
 
       it('should start correctly with port', () => {
         const port = Math.floor(Math.random() * 999) + 9000;
-        server = serverFactory({ port: port });
+        server = serverFactory({ port });
         expect(server.options.port).to.equal(port);
         return expect(server.start()).to.eventually.be.fulfilled;
       });
 
       it('should start correctly with host', () => {
         const host = 'localhost';
-        server = serverFactory({ host: host });
+        server = serverFactory({ host });
         expect(server.options.host).to.equal(host);
         return expect(server.start()).to.eventually.be.fulfilled;
       });
@@ -249,8 +249,8 @@ describe('Server Spec', () => {
       });
 
       context('Log Level', () => {
-        it("should start correctly with 'debug'", () => {
-          return Promise.all([
+        it("should start correctly with 'debug'", () =>
+          Promise.all([
             expect(
               serverFactory({
                 logLevel: 'debug',
@@ -263,11 +263,10 @@ describe('Server Spec', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any).start()
             ).to.eventually.be.fulfilled,
-          ]);
-        });
+          ]));
 
-        it("should start correctly with 'info'", () => {
-          return Promise.all([
+        it("should start correctly with 'info'", () =>
+          Promise.all([
             expect(
               serverFactory({
                 logLevel: 'info',
@@ -280,11 +279,10 @@ describe('Server Spec', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any).start()
             ).to.eventually.be.fulfilled,
-          ]);
-        });
+          ]));
 
-        it("should start correctly with 'warn'", () => {
-          return Promise.all([
+        it("should start correctly with 'warn'", () =>
+          Promise.all([
             expect(
               serverFactory({
                 logLevel: 'warn',
@@ -297,11 +295,10 @@ describe('Server Spec', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any).start()
             ).to.eventually.be.fulfilled,
-          ]);
-        });
+          ]));
 
-        it("should start correctly with 'error'", () => {
-          return Promise.all([
+        it("should start correctly with 'error'", () =>
+          Promise.all([
             expect(
               serverFactory({
                 logLevel: 'error',
@@ -314,8 +311,7 @@ describe('Server Spec', () => {
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
               } as any).start()
             ).to.eventually.be.fulfilled,
-          ]);
-        });
+          ]));
       });
     });
 
@@ -327,7 +323,7 @@ describe('Server Spec', () => {
 
     it('should change running state to true', () => {
       server = serverFactory();
-      return server.start().then(() => expect(server['__running']).to.be.true);
+      return server.start().then(() => expect(server.__running).to.be.true);
     });
   });
 
@@ -349,7 +345,7 @@ describe('Server Spec', () => {
         return server
           .start()
           .then(() => server.stop())
-          .then(() => expect(server['__running']).to.be.false);
+          .then(() => expect(server.__running).to.be.false);
       });
     });
   });
@@ -372,7 +368,7 @@ describe('Server Spec', () => {
         return server
           .start()
           .then(() => server.delete())
-          .then(() => expect(server['__running']).to.be.false);
+          .then(() => expect(server.__running).to.be.false);
       });
     });
   });

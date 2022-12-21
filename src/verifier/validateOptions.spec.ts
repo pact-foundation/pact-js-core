@@ -6,7 +6,7 @@ import logger from '../logger';
 import { validateOptions } from './validateOptions';
 import { ConsumerVersionSelector, VerifierOptions } from './types';
 
-const expect = chai.expect;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('Verifier argument validator', () => {

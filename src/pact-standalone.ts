@@ -21,11 +21,9 @@ export interface PactStandalone {
 }
 
 export const standalone = (
-  platform?: string,
-  arch?: string
+  platform: string = process.platform,
+  arch: string = process.arch
 ): PactStandalone => {
-  platform = platform || process.platform;
-  arch = arch || process.arch;
   const binName = (name: string): string =>
     `${name}${pactEnvironment.isWindows(platform) ? '.bat' : ''}`;
   const mock = binName('pact-mock-service');

@@ -1,45 +1,63 @@
 {
+  "root": true,
   "parser": "@typescript-eslint/parser",
-  "extends": ["plugin:@typescript-eslint/recommended"],
+  "plugins": ["@typescript-eslint", "import", "mocha", "chai-friendly"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "airbnb-base",
+    "airbnb-typescript/base",
+    "prettier"
+  ],
+  "settings": {
+    "import/resolver": {
+      "typescript": {
+        "project": ["tsconfig.json", "tsconfig.spec.json"]
+      }
+    }
+  },
   "parserOptions": {
     "ecmaVersion": 2018,
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": ["tsconfig.json", "tsconfig.spec.json"]
   },
   "rules": {
-    "curly": 2,
-    "indent": 0,
-    "no-console": 0,
-    "max-len": [
-      2,
-      {
-        "code": 200
-      }
-    ],
+    "@typescript-eslint/no-unused-vars": "error",
     "@typescript-eslint/no-explicit-any": "error",
-    "trailing-comma": 0,
-    "object-literal-sort-keys": 0,
-    "no-reference": 0,
-    "no-trailing-whitespace": 0,
-    "typedef-whitespace": 0,
-    "whitespace": 0,
-    "interface-name": 0,
-    "ordered-imports": 0,
-    "variable-name": 0,
-    "no-var-requires": 0,
-    "object-literal-shorthand": 0,
-    "no-empty": 0,
-    "max-classes-per-file": 0,
-    "prefer-const": 0,
-    "no-unused-expression": 0,
-    "forin": 0,
-    "object-literal-key-quotes": 0
+    "@typescript-eslint/no-shadow": "error",
+    "@typescript-eslint/explicit-module-boundary-types": "error",
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      { "allow": ["constructors"] }
+    ],
+    "import/prefer-default-export": "off",
+    "no-underscore-dangle": "off",
+    "class-methods-use-this": "off"
   },
   "overrides": [
     {
-      "files": ["*.spec.ts"],
+      "files": ["**/*.spec.ts", "test/**/*.ts"],
+      "env": {
+        "mocha": true
+      },
       "rules": {
-        "@typescript-eslint/no-explicit-any": "off"
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/no-unused-expressions": "off",
+        "@typescript-eslint/no-unused-vars": [
+          "error",
+          { "varsIgnorePattern": "unused" }
+        ],
+        "@typescript-eslint/ban-ts-comment": "off",
+        "no-new": "off",
+        "class-methods-use-this": "off",
+        "chai-friendly/no-unused-expressions": "error",
+        "mocha/no-mocha-arrows": "off",
+        "no-console": "off"
       }
     }
-  ]
+  ],
+  "globals": {
+    "NodeJS": true
+  }
 }

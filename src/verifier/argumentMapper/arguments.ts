@@ -1,18 +1,17 @@
-import logger from '../../logger';
 import fs = require('fs');
 import url = require('url');
+import { URL } from 'url';
+import logger from '../../logger';
 
 import { FnMapping, FnValidationStatus } from './types';
 import { InternalPactVerifierOptions } from '../types';
 
 import { FfiVerificationFunctions } from '../../ffi/types';
-import { URL } from 'url';
 
 const DEFAULT_TIMEOUT = 30000;
 
-const objArrayToStringArray = (obj: unknown[]) => {
-  return obj.map((o) => JSON.stringify(o));
-};
+const objArrayToStringArray = (obj: unknown[]) =>
+  obj.map((o) => JSON.stringify(o));
 
 type IgnoredFfiFunctions = {
   pactffiVerifierNewForApplication: 1;
@@ -68,14 +67,12 @@ export const ffiFnMapping: FnMapping<
               ffi.pactffiVerifierAddCustomHeader(handle, parts[0], parts[1]);
             }
           });
-        } else {
-          if (options.customProviderHeaders) {
-            Object.entries(options.customProviderHeaders).forEach(
-              ([key, value]) => {
-                ffi.pactffiVerifierAddCustomHeader(handle, key, value);
-              }
-            );
-          }
+        } else if (options.customProviderHeaders) {
+          Object.entries(options.customProviderHeaders).forEach(
+            ([key, value]) => {
+              ffi.pactffiVerifierAddCustomHeader(handle, key, value);
+            }
+          );
         }
         if (messages.length > 0) {
           return { status: FnValidationStatus.FAIL, messages };
@@ -219,7 +216,7 @@ export const ffiFnMapping: FnMapping<
       ) {
         const filterDescription = process.env.PACT_DESCRIPTION || '';
         const filterState = process.env.PACT_PROVIDER_STATE || '';
-        const filterNoState = process.env.PACT_PROVIDER_NO_STATE ? true : false;
+        const filterNoState = !!process.env.PACT_PROVIDER_NO_STATE;
 
         ffi.pactffiVerifierSetFilterInfo(
           handle,

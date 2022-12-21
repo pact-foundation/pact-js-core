@@ -1,6 +1,7 @@
-import chai = require('chai');
+import * as chai from 'chai';
 import index from './index';
-const expect = chai.expect;
+
+const { expect } = chai;
 
 describe('Index Spec', () => {
   it('Typescript import should work', () => {
@@ -10,7 +11,7 @@ describe('Index Spec', () => {
   });
 
   it('Node Require import should work', () => {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
     const entrypoint = require('./index');
     expect(entrypoint).to.be.ok;
     expect(entrypoint.createServer).to.be.ok;

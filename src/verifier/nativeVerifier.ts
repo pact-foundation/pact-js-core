@@ -3,10 +3,10 @@ import logger, { setLogLevel } from '../logger';
 import { getFfiLib } from '../ffi';
 import { VERIFY_PROVIDER_RESPONSE } from '../ffi/types';
 
+import { setupVerification } from './argumentMapper';
+
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../../package.json');
-
-import { setupVerification } from './argumentMapper';
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
   const ffi = getFfiLib(opts.logLevel);

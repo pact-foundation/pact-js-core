@@ -1,7 +1,8 @@
 import chai = require('chai');
-import { libName } from '.';
 import chaiAsPromised = require('chai-as-promised');
-const expect = chai.expect;
+import { libName } from '.';
+
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('ffi names', () => {

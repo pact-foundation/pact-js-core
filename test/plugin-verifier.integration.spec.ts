@@ -1,19 +1,103 @@
-import verifierFactory from '../src/verifier';
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 import { loadSync } from '@grpc/proto-loader';
 import * as grpc from '@grpc/grpc-js';
 import express = require('express');
 import * as http from 'http';
-import { returnJson } from './integration/data-utils';
 import cors = require('cors');
 import bodyParser = require('body-parser');
+import { returnJson } from './integration/data-utils';
+import verifierFactory from '../src/verifier';
 
-const expect = chai.expect;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 const HTTP_PORT = 50051;
 const GRPC_PORT = 50052;
+
+const getGRPCServer = () => {
+  const PROTO_PATH = `${__dirname}/integration/grpc/route_guide.proto`;
+
+  const options = {
+    keepCase: true,
+    longs: String,
+    enums: String,
+    defaults: true,
+    oneofs: true,
+  };
+  const packageDefinition = loadSync(PROTO_PATH, options);
+  const { routeguide } = grpc.loadPackageDefinition(packageDefinition);
+
+  const server = new grpc.Server();
+
+  server.addService(routeguide.RouteGuide.service, {
+    getFeature: (_: unknown, callback: any) => {
+      callback(null, {
+        name: 'A place',
+        latitude: 200,
+        longitude: 180,
+      });
+    },
+  });
+
+  return server;
+};
+
+const startGRPCServer = (server: any, port: number) => {
+  server.bindAsync(
+    `127.0.0.1:${port}`,
+    grpc.ServerCredentials.createInsecure(),
+    (_: unknown, grpcPort: number) => {
+      console.log(`Server running at http://127.0.0.1:${grpcPort}`);
+      server.start();
+    }
+  );
+};
+
+const startHTTPServer = (port: number): Promise<http.Server> => {
+  const server: express.Express = express();
+  server.use(cors());
+  server.use(bodyParser.json());
+  server.use(
+    bodyParser.urlencoded({
+      extended: true,
+    })
+  );
+
+  // Dummy server to respond to state changes etc.
+  server.all('/*', returnJson({}));
+
+  let s: http.Server;
+  return new Promise<void>((resolve) => {
+    s = server.listen(port, () => resolve());
+  }).then(() => s);
+};
+
+const getFeature = async (address: string, protoFile: string) => {
+  const def = loadSync(protoFile);
+  const { routeguide } = grpc.loadPackageDefinition(def);
+
+  const client = new routeguide.RouteGuide(
+    address,
+    grpc.credentials.createInsecure()
+  );
+
+  return new Promise<any>((resolve, reject) => {
+    client.GetFeature(
+      {
+        latitude: 180,
+        longitude: 200,
+      },
+      (e: Error, feature: any) => {
+        if (e) {
+          reject(e);
+        } else {
+          resolve(feature);
+        }
+      }
+    );
+  });
+};
 
 describe.skip('Plugin Verifier Integration Spec', () => {
   context('plugin tests', () => {
@@ -49,88 +133,3 @@ describe.skip('Plugin Verifier Integration Spec', () => {
     });
   });
 });
-
-const getGRPCServer = () => {
-  const PROTO_PATH = `${__dirname}/integration/grpc/route_guide.proto`;
-
-  const options = {
-    keepCase: true,
-    longs: String,
-    enums: String,
-    defaults: true,
-    oneofs: true,
-  };
-  const packageDefinition = loadSync(PROTO_PATH, options);
-  const routeguide: any =
-    grpc.loadPackageDefinition(packageDefinition).routeguide;
-
-  const server = new grpc.Server();
-
-  server.addService(routeguide.RouteGuide.service, {
-    getFeature: (_: unknown, callback: any) => {
-      callback(null, {
-        name: 'A place',
-        latitude: 200,
-        longitude: 180,
-      });
-    },
-  });
-
-  return server;
-};
-
-const startGRPCServer = (server: any, port: number) => {
-  server.bindAsync(
-    `127.0.0.1:${port}`,
-    grpc.ServerCredentials.createInsecure(),
-    (_: unknown, port: number) => {
-      console.log(`Server running at http://127.0.0.1:${port}`);
-      server.start();
-    }
-  );
-};
-
-const startHTTPServer = (port: number): Promise<http.Server> => {
-  const server: express.Express = express();
-  server.use(cors());
-  server.use(bodyParser.json());
-  server.use(
-    bodyParser.urlencoded({
-      extended: true,
-    })
-  );
-
-  // Dummy server to respond to state changes etc.
-  server.all('/*', returnJson({}));
-
-  let s: http.Server;
-  return new Promise<void>((resolve) => {
-    s = server.listen(port, () => resolve());
-  }).then(() => s);
-};
-
-const getFeature = async (address: string, protoFile: string) => {
-  const def = loadSync(protoFile);
-  const routeguide: any = grpc.loadPackageDefinition(def).routeguide;
-
-  const client = new routeguide.RouteGuide(
-    address,
-    grpc.credentials.createInsecure()
-  );
-
-  return new Promise<any>((resolve, reject) => {
-    client.GetFeature(
-      {
-        latitude: 180,
-        longitude: 200,
-      },
-      (e: Error, feature: any) => {
-        if (e) {
-          reject(e);
-        } else {
-          resolve(feature);
-        }
-      }
-    );
-  });
-};

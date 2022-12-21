@@ -1,24 +1,7 @@
 {
-  "extends": "@tsconfig/node14/tsconfig.json",
+  "extends": "./tsconfig.spec.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "removeComments": true,
-    "noLib": false,
-    "sourceMap": true,
-    "isolatedModules": false,
-    "moduleResolution": "node",
-    "suppressImplicitAnyIndexErrors": true,
-    "declaration": true,
-    "noImplicitReturns": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "strict": true,
-    "noUnusedLocals": true,
-    "stripInternal": true
+    "types": ["node"]
   },
-  "include": ["**/*.ts"],
-  "exclude": ["node_modules", "**/*.spec.ts", "**/__mocks__"],
-  "compileOnSave": false
+  "exclude": ["node_modules", "**/*.spec.ts", "**/__mocks__"]
 }

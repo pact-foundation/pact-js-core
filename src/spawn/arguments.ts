@@ -1,11 +1,8 @@
-import { CanDeployOptions } from '../can-deploy';
-import { MessageOptions } from '../message';
-import { PublisherOptions } from '../publisher';
-import { ServiceOptions } from '../service';
-import { VerifierOptions } from '../verifier/types';
-
 import _ = require('underscore');
 import checkTypes = require('check-types');
+import { VerifierOptions } from '../verifier/types';
+import { MessageOptions, PublisherOptions, ServiceOptions } from '../types';
+import { CanDeployOptions } from '../can-deploy/types';
 
 export type CliVerbOptions = {
   cliVerb: string;

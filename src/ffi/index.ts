@@ -1,7 +1,7 @@
+import bindings = require('bindings');
 import logger, { DEFAULT_LOG_LEVEL } from '../logger';
 import { LogLevel } from '../logger/types';
 import { Ffi } from './types';
-import bindings = require('bindings');
 
 const ffiLib: Ffi = bindings('pact.node');
 
