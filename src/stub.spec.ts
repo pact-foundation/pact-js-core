@@ -77,8 +77,12 @@ describe('Stub Spec', () => {
       });
 
       afterEach(() => {
-        if (fs.statSync(dirPath).isDirectory()) {
-          fs.rmdirSync(dirPath);
+        try {
+          if (fs.statSync(dirPath).isDirectory()) {
+            fs.rmdirSync(dirPath);
+          }
+        } catch (e) {
+          /* any errors here are not a failed test */
         }
       });
 

@@ -1,3 +1,4 @@
+/* eslint-disable no-param-reassign */ // TODO - this behaviour is relied on, and should be fixed
 import path = require('path');
 import fs = require('fs');
 import events = require('events');
@@ -52,13 +53,12 @@ export abstract class AbstractService extends events.EventEmitter {
 
   protected constructor(
     command: string,
-    passedOptions: ServiceOptions,
+    options: ServiceOptions,
     // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
     argMapping: any,
     cliVerb?: CliVerbOptions
   ) {
     super();
-    const options = { ...passedOptions };
     // Set logger first
     if (options.logLevel) {
       setLogLevel(options.logLevel);

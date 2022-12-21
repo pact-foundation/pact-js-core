@@ -62,8 +62,12 @@ describe('Pact Spec', () => {
     });
 
     afterEach(() => {
-      if (fs.statSync(dirPath).isDirectory()) {
-        fs.rmdirSync(dirPath);
+      try {
+        if (fs.statSync(dirPath).isDirectory()) {
+          fs.rmdirSync(dirPath);
+        }
+      } catch (e) {
+        /* any errors here are not a failed test */
       }
     });
 
@@ -106,7 +110,7 @@ describe('Pact Spec', () => {
         expect(server.options.dir).to.equal(options.dir);
         expect(server.options.ssl).to.equal(options.ssl);
         expect(server.options.cors).to.equal(options.cors);
-        expect(server.options.log).to.equal(options.log);
+        expect(server.options.log).to.equal(path.resolve(options.log));
         expect(server.options.spec).to.equal(options.spec);
         expect(server.options.consumer).to.equal(options.consumer);
         expect(server.options.provider).to.equal(options.provider);

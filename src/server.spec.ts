@@ -12,7 +12,6 @@ const { expect } = chai;
 const rm = util.promisify(rimraf);
 
 describe('Server Spec', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let server: any;
   const monkeypatchFile: string = path.resolve(
     __dirname,
