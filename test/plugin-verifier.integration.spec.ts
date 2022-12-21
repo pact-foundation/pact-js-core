@@ -30,7 +30,7 @@ const getGRPCServer = () => {
 
   const server = new grpc.Server();
 
-  server.addService(routeguide.RouteGuide.service, {
+  server.addService(routeguide['RouteGuide'].service, {
     getFeature: (_: unknown, callback: any) => {
       callback(null, {
         name: 'A place',
@@ -77,7 +77,7 @@ const getFeature = async (address: string, protoFile: string) => {
   const def = loadSync(protoFile);
   const { routeguide } = grpc.loadPackageDefinition(def);
 
-  const client = new routeguide.RouteGuide(
+  const client = new routeguide['RouteGuide'](
     address,
     grpc.credentials.createInsecure()
   );

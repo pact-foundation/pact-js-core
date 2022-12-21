@@ -21,7 +21,7 @@ const getFeature = async (address: string, protoFile: string) => {
   const def = await load(protoFile);
   const { routeguide } = grpc.loadPackageDefinition(def);
 
-  const client = new routeguide.RouteGuide(
+  const client = new routeguide['RouteGuide'](
     address,
     grpc.credentials.createInsecure()
   );

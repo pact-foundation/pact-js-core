@@ -53,7 +53,11 @@
         "class-methods-use-this": "off",
         "chai-friendly/no-unused-expressions": "error",
         "mocha/no-mocha-arrows": "off",
-        "no-console": "off"
+        "no-console": "off",
+        "@typescript-eslint/dot-notation": [
+          "error",
+          { "allowPattern": "RouteGuide" }
+        ]
       }
     }
   ],

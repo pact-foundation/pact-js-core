@@ -68,7 +68,7 @@
     "unixify": "1.0.0"
   },
   "devDependencies": {
-    "@grpc/grpc-js": "^1.7.1",
+    "@grpc/grpc-js": "^1.8.0",
     "@grpc/proto-loader": "^0.7.3",
     "@pact-foundation/pact-js-prettier-config": "^1.0.0",
     "@tsconfig/node14": "^1.0.3",
