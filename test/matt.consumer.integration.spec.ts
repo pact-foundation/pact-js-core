@@ -58,7 +58,7 @@ describe.skip('MATT protocol test', () => {
       provider = makeConsumerPact(
         'matt-consumer',
         'matt-provider',
-        FfiSpecificationVersion.SPECIFICATION_VERSION_V4
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
       );
       provider.addPlugin('matt', '0.0.2');
 
@@ -116,7 +116,7 @@ describe.skip('MATT protocol test', () => {
       tcpProvider = makeConsumerMessagePact(
         'matt-tcp-consumer',
         'matt-tcp-provider',
-        FfiSpecificationVersion.SPECIFICATION_VERSION_V4
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
       );
     });
     describe('with MATT protocol', () => {

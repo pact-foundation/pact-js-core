@@ -37,15 +37,15 @@ export const writePact = (
   }
 
   switch (result) {
-    case FfiWritePactResponse.SUCCESS:
+    case FfiWritePactResponse['SUCCESS']:
       return;
-    case FfiWritePactResponse.UNABLE_TO_WRITE_PACT_FILE:
+    case FfiWritePactResponse['UNABLE_TO_WRITE_PACT_FILE']:
       logErrorAndThrow('The pact core was unable to write the pact file');
       break;
-    case FfiWritePactResponse.GENERAL_PANIC:
+    case FfiWritePactResponse['GENERAL_PANIC']:
       logCrashAndThrow('The pact core panicked while writing the pact file');
       break;
-    case FfiWritePactResponse.MOCK_SERVER_NOT_FOUND:
+    case FfiWritePactResponse['MOCK_SERVER_NOT_FOUND']:
       logCrashAndThrow(
         'The pact core was asked to write a pact file from a mock server that appears not to exist'
       );

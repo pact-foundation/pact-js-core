@@ -53,7 +53,7 @@ export default (port: number): Promise<http.Server> => {
   server.get(
     '/contract/:name',
     (req: express.Request, res: express.Response) => {
-      const fileName = req.params.name;
+      const fileName = req.params['name'];
       res.sendFile(
         fileName,
         {

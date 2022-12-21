@@ -12,14 +12,14 @@
   "settings": {
     "import/resolver": {
       "typescript": {
-        "project": ["tsconfig.json", "tsconfig.spec.json"]
+        "project": ["tsconfig.json"]
       }
     }
   },
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module",
-    "project": ["tsconfig.json", "tsconfig.spec.json"]
+    "project": ["tsconfig.json"]
   },
   "rules": {
     "@typescript-eslint/no-unused-vars": "error",

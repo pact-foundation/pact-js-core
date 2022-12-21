@@ -38,7 +38,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       pact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
-        FfiSpecificationVersion.SPECIFICATION_VERSION_V3
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
       );
 
       const interaction = pact.newInteraction('some description');
@@ -176,7 +176,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       pact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
-        FfiSpecificationVersion.SPECIFICATION_VERSION_V3
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
       );
 
       const interaction = pact.newInteraction('some description');
@@ -255,7 +255,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       pact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
-        FfiSpecificationVersion.SPECIFICATION_VERSION_V3
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
       );
       pact.addPlugin('protobuf', '0.1.14');
 
@@ -331,7 +331,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       const consumerPact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
-        FfiSpecificationVersion.SPECIFICATION_VERSION_V3
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
       );
 
       const interaction = consumerPact.newInteraction('some description');

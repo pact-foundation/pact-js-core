@@ -15,7 +15,7 @@ const { expect } = chai;
 
 const isWin = process.platform === 'win32';
 const isOSX = process.platform === 'darwin';
-const isCI = process.env.CI === 'true';
+const isCI = process.env['CI'] === 'true';
 
 const getFeature = async (address: string, protoFile: string) => {
   const def = await load(protoFile);
@@ -58,7 +58,7 @@ describe('FFI integration test for the Message Consumer API', () => {
     pact = makeConsumerMessagePact(
       'message-consumer',
       'message-provider',
-      FfiSpecificationVersion.SPECIFICATION_VERSION_V4
+      FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
     );
   });
 

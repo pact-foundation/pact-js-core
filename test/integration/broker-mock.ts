@@ -19,9 +19,9 @@ export default (port: number): Promise<http.Server> => {
     if (
       _.isEmpty(req.body) ||
       // 2. Is there a consumer, provider and version in the request?
-      _.isEmpty(req.params.consumer) ||
-      _.isEmpty(req.params.provider) ||
-      _.isEmpty(req.params.version)
+      _.isEmpty(req.params['consumer']) ||
+      _.isEmpty(req.params['provider']) ||
+      _.isEmpty(req.params['version'])
     ) {
       return res.sendStatus(400);
     }
@@ -112,9 +112,9 @@ export default (port: number): Promise<http.Server> => {
     res: express.Response
   ): express.Response {
     if (
-      _.isEmpty(req.params.consumer) ||
-      _.isEmpty(req.params.version) ||
-      _.isEmpty(req.params.tag)
+      _.isEmpty(req.params['consumer']) ||
+      _.isEmpty(req.params['version']) ||
+      _.isEmpty(req.params['tag'])
     ) {
       return res.sendStatus(400);
     }
@@ -211,8 +211,8 @@ export default (port: number): Promise<http.Server> => {
     if (
       req &&
       req.query &&
-      req.query.q &&
-      req.query.q[0].pacticipant === 'Foo'
+      req.query['q'] &&
+      req.query['q'][0].pacticipant === 'Foo'
     ) {
       return res.json({
         summary: {

@@ -37,7 +37,7 @@ describe('Pact Standalone', function forMocha() {
   });
 
   describe('Check if OS specific files are there', () => {
-    if (!process.env.ONLY_DOWNLOAD_PACT_FOR_WINDOWS) {
+    if (!process.env['ONLY_DOWNLOAD_PACT_FOR_WINDOWS']) {
       describe('OSX', () => {
         beforeEach(() => {
           pact = standalone('darwin');

@@ -119,15 +119,15 @@
     "sinon": "9.2.4",
     "snyk": "^1.747.0",
     "standard-version": "^9.1.0",
-    "ts-node": "10.4.0",
-    "typescript": "4.2.4"
+    "ts-node": "10.9.1",
+    "typescript": "4.7.4"
   },
   "scripts": {
     "clean": "rimraf '{src,test,bin,standalone}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
     "lint": "eslint . --ext .ts --config .eslintrc",
     "lint:fix": "npm run lint -- --fix",
     "prebuild": "npm run clean && bash script/download-libs.sh",
-    "build": "tsc",
+    "build": "tsc --project tsconfig.build.json",
     "prerelease": "npm run snyk-protect",
     "release": "standard-version",
     "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test,bin,standalone}/**/*.spec.ts\"",
