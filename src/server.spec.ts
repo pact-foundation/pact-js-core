@@ -5,7 +5,7 @@ import util = require('util');
 import path = require('path');
 import mkdirp = require('mkdirp');
 import rimraf = require('rimraf');
-import serverFactory from './server';
+import serverFactory, { ServerOptions } from './server';
 
 chai.use(chaiAsPromised);
 const { expect } = chai;
@@ -259,8 +259,7 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'DEBUG',
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              } as any).start()
+              } as unknown as ServerOptions).start()
             ).to.eventually.be.fulfilled,
           ]));
 
@@ -275,8 +274,7 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'INFO',
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              } as any).start()
+              } as unknown as ServerOptions).start()
             ).to.eventually.be.fulfilled,
           ]));
 
@@ -291,8 +289,7 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'WARN',
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              } as any).start()
+              } as unknown as ServerOptions).start()
             ).to.eventually.be.fulfilled,
           ]));
 
@@ -307,8 +304,7 @@ describe('Server Spec', () => {
             expect(
               serverFactory({
                 logLevel: 'ERROR',
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              } as any).start()
+              } as unknown as ServerOptions).start()
             ).to.eventually.be.fulfilled,
           ]));
       });

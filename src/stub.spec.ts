@@ -8,7 +8,6 @@ chai.use(chaiAsPromised);
 const { expect } = chai;
 
 describe('Stub Spec', () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let stub: any;
   const validDefaults = {
     pactUrls: [

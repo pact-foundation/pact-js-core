@@ -1,4 +1,3 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import * as fs from 'fs';
 import * as path from 'path';
 import * as chai from 'chai';

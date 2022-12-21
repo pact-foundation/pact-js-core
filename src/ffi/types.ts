@@ -5,6 +5,8 @@ export type FfiVerifierHandle = number;
 export type FfiMessagePactHandle = number;
 export type FfiMessageHandle = number;
 
+// TODO: Replace this pattern of type + const + lint disable with enums
+
 export type FfiSpecificationVersion = 0 | 1 | 2 | 3 | 4 | 5;
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export const FfiSpecificationVersion: Record<string, FfiSpecificationVersion> =

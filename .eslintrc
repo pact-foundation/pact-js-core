@@ -42,6 +42,11 @@
       },
       "extends": ["plugin:mocha/recommended"],
       "rules": {
+        "@typescript-eslint/ban-ts-comment": "off",
+        "@typescript-eslint/dot-notation": [
+          "error",
+          { "allowPattern": "RouteGuide" }
+        ],
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/no-unused-expressions": "off",
@@ -49,17 +54,14 @@
           "error",
           { "varsIgnorePattern": "unused" }
         ],
-        "@typescript-eslint/ban-ts-comment": "off",
-        "no-new": "off",
-        "class-methods-use-this": "off",
         "chai-friendly/no-unused-expressions": "error",
+        "@typescript-eslint/no-var-requires": "off",
+        "global-require": "off",
+        "import/no-dynamic-require": "off",
         "mocha/no-mocha-arrows": "off",
         "mocha/no-setup-in-describe": "off",
         "no-console": "off",
-        "@typescript-eslint/dot-notation": [
-          "error",
-          { "allowPattern": "RouteGuide" }
-        ]
+        "no-new": "off"
       }
     }
   ],

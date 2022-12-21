@@ -1,4 +1,5 @@
-/* eslint-disable no-param-reassign */ // TODO - this behaviour is relied on, and should be fixed
+/* eslint-disable no-param-reassign */
+// TODO - the param reassign behaviour is relied on, and should be fixed
 import path = require('path');
 import fs = require('fs');
 import events = require('events');
@@ -40,8 +41,7 @@ export abstract class AbstractService extends events.EventEmitter {
 
   public readonly options: ServiceOptions;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected __argMapping: any;
+  protected __argMapping: Record<string, string>;
 
   protected __running: boolean;
 
@@ -54,8 +54,7 @@ export abstract class AbstractService extends events.EventEmitter {
   protected constructor(
     command: string,
     options: ServiceOptions,
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-    argMapping: any,
+    argMapping: Record<string, string>,
     cliVerb?: CliVerbOptions
   ) {
     super();
