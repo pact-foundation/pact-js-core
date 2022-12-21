@@ -144,7 +144,7 @@ describe('FFI integration test for the Message Consumer API', () => {
       });
     });
 
-    describe.skip('with plugin contents (gRPC)', async () => {
+    describe.skip('with plugin contents (gRPC)', () => {
       const protoFile = `${__dirname}/integration/grpc/route_guide.proto`;
 
       let port: number;

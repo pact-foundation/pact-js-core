@@ -40,6 +40,7 @@
       "env": {
         "mocha": true
       },
+      "extends": ["plugin:mocha/recommended"],
       "rules": {
         "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/no-empty-function": "off",
@@ -53,6 +54,7 @@
         "class-methods-use-this": "off",
         "chai-friendly/no-unused-expressions": "error",
         "mocha/no-mocha-arrows": "off",
+        "mocha/no-setup-in-describe": "off",
         "no-console": "off",
         "@typescript-eslint/dot-notation": [
           "error",

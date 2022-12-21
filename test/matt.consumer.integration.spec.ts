@@ -119,7 +119,7 @@ describe.skip('MATT protocol test', () => {
         FfiSpecificationVersion.SPECIFICATION_VERSION_V4
       );
     });
-    describe('with MATT protocol', async () => {
+    describe('with MATT protocol', () => {
       afterEach(() => {
         tcpProvider.writePactFileForPluginServer(
           port,
