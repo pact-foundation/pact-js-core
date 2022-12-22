@@ -5,7 +5,7 @@ import bindings = require('bindings');
 
 const ffiLib: Ffi = bindings('pact.node');
 
-export const PACT_FFI_VERSION = '0.3.18';
+export const PACT_FFI_VERSION = '0.3.19';
 
 let ffi: typeof ffiLib;
 let ffiLogLevel: LogLevel;
