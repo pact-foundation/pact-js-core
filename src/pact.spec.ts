@@ -1,20 +1,22 @@
-import chai = require('chai');
-import path = require('path');
-import chaiAsPromised = require('chai-as-promised');
-import fs = require('fs');
+import * as chai from 'chai';
+import * as path from 'path';
+import chaiAsPromised from 'chai-as-promised';
+import * as fs from 'fs';
 import pact from './pact';
+import { ServerOptions } from '.';
 
-const expect = chai.expect;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('Pact Spec', () => {
   afterEach(() => pact.removeAllServers());
 
   describe('Set Log Level', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let originalLogLevel: any;
     // Reset log level after the tests
-    before(() => (originalLogLevel = pact.logLevel()));
+    before(() => {
+      originalLogLevel = pact.logLevel();
+    });
     after(() => pact.logLevel(originalLogLevel));
 
     context('when setting a log level', () => {
@@ -52,25 +54,26 @@ describe('Pact Spec', () => {
       '../test/monkeypatch.rb'
     );
 
-    beforeEach(
-      () =>
-        (dirPath = path.resolve(
-          __dirname,
-          `../.tmp/${Math.floor(Math.random() * 1000)}`
-        ))
-    );
+    beforeEach(() => {
+      dirPath = path.resolve(
+        __dirname,
+        `../.tmp/${Math.floor(Math.random() * 1000)}`
+      );
+    });
 
     afterEach(() => {
       try {
         if (fs.statSync(dirPath).isDirectory()) {
           fs.rmdirSync(dirPath);
         }
-      } catch (e) {}
+      } catch (e) {
+        /* any errors here are not a failed test */
+      }
     });
 
     context('when no options are set', () => {
       it('should use defaults and return serverFactory', () => {
-        let server = pact.createServer();
+        const server = pact.createServer();
         expect(server).to.be.an('object');
         expect(server.options).to.be.an('object');
         expect(server.options).to.contain.all.keys([
@@ -87,7 +90,7 @@ describe('Pact Spec', () => {
 
     context('when user specifies valid options', () => {
       it('should return serverFactory using specified options', () => {
-        let options = {
+        const options = {
           port: 9500,
           host: 'localhost',
           dir: dirPath,
@@ -99,7 +102,7 @@ describe('Pact Spec', () => {
           provider: 'providerName',
           monkeypatch: monkeypatchFile,
         };
-        let server = pact.createServer(options);
+        const server = pact.createServer(options);
         expect(server).to.be.an('object');
         expect(server.options).to.be.an('object');
         expect(server.options.port).to.equal(options.port);
@@ -107,7 +110,7 @@ describe('Pact Spec', () => {
         expect(server.options.dir).to.equal(options.dir);
         expect(server.options.ssl).to.equal(options.ssl);
         expect(server.options.cors).to.equal(options.cors);
-        expect(server.options.log).to.equal(options.log);
+        expect(server.options.log).to.equal(path.resolve(options.log));
         expect(server.options.spec).to.equal(options.spec);
         expect(server.options.consumer).to.equal(options.consumer);
         expect(server.options.provider).to.equal(options.provider);
@@ -127,8 +130,9 @@ describe('Pact Spec', () => {
       });
 
       it('should return an error on non-number', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(() => pact.createServer({ port: '99' } as any)).to.throw(Error);
+        expect(() =>
+          pact.createServer({ port: '99' } as unknown as ServerOptions)
+        ).to.throw(Error);
       });
 
       it('should return an error on outside port range', () => {
@@ -147,8 +151,9 @@ describe('Pact Spec', () => {
 
     context('when user specifies invalid host', () => {
       it('should return an error on non-string', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(() => pact.createServer({ host: 12 } as any)).to.throw(Error);
+        expect(() =>
+          pact.createServer({ host: 12 } as unknown as ServerOptions)
+        ).to.throw(Error);
       });
     });
 
@@ -161,22 +166,25 @@ describe('Pact Spec', () => {
 
     context('when user specifies invalid ssl', () => {
       it('should return an error on non-boolean', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(() => pact.createServer({ ssl: 1 } as any)).to.throw(Error);
+        expect(() =>
+          pact.createServer({ ssl: 1 } as unknown as ServerOptions)
+        ).to.throw(Error);
       });
     });
 
     context('when user specifies invalid cors', () => {
       it('should return an error on non-boolean', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(() => pact.createServer({ cors: 1 } as any)).to.throw(Error);
+        expect(() =>
+          pact.createServer({ cors: 1 } as unknown as ServerOptions)
+        ).to.throw(Error);
       });
     });
 
     context('when user specifies invalid spec', () => {
       it('should return an error on non-number', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(() => pact.createServer({ spec: '1' } as any)).to.throw(Error);
+        expect(() =>
+          pact.createServer({ spec: '1' } as unknown as ServerOptions)
+        ).to.throw(Error);
       });
 
       it('should return an error on negative number', () => {
@@ -194,19 +202,17 @@ describe('Pact Spec', () => {
 
     context('when user specifies invalid consumer name', () => {
       it('should return an error on non-string', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(() => pact.createServer({ consumer: 1234 } as any)).to.throw(
-          Error
-        );
+        expect(() =>
+          pact.createServer({ consumer: 1234 } as unknown as ServerOptions)
+        ).to.throw(Error);
       });
     });
 
     context('when user specifies invalid provider name', () => {
       it('should return an error on non-string', () => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        expect(() => pact.createServer({ provider: 2341 } as any)).to.throw(
-          Error
-        );
+        expect(() =>
+          pact.createServer({ provider: 2341 } as unknown as ServerOptions)
+        ).to.throw(Error);
       });
     });
 

@@ -1,12 +1,12 @@
 import path = require('path');
 import chai = require('chai');
-import logger from '../src/logger';
 import chaiAsPromised = require('chai-as-promised');
+import * as http from 'http';
+import logger from '../src/logger';
 import publisherFactory from '../src/publisher';
 import brokerMock from './integration/broker-mock';
-import * as http from 'http';
 
-const expect = chai.expect;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('Publish Spec', () => {

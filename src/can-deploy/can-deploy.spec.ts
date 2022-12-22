@@ -1,15 +1,17 @@
-import path = require('path');
-import fs = require('fs');
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-import canDeployFactory, { CanDeploy, CanDeployOptions } from './can-deploy';
-import logger from './logger';
-import brokerMock from '../test/integration/broker-mock';
+import * as path from 'path';
+import * as fs from 'fs';
+import * as chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import * as http from 'http';
-import rimraf = require('rimraf');
-import mkdirp = require('mkdirp');
+import * as rimraf from 'rimraf';
+import * as mkdirp from 'mkdirp';
 
-const expect = chai.expect;
+import canDeployFactory, { CanDeploy } from './can-deploy';
+import { CanDeployOptions } from './types';
+import logger from '../logger';
+import brokerMock from '../../test/integration/broker-mock';
+
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('CanDeploy Spec', () => {

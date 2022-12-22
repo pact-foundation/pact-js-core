@@ -1,14 +1,15 @@
 import fs = require('fs');
-import logger from './logger';
-import spawn from './spawn';
-import { DEFAULT_ARG } from './spawn';
-import pactStandalone from './pact-standalone';
 import path = require('path');
 import mkdirp = require('mkdirp');
 import checkTypes = require('check-types');
+import logger from './logger';
+import spawn, { DEFAULT_ARG } from './spawn';
+import pactStandalone from './pact-standalone';
+import { MessageOptions } from './types';
 
 export class Message {
   public readonly options: MessageOptions;
+
   private readonly __argMapping = {
     pactFileWriteMode: DEFAULT_ARG,
     dir: '--pact_dir',
@@ -17,8 +18,8 @@ export class Message {
     spec: '--pact_specification_version',
   };
 
-  constructor(options: MessageOptions) {
-    options = options || {};
+  constructor(passedOptions: MessageOptions = {}) {
+    const options = { ...passedOptions };
     options.pactFileWriteMode = options.pactFileWriteMode || 'update';
     options.spec = options.spec || 3;
 
@@ -99,21 +100,11 @@ export class Message {
 
         if (code === 0) {
           return resolve(o);
-        } else {
-          return reject(o);
         }
+        return reject(o);
       });
     });
   }
 }
 
 export default (options: MessageOptions): Message => new Message(options);
-
-export interface MessageOptions {
-  content?: string;
-  dir?: string;
-  consumer?: string;
-  provider?: string;
-  pactFileWriteMode?: 'overwrite' | 'update' | 'merge';
-  spec?: number;
-}

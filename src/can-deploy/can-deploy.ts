@@ -1,21 +1,12 @@
-import logger, { verboseIsImplied } from './logger';
-import spawn from './spawn';
-import pactStandalone from './pact-standalone';
 import { timeout, TimeoutError } from 'promise-timeout';
-import { PACT_NODE_NO_VALUE } from './spawn';
 import * as _ from 'underscore';
-
 import checkTypes = require('check-types');
 
-export class CannotDeployError extends Error {
-  output: CanDeployResponse | string;
-
-  constructor(output: CanDeployResponse | string) {
-    super('can-i-deploy result: it is not safe to deploy');
-    this.name = 'CannotDeployError';
-    this.output = output;
-  }
-}
+import { CanDeployOptions, CanDeployResponse } from './types';
+import logger, { verboseIsImplied } from '../logger';
+import pactStandalone from '../pact-standalone';
+import spawn, { PACT_NODE_NO_VALUE } from '../spawn';
+import { CannotDeployError } from './CannotDeployError';
 
 export class CanDeploy {
   public static convertForSpawnBinary(
@@ -36,6 +27,7 @@ export class CanDeploy {
   }
 
   public readonly options: CanDeployOptions;
+
   private readonly __argMapping = {
     name: '--pacticipant',
     version: '--version',
@@ -51,8 +43,8 @@ export class CanDeploy {
     retryInterval: '--retry-interval',
   };
 
-  constructor(options: CanDeployOptions) {
-    options = options || {};
+  constructor(passedOptions: CanDeployOptions) {
+    const options = { ...passedOptions };
     // Setting defaults
     options.timeout = options.timeout || 60000;
     if (!options.output) {
@@ -69,13 +61,15 @@ export class CanDeploy {
       'Must provide the pactBroker argument'
     );
 
-    options.pactBrokerToken !== undefined &&
+    if (options.pactBrokerToken !== undefined) {
       checkTypes.assert.nonEmptyString(options.pactBrokerToken);
-    options.pactBrokerUsername !== undefined &&
+    }
+    if (options.pactBrokerUsername !== undefined) {
       checkTypes.assert.string(options.pactBrokerUsername);
-    options.pactBrokerPassword !== undefined &&
+    }
+    if (options.pactBrokerPassword !== undefined) {
       checkTypes.assert.string(options.pactBrokerPassword);
-
+    }
     if (options.verbose === undefined && verboseIsImplied()) {
       options.verbose = true;
     }
@@ -173,33 +167,3 @@ export class CanDeploy {
 }
 
 export default (options: CanDeployOptions): CanDeploy => new CanDeploy(options);
-
-export interface CanDeployPacticipant {
-  name: string;
-  version?: string;
-  latest?: string | boolean;
-}
-
-export interface CanDeployOptions {
-  pacticipants: CanDeployPacticipant[];
-  pactBroker: string;
-  pactBrokerToken?: string;
-  pactBrokerUsername?: string;
-  pactBrokerPassword?: string;
-  output?: 'json' | 'table';
-  verbose?: boolean;
-  to?: string;
-  retryWhileUnknown?: number;
-  retryInterval?: number;
-  timeout?: number;
-}
-
-export interface CanDeployResponse {
-  summary: { deployable: boolean; reason: string; unknown: number };
-  matrix: Array<{
-    consumer: CanDeployPacticipant;
-    provider: CanDeployPacticipant;
-    verificationResult: { verifiedAt: string; success: boolean };
-    pact: { createdAt: string };
-  }>;
-}

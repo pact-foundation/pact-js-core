@@ -1,18 +1,17 @@
-import logger from '../../logger';
 import fs = require('fs');
 import url = require('url');
+import { URL } from 'url';
+import logger from '../../logger';
 
 import { FnMapping, FnValidationStatus } from './types';
 import { InternalPactVerifierOptions } from '../types';
 
 import { FfiVerificationFunctions } from '../../ffi/types';
-import { URL } from 'url';
 
 const DEFAULT_TIMEOUT = 30000;
 
-const objArrayToStringArray = (obj: unknown[]) => {
-  return obj.map((o) => JSON.stringify(o));
-};
+const objArrayToStringArray = (obj: unknown[]) =>
+  obj.map((o) => JSON.stringify(o));
 
 type IgnoredFfiFunctions = {
   pactffiVerifierNewForApplication: 1;
@@ -68,14 +67,12 @@ export const ffiFnMapping: FnMapping<
               ffi.pactffiVerifierAddCustomHeader(handle, parts[0], parts[1]);
             }
           });
-        } else {
-          if (options.customProviderHeaders) {
-            Object.entries(options.customProviderHeaders).forEach(
-              ([key, value]) => {
-                ffi.pactffiVerifierAddCustomHeader(handle, key, value);
-              }
-            );
-          }
+        } else if (options.customProviderHeaders) {
+          Object.entries(options.customProviderHeaders).forEach(
+            ([key, value]) => {
+              ffi.pactffiVerifierAddCustomHeader(handle, key, value);
+            }
+          );
         }
         if (messages.length > 0) {
           return { status: FnValidationStatus.FAIL, messages };
@@ -108,12 +105,14 @@ export const ffiFnMapping: FnMapping<
                   handle,
                   file,
                   options.pactBrokerUsername ||
-                    process.env.PACT_BROKER_USERNAME ||
+                    process.env['PACT_BROKER_USERNAME'] ||
                     '',
                   options.pactBrokerPassword ||
-                    process.env.PACT_BROKER_PASSWORD ||
+                    process.env['PACT_BROKER_PASSWORD'] ||
                     '',
-                  options.pactBrokerToken || process.env.PACT_BROKER_TOKEN || ''
+                  options.pactBrokerToken ||
+                    process.env['PACT_BROKER_TOKEN'] ||
+                    ''
                 );
               }
             } catch {
@@ -153,15 +152,16 @@ export const ffiFnMapping: FnMapping<
   },
   pactffiVerifierBrokerSourceWithSelectors: {
     validateAndExecute(ffi, handle, opts) {
-      const brokerUrl = opts.pactBrokerUrl || process.env.PACT_BROKER_BASE_URL;
+      const brokerUrl =
+        opts.pactBrokerUrl || process.env['PACT_BROKER_BASE_URL'];
 
       if (brokerUrl && opts.provider) {
         ffi.pactffiVerifierBrokerSourceWithSelectors(
           handle,
           brokerUrl,
-          opts.pactBrokerUsername || process.env.PACT_BROKER_USERNAME || '',
-          opts.pactBrokerPassword || process.env.PACT_BROKER_PASSWORD || '',
-          opts.pactBrokerToken || process.env.PACT_BROKER_TOKEN || '',
+          opts.pactBrokerUsername || process.env['PACT_BROKER_USERNAME'] || '',
+          opts.pactBrokerPassword || process.env['PACT_BROKER_PASSWORD'] || '',
+          opts.pactBrokerToken || process.env['PACT_BROKER_TOKEN'] || '',
           opts.enablePending || false,
           opts.includeWipPactsSince || '',
           opts.providerVersionTags || [],
@@ -213,13 +213,13 @@ export const ffiFnMapping: FnMapping<
   pactffiVerifierSetFilterInfo: {
     validateAndExecute(ffi, handle) {
       if (
-        process.env.PACT_DESCRIPTION ||
-        process.env.PACT_PROVIDER_STATE ||
-        process.env.PACT_PROVIDER_NO_STATE
+        process.env['PACT_DESCRIPTION'] ||
+        process.env['PACT_PROVIDER_STATE'] ||
+        process.env['PACT_PROVIDER_NO_STATE']
       ) {
-        const filterDescription = process.env.PACT_DESCRIPTION || '';
-        const filterState = process.env.PACT_PROVIDER_STATE || '';
-        const filterNoState = process.env.PACT_PROVIDER_NO_STATE ? true : false;
+        const filterDescription = process.env['PACT_DESCRIPTION'] || '';
+        const filterState = process.env['PACT_PROVIDER_STATE'] || '';
+        const filterNoState = !!process.env['PACT_PROVIDER_NO_STATE'];
 
         ffi.pactffiVerifierSetFilterInfo(
           handle,
@@ -277,7 +277,7 @@ export const ffiFnMapping: FnMapping<
     validateAndExecute(ffi, handle, options) {
       if (
         (options.publishVerificationResult ||
-          process.env.PACT_BROKER_PUBLISH_VERIFICATION_RESULTS) &&
+          process.env['PACT_BROKER_PUBLISH_VERIFICATION_RESULTS']) &&
         options.providerVersion
       ) {
         ffi.pactffiVerifierSetPublishOptions(

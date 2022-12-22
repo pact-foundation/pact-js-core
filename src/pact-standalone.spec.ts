@@ -1,16 +1,14 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-/* global describe:true, before:true, after:true, it:true, global:true, process:true */
 import * as fs from 'fs';
 import * as path from 'path';
 import * as chai from 'chai';
 import pactEnvironment from './pact-environment';
 import { PactStandalone, standalone } from './pact-standalone';
 
-const expect = chai.expect;
+const { expect } = chai;
 const basePath = pactEnvironment.cwd;
 
 // Needs to stay a function and not an arrow function to access mocha 'this' context
-describe('Pact Standalone', function () {
+describe('Pact Standalone', function forMocha() {
   // Set timeout to 10 minutes because downloading binaries might take a while.
   this.timeout(600000);
 
@@ -39,9 +37,11 @@ describe('Pact Standalone', function () {
   });
 
   describe('Check if OS specific files are there', () => {
-    if (!process.env.ONLY_DOWNLOAD_PACT_FOR_WINDOWS) {
+    if (!process.env['ONLY_DOWNLOAD_PACT_FOR_WINDOWS']) {
       describe('OSX', () => {
-        beforeEach(() => (pact = standalone('darwin')));
+        beforeEach(() => {
+          pact = standalone('darwin');
+        });
 
         it('broker relative path', () => {
           expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
@@ -98,7 +98,9 @@ describe('Pact Standalone', function () {
       });
 
       describe('Linux X64', () => {
-        beforeEach(() => (pact = standalone('linux', 'x64')));
+        beforeEach(() => {
+          pact = standalone('linux', 'x64');
+        });
 
         it('broker relative path', () => {
           expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
@@ -157,7 +159,9 @@ describe('Pact Standalone', function () {
     }
 
     describe('Windows', () => {
-      beforeEach(() => (pact = standalone('win32')));
+      beforeEach(() => {
+        pact = standalone('win32');
+      });
 
       it("should add '.bat' to the end of the binary names", () => {
         expect(pact.brokerPath).to.contain('pact-broker.bat');

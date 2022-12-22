@@ -3,8 +3,8 @@ import chalk = require('chalk');
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
 export const PACT_STANDALONE_VERSION = '1.91.0';
 
-function throwError(msg: string): never {
-  throw new Error(chalk.red(`Error while locating pact binary: ${msg}`));
+function makeError(msg: string): Error {
+  return new Error(chalk.red(`Error while locating pact binary: ${msg}`));
 }
 
 export function createConfig(): Config {
@@ -37,20 +37,20 @@ export function createConfig(): Config {
 
 const CONFIG = createConfig();
 
-export function getBinaryEntry(platform?: string, arch?: string): BinaryEntry {
-  platform = platform || process.platform;
-  arch = arch || process.arch;
-  for (let value of CONFIG.binaries) {
-    if (
-      value.platform === platform &&
-      (value.arch ? value.arch === arch : true)
-    ) {
-      return value;
-    }
-  }
-  throw throwError(
-    `Cannot find binary for platform '${platform}' with architecture '${arch}'.`
+export function getBinaryEntry(
+  platform: string = process.platform,
+  arch: string = process.arch
+): BinaryEntry {
+  const found = CONFIG.binaries.find(
+    (value) =>
+      value.platform === platform && (value.arch ? value.arch === arch : true)
   );
+  if (found === undefined) {
+    throw makeError(
+      `Cannot find binary for platform '${platform}' with architecture '${arch}'.`
+    );
+  }
+  return found;
 }
 
 export interface Config {

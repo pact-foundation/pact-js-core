@@ -1,14 +1,15 @@
 import path = require('path');
 import fs = require('fs');
-import logger, { verboseIsImplied } from './logger';
-import spawn from './spawn';
 import { timeout, TimeoutError } from 'promise-timeout';
-import { DEFAULT_ARG } from './spawn';
-import pactStandalone from './pact-standalone';
 import checkTypes = require('check-types');
+import logger, { verboseIsImplied } from './logger';
+import spawn, { DEFAULT_ARG } from './spawn';
+import pactStandalone from './pact-standalone';
+import { PublisherOptions } from './types';
 
 export class Publisher {
   public readonly options: PublisherOptions;
+
   private readonly __argMapping = {
     pactFilesOrDirs: DEFAULT_ARG,
     pactBroker: '--broker-base-url',
@@ -23,34 +24,34 @@ export class Publisher {
     autoDetectVersionProperties: '--auto-detect-version-properties',
   };
 
-  constructor(options: PublisherOptions) {
-    options = options || {};
+  constructor(passedOptions: PublisherOptions) {
+    this.options = passedOptions || {};
     // Setting defaults
-    options.tags = options.tags || [];
-    options.timeout = options.timeout || 60000;
+    this.options.tags = this.options.tags || [];
+    this.options.timeout = this.options.timeout || 60000;
 
     checkTypes.assert.nonEmptyString(
-      options.pactBroker,
+      this.options.pactBroker,
       'Must provide the pactBroker argument'
     );
     checkTypes.assert.nonEmptyString(
-      options.consumerVersion,
+      this.options.consumerVersion,
       'Must provide the consumerVersion argument'
     );
     checkTypes.assert.arrayLike(
-      options.pactFilesOrDirs,
+      this.options.pactFilesOrDirs,
       'Must provide the pactFilesOrDirs argument'
     );
     checkTypes.assert.nonEmptyArray(
-      options.pactFilesOrDirs,
+      this.options.pactFilesOrDirs,
       'Must provide the pactFilesOrDirs argument with an array'
     );
 
-    if (options.pactFilesOrDirs) {
-      checkTypes.assert.array.of.string(options.pactFilesOrDirs);
+    if (this.options.pactFilesOrDirs) {
+      checkTypes.assert.array.of.string(this.options.pactFilesOrDirs);
 
       // Resolve all paths as absolute paths
-      options.pactFilesOrDirs = options.pactFilesOrDirs.map((v) => {
+      this.options.pactFilesOrDirs = this.options.pactFilesOrDirs.map((v) => {
         const newPath = path.resolve(v);
         if (!fs.existsSync(newPath)) {
           throw new Error(
@@ -61,25 +62,25 @@ export class Publisher {
       });
     }
 
-    if (options.pactBroker) {
-      checkTypes.assert.string(options.pactBroker);
+    if (this.options.pactBroker) {
+      checkTypes.assert.string(this.options.pactBroker);
     }
 
-    if (options.pactBrokerUsername) {
-      checkTypes.assert.string(options.pactBrokerUsername);
+    if (this.options.pactBrokerUsername) {
+      checkTypes.assert.string(this.options.pactBrokerUsername);
     }
 
-    if (options.pactBrokerPassword) {
-      checkTypes.assert.string(options.pactBrokerPassword);
+    if (this.options.pactBrokerPassword) {
+      checkTypes.assert.string(this.options.pactBrokerPassword);
     }
 
-    if (options.verbose === undefined && verboseIsImplied()) {
-      options.verbose = true;
+    if (this.options.verbose === undefined && verboseIsImplied()) {
+      this.options.verbose = true;
     }
 
     if (
-      (options.pactBrokerUsername && !options.pactBrokerPassword) ||
-      (options.pactBrokerPassword && !options.pactBrokerUsername)
+      (this.options.pactBrokerUsername && !this.options.pactBrokerPassword) ||
+      (this.options.pactBrokerPassword && !this.options.pactBrokerUsername)
     ) {
       throw new Error(
         'Must provide both Pact Broker username and password. None needed if authentication on Broker is disabled.'
@@ -87,23 +88,21 @@ export class Publisher {
     }
 
     if (
-      options.pactBrokerToken &&
-      (options.pactBrokerUsername || options.pactBrokerPassword)
+      this.options.pactBrokerToken &&
+      (this.options.pactBrokerUsername || this.options.pactBrokerPassword)
     ) {
       throw new Error(
         'Must provide pactBrokerToken or pactBrokerUsername/pactBrokerPassword but not both.'
       );
     }
 
-    if (options.branch) {
-      checkTypes.assert.string(options.branch);
+    if (this.options.branch) {
+      checkTypes.assert.string(this.options.branch);
     }
 
-    if (options.autoDetectVersionProperties) {
-      checkTypes.assert.boolean(options.autoDetectVersionProperties);
+    if (this.options.autoDetectVersionProperties) {
+      checkTypes.assert.boolean(this.options.autoDetectVersionProperties);
     }
-
-    this.options = options;
   }
 
   public publish(): Promise<string[]> {
@@ -150,18 +149,3 @@ export class Publisher {
 }
 
 export default (options: PublisherOptions): Publisher => new Publisher(options);
-
-export interface PublisherOptions {
-  pactFilesOrDirs: string[];
-  pactBroker: string;
-  consumerVersion: string;
-  pactBrokerUsername?: string;
-  pactBrokerPassword?: string;
-  pactBrokerToken?: string;
-  tags?: string[];
-  verbose?: boolean;
-  timeout?: number;
-  buildUrl?: string;
-  branch?: string;
-  autoDetectVersionProperties?: boolean;
-}

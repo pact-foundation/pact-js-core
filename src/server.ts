@@ -1,15 +1,16 @@
-import { AbstractService } from './service';
-import pact from './pact-standalone';
 import path = require('path');
 import fs = require('fs');
 import mkdirp = require('mkdirp');
 import checkTypes = require('check-types');
+import pact from './pact-standalone';
+import { AbstractService } from './service';
 import { LogLevel } from './logger/types';
 
 export class Server extends AbstractService {
   public readonly options: ServerOptions;
 
-  constructor(options: ServerOptions = {}) {
+  constructor(passedOptions: ServerOptions = {}) {
+    const options = { ...passedOptions };
     options.dir = options.dir ? path.resolve(options.dir) : process.cwd(); // Use directory relative to cwd
     options.pactFileWriteMode = options.pactFileWriteMode || 'overwrite';
 

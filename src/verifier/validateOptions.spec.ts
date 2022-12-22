@@ -6,7 +6,7 @@ import logger from '../logger';
 import { validateOptions } from './validateOptions';
 import { ConsumerVersionSelector, VerifierOptions } from './types';
 
-const expect = chai.expect;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('Verifier argument validator', () => {
@@ -104,12 +104,6 @@ describe('Verifier argument validator', () => {
           ).to.not.throw(Error);
         });
       });
-    }
-  );
-
-  context(
-    'when requested to publish verification results to a Pact Broker',
-    () => {
       context('and does not specify provider version', () => {
         it('should fail with an error', () => {
           expect(() =>

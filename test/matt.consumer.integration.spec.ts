@@ -8,12 +8,39 @@ import {
   ConsumerPact,
   makeConsumerMessagePact,
   makeConsumerPact,
-} from '../src/consumer';
+} from '../src';
 import { setLogLevel } from '../src/logger';
 import { FfiSpecificationVersion } from '../src/ffi/types';
 
 chai.use(chaiAsPromised);
-const expect = chai.expect;
+const { expect } = chai;
+
+const parseMattMessage = (raw: string): string =>
+  raw.replace(/(MATT)+/g, '').trim();
+const generateMattMessage = (raw: string): string => `MATT${raw}MATT`;
+
+const sendMattMessageTCP = (
+  message: string,
+  host: string,
+  port: number
+): Promise<string> => {
+  const socket = net.connect({
+    port,
+    host,
+  });
+
+  const res = socket.write(`${generateMattMessage(message)}\n`);
+
+  if (!res) {
+    throw Error('unable to connect to host');
+  }
+
+  return new Promise((resolve) => {
+    socket.on('data', (data) => {
+      resolve(parseMattMessage(data.toString()));
+    });
+  });
+};
 
 describe.skip('MATT protocol test', () => {
   setLogLevel('trace');
@@ -31,7 +58,7 @@ describe.skip('MATT protocol test', () => {
       provider = makeConsumerPact(
         'matt-consumer',
         'matt-provider',
-        FfiSpecificationVersion.SPECIFICATION_VERSION_V4
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
       );
       provider.addPlugin('matt', '0.0.2');
 
@@ -56,8 +83,8 @@ describe.skip('MATT protocol test', () => {
       provider.cleanupMockServer(port);
     });
 
-    it('returns a valid MATT message over HTTP', () => {
-      return axios
+    it('returns a valid MATT message over HTTP', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -81,8 +108,7 @@ describe.skip('MATT protocol test', () => {
         })
         .then(() => {
           provider.writePactFile(path.join(__dirname, '__testoutput__'));
-        });
-    });
+        }));
   });
 
   describe('TCP Messages', () => {
@@ -90,10 +116,10 @@ describe.skip('MATT protocol test', () => {
       tcpProvider = makeConsumerMessagePact(
         'matt-tcp-consumer',
         'matt-tcp-provider',
-        FfiSpecificationVersion.SPECIFICATION_VERSION_V4
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
       );
     });
-    describe('with MATT protocol', async () => {
+    describe('with MATT protocol', () => {
       afterEach(() => {
         tcpProvider.writePactFileForPluginServer(
           port,
@@ -134,33 +160,3 @@ describe.skip('MATT protocol test', () => {
     });
   });
 });
-
-const parseMattMessage = (raw: string): string => {
-  return raw.replace(/(MATT)+/g, '').trim();
-};
-const generateMattMessage = (raw: string): string => {
-  return `MATT${raw}MATT`;
-};
-
-const sendMattMessageTCP = (
-  message: string,
-  host: string,
-  port: number
-): Promise<string> => {
-  const socket = net.connect({
-    port: port,
-    host: host,
-  });
-
-  const res = socket.write(generateMattMessage(message) + '\n');
-
-  if (!res) {
-    throw Error('unable to connect to host');
-  }
-
-  return new Promise((resolve, reject) => {
-    socket.on('data', (data) => {
-      resolve(parseMattMessage(data.toString()));
-    });
-  });
-};

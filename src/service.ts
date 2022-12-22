@@ -1,17 +1,20 @@
+/* eslint-disable no-param-reassign */
+// TODO - the param reassign behaviour is relied on, and should be fixed
 import path = require('path');
 import fs = require('fs');
 import events = require('events');
-import logger, { setLogLevel } from './logger';
-import { LogLevel } from './logger/types';
-import spawn, { CliVerbOptions } from './spawn';
 import { ChildProcess } from 'child_process';
 import { timeout, TimeoutError } from 'promise-timeout';
 import mkdirp = require('mkdirp');
 import checkTypes = require('check-types');
 import needle = require('needle');
+import spawn, { CliVerbOptions } from './spawn';
+import { LogLevel } from './logger/types';
+import logger, { setLogLevel } from './logger';
+import { HTTPConfig, ServiceOptions } from './types';
 
 // Get a reference to the global setTimeout object in case it is mocked by a testing library later
-const setTimeout = global.setTimeout;
+const { setTimeout } = global;
 
 const RETRY_AMOUNT = 60;
 
@@ -38,22 +41,23 @@ export abstract class AbstractService extends events.EventEmitter {
 
   public readonly options: ServiceOptions;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  protected __argMapping: any;
+  protected __argMapping: Record<string, string>;
+
   protected __running: boolean;
+
   protected __instance: ChildProcess | undefined;
+
   protected __cliVerb?: CliVerbOptions;
+
   protected __serviceCommand: string;
 
   protected constructor(
     command: string,
     options: ServiceOptions,
-    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any
-    argMapping: any,
+    argMapping: Record<string, string>,
     cliVerb?: CliVerbOptions
   ) {
     super();
-
     // Set logger first
     if (options.logLevel) {
       setLogLevel(options.logLevel);
@@ -271,7 +275,7 @@ export abstract class AbstractService extends events.EventEmitter {
       };
 
       const check = (): void => {
-        amount++;
+        amount += 1;
         if (this.options.port) {
           this.__call(this.options).then(() => resolve(), retry.bind(this));
         } else {
@@ -289,7 +293,7 @@ export abstract class AbstractService extends events.EventEmitter {
 
     const checkPromise = new Promise<void>((resolve, reject) => {
       const check = (): void => {
-        amount++;
+        amount += 1;
         if (this.options.port) {
           this.__call(this.options).then(
             () => {
@@ -325,7 +329,7 @@ export abstract class AbstractService extends events.EventEmitter {
     };
 
     if (options.ssl) {
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
       config.rejectUnauthorized = false;
       config.agent = false;
     }
@@ -340,23 +344,4 @@ export abstract class AbstractService extends events.EventEmitter {
       }
     });
   }
-}
-
-export interface ServiceOptions {
-  port?: number;
-  ssl?: boolean;
-  cors?: boolean;
-  host?: string;
-  sslcert?: string;
-  sslkey?: string;
-  log?: string;
-  logLevel?: LogLevel;
-  timeout?: number;
-}
-
-export interface HTTPConfig extends Omit<needle.NeedleOptions, 'headers'> {
-  headers: {
-    'X-Pact-Mock-Service': string;
-    'Content-Type': string;
-  };
 }

@@ -3,18 +3,45 @@ import path = require('path');
 import chaiAsPromised = require('chai-as-promised');
 import * as rimraf from 'rimraf';
 import zlib = require('zlib');
-import { ConsumerMessagePact, makeConsumerMessagePact } from '../src/consumer';
-import { FfiSpecificationVersion } from '../src/ffi/types';
-import { setLogLevel } from '../src/logger';
 import { load } from '@grpc/proto-loader';
 import * as grpc from '@grpc/grpc-js';
 
+import { ConsumerMessagePact, makeConsumerMessagePact } from '../src';
+import { FfiSpecificationVersion } from '../src/ffi/types';
+import { setLogLevel } from '../src/logger';
+
 chai.use(chaiAsPromised);
-const expect = chai.expect;
+const { expect } = chai;
 
 const isWin = process.platform === 'win32';
 const isOSX = process.platform === 'darwin';
-const isCI = process.env.CI === 'true';
+const isCI = process.env['CI'] === 'true';
+
+const getFeature = async (address: string, protoFile: string) => {
+  const def = await load(protoFile);
+  const { routeguide } = grpc.loadPackageDefinition(def);
+
+  const client = new routeguide['RouteGuide'](
+    address,
+    grpc.credentials.createInsecure()
+  );
+
+  return new Promise<any>((resolve, reject) => {
+    client.GetFeature(
+      {
+        latitude: 180,
+        longitude: 200,
+      },
+      (e: Error, feature: any) => {
+        if (e) {
+          reject(e);
+        } else {
+          resolve(feature);
+        }
+      }
+    );
+  });
+};
 
 describe('FFI integration test for the Message Consumer API', () => {
   setLogLevel('error');
@@ -31,7 +58,7 @@ describe('FFI integration test for the Message Consumer API', () => {
     pact = makeConsumerMessagePact(
       'message-consumer',
       'message-provider',
-      FfiSpecificationVersion.SPECIFICATION_VERSION_V4
+      FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
     );
   });
 
@@ -80,7 +107,7 @@ describe('FFI integration test for the Message Consumer API', () => {
         message.withMetadata('meta-key', 'meta-val');
 
         const reified = message.reifyMessage();
-        const contents = JSON.parse(reified).contents;
+        const { contents } = JSON.parse(reified);
 
         // Check the base64 encoded contents can be decoded, unzipped and equals the secret
         const buf = Buffer.from(contents.content, 'base64');
@@ -117,7 +144,7 @@ describe('FFI integration test for the Message Consumer API', () => {
       });
     });
 
-    describe.skip('with plugin contents (gRPC)', async () => {
+    describe.skip('with plugin contents (gRPC)', () => {
       const protoFile = `${__dirname}/integration/grpc/route_guide.proto`;
 
       let port: number;
@@ -127,11 +154,8 @@ describe('FFI integration test for the Message Consumer API', () => {
       });
 
       beforeEach(() => {
-        const grpcInteraction =
-          `{
-          "pact:proto": "` +
-          protoFile +
-          `",
+        const grpcInteraction = `{
+          "pact:proto": "${protoFile}",
           "pact:proto-service": "RouteGuide/GetFeature",
           "pact:content-type": "application/protobuf",
           "request": {
@@ -180,29 +204,3 @@ describe('FFI integration test for the Message Consumer API', () => {
     });
   });
 });
-
-const getFeature = async (address: string, protoFile: string) => {
-  const def = await load(protoFile);
-  const routeguide: any = grpc.loadPackageDefinition(def).routeguide;
-
-  const client = new routeguide.RouteGuide(
-    address,
-    grpc.credentials.createInsecure()
-  );
-
-  return new Promise<any>((resolve, reject) => {
-    client.GetFeature(
-      {
-        latitude: 180,
-        longitude: 200,
-      },
-      (e: Error, feature: any) => {
-        if (e) {
-          reject(e);
-        } else {
-          resolve(feature);
-        }
-      }
-    );
-  });
-};

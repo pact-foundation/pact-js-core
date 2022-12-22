@@ -1,2 +1,5 @@
+import spawn from './spawn';
+
 export * from './arguments';
-export { default } from './spawn';
+
+export default spawn;

@@ -2,14 +2,15 @@ import path = require('path');
 import fs = require('fs');
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
-import publisherFactory, { PublisherOptions } from './publisher';
-import logger from './logger';
-import brokerMock from '../test/integration/broker-mock';
 import * as http from 'http';
 import rimraf = require('rimraf');
 import mkdirp = require('mkdirp');
+import publisherFactory from './publisher';
+import logger from './logger';
+import brokerMock from '../test/integration/broker-mock';
+import { PublisherOptions } from './types';
 
-const expect = chai.expect;
+const { expect } = chai;
 chai.use(chaiAsPromised);
 
 describe('Publish Spec', () => {

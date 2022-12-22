@@ -1,9 +1,9 @@
 import express = require('express');
 import * as http from 'http';
-import { auth, returnJson } from './data-utils';
 import cors = require('cors');
 import _ = require('underscore');
 import bodyParser = require('body-parser');
+import { auth, returnJson } from './data-utils';
 
 export default (port: number): Promise<http.Server> => {
   const BROKER_HOST = `http://localhost:${port}`;
@@ -19,9 +19,9 @@ export default (port: number): Promise<http.Server> => {
     if (
       _.isEmpty(req.body) ||
       // 2. Is there a consumer, provider and version in the request?
-      _.isEmpty(req.params.consumer) ||
-      _.isEmpty(req.params.provider) ||
-      _.isEmpty(req.params.version)
+      _.isEmpty(req.params['consumer']) ||
+      _.isEmpty(req.params['provider']) ||
+      _.isEmpty(req.params['version'])
     ) {
       return res.sendStatus(400);
     }
@@ -112,9 +112,9 @@ export default (port: number): Promise<http.Server> => {
     res: express.Response
   ): express.Response {
     if (
-      _.isEmpty(req.params.consumer) ||
-      _.isEmpty(req.params.version) ||
-      _.isEmpty(req.params.tag)
+      _.isEmpty(req.params['consumer']) ||
+      _.isEmpty(req.params['version']) ||
+      _.isEmpty(req.params['tag'])
     ) {
       return res.sendStatus(400);
     }
@@ -211,8 +211,8 @@ export default (port: number): Promise<http.Server> => {
     if (
       req &&
       req.query &&
-      req.query.q &&
-      req.query.q[0].pacticipant === 'Foo'
+      req.query['q'] &&
+      req.query['q'][0].pacticipant === 'Foo'
     ) {
       return res.json({
         summary: {
@@ -244,38 +244,37 @@ export default (port: number): Promise<http.Server> => {
           },
         ],
       });
-    } else {
-      return res.json({
-        summary: {
-          deployable: false,
-          reason: 'some text',
-          unknown: 1,
-        },
-        matrix: [
-          {
-            consumer: {
-              name: 'FooFail',
-              version: {
-                number: '4',
-              },
-            },
-            provider: {
-              name: 'Bar',
-              version: {
-                number: '5',
-              },
-            },
-            verificationResult: {
-              verifiedAt: '2017-10-10T12:49:04+11:00',
-              success: false,
-            },
-            pact: {
-              createdAt: '2017-10-10T12:49:04+11:00',
+    }
+    return res.json({
+      summary: {
+        deployable: false,
+        reason: 'some text',
+        unknown: 1,
+      },
+      matrix: [
+        {
+          consumer: {
+            name: 'FooFail',
+            version: {
+              number: '4',
             },
           },
-        ],
-      });
-    }
+          provider: {
+            name: 'Bar',
+            version: {
+              number: '5',
+            },
+          },
+          verificationResult: {
+            verifiedAt: '2017-10-10T12:49:04+11:00',
+            success: false,
+          },
+          pact: {
+            createdAt: '2017-10-10T12:49:04+11:00',
+          },
+        },
+      ],
+    });
   });
 
   // Get root HAL links

@@ -18,13 +18,13 @@ export class Spawn {
   ): ChildProcess {
     const envVars = JSON.parse(JSON.stringify(process.env)); // Create copy of environment variables
 
-    envVars['PACT_EXECUTING_LANGUAGE'] = 'node.js';
-    envVars['PACT_EXECUTING_LANGUAGE_VERSION'] = process.versions.node;
+    envVars.PACT_EXECUTING_LANGUAGE = 'node.js';
+    envVars.PACT_EXECUTING_LANGUAGE_VERSION = process.versions.node;
 
     // Remove environment variable if there
     // This is a hack to prevent some weird Travelling Ruby behaviour with Gems
     // https://github.com/pact-foundation/pact-mock-service-npm/issues/16
-    delete envVars['RUBYGEMS_GEMDEPS'];
+    delete envVars.RUBYGEMS_GEMDEPS;
 
     const opts: SpawnOptions = {
       cwd: pactEnvironment.cwd,
@@ -64,15 +64,17 @@ export class Spawn {
 
   public killBinary(binary?: ChildProcess): boolean {
     if (binary) {
-      const pid = binary.pid;
+      const { pid } = binary;
       logger.info(`Removing Pact process with PID: ${pid}`);
       binary.removeAllListeners();
       // Killing instance, since windows can't send signals, must kill process forcefully
       try {
         if (pid) {
-          pactEnvironment.isWindows()
-            ? cp.execSync(`taskkill /f /t /pid ${pid}`)
-            : process.kill(-pid, 'SIGINT');
+          if (pactEnvironment.isWindows()) {
+            cp.execSync(`taskkill /f /t /pid ${pid}`);
+          } else {
+            process.kill(-pid, 'SIGINT');
+          }
         }
       } catch (e) {
         return false;

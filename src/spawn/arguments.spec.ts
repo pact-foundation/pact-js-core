@@ -2,7 +2,7 @@ import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 import argsHelper, { DEFAULT_ARG } from './arguments';
 
-const expect = chai.expect;
+const { expect } = chai;
 
 chai.use(chaiAsPromised);
 

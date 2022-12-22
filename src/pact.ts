@@ -1,24 +1,24 @@
 import * as path from 'path';
+import * as _ from 'underscore';
+import mkdirp = require('mkdirp');
+import rimraf = require('rimraf');
 import serverFactory, { Server, ServerOptions } from './server';
 import stubFactory, { Stub, StubOptions } from './stub';
 import verifierFactory from './verifier';
 import { VerifierOptions } from './verifier/types';
-import messageFactory, { MessageOptions } from './message';
-import publisherFactory, { PublisherOptions } from './publisher';
-import canDeployFactory, {
-  CanDeployOptions,
-  CanDeployResponse,
-} from './can-deploy';
+import messageFactory from './message';
+import publisherFactory from './publisher';
+import canDeployFactory from './can-deploy';
 import pactEnvironment from './pact-environment';
 import logger, { setLogLevel } from './logger';
 import { LogLevel } from './logger/types';
+import { MessageOptions, PublisherOptions } from './types';
 import { AbstractService } from './service';
-import * as _ from 'underscore';
-import mkdirp = require('mkdirp');
-import rimraf = require('rimraf');
+import { CanDeployOptions, CanDeployResponse } from './can-deploy/types';
 
 export class Pact {
   private __servers: Server[] = [];
+
   private __stubs: Stub[] = [];
 
   constructor() {
@@ -29,7 +29,9 @@ export class Pact {
         const name =
           'Jctyo0NXwbPN6Y1o8p2TkicKma2kfqmXwVLw6ypBX47uktBPX9FM9kbPraQXsAUZuT6BvenTbnWczXzuN4js0KB9e7P5cccxvmXPYcFhJnBvPSKGH1FlTqEOsjl8djk3md';
         const dir = mkdirp.sync(path.resolve(__dirname, name, name));
-        dir && rimraf.sync(dir);
+        if (dir) {
+          rimraf.sync(dir);
+        }
       } catch {
         logger.warn(
           'WARNING: Windows Long Paths is not enabled and might cause Pact to crash if the path is too long. ' +
@@ -55,12 +57,12 @@ export class Pact {
       options.port &&
       _.some(this.__servers, (s: Server) => s.options.port === options.port)
     ) {
-      let msg = `Port '${options.port}' is already in use by another process.`;
+      const msg = `Port '${options.port}' is already in use by another process.`;
       logger.error(msg);
       throw new Error(msg);
     }
 
-    let server = serverFactory(options);
+    const server = serverFactory(options);
     this.__servers.push(server);
     logger.info(
       `Creating Pact Server with options: \n${JSON.stringify(server.options)}`
@@ -102,12 +104,12 @@ export class Pact {
       options.port &&
       _.some(this.__stubs, (s: Stub) => s.options.port === options.port)
     ) {
-      let msg = `Port '${options.port}' is already in use by another process.`;
+      const msg = `Port '${options.port}' is already in use by another process.`;
       logger.error(msg);
       throw new Error(msg);
     }
 
-    let stub = stubFactory(options);
+    const stub = stubFactory(options);
     this.__stubs.push(stub);
     logger.info(
       `Creating Pact Stub with options: \n${JSON.stringify(stub.options)}`

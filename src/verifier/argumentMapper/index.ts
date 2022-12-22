@@ -1,9 +1,9 @@
+import { values, invert } from 'underscore';
 import { FnValidationResult, FnValidationStatus } from './types';
 import logger, { logCrashAndThrow, logErrorAndThrow } from '../../logger';
 import { InternalPactVerifierOptions } from '../types';
 import { ffiFnMapping, orderOfExecution } from './arguments';
 import { Ffi, FfiVerifierHandle } from '../../ffi/types';
-import { values, invert } from 'underscore';
 
 export const setupVerification = (
   ffi: Ffi,
@@ -13,7 +13,7 @@ export const setupVerification = (
   const order = values(orderOfExecution).sort((a, b) => a - b);
   const functionsToCall = invert(orderOfExecution);
 
-  order.map((k) => {
+  order.forEach((k) => {
     const fn = functionsToCall[k];
     const validation: FnValidationResult = ffiFnMapping[fn].validateAndExecute(
       ffi,

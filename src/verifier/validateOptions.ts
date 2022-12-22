@@ -1,7 +1,7 @@
 import checkTypes = require('check-types');
+import { pick } from 'underscore';
 import logger, { logErrorAndThrow } from '../logger';
 import { LogLevel } from '../logger/types';
-import { pick } from 'underscore';
 import {
   ConsumerVersionSelector,
   InternalPactVerifierOptions,
@@ -96,7 +96,6 @@ const logLevelValidator =
   (l: unknown): boolean => {
     if (typeof l === 'string') {
       if (LogLevels.includes(l.toLowerCase() as LogLevel)) {
-        l = l.toLowerCase() as LogLevel;
         return true;
       }
     }
@@ -258,19 +257,19 @@ export const validateOptions = (options: VerifierOptions): VerifierOptions => {
     Object.keys(options).concat('providerBaseUrl') as Array<
       keyof InternalPactVerifierOptions
     >
-  ).map((k) => {
+  ).forEach((k) => {
     const rules = validationRules[k];
 
     // get type of parameter (if an array, we apply the rule to each item of the array instead)
     if (Array.isArray(options[k])) {
-      options[k].map((item: unknown) => {
-        rules.map((rule) => {
+      options[k].forEach((item: unknown) => {
+        rules.forEach((rule) => {
           // rule(item)  // If the messages aren't clear, we can do this
           rule(options)(item, k);
         });
       });
     } else {
-      (rules || []).map((rule) => {
+      (rules || []).forEach((rule) => {
         rule(options)(options[k], k);
       });
     }
