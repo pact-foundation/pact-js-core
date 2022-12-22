@@ -329,7 +329,7 @@ export abstract class AbstractService extends events.EventEmitter {
     };
 
     if (options.ssl) {
-      process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+      process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
       config.rejectUnauthorized = false;
       config.agent = false;
     }
