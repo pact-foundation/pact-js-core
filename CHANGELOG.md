@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [10.17.7](https://github.com/pact-foundation/pact-node/compare/v10.17.6...v10.17.7) (2022-12-22)
+
+
+### Fixes and Improvements
+
+* Update pact-ruby-standalone to 1.91.0, shortening the path for windows users ([7f5bd51](https://github.com/pact-foundation/pact-node/commit/7f5bd51148df2d10c2258b5831558dee9efdb8c5))
+
 ### [10.17.6](https://github.com/pact-foundation/pact-node/compare/v10.17.5...v10.17.6) (2022-07-06)
 
 ### [10.17.5](https://github.com/pact-foundation/pact-node/compare/v10.17.4...v10.17.5) (2022-07-06)
