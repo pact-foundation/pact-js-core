@@ -852,13 +852,40 @@ Napi::Value PactffiWithPactMetadata(const Napi::CallbackInfo& info) {
  * * `value` - the header value.
  * * `index` - the index of the value (starts at 0). You can use this to create a header with multiple values
  *
- * C interface:
+ * To setup a header with multiple values, you can either call this function multiple times
+ * with a different index value, i.e. to create `x-id=2, 3`
  *
- *    bool pactffi_with_header(InteractionHandle interaction,
- *                        InteractionPart part,
- *                        const char *name,
- *                        size_t index,
- *                        const char *value);
+ * ```c
+ * pactffi_with_header_v2(handle, InteractionPart::Request, "x-id", 0, "2");
+ * pactffi_with_header_v2(handle, InteractionPart::Request, "x-id", 1, "3");
+ * ```
+ *
+ * Or you can call it once with a JSON value that contains multiple values:
+ *
+ * ```c
+ * const char* value = "{\"value\": [\"2\",\"3\"]}";
+ * pactffi_with_header_v2(handle, InteractionPart::Request, "x-id", 0, value);
+ * ```
+ *
+ * To include matching rules for the header, include the matching rule JSON format with
+ * the value as a single JSON document. I.e.
+ *
+ * ```c
+ * const char* value = "{\"value\":\"2\", \"pact:matcher:type\":\"regex\", \"regex\":\"\\\\d+\"}";
+ * pactffi_with_header_v2(handle, InteractionPart::Request, "id", 0, value);
+ * ```
+ * See [IntegrationJson.md](https://github.com/pact-foundation/pact-reference/blob/master/rust/pact_ffi/IntegrationJson.md)
+ *
+ * # Safety
+ * The name and value parameters must be valid pointers to NULL terminated strings.
+ * 
+ * C interface:
+ * 
+ *    bool pactffi_with_header_v2(InteractionHandle interaction,
+ *                                enum InteractionPart part,
+ *                                const char *name,
+ *                                size_t index,
+ *                                const char *value);
  */
 Napi::Value PactffiWithHeader(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
@@ -894,7 +921,7 @@ Napi::Value PactffiWithHeader(const Napi::CallbackInfo& info) {
   size_t index = info[3].As<Napi::Number>().Uint32Value();
   std::string value = info[4].As<Napi::String>().Utf8Value();
 
-  bool res = pactffi_with_header(interaction, part, name.c_str(), index, value.c_str());
+  bool res = pactffi_with_header_v2(interaction, part, name.c_str(), index, value.c_str());
 
   return Napi::Boolean::New(env, res);
 }
