@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.13.3](https://github.com/pact-foundation/pact-js-core/compare/v13.13.2...v13.13.3) (2022-12-23)
+
+
+### Fixes and Improvements
+
+* use newer pactffi_with_header_v2 ffi method ([b579e4d](https://github.com/pact-foundation/pact-js-core/commit/b579e4d271298b6a90be7b7bd05375b7e65a0bf6))
+
 ### [13.13.2](https://github.com/pact-foundation/pact-js-core/compare/v13.13.1...v13.13.2) (2022-12-22)
 
 
