@@ -1,5 +1,8 @@
 import pact from './pact';
 
+// eslint-disable-next-line no-multi-assign
+module.exports = exports = pact;
+
 export default pact;
 
 export * from './verifier';

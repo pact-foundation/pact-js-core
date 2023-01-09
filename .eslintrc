@@ -31,6 +31,7 @@
       { "allow": ["constructors"] }
     ],
     "import/prefer-default-export": "off",
+    "import/no-import-module-exports": "off",
     "no-underscore-dangle": "off",
     "class-methods-use-this": "off"
   },
