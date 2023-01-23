@@ -5,7 +5,7 @@ import { Ffi } from './types';
 
 const ffiLib: Ffi = bindings('pact.node');
 
-export const PACT_FFI_VERSION = '0.3.19';
+export const PACT_FFI_VERSION = '0.4.0';
 
 let ffi: typeof ffiLib;
 let ffiLogLevel: LogLevel;
