@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.13.4](https://github.com/pact-foundation/pact-js-core/compare/v13.13.3...v13.13.4) (2023-01-23)
+
+
+### Fixes and Improvements
+
+* Fix 'is not a function' regression when using require() and a directly exported factory function. Fixes [#426](https://github.com/pact-foundation/pact-js-core/issues/426) ([2941552](https://github.com/pact-foundation/pact-js-core/commit/2941552e1ca814ed1f2e7dca7e6ae1fb743af440))
+* update rust core to 0.4.0 ([3b396cd](https://github.com/pact-foundation/pact-js-core/commit/3b396cd7aca8bfebd4037f515e499460f44055fc))
+
 ### [13.13.3](https://github.com/pact-foundation/pact-js-core/compare/v13.13.2...v13.13.3) (2022-12-23)
 
 
