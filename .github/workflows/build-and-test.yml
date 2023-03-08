@@ -32,12 +32,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set MSVS version
-        run: npm config set msvs_version 2017
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+      - name: Set MSVS version
+        run: npm config set msvs_version 2017
       - run: script/ci/build-and-test.sh
         env:
           NODE_VERSION: ${{ matrix.node-version }}
