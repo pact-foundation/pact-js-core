@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.13.5](https://github.com/pact-foundation/pact-js-core/compare/v13.13.4...v13.13.5) (2023-03-08)
+
+
+### Fixes and Improvements
+
+* Fix an issue where invalid VerifierOptions keys with Array values would cause a TypeError ([4ecc29f](https://github.com/pact-foundation/pact-js-core/commit/4ecc29f567d16a279b6782a0d8cc7a948100cd25))
+
 ### [13.13.4](https://github.com/pact-foundation/pact-js-core/compare/v13.13.3...v13.13.4) (2023-01-23)
 
 
