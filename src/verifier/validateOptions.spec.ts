@@ -47,6 +47,18 @@ describe('Verifier argument validator', () => {
         });
       });
     });
+
+    context('when given an unknown array argument', () => {
+      it('should return a Verifier object', () => {
+        expectSuccessWith({
+          madeupArg: [''],
+          providerBaseUrl: 'http://localhost',
+          pactBrokerUrl: 'http://foo.com',
+          pactUrls: ['http://idontexist'],
+          provider: 'someprovider',
+        } as VerifierOptions);
+      });
+    });
   });
 
   context('when not given --pact-urls or --provider-base-url', () => {

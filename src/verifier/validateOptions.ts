@@ -263,7 +263,7 @@ export const validateOptions = (options: VerifierOptions): VerifierOptions => {
     // get type of parameter (if an array, we apply the rule to each item of the array instead)
     if (Array.isArray(options[k])) {
       options[k].forEach((item: unknown) => {
-        rules.forEach((rule) => {
+        (rules || []).forEach((rule) => {
           // rule(item)  // If the messages aren't clear, we can do this
           rule(options)(item, k);
         });
