@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [13.13.6](https://github.com/pact-foundation/pact-js-core/compare/v13.13.5...v13.13.6) (2023-03-14)
+
+
+### Fixes and Improvements
+
+* Use synchronous logging to allow usage with Jest ([a4899f4](https://github.com/pact-foundation/pact-js-core/commit/a4899f45e3ca8ee3f1754dd88bbb15ee8039b3ba))
+
 ### [13.13.5](https://github.com/pact-foundation/pact-js-core/compare/v13.13.4...v13.13.5) (2023-03-08)
 
 
