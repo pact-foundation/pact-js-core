@@ -1,7 +1,4 @@
-import * as path from 'path';
 import * as _ from 'underscore';
-import mkdirp = require('mkdirp');
-import rimraf = require('rimraf');
 import serverFactory, { Server, ServerOptions } from './server';
 import stubFactory, { Stub, StubOptions } from './stub';
 import verifierFactory from './verifier';
@@ -9,7 +6,6 @@ import { VerifierOptions } from './verifier/types';
 import messageFactory from './message';
 import publisherFactory from './publisher';
 import canDeployFactory from './can-deploy';
-import pactEnvironment from './pact-environment';
 import logger, { setLogLevel } from './logger';
 import { LogLevel } from './logger/types';
 import { MessageOptions, PublisherOptions } from './types';
@@ -23,22 +19,6 @@ export class Pact {
 
   constructor() {
     // Check to see if we hit into Windows Long Path issue
-    if (pactEnvironment.isWindows()) {
-      try {
-        // Trying to trigger windows error by creating path that's over 260 characters long
-        const name =
-          'Jctyo0NXwbPN6Y1o8p2TkicKma2kfqmXwVLw6ypBX47uktBPX9FM9kbPraQXsAUZuT6BvenTbnWczXzuN4js0KB9e7P5cccxvmXPYcFhJnBvPSKGH1FlTqEOsjl8djk3md';
-        const dir = mkdirp.sync(path.resolve(__dirname, name, name));
-        if (dir) {
-          rimraf.sync(dir);
-        }
-      } catch {
-        logger.warn(
-          'WARNING: Windows Long Paths is not enabled and might cause Pact to crash if the path is too long. ' +
-            'To fix this issue, please consult https://github.com/pact-foundation/pact-js-core#enable-long-paths`'
-        );
-      }
-    }
 
     // Listen for Node exiting or someone killing the process
     // Must remove all the instances of Pact mock service
