@@ -15,5 +15,3 @@ export * from './consumer';
 export * from './consumer/types';
 
 export * from './ffi';
-
-export * from './types';
