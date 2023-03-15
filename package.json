@@ -120,7 +120,7 @@
     "build": "tsc --project tsconfig.build.json",
     "prerelease": "npm run snyk-protect",
     "release": "standard-version",
-    "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,bin}/**/*.spec.ts\"",
+    "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test}/**/*.spec.ts\"",
     "snyk-protect": "snyk protect",
     "format:base": "prettier --parser typescript",
     "format:check": "npm run format:base -- --list-different \"{src,test}/**/*.{ts,tsx}\"",
