@@ -5,15 +5,6 @@
   "main": "src/index.js",
   "homepage": "https://github.com/pact-foundation/pact-js-core#readme",
   "types": "src/index.d.ts",
-  "bin": {
-    "pact": "bin/pact.js",
-    "pact-broker": "bin/pact-broker.js",
-    "pact-mock-service": "bin/pact-mock-service.js",
-    "pact-stub-service": "bin/pact-stub-service.js",
-    "pact-provider-verifier": "bin/pact-provider-verifier.js",
-    "pact-message": "bin/pact-message.js",
-    "pactflow": "bin/pactflow.js"
-  },
   "os": [
     "darwin",
     "linux",
@@ -54,7 +45,6 @@
   "dependencies": {
     "@types/needle": "2.5.2",
     "bindings": "^1.5.0",
-    "chalk": "4.1.2",
     "check-types": "7.3.0",
     "cross-spawn": "7.0.3",
     "mkdirp": "1.0.0",
@@ -123,18 +113,18 @@
     "typescript": "4.7.4"
   },
   "scripts": {
-    "clean": "rimraf '{src,test,bin,standalone}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
+    "clean": "rimraf '{src,test}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
     "lint": "eslint . --ext .ts --config .eslintrc",
     "lint:fix": "npm run lint -- --fix",
     "prebuild": "npm run clean && bash script/download-libs.sh",
     "build": "tsc --project tsconfig.build.json",
     "prerelease": "npm run snyk-protect",
     "release": "standard-version",
-    "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test,bin,standalone}/**/*.spec.ts\"",
+    "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,bin}/**/*.spec.ts\"",
     "snyk-protect": "snyk protect",
     "format:base": "prettier --parser typescript",
-    "format:check": "npm run format:base -- --list-different \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
-    "format:fix": "npm run format:base -- --write \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
+    "format:check": "npm run format:base -- --list-different \"{src,test}/**/*.{ts,tsx}\"",
+    "format:fix": "npm run format:base -- --write \"{src,test}/**/*.{ts,tsx}\"",
     "postinstall": "npm run native",
     "native": "node-gyp rebuild -v"
   },
