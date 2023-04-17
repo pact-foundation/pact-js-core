@@ -11,7 +11,7 @@ import needle = require('needle');
 import spawn, { CliVerbOptions } from './spawn';
 import { LogLevel } from './logger/types';
 import logger, { setLogLevel } from './logger';
-import { HTTPConfig, ServiceOptions } from './types';
+import { ServiceOptions } from './types';
 
 // Get a reference to the global setTimeout object in case it is mocked by a testing library later
 const { setTimeout } = global;
@@ -320,7 +320,7 @@ export abstract class AbstractService extends events.EventEmitter {
   }
 
   private __call(options: ServiceOptions): Promise<unknown> {
-    const config: HTTPConfig = {
+    const config: needle.NeedleOptions = {
       method: 'GET',
       headers: {
         'X-Pact-Mock-Service': 'true',

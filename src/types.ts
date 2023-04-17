@@ -1,4 +1,3 @@
-import needle from 'needle';
 import { LogLevel } from './logger/types';
 
 export interface MessageOptions {
@@ -35,11 +34,4 @@ export interface ServiceOptions {
   log?: string;
   logLevel?: LogLevel;
   timeout?: number;
-}
-
-export interface HTTPConfig extends Omit<needle.NeedleOptions, 'headers'> {
-  headers: {
-    'X-Pact-Mock-Service': string;
-    'Content-Type': string;
-  };
 }
