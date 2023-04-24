@@ -1,6 +1,14 @@
 # Changelog
 
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
+All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
+
+## [13.13.7](https://github.com/pact-foundation/pact-js-core/compare/v13.13.6...v13.13.7) (2023-04-24)
+
+
+### Fixes and Improvements
+
+* Remove unusable external export of HTTPConfig, which removes the need to have needle types as a dependency ([f123204](https://github.com/pact-foundation/pact-js-core/commit/f12320473aefdd51e6230e20256fcb61c661bf8d))
+* upgrade to latest needle to support no_proxy. Fixes [#351](https://github.com/pact-foundation/pact-js-core/issues/351) ([30f46d0](https://github.com/pact-foundation/pact-js-core/commit/30f46d071865a69c94a25381f371605e3a1667ed))
 
 ### [13.13.6](https://github.com/pact-foundation/pact-js-core/compare/v13.13.5...v13.13.6) (2023-03-14)
 
