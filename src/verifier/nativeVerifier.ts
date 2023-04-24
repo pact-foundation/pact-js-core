@@ -11,7 +11,7 @@ import { setupVerification } from './argumentMapper';
 const pkg = require('../../package.json');
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
-  const ffi = getFfiLib(opts.logLevel);
+  const ffi = getFfiLib(opts.logLevel, opts.logFile);
   if (opts.logLevel) {
     setLogLevel(opts.logLevel);
   }
