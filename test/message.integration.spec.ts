@@ -14,9 +14,9 @@ chai.use(chaiAsPromised);
 const { expect } = chai;
 
 const isWin = process.platform === 'win32';
-const isDarwinArm64 = process.platform === 'darwin' && process.arch === 'arm64'
-const isLinuxArm64 = process.platform === 'linux' && process.arch === 'arm64'
-const usesOctetStream =  isLinuxArm64 || isWin || isDarwinArm64
+const isDarwinArm64 = process.platform === 'darwin' && process.arch === 'arm64';
+const isLinuxArm64 = process.platform === 'linux' && process.arch === 'arm64';
+const usesOctetStream = isLinuxArm64 || isWin || isDarwinArm64;
 
 const getFeature = async (address: string, protoFile: string) => {
   const def = await load(protoFile);
@@ -101,9 +101,7 @@ describe('FFI integration test for the Message Consumer API', () => {
         message.givenWithParam('some state 2', 'state2 key', 'state2 val');
         message.withBinaryContents(
           bytes,
-          usesOctetStream
-            ? 'application/octet-stream'
-            : 'application/gzip'
+          usesOctetStream ? 'application/octet-stream' : 'application/gzip'
         );
         message.withMetadata('meta-key', 'meta-val');
 
