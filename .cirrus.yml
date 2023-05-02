@@ -10,32 +10,33 @@ BUILD_TEST_TASK_TEMPLATE: &BUILD_TEST_TASK_TEMPLATE
 
 # These are probably expected to fail in the post install script
 # until we are packing v2.0.0 of pact-ruby-standalone that supports
-# arm64 linux
-linux_arm64_task:
-  skip: "changesInclude('.github/**')" 
-  env:
-    matrix:
-      - IMAGE: node:16-slim
-      - IMAGE: node:18-slim
-      - IMAGE: node:20-slim
-  arm_container:
-    image: $IMAGE
-  install_script:
-    - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
-  << : *BUILD_TEST_TASK_TEMPLATE
+# arm64 linux - as per https://github.com/pact-foundation/pact-js-core/issues/416
+# Error: Error while locating pact binary: Cannot find binary for platform 'linux' with architecture 'arm64'.
+# linux_arm64_task:
+#   skip: "changesInclude('.github/**')" 
+#   env:
+#     matrix:
+#       - IMAGE: node:16-slim
+#       - IMAGE: node:18-slim
+#       - IMAGE: node:20-slim
+#   arm_container:
+#     image: $IMAGE
+#   install_script:
+#     - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
+#   << : *BUILD_TEST_TASK_TEMPLATE
 
-linux_amd64_task:
-  skip: "changesInclude('.github/**')" 
-  env:
-    matrix:
-      - IMAGE: node:16-slim
-      - IMAGE: node:18-slim
-      - IMAGE: node:20-slim
-  container:
-    image: $IMAGE
-  install_script:
-    - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
-  << : *BUILD_TEST_TASK_TEMPLATE
+# linux_amd64_task:
+#   skip: "changesInclude('.github/**')" 
+#   env:
+#     matrix:
+#       - IMAGE: node:16-slim
+#       - IMAGE: node:18-slim
+#       - IMAGE: node:20-slim
+#   container:
+#     image: $IMAGE
+#   install_script:
+#     - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
+#   << : *BUILD_TEST_TASK_TEMPLATE
 
 
 mac_task:
