@@ -17,8 +17,9 @@ const isWin = process.platform === 'win32';
 const isLinux = process.platform === 'linux';
 const isDarwinArm64 = process.platform === 'darwin' && process.arch === 'arm64';
 const isLinuxArm64 = process.platform === 'linux' && process.arch === 'arm64';
-const isCirrusCi = process.env["CIRRUS_CI"] === "true"
-const usesOctetStream = isLinuxArm64 || isWin || isDarwinArm64 || (isCirrusCi && isLinux);
+const isCirrusCi = process.env['CIRRUS_CI'] === 'true';
+const usesOctetStream =
+  isLinuxArm64 || isWin || isDarwinArm64 || (isCirrusCi && isLinux);
 
 const getFeature = async (address: string, protoFile: string) => {
   const def = await load(protoFile);

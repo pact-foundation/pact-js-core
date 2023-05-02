@@ -25,18 +25,18 @@ BUILD_TEST_TASK_TEMPLATE: &BUILD_TEST_TASK_TEMPLATE
 #     - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
 #   << : *BUILD_TEST_TASK_TEMPLATE
 
-# linux_amd64_task:
-#   skip: "changesInclude('.github/**')" 
-#   env:
-#     matrix:
-#       - IMAGE: node:16-slim
-#       - IMAGE: node:18-slim
-#       - IMAGE: node:20-slim
-#   container:
-#     image: $IMAGE
-#   install_script:
-#     - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
-#   << : *BUILD_TEST_TASK_TEMPLATE
+linux_amd64_task:
+  skip: "changesInclude('.github/**')" 
+  env:
+    matrix:
+      - IMAGE: node:16-slim
+      - IMAGE: node:18-slim
+      - IMAGE: node:20-slim
+  container:
+    image: $IMAGE
+  install_script:
+    - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
+  << : *BUILD_TEST_TASK_TEMPLATE
 
 
 mac_task:
