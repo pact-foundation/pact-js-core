@@ -8,13 +8,14 @@ on:
 
 jobs:
   build-and-test-osx:
-    runs-on: [macos-latest,ubuntu-latest,windows-latest]
+    runs-on: ${{ matrix.os }}
     defaults:
       run:
         shell: bash
     strategy:
       matrix:
         node-version: [16,18,20]
+        os: [macos-latest,ubuntu-latest,windows-latest]
 
     steps:
       - uses: actions/checkout@v3
