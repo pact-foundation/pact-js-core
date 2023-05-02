@@ -21,7 +21,7 @@ linux_arm64_task:
   arm_container:
     image: $IMAGE
   install_script:
-    - apt update --yes && apt install --yes curl python3 make build-essential g++
+    - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
   << : *BUILD_TEST_TASK_TEMPLATE
 
 linux_amd64_task:
@@ -34,12 +34,12 @@ linux_amd64_task:
   container:
     image: $IMAGE
   install_script:
-    - apt update --yes && apt install --yes curl python3 make build-essential g++
+    - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
   << : *BUILD_TEST_TASK_TEMPLATE
 
 
 mac_task:
-  skip: "!changesInclude('.github/**')" 
+  skip: "changesInclude('.github/**')" 
   macos_instance:
     image: ghcr.io/cirruslabs/macos-ventura-base:latest
   env:
