@@ -17,7 +17,7 @@ if [[ $(find "${FFI_DIR}" -name "${FFI_VERSION}*") ]]; then
 fi
 
 warn "Cleaning ffi directory $FFI_DIR"
-rm -rf "${FFI_DIR:?}/*"
+rm -rf "${FFI_DIR:?}"
 mkdir -p "$FFI_DIR/osxaarch64"
 mkdir -p "$FFI_DIR/linuxaarch64"
 
