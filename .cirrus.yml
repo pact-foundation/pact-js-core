@@ -50,7 +50,8 @@ mac_task:
       - NODE_VERSION: 16
       - NODE_VERSION: 18
       - NODE_VERSION: 20
-  install_script:
+  install_script: # we need to install rosetta as v1.x of pact-ruby-standalone doesn't support arm64
+    - softwareupdate --install-rosetta --agree-to-license
     - brew install nvm
     - source $(brew --prefix nvm)/nvm.sh
     - nvm install $NODE_VERSION
