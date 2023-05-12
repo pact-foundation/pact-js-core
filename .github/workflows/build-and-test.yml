@@ -8,64 +8,30 @@ on:
 
 jobs:
   build-and-test-osx:
-    runs-on: macos-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: script/ci/build-and-test.sh
-        env:
-          NODE_VERSION: ${{ matrix.node-version }}
-          PACT_BROKER_FEATURES: publish_pacts_using_old_api
-
-  build-and-test-ubuntu:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Set MSVS version
-        run: npm config set msvs_version 2017
-      - run: script/ci/build-and-test.sh
-        env:
-          NODE_VERSION: ${{ matrix.node-version }}
-          PACT_BROKER_FEATURES: publish_pacts_using_old_api
-
-  build-and-test-windows:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        node-version: [16.x]
-
-    steps:
-      - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-      - name: Fix node-gyp
-        run: |-
-          npm install --global node-gyp@latest
-          npm prefix -g | % {npm config set node_gyp "$_\node_modules\node-gyp\bin\node-gyp.js"}
-        shell: pwsh
-      - run: bash script/ci/build-and-test.sh
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
         shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [16,18,20]
+        os: [macos-latest,ubuntu-latest,windows-latest]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: script/ci/build-and-test.sh
+        if: runner.os != 'Windows'
         env:
           NODE_VERSION: ${{ matrix.node-version }}
-          # The windows build agent has trouble unpacking the tar for
-          # linux, so we only download windows binaries. This means
-          # we cannot release from Windows in CI.
-          ONLY_DOWNLOAD_PACT_FOR_WINDOWS: true
           PACT_BROKER_FEATURES: publish_pacts_using_old_api
+      - run: script/ci/build-and-test.sh
+        if: runner.os == 'Windows'
+        env:
+          NODE_VERSION: ${{ matrix.node-version }}
+          PACT_BROKER_FEATURES: publish_pacts_using_old_api
+          ONLY_DOWNLOAD_PACT_FOR_WINDOWS: true

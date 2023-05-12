@@ -21,6 +21,12 @@ const { expect } = chai;
 const HOST = '127.0.0.1';
 
 const isWin = process.platform === 'win32';
+const isLinux = process.platform === 'linux';
+const isDarwinArm64 = process.platform === 'darwin' && process.arch === 'arm64';
+const isLinuxArm64 = process.platform === 'linux' && process.arch === 'arm64';
+const isCirrusCi = process.env['CIRRUS_CI'] === 'true';
+const usesOctetStream =
+  isLinuxArm64 || isWin || isDarwinArm64 || (isCirrusCi && isLinux);
 
 describe('FFI integration test for the HTTP Consumer API', () => {
   setLogLevel('trace');
@@ -73,7 +79,9 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
-            'content-type': 'application/octet-stream',
+            'content-type': usesOctetStream
+              ? 'application/octet-stream'
+              : 'application/gzip',
             Accept: 'application/json',
             'x-special-header': 'header',
           },
@@ -168,9 +176,11 @@ describe('FFI integration test for the HTTP Consumer API', () => {
 
   // See https://github.com/pact-foundation/pact-reference/issues/171 for why we have an OS switch here
   // Windows: does not have magic mime matcher, uses content-type
-  // OSX on CI: does not magic mime matcher, uses content-type
-  // OSX: has magic mime matcher, sniffs content
+  // OSX arm64: does not magic mime matcher, uses content-type
+  // OSX x86_64: has magic mime matcher, sniffs content
+  // OSX x86_64 - CI GitHub Actions: has magic mime matcher, sniffs content
   // Linux: has magic mime matcher, sniffs content
+  // Linux - CI Cirrus: does not have magic mime matcher, uses content-type
   describe('with binary data', () => {
     beforeEach(() => {
       pact = makeConsumerPact(
@@ -188,7 +198,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       interaction.withQuery('someParam', 0, 'someValue');
       interaction.withRequestBinaryBody(
         bytes,
-        isWin ? 'application/octet-stream' : 'application/gzip'
+        usesOctetStream ? 'application/octet-stream' : 'application/gzip'
       );
       interaction.withResponseBody(
         JSON.stringify({
@@ -211,7 +221,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
-            'content-type': isWin
+            'content-type': usesOctetStream
               ? 'application/octet-stream'
               : 'application/gzip',
             Accept: 'application/json',

@@ -1,0 +1,58 @@
+env:
+  PACT_BROKER_FEATURES: publish_pacts_using_old_api
+
+BUILD_TEST_TASK_TEMPLATE: &BUILD_TEST_TASK_TEMPLATE
+  arch_check_script:
+    - uname -am
+  test_script:
+    - node --version
+    - script/ci/build-and-test.sh
+
+# These are probably expected to fail in the post install script
+# until we are packing v2.0.0 of pact-ruby-standalone that supports
+# arm64 linux - as per https://github.com/pact-foundation/pact-js-core/issues/416
+# Error: Error while locating pact binary: Cannot find binary for platform 'linux' with architecture 'arm64'.
+# linux_arm64_task:
+#   skip: "changesInclude('.github/**')" 
+#   env:
+#     matrix:
+#       - IMAGE: node:16-slim
+#       - IMAGE: node:18-slim
+#       - IMAGE: node:20-slim
+#   arm_container:
+#     image: $IMAGE
+#   install_script:
+#     - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
+#   << : *BUILD_TEST_TASK_TEMPLATE
+
+linux_amd64_task:
+  env:
+    matrix:
+      - IMAGE: node:16-slim
+      - IMAGE: node:18-slim
+      - IMAGE: node:20-slim
+  container:
+    image: $IMAGE
+  install_script:
+    - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
+  << : *BUILD_TEST_TASK_TEMPLATE
+
+
+mac_task:
+  macos_instance:
+    image: ghcr.io/cirruslabs/macos-ventura-base:latest
+  env:
+    PACT_BROKER_FEATURES: publish_pacts_using_old_api
+    NVS_HOME: ${HOME}/.nvs
+    PATH: ${NVS_HOME}:${PATH}
+    matrix:
+      - NODE_VERSION: 16
+      - NODE_VERSION: 18
+      - NODE_VERSION: 20
+  install_script: # we need to install rosetta as v1.x of pact-ruby-standalone doesn't support arm64
+    - softwareupdate --install-rosetta --agree-to-license
+    - brew install nvm
+    - source $(brew --prefix nvm)/nvm.sh
+    - nvm install $NODE_VERSION
+    - nvm use $NODE_VERSION
+  << : *BUILD_TEST_TASK_TEMPLATE
