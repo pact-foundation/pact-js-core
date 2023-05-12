@@ -1,4 +1,6 @@
 #!/bin/bash -eu
+set -e
+set -u
 LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the script is running
 . "${LIB_DIR}/robust-bash.sh"
 . "${LIB_DIR}/download-file.sh"
@@ -7,7 +9,7 @@ require_binary curl
 require_binary unzip
 require_env_var STANDALONE_VERSION
 
-BASEURL=https://github.com/pact-foundation/pact-ruby-standalone/releases/download
+BASEURL=https://github.com/you54f/pact-ruby-standalone/releases/download
 STANDALONE_DIR="${LIB_DIR}/../../standalone"
 
 function download_standalone {
@@ -45,11 +47,13 @@ if [[ $(find "${STANDALONE_DIR}" -name "*${STANDALONE_VERSION}") ]]; then
   exit 0
 fi
 
-download_standalone "pact-${STANDALONE_VERSION}-win32.zip"            "win32-${STANDALONE_VERSION}.zip"
+download_standalone "pact-${STANDALONE_VERSION}-windows-x86_64.zip"            "windows-x64-${STANDALONE_VERSION}.zip"
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
-  download_standalone "pact-${STANDALONE_VERSION}-osx.tar.gz"           "darwin-${STANDALONE_VERSION}.tar.gz"
+  download_standalone "pact-${STANDALONE_VERSION}-osx-x86_64.tar.gz"           "darwin-x64-${STANDALONE_VERSION}.tar.gz"
+  download_standalone "pact-${STANDALONE_VERSION}-osx-arm64.tar.gz"           "darwin-arm64-${STANDALONE_VERSION}.tar.gz"
   download_standalone "pact-${STANDALONE_VERSION}-linux-x86_64.tar.gz"  "linux-x64-${STANDALONE_VERSION}.tar.gz"
+  download_standalone "pact-${STANDALONE_VERSION}-linux-arm64.tar.gz"  "linux-arm64-${STANDALONE_VERSION}.tar.gz"
 fi
 
 # Write readme in the ffi folder
