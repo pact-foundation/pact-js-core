@@ -26,7 +26,6 @@ BUILD_TEST_TASK_TEMPLATE: &BUILD_TEST_TASK_TEMPLATE
 #   << : *BUILD_TEST_TASK_TEMPLATE
 
 linux_amd64_task:
-  skip: "changesInclude('.github/**')" 
   env:
     matrix:
       - IMAGE: node:16-slim
@@ -40,7 +39,6 @@ linux_amd64_task:
 
 
 mac_task:
-  skip: "changesInclude('.github/**')" 
   macos_instance:
     image: ghcr.io/cirruslabs/macos-ventura-base:latest
   env:
