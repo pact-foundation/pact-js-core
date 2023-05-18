@@ -9,7 +9,7 @@ require_binary curl
 require_binary unzip
 require_env_var STANDALONE_VERSION
 
-BASEURL=https://github.com/you54f/pact-ruby-standalone/releases/download
+BASEURL=https://github.com/pact-foundation/pact-ruby-standalone/releases/download
 STANDALONE_DIR="${LIB_DIR}/../../standalone"
 
 function download_standalone {
