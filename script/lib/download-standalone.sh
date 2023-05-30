@@ -9,7 +9,7 @@ require_binary curl
 require_binary unzip
 require_env_var STANDALONE_VERSION
 
-BASEURL=https://github.com/you54f/pact-ruby-standalone/releases/download
+BASEURL=https://github.com/pact-foundation/pact-ruby-standalone/releases/download
 STANDALONE_DIR="${LIB_DIR}/../../standalone"
 
 function download_standalone {
@@ -48,6 +48,10 @@ if [[ $(find "${STANDALONE_DIR}" -name "*${STANDALONE_VERSION}") ]]; then
 fi
 
 download_standalone "pact-${STANDALONE_VERSION}-windows-x86_64.zip"            "windows-x64-${STANDALONE_VERSION}.zip"
+
+if [[ ${RUNNER_OS:-} == 'Windows' ]]; then
+  ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true
+fi
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
   download_standalone "pact-${STANDALONE_VERSION}-osx-x86_64.tar.gz"           "darwin-x64-${STANDALONE_VERSION}.tar.gz"

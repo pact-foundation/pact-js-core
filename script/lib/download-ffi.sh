@@ -55,6 +55,10 @@ function download_ffi {
   gunzip "$DOWNLOAD_LOCATION"
 }
 
+if [[ ${RUNNER_OS:-} == 'Windows' ]]; then
+  ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true
+fi
+
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
   download_ffi "linux-x86_64.so.gz" "lib" "libpact_ffi.so.gz"
   download_ffi "linux-aarch64.so.gz" "lib" "linuxaarch64/libpact_ffi.so.gz"

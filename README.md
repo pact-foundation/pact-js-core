@@ -6,10 +6,33 @@
 
 ![Build and test](https://github.com/pact-foundation/pact-js-core/workflows/Build%20and%20test/badge.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/pact-foundation/pact-js-core/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pact-foundation/pact-js-core?targetFile=package.json)
+[![GitHub release](https://img.shields.io/github/release/pact-foundation/pact-js-core)](https://github.com/pact-foundation/pact-js-core)
 [![npm](https://img.shields.io/npm/v/@pact-foundation/pact-core.svg)](https://www.npmjs.com/package/@pact-foundation/pact-core)
 [![license](https://img.shields.io/github/license/pact-foundation/pact-js-core.svg)](https://github.com/pact-foundation/pact-js-core/blob/master/LICENSE)
-[![dependencies](https://img.shields.io/david/pact-foundation/pact-js-core.svg)](https://www.npmjs.com/package/@pact-foundation/pact-core)
 [![slack](http://slack.pact.io/badge.svg)](http://slack.pact.io)
+
+
+[![Npm package license](https://badgen.net/npm/license/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+[![Npm package version](https://badgen.net/npm/v/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+[![Minimum node.js version](https://badgen.net/npm/node/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+
+[![Npm package total downloads](https://badgen.net/npm/dt/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+
+[![Npm package yearly downloads](https://badgen.net/npm/dy/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+[![Npm package monthly downloads](https://badgen.net/npm/dm/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+[![Npm package daily downloads](https://badgen.net/npm/dd/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+
+[![Npm package dependents](https://badgen.net/npm/dependents/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/pact-foundation/pact-js-core/graphs/commit-activity)
+
+[![Build and test](https://github.com/pact-foundation/pact-js-core/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/pact-foundation/pact-js-core/actions/workflows/build-and-test.yml)
+[![Publish and release](https://github.com/pact-foundation/pact-js-core/actions/workflows/publish.yml/badge.svg)](https://github.com/pact-foundation/pact-js-core/actions/workflows/publish.yml)
+
+[![Linux](https://svgshare.com/i/Zhy.svg)](https://svgshare.com/i/Zhy.svg)
+[![macOS](https://svgshare.com/i/ZjP.svg)](https://svgshare.com/i/ZjP.svg)
+[![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)
+
 
 # Pact-JS Core
 
@@ -42,6 +65,11 @@ A wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-fou
       - [Create Message Pacts](#create-message-pacts)
         - [Example](#example)
   - [CLI Tools](#cli-tools)
+  - [Windows Issues](#windows-issues)
+    - [Enable Long Paths](#enable-long-paths)
+  - [Contributing](#contributing)
+  - [Testing](#testing)
+  - [Questions?](#questions)
 
 <!-- /TOC -->
 
