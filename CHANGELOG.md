@@ -2,34 +2,6 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
-## 13.19.0 (2023-05-27)
-
-
-### Features
-
-* Improved error messaging on path lookups ([b3c80be](https://github.com/pact-foundation/pact-js-core/commit/b3c80be68882cdbbc0801f01e3d0ea1493dccb5e))
-
-## 13.18.2 (2023-05-27)
-
-
-### Fixes and Improvements
-
-* node-gyp-build for resolution only ([fceb1cf](https://github.com/pact-foundation/pact-js-core/commit/fceb1cf2cd091b0858f73b6184398df392aa061a))
-
-## 13.18.1 (2023-05-27)
-
-
-### Fixes and Improvements
-
-* ensure ffi not npm ignored ([8092c22](https://github.com/pact-foundation/pact-js-core/commit/8092c22b3a9a8714e85908d16dd0fa531613cb7e))
-
-## 13.18.0 (2023-05-27)
-
-
-### Features
-
-* Prebuild pact_ffi pact.node + publish in npm pkg - (win-32|linux|darwin)-x64 (linux|darwin)-arm64 ([2cd224d](https://github.com/pact-foundation/pact-js-core/commit/2cd224dbbb49b06ab98f4e1e05d38aa45b497d16))
-
 ## [13.13.8](https://github.com/pact-foundation/pact-js-core/compare/v13.13.7...v13.13.8) (2023-04-24)
 
 
