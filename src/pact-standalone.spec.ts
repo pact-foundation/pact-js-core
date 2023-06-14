@@ -28,8 +28,6 @@ describe('Pact Standalone', function forMocha() {
     expect(pact.verifierFullPath).to.contain('pact-provider-verifier');
     expect(pact.pactPath).to.contain('pact');
     expect(pact.pactFullPath).to.contain('pact');
-    expect(pact.pactflowPath).to.contain('pactflow');
-    expect(pact.pactflowFullPath).to.contain('pactflow');
   });
 
   it("should return the base directory of the project with 'cwd' (where the package.json file is)", () => {
@@ -87,14 +85,6 @@ describe('Pact Standalone', function forMocha() {
         it('pact full path', () => {
           expect(fs.existsSync(pact.pactFullPath)).to.be.true;
         });
-        it('pactflow relative path', () => {
-          expect(fs.existsSync(path.resolve(basePath, pact.pactflowPath))).to.be
-            .true;
-        });
-
-        it('pactflow full path', () => {
-          expect(fs.existsSync(pact.pactflowFullPath)).to.be.true;
-        });
       });
 
       describe('Linux X64', () => {
@@ -146,15 +136,6 @@ describe('Pact Standalone', function forMocha() {
         it('pact full path', () => {
           expect(fs.existsSync(pact.pactFullPath)).to.be.true;
         });
-
-        it('pactflow relative path', () => {
-          expect(fs.existsSync(path.resolve(basePath, pact.pactflowPath))).to.be
-            .true;
-        });
-
-        it('pactflow full path', () => {
-          expect(fs.existsSync(pact.pactflowFullPath)).to.be.true;
-        });
       });
     }
 
@@ -174,8 +155,6 @@ describe('Pact Standalone', function forMocha() {
         expect(pact.verifierFullPath).to.contain('pact-provider-verifier.bat');
         expect(pact.pactPath).to.contain('pact.bat');
         expect(pact.pactFullPath).to.contain('pact.bat');
-        expect(pact.pactflowPath).to.contain('pactflow.bat');
-        expect(pact.pactflowFullPath).to.contain('pactflow.bat');
       });
 
       it('broker relative path', () => {
@@ -219,15 +198,6 @@ describe('Pact Standalone', function forMocha() {
 
       it('pact full path', () => {
         expect(fs.existsSync(pact.pactFullPath)).to.be.true;
-      });
-
-      it('pactflow relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.pactflowPath))).to.be
-          .true;
-      });
-
-      it('pactflow full path', () => {
-        expect(fs.existsSync(pact.pactflowPath)).to.be.true;
       });
     });
   });

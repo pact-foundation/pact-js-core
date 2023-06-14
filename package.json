@@ -11,8 +11,7 @@
     "pact-mock-service": "bin/pact-mock-service.js",
     "pact-stub-service": "bin/pact-stub-service.js",
     "pact-provider-verifier": "bin/pact-provider-verifier.js",
-    "pact-message": "bin/pact-message.js",
-    "pactflow": "bin/pactflow.js"
+    "pact-message": "bin/pact-message.js"
   },
   "os": [
     "darwin",
