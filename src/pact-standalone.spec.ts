@@ -53,7 +53,6 @@ describe('Pact Standalone', function forMocha() {
         });
 
         it('broker relative path', () => {
-          console.log(path.resolve(basePath, pact.brokerPath))
           expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
             .true;
         });
