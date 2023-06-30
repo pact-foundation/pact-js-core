@@ -8,30 +8,24 @@ function makeError(msg: string): Error {
 }
 
 export function createConfig(): Config {
-  const CHECKSUM_SUFFIX = '.checksum';
-
   return {
     binaries: [
-      {
-        platform: 'win32',
-        binary: `pact-${PACT_STANDALONE_VERSION}-win32.zip`,
-        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-win32.zip${CHECKSUM_SUFFIX}`,
-        folderName: `win32-${PACT_STANDALONE_VERSION}`,
-      },
-      {
-        platform: 'darwin',
-        binary: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz`,
-        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz${CHECKSUM_SUFFIX}`,
-        folderName: `darwin-${PACT_STANDALONE_VERSION}`,
-      },
-      {
-        platform: 'linux',
-        arch: 'x64',
-        binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`,
-        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${CHECKSUM_SUFFIX}`,
-        folderName: `linux-x64-${PACT_STANDALONE_VERSION}`,
-      },
-    ],
+      [ 'win32',  'x86',    'windows', 'zip' ],
+      [ 'win32',  'x86_64', 'windows', 'zip' ],
+      [ 'darwin', 'arm64',  'osx',     'tar.gz' ],
+      [ 'darwin', 'x86_64', 'osx',     'tar.gz' ],
+      [ 'linux',  'arm64',  'linux',   'tar.gz' ],
+      [ 'linux',  'x64',    'linux',   'tar.gz' ],
+    ].map(([ platform, arch, name, extension ]) => {
+      const binary = `pact-${PACT_STANDALONE_VERSION}-${name}-${arch}.${extension}`;
+      return {
+        platform,
+        arch,
+        binary,
+        binaryChecksum: `${binary}.checksum`,
+        folderName: `${platform}-${arch}-${PACT_STANDALONE_VERSION}`
+      }
+    })
   };
 }
 
