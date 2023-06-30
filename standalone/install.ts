@@ -10,14 +10,14 @@ function makeError(msg: string): Error {
 export function createConfig(): Config {
   return {
     binaries: [
-      ['win32', 'x86', 'windows', 'zip'],
-      ['win32', 'x86_64', 'windows', 'zip'],
-      ['darwin', 'arm64', 'osx', 'tar.gz'],
-      ['darwin', 'x86_64', 'osx', 'tar.gz'],
-      ['linux', 'arm64', 'linux', 'tar.gz'],
-      ['linux', 'x64', 'linux', 'tar.gz'],
-    ].map(([platform, arch, name, extension]) => {
-      const binary = `pact-${PACT_STANDALONE_VERSION}-${name}-${arch}.${extension}`;
+      ['win32', 'x86', 'windows', 'x86', 'zip'],
+      ['win32', 'x64', 'windows', 'x86_64', 'zip'],
+      ['darwin', 'arm64', 'osx', 'arm64', 'tar.gz'],
+      ['darwin', 'x64', 'osx', 'x86_64', 'tar.gz'],
+      ['linux', 'arm64', 'linux', 'arm64', 'tar.gz'],
+      ['linux', 'x64', 'linux', 'x64', 'tar.gz'],
+    ].map(([platform, arch, downloadPlatform, downloadArch, extension]) => {
+      const binary = `pact-${PACT_STANDALONE_VERSION}-${downloadPlatform}-${downloadArch}.${extension}`;
       return {
         platform,
         arch,

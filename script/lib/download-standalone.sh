@@ -46,11 +46,11 @@ if [[ $(find "${STANDALONE_DIR}" -name "*${STANDALONE_VERSION}") ]]; then
 fi
 
 download_standalone "pact-${STANDALONE_VERSION}-windows-x86.zip"        "win32-x86-${STANDALONE_VERSION}.zip"
-download_standalone "pact-${STANDALONE_VERSION}-windows-x86_64.zip"     "win32-x86_64-${STANDALONE_VERSION}.zip"
+download_standalone "pact-${STANDALONE_VERSION}-windows-x86_64.zip"     "win32-x64-${STANDALONE_VERSION}.zip"
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
   download_standalone "pact-${STANDALONE_VERSION}-osx-arm64.tar.gz"     "darwin-arm64-${STANDALONE_VERSION}.tar.gz"
-  download_standalone "pact-${STANDALONE_VERSION}-osx-x86_64.tar.gz"    "darwin-x86_64-${STANDALONE_VERSION}.tar.gz"
+  download_standalone "pact-${STANDALONE_VERSION}-osx-x86_64.tar.gz"    "darwin-x64-${STANDALONE_VERSION}.tar.gz"
   download_standalone "pact-${STANDALONE_VERSION}-linux-arm64.tar.gz"   "linux-arm64-${STANDALONE_VERSION}.tar.gz"
   download_standalone "pact-${STANDALONE_VERSION}-linux-x86_64.tar.gz"  "linux-x64-${STANDALONE_VERSION}.tar.gz"
 fi
