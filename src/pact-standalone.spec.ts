@@ -37,69 +37,23 @@ describe('Pact Standalone', function forMocha() {
   });
 
   describe('Check if OS specific files are there', () => {
-    if (!process.env['ONLY_DOWNLOAD_PACT_FOR_WINDOWS']) {
-      describe('OSX', () => {
+    const tests = [
+      ['darwin', 'arm64'],
+      ['darwin', 'x64'],
+      ['linux', 'arm64'],
+      ['linux', 'x64'],
+      ['win32', 'x86'],
+      ['win32', 'x64'],
+    ].filter(([platform]) =>
+      process.env['ONLY_DOWNLOAD_PACT_FOR_WINDOWS']
+        ? platform === 'win32'
+        : true
+    );
+
+    tests.forEach(([platform, arch]) => {
+      describe(`${platform} ${arch}`, () => {
         beforeEach(() => {
-          pact = standalone('darwin');
-        });
-
-        it('broker relative path', () => {
-          expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
-            .true;
-        });
-
-        it('broker full path', () => {
-          expect(fs.existsSync(pact.brokerFullPath)).to.be.true;
-        });
-
-        it('mock service relative path', () => {
-          expect(fs.existsSync(path.resolve(basePath, pact.mockServicePath))).to
-            .be.true;
-        });
-
-        it('mock service full path', () => {
-          expect(fs.existsSync(pact.mockServiceFullPath)).to.be.true;
-        });
-
-        it('stub relative path', () => {
-          expect(fs.existsSync(path.resolve(basePath, pact.stubPath))).to.be
-            .true;
-        });
-
-        it('stub full path', () => {
-          expect(fs.existsSync(pact.stubFullPath)).to.be.true;
-        });
-
-        it('provider verifier relative path', () => {
-          expect(fs.existsSync(path.resolve(basePath, pact.verifierPath))).to.be
-            .true;
-        });
-
-        it('provider verifier full path', () => {
-          expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
-        });
-
-        it('pact relative path', () => {
-          expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be
-            .true;
-        });
-
-        it('pact full path', () => {
-          expect(fs.existsSync(pact.pactFullPath)).to.be.true;
-        });
-        it('pactflow relative path', () => {
-          expect(fs.existsSync(path.resolve(basePath, pact.pactflowPath))).to.be
-            .true;
-        });
-
-        it('pactflow full path', () => {
-          expect(fs.existsSync(pact.pactflowFullPath)).to.be.true;
-        });
-      });
-
-      describe('Linux X64', () => {
-        beforeEach(() => {
-          pact = standalone('linux', 'x64');
+          pact = standalone(platform, arch);
         });
 
         it('broker relative path', () => {
@@ -155,79 +109,27 @@ describe('Pact Standalone', function forMocha() {
         it('pactflow full path', () => {
           expect(fs.existsSync(pact.pactflowFullPath)).to.be.true;
         });
-      });
-    }
 
-    describe('Windows', () => {
-      beforeEach(() => {
-        pact = standalone('win32');
-      });
-
-      it("should add '.bat' to the end of the binary names", () => {
-        expect(pact.brokerPath).to.contain('pact-broker.bat');
-        expect(pact.brokerFullPath).to.contain('pact-broker.bat');
-        expect(pact.mockServicePath).to.contain('pact-mock-service.bat');
-        expect(pact.mockServiceFullPath).to.contain('pact-mock-service.bat');
-        expect(pact.stubPath).to.contain('pact-stub-service.bat');
-        expect(pact.stubFullPath).to.contain('pact-stub-service.bat');
-        expect(pact.verifierPath).to.contain('pact-provider-verifier.bat');
-        expect(pact.verifierFullPath).to.contain('pact-provider-verifier.bat');
-        expect(pact.pactPath).to.contain('pact.bat');
-        expect(pact.pactFullPath).to.contain('pact.bat');
-        expect(pact.pactflowPath).to.contain('pactflow.bat');
-        expect(pact.pactflowFullPath).to.contain('pactflow.bat');
-      });
-
-      it('broker relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
-          .true;
-      });
-
-      it('broker full path', () => {
-        expect(fs.existsSync(pact.brokerFullPath)).to.be.true;
-      });
-
-      it('mock service relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.mockServicePath))).to
-          .be.true;
-      });
-
-      it('mock service full path', () => {
-        expect(fs.existsSync(pact.mockServiceFullPath)).to.be.true;
-      });
-
-      it('stub relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.stubPath))).to.be.true;
-      });
-
-      it('stub full path', () => {
-        expect(fs.existsSync(pact.stubFullPath)).to.be.true;
-      });
-
-      it('provider verifier relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.verifierPath))).to.be
-          .true;
-      });
-
-      it('provider verifier full path', () => {
-        expect(fs.existsSync(pact.verifierFullPath)).to.be.true;
-      });
-
-      it('pact relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.pactPath))).to.be.true;
-      });
-
-      it('pact full path', () => {
-        expect(fs.existsSync(pact.pactFullPath)).to.be.true;
-      });
-
-      it('pactflow relative path', () => {
-        expect(fs.existsSync(path.resolve(basePath, pact.pactflowPath))).to.be
-          .true;
-      });
-
-      it('pactflow full path', () => {
-        expect(fs.existsSync(pact.pactflowPath)).to.be.true;
+        if (platform === 'win32') {
+          it("should add '.bat' to the end of the binary names", () => {
+            expect(pact.brokerPath).to.contain('pact-broker.bat');
+            expect(pact.brokerFullPath).to.contain('pact-broker.bat');
+            expect(pact.mockServicePath).to.contain('pact-mock-service.bat');
+            expect(pact.mockServiceFullPath).to.contain(
+              'pact-mock-service.bat'
+            );
+            expect(pact.stubPath).to.contain('pact-stub-service.bat');
+            expect(pact.stubFullPath).to.contain('pact-stub-service.bat');
+            expect(pact.verifierPath).to.contain('pact-provider-verifier.bat');
+            expect(pact.verifierFullPath).to.contain(
+              'pact-provider-verifier.bat'
+            );
+            expect(pact.pactPath).to.contain('pact.bat');
+            expect(pact.pactFullPath).to.contain('pact.bat');
+            expect(pact.pactflowPath).to.contain('pactflow.bat');
+            expect(pact.pactflowFullPath).to.contain('pactflow.bat');
+          });
+        }
       });
     });
   });
