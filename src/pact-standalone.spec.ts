@@ -38,13 +38,17 @@ describe('Pact Standalone', function forMocha() {
 
   describe('Check if OS specific files are there', () => {
     const tests = [
-      [ 'darwin', 'arm64' ],
-      [ 'darwin', 'x86_64' ],
-      [ 'linux', 'arm64' ],
-      [ 'linux', 'x64' ],
-      [ 'win32', 'x86' ],
-      [ 'win32', 'x86_64' ],
-    ].filter(([platform]) => process.env['ONLY_DOWNLOAD_PACT_FOR_WINDOWS'] ? platform === "win32" : true)
+      ['darwin', 'arm64'],
+      ['darwin', 'x86_64'],
+      ['linux', 'arm64'],
+      ['linux', 'x64'],
+      ['win32', 'x86'],
+      ['win32', 'x86_64'],
+    ].filter(([platform]) =>
+      process.env['ONLY_DOWNLOAD_PACT_FOR_WINDOWS']
+        ? platform === 'win32'
+        : true
+    );
 
     tests.forEach(([platform, arch]) => {
       describe(`${platform} ${arch}`, () => {
@@ -111,11 +115,15 @@ describe('Pact Standalone', function forMocha() {
             expect(pact.brokerPath).to.contain('pact-broker.bat');
             expect(pact.brokerFullPath).to.contain('pact-broker.bat');
             expect(pact.mockServicePath).to.contain('pact-mock-service.bat');
-            expect(pact.mockServiceFullPath).to.contain('pact-mock-service.bat');
+            expect(pact.mockServiceFullPath).to.contain(
+              'pact-mock-service.bat'
+            );
             expect(pact.stubPath).to.contain('pact-stub-service.bat');
             expect(pact.stubFullPath).to.contain('pact-stub-service.bat');
             expect(pact.verifierPath).to.contain('pact-provider-verifier.bat');
-            expect(pact.verifierFullPath).to.contain('pact-provider-verifier.bat');
+            expect(pact.verifierFullPath).to.contain(
+              'pact-provider-verifier.bat'
+            );
             expect(pact.pactPath).to.contain('pact.bat');
             expect(pact.pactFullPath).to.contain('pact.bat');
             expect(pact.pactflowPath).to.contain('pactflow.bat');

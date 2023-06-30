@@ -10,22 +10,22 @@ function makeError(msg: string): Error {
 export function createConfig(): Config {
   return {
     binaries: [
-      [ 'win32',  'x86',    'windows', 'zip' ],
-      [ 'win32',  'x86_64', 'windows', 'zip' ],
-      [ 'darwin', 'arm64',  'osx',     'tar.gz' ],
-      [ 'darwin', 'x86_64', 'osx',     'tar.gz' ],
-      [ 'linux',  'arm64',  'linux',   'tar.gz' ],
-      [ 'linux',  'x64',    'linux',   'tar.gz' ],
-    ].map(([ platform, arch, name, extension ]) => {
+      ['win32', 'x86', 'windows', 'zip'],
+      ['win32', 'x86_64', 'windows', 'zip'],
+      ['darwin', 'arm64', 'osx', 'tar.gz'],
+      ['darwin', 'x86_64', 'osx', 'tar.gz'],
+      ['linux', 'arm64', 'linux', 'tar.gz'],
+      ['linux', 'x64', 'linux', 'tar.gz'],
+    ].map(([platform, arch, name, extension]) => {
       const binary = `pact-${PACT_STANDALONE_VERSION}-${name}-${arch}.${extension}`;
       return {
         platform,
         arch,
         binary,
         binaryChecksum: `${binary}.checksum`,
-        folderName: `${platform}-${arch}-${PACT_STANDALONE_VERSION}`
-      }
-    })
+        folderName: `${platform}-${arch}-${PACT_STANDALONE_VERSION}`,
+      };
+    }),
   };
 }
 
