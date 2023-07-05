@@ -146,6 +146,12 @@ var pact = require("@pact-foundation/pact-core");
 pact.logLevel("debug");
 ```
 
+or you can set it via an environment variable
+
+```
+LOG_LEVEL=debug
+```
+
 ### Mock Servers
 
 Mock servers are used by Pact to record interactions and create pact contracts.
@@ -166,7 +172,7 @@ var server = pact.createServer({
 | `port`              | false     | number                             | Port number that the server runs on, defaults to random available port                                                               |
 | `host`              | false     | string                             | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
 | `log`               | false     | string                             | File to log output on relative to current working directory, defaults to none                                                        |
-| `logLevel`    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
+| `logLevel`    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO", can be set by LOG_LEVEL env var |
 | `ssl`               | false     | boolean                            | Create a self-signed SSL cert to run the server over HTTPS , defaults to `false`                                                     |
 | `sslcert`           | false     | string                             | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option, defaults to none                    |
 | `sslkey`            | false     | string                             | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this, defaults to none                  |
@@ -295,7 +301,7 @@ pact.verifyPacts({
 | `providerVersion`           | false     | string  | Provider version, required to publish verification result to Broker. Optional otherwise.                   |
 | `enablePending`                   | false     | boolean  | Enable the [pending pacts](https://docs.pact.io/pending) feature.       |
 | `timeout`                   | false     | number  | The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.       |
-| `logLevel`    | false     | LogLevel (string)          | Log level. One of "TRACE", "DEBUG", "ERROR", "WARN", "INFO" |
+| `logLevel`    | false     | LogLevel (string)          | Log level. One of "TRACE", "DEBUG", "ERROR", "WARN", "INFO", can be set by LOG_LEVEL env var |
 
 The consumer version selector looks like this:
 
@@ -410,7 +416,7 @@ var server = pact.createStub({
 | port      | false     | number  | Port number that the server runs on, defaults to random available port                                                               |
 | host      | false     | string  | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
 | log       | false     | string  | File to log output on relative to current working directory, defaults to none                                                        |
-| logLevel    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
+| logLevel    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO", can be set by LOG_LEVEL env var |
 | ssl       | false     | boolean | Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'                                                     |
 | sslcert   | false     | string  | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults false                      | to none |
 | sslkey    | false     | string  | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this option false. Defaults to none     |

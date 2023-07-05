@@ -134,7 +134,7 @@
     "build": "tsc --project tsconfig.build.json",
     "prerelease": "npm run snyk-protect",
     "release": "commit-and-tag-version",
-    "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test,bin,standalone}/**/*.spec.ts\"",
+    "test": "cross-env LOG_LEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test,bin,standalone}/**/*.spec.ts\"",
     "snyk-protect": "snyk-protect",
     "format:base": "prettier --parser typescript",
     "format:check": "npm run format:base -- --list-different \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
