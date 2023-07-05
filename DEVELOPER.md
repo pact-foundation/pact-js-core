@@ -1,17 +1,41 @@
 # Developer documentation
 
+Pact-Js-Core uses FFI bindings from the pact-reference project, which are prebuilt for end users, the following steps will show some of the steps required to build and test locally on your machine.
+
 Do this and you should be 👌👌👌:
+
+```
+bash script/ci/prebuild.sh
+npm ci --ignore-scripts
+npm run build
+npm test
+```
+
+_notes_ - 
+
+As a developer, you need to run `bash script/ci/prebuild.sh` to
+
+- download the FFI libraries to `ffi` folder
+- prebuilds the binaries and outputs to `prebuilds`
+- cleans up `ffi` and `build`
+- downloads the `pact-ruby-standalone` bindings to `standalone`
+
+For end users, the following is provided as part of the packaging and release step in CI.
+
+- the `prebuilds` folder containing built `ffi` bindings
+- the `standalone` folder containing the pact ruby standalone bindings is populated, 
+- the `binding.gyp` file is removed from the npm package, so `npm install` doesn't attempt to build the `ffi` buildings, that are prebuilt.
+
+If you have a `binding.gyp` file, and have created `prebuilds` you will want to perform `npm ci` or `npm install` with `--ignore-scripts` set, to avoid building the `ffi` which is prebuilt.
+
+Alternatively you can run the following, which will not create a prebuild, but instead use `node-gyp` to output the built `ffi` libraries to the `build` folder. This was the previous method, which meant that end users would also perform.
 
 ```
 bash script/download-libs.sh
 npm ci
+npm run build
 npm test
 ```
-
-
-_notes_ - As a developer, you need to run `bash script/download-libs.sh` to download the FFI libraries prior to running `npm install` / `npm ci` as the libraries will be expected to be there, and you won't have any `node_modules` installed yet.
-
-For end users, the `ffi` folder is populated, as part of the npm publishing step.
 
 ### Linux x86_64 Task
 
@@ -81,23 +105,18 @@ Change `arm_container` to container
 1. Arm64 Machine
 2. Docker / Podman
 3. Cirrus-Cli
-   1. Fork that supports running `container` tasks as `aarch64`
 
 
 ```sh
-saffus run --output github-actions linux_arm --artifacts-dir tmp
+cirrus run --output github-actions linux_arm --artifacts-dir tmp
 ```
-
-#### Notes
-
-Change `arm_container` to container
-
-
 
 #### Publishing Assets
 
+MacOS ARM64
+
 `cirrus run --output github-actions macos_arm --artifacts-dir tmp --environment GITHUB_TOKEN=$GITHUB_TOKEN --environment CIRRUS_RELEASE=test --environment CIRRUS_REPO_FULL_NAME=pact-foundation/pact-js-core;`
 
-Change `arm_container` to container
+Linux ARM64
 
-`saffus run --output github-actions linux_arm --artifacts-dir tmp --environment GITHUB_TOKEN=$GITHUB_TOKEN --environment CIRRUS_RELEASE=test --environment CIRRUS_REPO_FULL_NAME=pact-foundation/pact-js-core;`
+`cirrus run --output github-actions linux_arm --artifacts-dir tmp --environment GITHUB_TOKEN=$GITHUB_TOKEN --environment CIRRUS_RELEASE=test --environment CIRRUS_REPO_FULL_NAME=pact-foundation/pact-js-core;`
