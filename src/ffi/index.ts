@@ -27,23 +27,12 @@ const supportedPlatformsMessage = [
   ` - ${supportedPlatforms.join('\n - ')}`,
 ].join('\n');
 const detectedMessage = `We detected your platform as: \n\n - ${platform}\n`;
-logger.info(detectedMessage);
-if (
-  !supportedPlatforms.includes(platform) &&
-  process.env['UNSUPPORTED_PLATFORM'] !== platform
-) {
+logger.debug(detectedMessage);
+if (!supportedPlatforms.includes(platform)) {
   logger.warn(supportedPlatformsMessage);
   logger.warn(detectedMessage);
   logger.error(`Unsupported platform: ${platform}`);
-  throw new Error(
-    `Unsupported platform: ${platform}, set $UNSUPPORTED_PLATFORM to ${platform} to override this check`
-  );
-}
-
-if (process.env['UNSUPPORTED_PLATFORM'] !== platform) {
-  logger.warn(
-    `You have set the environment variable UNSUPPORTED_PLATFORM to ${process.env['UNSUPPORTED_PLATFORM']}, this will override the detected platform of ${platform}`
-  );
+  throw new Error(`Unsupported platform: ${platform}`);
 }
 
 const loadPathMessage = (bindingsPath: string) =>
@@ -80,21 +69,23 @@ try {
   bindingPaths.forEach((bindingPath) => {
     try {
       loadPath = bindingPath;
-      logger.info(
+      logger.debug(
         `Attempting to find pact native module ${loadPathMessage(bindingPath)}`
       );
       ffiLib = bindingsResolver(bindingPath);
-      if (ffiLib) {
+      if (!ffiLib) {
         throw new Error('Native module not found');
       }
     } catch (error) {
-      logger.warn(`Failed to load native module from ${bindingPath}: ${error}`);
+      logger.error(
+        `Failed to load native module from ${bindingPath}: ${error}`
+      );
     }
   });
 } catch (error) {
   logger.debug(supportedPlatformsMessage);
   logger.debug(detectedMessage);
-  logger.debug(`Failed ${loadPathMessage}`);
+  logger.error(`Failed ${loadPathMessage}`);
   logger.error(`Failed to load native module: ${error}`);
   throw new Error(
     'Native module not found - check the logs for more details and set PACT_LOG_LEVEL=debug for more details'
@@ -115,46 +106,38 @@ const initialiseFfi = (logLevel: LogLevel): typeof ffi => {
     logger.error(
       `Failed to initialise native module for ${platform}: ${error}`
     );
-    logger.error(
+    logger.debug(
       `We looked for a supported build in this location ${path.join(
         loadPath ?? path.resolve(),
         'prebuilds',
         platform
       )}`
     );
-    logger.error(`Tip: check there this a prebuild for ${platform}`);
-    logger.error(
+    logger.debug(`Tip: check there this a prebuild for ${platform}`);
+    logger.debug(
       `Tip: check the prebuild exists at the path: ${path.join(
         loadPath ?? path.resolve(),
         'prebuilds',
         platform
       )}`
     );
-    logger.error(
+    logger.debug(
       `Wrong Path?: set the load path with $PACT_NAPI_NODE_LOCATION ensuring that ${path.join(
         '$PACT_NODE_NAPI_LOCATION',
         'prebuilds',
         platform
       )} exists`
     );
-    logger.error(
+    logger.debug(
       `  - Note: You dont need to include the prebuilds${platform} part of the path, just the parent directory`
     );
-    logger.error(
+    logger.debug(
       `  - Let us know: - We can add more supported path lookups easily, chat to us on slack or raise an issue on github`
-    );
-    logger.error(
-      `Pro Tip: build your own prebuild, and set $UNSUPPORTED_PLATFORM to ${platform}`
-    );
-    logger.error(`Pro Tip: see DEVELOPER.md in pact-js-core for more details`);
-    logger.error(
-      `  - Let us know: - We can add look to build more supported platforms, chat to us on slack or raise an issue on github`
     );
     throw new Error(
       'Native module not found - check the logs for more details and set PACT_LOG_LEVEL=debug for more details'
     );
   }
-
   return ffiLib;
 };
 
