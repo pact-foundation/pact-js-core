@@ -41,17 +41,13 @@ const loadPathMessage = (bindingsPath: string) =>
     'prebuilds',
     platform
   )} ${
-    process.env['PACT_NAPI_NODE_LOCATION']
-      ? `\n - source: PACT_NAPI_NODE_LOCATION \n - You must have a supported prebuild for your platform at this location in the path ${path.join(
-          process.env['PACT_NAPI_NODE_LOCATION'],
+    process.env['PACT_PREBUILD_LOCATION']
+      ? `\n - source: PACT_PREBUILD_LOCATION \n - You must have a supported prebuild for your platform at this location in the path ${path.join(
+          process.env['PACT_PREBUILD_LOCATION'],
           'prebuilds',
           platform
         )}`
-      : `\n   source: ${path.join(
-          bindingsPath,
-          'prebuilds',
-          platform
-        )} \n\n - You can override via PACT_NAPI_NODE_LOCATION\n`
+      : `\n   source: pact-js-core binding lookup \n\n - You can override via PACT_PREBUILD_LOCATION\n`
   }`;
 
 const bindingsResolver = (bindingsPath: string | undefined) =>
@@ -59,38 +55,37 @@ const bindingsResolver = (bindingsPath: string | undefined) =>
 
 const bindingPaths = [
   path.resolve(
-    process.env['PACT_NAPI_NODE_LOCATION']?.toString() ?? path.resolve(),
-    path.resolve(__dirname, '..', '..')
+    path.resolve(__dirname, '..', '..'),
+    process.env['PACT_PREBUILD_LOCATION']?.toString() ?? path.resolve()
   ),
 ];
 let ffiLib: Ffi;
-let loadPath: string | undefined;
-try {
-  bindingPaths.forEach((bindingPath) => {
-    try {
-      loadPath = bindingPath;
-      logger.debug(
-        `Attempting to find pact native module ${loadPathMessage(bindingPath)}`
-      );
-      ffiLib = bindingsResolver(bindingPath);
-      if (!ffiLib) {
-        throw new Error('Native module not found');
-      }
-    } catch (error) {
-      logger.error(
-        `Failed to load native module from ${bindingPath}: ${error}`
-      );
-    }
-  });
-} catch (error) {
-  logger.debug(supportedPlatformsMessage);
-  logger.debug(detectedMessage);
-  logger.error(`Failed ${loadPathMessage}`);
-  logger.error(`Failed to load native module: ${error}`);
-  throw new Error(
-    'Native module not found - check the logs for more details and set PACT_LOG_LEVEL=debug for more details'
+
+const renderBinaryErrorMessage = (error: unknown, bindingPath: string) => {
+  logger.debug(`${supportedPlatformsMessage}\n${detectedMessage}`);
+  logger.error(`Failed to initialise native module for ${platform}: ${error}`);
+  logger.debug(
+    `{supportedPlatformsMessage}\n${detectedMessage}\n
+      We looked for a supported build in this location ${path.join(
+        bindingPath ?? path.resolve(),
+        'prebuilds',
+        platform
+      )}\n
+      Tip: check there is a prebuild for ${platform} \n
+      check the prebuild exists at the path: ${path.join(
+        bindingPath ?? path.resolve(),
+        'prebuilds',
+        platform
+      )}\n
+      Wrong Path?: set the load path with PACT_PREBUILD_LOCATION ensuring that ${path.join(
+        '$PACT_NODE_NAPI_LOCATION',
+        'prebuilds',
+        platform
+      )} exists\n
+      - Note: You dont need to include the prebuilds/${platform} part of the path, just the parent directory\n
+      - Let us know: We can add more supported path lookups easily, chat to us on slack or raise an issue on github`
   );
-}
+};
 
 let ffi: typeof ffiLib;
 let ffiLogLevel: LogLevel;
@@ -99,43 +94,25 @@ const initialiseFfi = (logLevel: LogLevel): typeof ffi => {
   logger.debug(`Initalising native core at log level '${logLevel}'`);
   ffiLogLevel = logLevel;
   try {
+    bindingPaths.forEach((bindingPath) => {
+      try {
+        logger.debug(
+          `Attempting to find pact native module ${loadPathMessage(
+            bindingPath
+          )}`
+        );
+        ffiLib = bindingsResolver(bindingPath);
+        if (!ffiLib) {
+          throw new Error('Native module not found');
+        }
+      } catch (error) {
+        renderBinaryErrorMessage(error, bindingPath);
+      }
+    });
     ffiLib.pactffiInitWithLogLevel(logLevel);
   } catch (error) {
-    logger.debug(supportedPlatformsMessage);
-    logger.debug(detectedMessage);
-    logger.error(
-      `Failed to initialise native module for ${platform}: ${error}`
-    );
-    logger.debug(
-      `We looked for a supported build in this location ${path.join(
-        loadPath ?? path.resolve(),
-        'prebuilds',
-        platform
-      )}`
-    );
-    logger.debug(`Tip: check there this a prebuild for ${platform}`);
-    logger.debug(
-      `Tip: check the prebuild exists at the path: ${path.join(
-        loadPath ?? path.resolve(),
-        'prebuilds',
-        platform
-      )}`
-    );
-    logger.debug(
-      `Wrong Path?: set the load path with $PACT_NAPI_NODE_LOCATION ensuring that ${path.join(
-        '$PACT_NODE_NAPI_LOCATION',
-        'prebuilds',
-        platform
-      )} exists`
-    );
-    logger.debug(
-      `  - Note: You dont need to include the prebuilds${platform} part of the path, just the parent directory`
-    );
-    logger.debug(
-      `  - Let us know: - We can add more supported path lookups easily, chat to us on slack or raise an issue on github`
-    );
     throw new Error(
-      'Native module not found - check the logs for more details and set PACT_LOG_LEVEL=debug for more details'
+      `Failed to load native module, try setting LOG_LEVEL=debug for more info \n. ${error}`
     );
   }
   return ffiLib;
