@@ -10,7 +10,6 @@ function makeError(msg: string): Error {
 export function createConfig(): Config {
   return {
     binaries: [
-      ['win32', 'x86', 'windows', 'x86', 'zip'],
       ['win32', 'x64', 'windows', 'x86_64', 'zip'],
       ['darwin', 'arm64', 'osx', 'arm64', 'tar.gz'],
       ['darwin', 'x64', 'osx', 'x86_64', 'tar.gz'],

@@ -42,7 +42,6 @@ describe('Pact Standalone', function forMocha() {
       ['darwin', 'x64'],
       ['linux', 'arm64'],
       ['linux', 'x64'],
-      ['win32', 'x86'],
       ['win32', 'x64'],
     ].filter(([platform]) =>
       process.env['ONLY_DOWNLOAD_PACT_FOR_WINDOWS']
