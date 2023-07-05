@@ -22,7 +22,9 @@ export function createConfig(): Config {
         arch,
         binary,
         binaryChecksum: `${binary}.checksum`,
-        folderName: `${platform === 'win32' ? 'windows' : platform}-${arch}-${PACT_STANDALONE_VERSION}`,
+        folderName: `${
+          platform === 'win32' ? 'windows' : platform
+        }-${arch}-${PACT_STANDALONE_VERSION}`,
       };
     }),
   };
