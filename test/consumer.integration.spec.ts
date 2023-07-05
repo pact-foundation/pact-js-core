@@ -44,7 +44,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
     value,
   });
 
-  describe.skip('with JSON data', () => {
+  describe('with JSON data', () => {
     beforeEach(() => {
       pact = makeConsumerPact(
         'foo-consumer',
