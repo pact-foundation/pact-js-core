@@ -42,7 +42,7 @@ npm test
 #### Pre Reqs
 
 1. x86_64 Machine
-   1. ARM64 Mac - If you have Rosetta (MacOS) 
+   1. ARM64 Mac - If you have Rosetta (MacOS)
 
 ### CI Locally
 
@@ -53,33 +53,9 @@ npm test
 act --container-architecture linux/amd64 -W .github/workflows/build-and-test.yml --artifact-server-path tmp
 ```
 
-### MacOS x86_64 Task
-
-#### Pre Reqs
-
-1. Arm64 Mac with Rosetta
-   1. install notes for rosetta
-   2. prefix commands with `arch -x86_64`
-2. x86_64 Mac
-
-### CI Locally
-
-1. Arm64 Mac with Rosetta
-2. x86_64 Mac
-3. Cirrus-Cli
-4. Parallels
-
-```sh
-to be added
-```
-
 ### MacOS ARM64 Task
 
 #### Pre Reqs
-
-1. Arm64 Mac
-
-### CI Locally
 
 1. Arm64 Mac
 2. Cirrus-Cli
@@ -89,10 +65,6 @@ to be added
 ```sh
 cirrus run --output github-actions macos_arm --artifacts-dir tmp
 ```
-
-#### Notes
-
-Change `arm_container` to container
 
 ### Linux ARM64 Task
 

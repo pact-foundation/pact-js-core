@@ -27,8 +27,7 @@ linux_arm_task:
   # container:
     image: node:20-slim
   cirrus_setup_script: chmod +x script/**/* && chmod +x script/**
-  setup_script: apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip libyaml-dev git
-  dry_run_check_script: npx --yes commit-and-tag-version --dry-run && git remote -v
+  setup_script: apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip git
   pre_req_script: curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash
   <<: *INSTALL_GH_CLI
   <<: *PREBUILD_AND_TEST
