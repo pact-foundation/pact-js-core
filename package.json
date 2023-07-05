@@ -135,8 +135,7 @@
     "snyk-protect": "snyk-protect",
     "format:base": "prettier --parser typescript",
     "format:check": "npm run format:base -- --list-different \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
-    "format:fix": "npm run format:base -- --write \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
-    "install": "echo welcome to Pact-JS - This post install script supresses node-gyp rebuild as it is not required for this package"
+    "format:fix": "npm run format:base -- --write \"{src,standalone,bin,test}/**/*.{ts,tsx}\""
   },
   "prettier": "@pact-foundation/pact-js-prettier-config",
   "commit-and-tag-version": {
