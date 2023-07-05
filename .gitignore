@@ -67,10 +67,10 @@ standalone/README.md
 # FFI native bindings
 *.so
 *.dll*
+*.dylib
 pact.h
 pact-cpp.h
 ffi/README.md
-*.dylib
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build
 # Precompiled binary addons
