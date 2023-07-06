@@ -8,12 +8,16 @@ require_binary npm
 
 VERSION="$("$SCRIPT_DIR/get-version.sh")"
 
-echo "--> Preparing npmrc file"
-"$SCRIPT_DIR"/create_npmrc_file.sh
-
 echo "--> Releasing version ${VERSION}"
 
 echo "--> Releasing artifacts"
 echo "    Publishing pact-core@${VERSION}..."
-npm publish --access public --tag latest
+if [[ ${DRY_RUN:-} == 'true' ]]; then
+  echo "publishing in dry run mode"
+  npm publish --access-public --dry-run
+  else
+  echo "--> Preparing npmrc file"
+  "$SCRIPT_DIR"/create_npmrc_file.sh
+  npm publish --access public --tag latest
+fi
 echo "    done!"

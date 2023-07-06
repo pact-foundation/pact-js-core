@@ -6,10 +6,33 @@
 
 ![Build and test](https://github.com/pact-foundation/pact-js-core/workflows/Build%20and%20test/badge.svg)
 [![Known Vulnerabilities](https://snyk.io/test/github/pact-foundation/pact-js-core/badge.svg?targetFile=package.json)](https://snyk.io/test/github/pact-foundation/pact-js-core?targetFile=package.json)
+[![GitHub release](https://img.shields.io/github/release/pact-foundation/pact-js-core)](https://github.com/pact-foundation/pact-js-core)
 [![npm](https://img.shields.io/npm/v/@pact-foundation/pact-core.svg)](https://www.npmjs.com/package/@pact-foundation/pact-core)
 [![license](https://img.shields.io/github/license/pact-foundation/pact-js-core.svg)](https://github.com/pact-foundation/pact-js-core/blob/master/LICENSE)
-[![dependencies](https://img.shields.io/david/pact-foundation/pact-js-core.svg)](https://www.npmjs.com/package/@pact-foundation/pact-core)
 [![slack](http://slack.pact.io/badge.svg)](http://slack.pact.io)
+
+
+[![Npm package license](https://badgen.net/npm/license/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+[![Npm package version](https://badgen.net/npm/v/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+[![Minimum node.js version](https://badgen.net/npm/node/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+
+[![Npm package total downloads](https://badgen.net/npm/dt/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+
+[![Npm package yearly downloads](https://badgen.net/npm/dy/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+[![Npm package monthly downloads](https://badgen.net/npm/dm/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+[![Npm package daily downloads](https://badgen.net/npm/dd/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+
+[![Npm package dependents](https://badgen.net/npm/dependents/@pact-foundation/pact-core)](https://npmjs.com/package/@pact-foundation/pact-core)
+
+[![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-green.svg)](https://GitHub.com/pact-foundation/pact-js-core/graphs/commit-activity)
+
+[![Build and test](https://github.com/pact-foundation/pact-js-core/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/pact-foundation/pact-js-core/actions/workflows/build-and-test.yml)
+[![Publish and release](https://github.com/pact-foundation/pact-js-core/actions/workflows/publish.yml/badge.svg)](https://github.com/pact-foundation/pact-js-core/actions/workflows/publish.yml)
+
+[![Linux](https://svgshare.com/i/Zhy.svg)](https://svgshare.com/i/Zhy.svg)
+[![macOS](https://svgshare.com/i/ZjP.svg)](https://svgshare.com/i/ZjP.svg)
+[![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)
+
 
 # Pact-JS Core
 
@@ -42,6 +65,11 @@ A wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-fou
       - [Create Message Pacts](#create-message-pacts)
         - [Example](#example)
   - [CLI Tools](#cli-tools)
+  - [Windows Issues](#windows-issues)
+    - [Enable Long Paths](#enable-long-paths)
+  - [Contributing](#contributing)
+  - [Testing](#testing)
+  - [Questions?](#questions)
 
 <!-- /TOC -->
 
@@ -118,6 +146,12 @@ var pact = require("@pact-foundation/pact-core");
 pact.logLevel("debug");
 ```
 
+or you can set it via an environment variable
+
+```
+LOG_LEVEL=debug
+```
+
 ### Mock Servers
 
 Mock servers are used by Pact to record interactions and create pact contracts.
@@ -138,7 +172,7 @@ var server = pact.createServer({
 | `port`              | false     | number                             | Port number that the server runs on, defaults to random available port                                                               |
 | `host`              | false     | string                             | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
 | `log`               | false     | string                             | File to log output on relative to current working directory, defaults to none                                                        |
-| `logLevel`    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
+| `logLevel`    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO", can be set by LOG_LEVEL env var |
 | `ssl`               | false     | boolean                            | Create a self-signed SSL cert to run the server over HTTPS , defaults to `false`                                                     |
 | `sslcert`           | false     | string                             | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option, defaults to none                    |
 | `sslkey`            | false     | string                             | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this, defaults to none                  |
@@ -267,7 +301,7 @@ pact.verifyPacts({
 | `providerVersion`           | false     | string  | Provider version, required to publish verification result to Broker. Optional otherwise.                   |
 | `enablePending`                   | false     | boolean  | Enable the [pending pacts](https://docs.pact.io/pending) feature.       |
 | `timeout`                   | false     | number  | The duration in ms we should wait to confirm verification process was successful. Defaults to 30000.       |
-| `logLevel`    | false     | LogLevel (string)          | Log level. One of "TRACE", "DEBUG", "ERROR", "WARN", "INFO" |
+| `logLevel`    | false     | LogLevel (string)          | Log level. One of "TRACE", "DEBUG", "ERROR", "WARN", "INFO", can be set by LOG_LEVEL env var |
 
 The consumer version selector looks like this:
 
@@ -382,7 +416,7 @@ var server = pact.createStub({
 | port      | false     | number  | Port number that the server runs on, defaults to random available port                                                               |
 | host      | false     | string  | Host on which to bind the server on, defaults to 'localhost'. Supports '0.0.0.0' to bind on all IPv4 addresses on the local machine. |
 | log       | false     | string  | File to log output on relative to current working directory, defaults to none                                                        |
-| logLevel    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO" |
+| logLevel    | false     | LogLevel (string)       | Log level to pass to the pact core. One of "DEBUG", "ERROR", "WARN", "INFO", can be set by LOG_LEVEL env var |
 | ssl       | false     | boolean | Create a self-signed SSL cert to run the server over HTTPS , defaults to 'false'                                                     |
 | sslcert   | false     | string  | Path to a custom self-signed SSL cert file, 'ssl' option must be set to true to use this option. Defaults false                      | to none |
 | sslkey    | false     | string  | Path a custom key and self-signed SSL cert key file, 'ssl' option must be set to true to use this option false. Defaults to none     |

@@ -23,10 +23,15 @@ const HOST = '127.0.0.1';
 const isWin = process.platform === 'win32';
 const isLinux = process.platform === 'linux';
 const isDarwinArm64 = process.platform === 'darwin' && process.arch === 'arm64';
+const isDarwinX64 = process.platform === 'darwin' && process.arch === 'x64';
 const isLinuxArm64 = process.platform === 'linux' && process.arch === 'arm64';
 const isCirrusCi = process.env['CIRRUS_CI'] === 'true';
 const usesOctetStream =
-  isLinuxArm64 || isWin || isDarwinArm64 || (isCirrusCi && isLinux);
+  isLinuxArm64 ||
+  isWin ||
+  isDarwinArm64 ||
+  (isCirrusCi && isLinux) ||
+  (isCirrusCi && isDarwinX64);
 
 describe('FFI integration test for the HTTP Consumer API', () => {
   setLogLevel('trace');

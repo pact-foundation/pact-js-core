@@ -7,8 +7,58 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-and-test-osx:
+
+  create_pre_release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - run: GH_CREATE_PRE_RELEASE=true ./script/ci/release.sh
+        if: github.ref == 'refs/heads/master' && env.ACT != 'true' && runner.os == 'Linux'
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+   
+  prebuild:
+    needs: [ create_pre_release ]
     runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [20]
+        os: [macos-latest,ubuntu-latest,windows-latest]
+
+    env:
+      NODE_VERSION: ${{ matrix.node-version }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - if: runner.os == 'Windows'
+        run: echo "ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true" >> $GITHUB_ENV
+
+      - run: ./script/ci/prebuild.sh
+
+      - name: Upload prebuild for ${{ runner.os }}-${{ runner.arch }}
+        uses: actions/upload-artifact@v3
+        with:
+          path: prebuilds/*.tar.gz
+          
+      - run: GH_PRE_RELEASE_UPLOAD=true ./script/ci/release.sh
+        if: github.ref == 'refs/heads/master' && env.ACT != 'true'
+        env:
+            GITHUB_TOKEN: ${{ github.token }}
+
+  test:
+    runs-on: ${{ matrix.os }}
+    needs: [prebuild]
     defaults:
       run:
         shell: bash
@@ -18,20 +68,46 @@ jobs:
         node-version: [16,18,20]
         os: [macos-latest,ubuntu-latest,windows-latest]
 
+    env:
+      NODE_VERSION: ${{ matrix.node-version }}
+
     steps:
       - uses: actions/checkout@v3
-      - name: Use Node.js ${{ matrix.node-version }}
+
+      - name: Download prebuilds
+        uses: actions/download-artifact@v3
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-version }}
-      - run: script/ci/build-and-test.sh
-        if: runner.os != 'Windows'
+          node-version: ${{ env.NODE_VERSION }}
+
+      - if: runner.os == 'Windows'
+        run: echo "ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true" >> $GITHUB_ENV
+      - run: ./script/ci/unpack-and-test.sh
+
+  release_dry_run:
+    runs-on: ubuntu-latest
+    needs: [ create_pre_release, prebuild ]
+    if: github.ref == 'refs/heads/master'
+
+    env:
+      NODE_VERSION: 20
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: "release - dry run: ${{ env.DRY_RUN }}"
+        id: publish
+        run: script/ci/release.sh
         env:
-          NODE_VERSION: ${{ matrix.node-version }}
-          PACT_BROKER_FEATURES: publish_pacts_using_old_api
-      - run: script/ci/build-and-test.sh
-        if: runner.os == 'Windows'
-        env:
-          NODE_VERSION: ${{ matrix.node-version }}
-          PACT_BROKER_FEATURES: publish_pacts_using_old_api
-          ONLY_DOWNLOAD_PACT_FOR_WINDOWS: true
+          GITHUB_TOKEN: ${{ github.token }}
+          DRY_RUN: true
+
+      - run: echo "New Release will be v${{ steps.publish.outputs.version }}"

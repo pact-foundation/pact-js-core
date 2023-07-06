@@ -28,7 +28,11 @@
               "VCCLCompilerTool": {
                 "ExceptionHandling": 1
               }
-            }
+            },
+            "copies":[{
+                "files": [ "<(module_root_dir)/ffi/pact_ffi.dll"],
+                "destination": "<(PRODUCT_DIR)"
+                }],
           }
         ],
         [
@@ -47,7 +51,11 @@
                 "-L<(module_root_dir)/ffi",
                 "-Wl,-rpath,@loader_path"
               ]
-            }
+            },
+            "copies":[{
+                "files": [ "<(module_root_dir)/ffi/libpact_ffi.dylib"],
+                "destination": "<(PRODUCT_DIR)"
+                }],
           }
         ],
         [
@@ -63,10 +71,14 @@
             "link_settings": {
               "libraries": [
                 "-lpact_ffi",
-                "-L<(module_root_dir)/ffi/osxaarch64",
-                "-Wl,-rpath,@loader_path/osxaarch64"
+                "-L<(module_root_dir)/ffi",
+                "-Wl,-rpath,@loader_path"
               ]
-            }
+            },
+            "copies":[{
+                "files": [ "<(module_root_dir)/ffi/osxaarch64/libpact_ffi.dylib"],
+                "destination": "<(PRODUCT_DIR)"
+                }],
           }
         ],
         [
@@ -78,7 +90,11 @@
                 "-L<(module_root_dir)/ffi",
                 "-Wl,-rpath,'$$ORIGIN'"
               ]
-            }
+            },
+            "copies":[{
+                "files": [ "<(module_root_dir)/ffi/libpact_ffi.so"],
+                "destination": "<(PRODUCT_DIR)"
+                }],
           }
         ],
         [
@@ -88,9 +104,13 @@
               "libraries": [
                 "-lpact_ffi",
                 "-L<(module_root_dir)/ffi/linuxaarch64",
-                "-Wl,-rpath,'$$ORIGIN'/linuxaarch64"
+                "-Wl,-rpath,'$$ORIGIN'"
               ]
-            }
+            },
+            "copies":[{
+                "files": [ "<(module_root_dir)/ffi/linuxaarch64/libpact_ffi.so"],
+                "destination": "<(PRODUCT_DIR)"
+                }],
           }
         ]
       ],
@@ -105,39 +125,10 @@
         "NAPI_CPP_EXCEPTIONS"
       ]
     },
-    # Copy the shared libraries into the build/Release folder for distribution
-    {
-      "target_name": "copy_release_artifacts",
-      "dependencies": ["pact"],
-      "type": "none",
-      "copies": [
-        {
-          # must use module_root_dir here, because it uses proper windows paths
-          "files": [
-            "<(module_root_dir)/ffi/libpact_ffi.dylib",
-            "<(module_root_dir)/ffi/libpact_ffi.so",
-            "<(module_root_dir)/ffi/pact_ffi.dll",
-          ],
-          "destination": "<(PRODUCT_DIR)"
-        },
-        {
-          "files": [
-            "<(module_root_dir)/ffi/osxaarch64/libpact_ffi.dylib",
-          ],
-          "destination": "<(PRODUCT_DIR)/osxaarch64"
-        },
-        {
-          "files": [
-            "<(module_root_dir)/ffi/linuxaarch64/libpact_ffi.so",
-          ],
-          "destination": "<(PRODUCT_DIR)/linuxaarch64"
-        }
-      ]
-    },
     # Need to set the library install name to enable the rpath settings to work on OSX
     {
       "target_name": "set_osx_install_name",
-      "dependencies": ["pact", "copy_release_artifacts"],
+      "dependencies": ["pact"],
       "type": "none",
       "target_conditions":[
         [

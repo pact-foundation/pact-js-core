@@ -19,8 +19,7 @@ coverage
 # node-waf configuration
 .lock-wscript
 
-# Compiled binary addons (http://nodejs.org/api/addons.html)
-build
+
 
 # Redis database dump
 dump.rdb
@@ -44,8 +43,11 @@ src/**/**.d.ts
 test/**/**.d.ts
 bin/**/**.d.ts
 **/*.d.ts
-*.js
-!test.js
+src/**/**.js
+test/**/**.js
+bin/**/**.js
+# *.js
+# !test.js
 
 *.js.map
 
@@ -53,12 +55,26 @@ bin/**/**.d.ts
 ts-node-*
 
 # pact standalone binaries
-standalone/*
-!standalone/__fixtures__/.keep
-!standalone/*.ts
+# standalone/*
+standalone/darwin*
+standalone/linux*
+standalone/windows*
 standalone/*.d.ts
-ffi/*
-!ffi/README.md
+standalone/*.js
+standalone/*.checksum
+standalone/*.gz
+standalone/README.md
+# FFI native bindings
+*.so
+*.dll*
+*.dylib
+pact.h
+pact-cpp.h
+ffi/README.md
+# Compiled binary addons (http://nodejs.org/api/addons.html)
+build
+# Precompiled binary addons
+prebuilds
 
 # Folders created during testing
 log
@@ -66,13 +82,3 @@ reports
 tmp
 .tmp
 test/__testoutput__
-
-# jest config
-!jest.config.js
-
-# mocha config
-!.mocharc.js
-!ts-node.js
-
-# jest mocks
-!__mocks__

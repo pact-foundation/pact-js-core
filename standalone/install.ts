@@ -10,8 +10,7 @@ function makeError(msg: string): Error {
 export function createConfig(): Config {
   return {
     binaries: [
-      ['win32', 'x86', 'windows', 'x86', 'zip'],
-      ['win32', 'x64', 'windows', 'x86_64', 'zip'],
+      ['win32', 'x64', 'windows', 'x64', 'zip'],
       ['darwin', 'arm64', 'osx', 'arm64', 'tar.gz'],
       ['darwin', 'x64', 'osx', 'x86_64', 'tar.gz'],
       ['linux', 'arm64', 'linux', 'arm64', 'tar.gz'],
@@ -23,7 +22,9 @@ export function createConfig(): Config {
         arch,
         binary,
         binaryChecksum: `${binary}.checksum`,
-        folderName: `${platform}-${arch}-${PACT_STANDALONE_VERSION}`,
+        folderName: `${
+          platform === 'win32' ? 'windows' : platform
+        }-${arch}-${PACT_STANDALONE_VERSION}`,
       };
     }),
   };

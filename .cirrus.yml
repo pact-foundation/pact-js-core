@@ -1,58 +1,48 @@
-env:
-  PACT_BROKER_FEATURES: publish_pacts_using_old_api
 
-BUILD_TEST_TASK_TEMPLATE: &BUILD_TEST_TASK_TEMPLATE
-  arch_check_script:
-    - uname -am
-  test_script:
-    - node --version
-    - script/ci/build-and-test.sh
+INSTALL_GH_CLI: &INSTALL_GH_CLI
+  install_gh_cli_script: |
+    curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+    && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+    && apt update \
+    && apt install gh -y
 
-# These are probably expected to fail in the post install script
-# until we are packing v2.0.0 of pact-ruby-standalone that supports
-# arm64 linux - as per https://github.com/pact-foundation/pact-js-core/issues/416
-# Error: Error while locating pact binary: Cannot find binary for platform 'linux' with architecture 'arm64'.
-# linux_arm64_task:
-#   skip: "changesInclude('.github/**')" 
-#   env:
-#     matrix:
-#       - IMAGE: node:16-slim
-#       - IMAGE: node:18-slim
-#       - IMAGE: node:20-slim
-#   arm_container:
-#     image: $IMAGE
-#   install_script:
-#     - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
-#   << : *BUILD_TEST_TASK_TEMPLATE
-
-linux_amd64_task:
+RELEASE: &RELEASE
+  release_script: ./script/ci/release.sh
   env:
-    matrix:
-      - IMAGE: node:16-slim
-      - IMAGE: node:18-slim
-      - IMAGE: node:20-slim
-  container:
-    image: $IMAGE
-  install_script:
-    - apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip
-  << : *BUILD_TEST_TASK_TEMPLATE
+    GITHUB_TOKEN: ENCRYPTED[80f01174768fa2065635588baac761b8d7079ea3e06f4af861d3c5c6ada0a8fe93a19e45d33a64fccc24f94f6398593d]
+    GH_PRE_RELEASE_UPLOAD: true 
 
+PREBUILD_AND_TEST: &PREBUILD_AND_TEST
+  prebuild_script: NODE_VERSION=20 script/ci/prebuild.sh
+  <<: *RELEASE
+  test_20_script:  NODE_VERSION=20 script/ci/build-and-test.sh && script/ci/clean.sh
+  test_18_script:  NODE_VERSION=18 script/ci/build-and-test.sh && script/ci/clean.sh
+  test_16_script:  NODE_VERSION=16 script/ci/build-and-test.sh && script/ci/clean.sh
 
-mac_task:
+linux_arm_task:
+  env:
+    SET_NVM: "true"
+  arm_container:
+  # container:
+    image: node:20-slim
+  cirrus_setup_script: chmod +x script/**/* && chmod +x script/**
+  setup_script: apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip git
+  pre_req_script: curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.39.3/install.sh | bash
+  <<: *INSTALL_GH_CLI
+  <<: *PREBUILD_AND_TEST
+  artifacts:
+    path: prebuilds/*.tar.gz
+
+macos_arm_task:
   macos_instance:
     image: ghcr.io/cirruslabs/macos-ventura-base:latest
   env:
-    PACT_BROKER_FEATURES: publish_pacts_using_old_api
-    NVS_HOME: ${HOME}/.nvs
-    PATH: ${NVS_HOME}:${PATH}
-    matrix:
-      - NODE_VERSION: 16
-      - NODE_VERSION: 18
-      - NODE_VERSION: 20
-  install_script: # we need to install rosetta as v1.x of pact-ruby-standalone doesn't support arm64
-    - softwareupdate --install-rosetta --agree-to-license
-    - brew install nvm
-    - source $(brew --prefix nvm)/nvm.sh
-    - nvm install $NODE_VERSION
-    - nvm use $NODE_VERSION
-  << : *BUILD_TEST_TASK_TEMPLATE
+    SET_NVM: "true"
+  cirrus_setup_script: chmod +x script/**/* && chmod +x script/**
+  dry_run_check_script: |
+    npx --yes commit-and-tag-version --dry-run && git remote -v
+  pre_req_script: brew install nvm
+  <<: *PREBUILD_AND_TEST
+  artifacts:
+    path: prebuilds/*.tar.gz
