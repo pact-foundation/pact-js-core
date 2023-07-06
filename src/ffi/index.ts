@@ -54,8 +54,8 @@ const bindingsResolver = (bindingsPath: string | undefined) =>
   bindings(bindingsPath);
 
 const bindingPaths = [
-    path.resolve(__dirname, '..', '..'),
-    process.env['PACT_PREBUILD_LOCATION']?.toString() ?? path.resolve()
+  path.resolve(__dirname, '..', '..'),
+  process.env['PACT_PREBUILD_LOCATION']?.toString() ?? path.resolve(),
 ];
 let ffiLib: Ffi;
 

@@ -14,8 +14,8 @@ let currentLogLevel: LogLevel = process.env['LOG_LEVEL']
 let logger = createLogger(currentLogLevel);
 
 export const DEFAULT_LOG_LEVEL: LogLevel = process.env['LOG_LEVEL']
-? (process.env['LOG_LEVEL'] as LogLevel)
-: 'info';
+  ? (process.env['LOG_LEVEL'] as LogLevel)
+  : 'info';
 
 export const setLogLevel = (level: LogLevel = 'info'): void => {
   currentLogLevel = level;
