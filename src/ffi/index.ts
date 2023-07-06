@@ -54,10 +54,8 @@ const bindingsResolver = (bindingsPath: string | undefined) =>
   bindings(bindingsPath);
 
 const bindingPaths = [
-  path.resolve(
     path.resolve(__dirname, '..', '..'),
     process.env['PACT_PREBUILD_LOCATION']?.toString() ?? path.resolve()
-  ),
 ];
 let ffiLib: Ffi;
 
@@ -78,7 +76,7 @@ const renderBinaryErrorMessage = (error: unknown, bindingPath: string) => {
         platform
       )}\n
       Wrong Path?: set the load path with PACT_PREBUILD_LOCATION ensuring that ${path.join(
-        '$PACT_NODE_NAPI_LOCATION',
+        '$PACT_PREBUILD_LOCATION',
         'prebuilds',
         platform
       )} exists\n
