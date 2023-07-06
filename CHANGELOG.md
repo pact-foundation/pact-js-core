@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [13.15.0](https://github.com/pact-foundation/pact-js-core/compare/v13.13.9...v13.15.0) (2023-07-06)
+
+
+### Features
+
+* allow setting of LOG_LEVEL env var ([7224770](https://github.com/pact-foundation/pact-js-core/commit/72247702e1868286c09988764f93ac4aad68dfdb))
+* ARM64 Linux/MacOS Pact Ruby Standalone ([ea9f86f](https://github.com/pact-foundation/pact-js-core/commit/ea9f86f75a287425dfc1aa9b2124b9c892ec7672))
+* Prebuild pact_ffi pact.node - ([6a38cf7](https://github.com/pact-foundation/pact-js-core/commit/6a38cf7cf2738e43e84586446fcaa8022d9e2431))
+
+
+### Fixes and Improvements
+
+* path lookup for binaries was incorrectly munging into a single path ([7203e10](https://github.com/pact-foundation/pact-js-core/commit/7203e1064deb28a79aa92da0edfa28bac604c38b))
+
 ## [13.14.0](https://github.com/pact-foundation/pact-js-core/compare/v13.13.9...v13.14.0) (2023-07-06)
 
 
