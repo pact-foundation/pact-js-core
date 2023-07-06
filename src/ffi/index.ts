@@ -60,7 +60,7 @@ const bindingPaths = [
 let ffiLib: Ffi;
 
 const renderBinaryErrorMessage = (error: unknown) => {
-  logger.debug(`${supportedPlatformsMessage}`);
+  logger.debug(supportedPlatformsMessage);
   logger.error(`Failed to find native module for ${platform}: ${error}`);
   bindingPaths.forEach((bindingPath) => {
     logger.debug(
