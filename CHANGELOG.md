@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.0.1](https://github.com/pact-foundation/pact-js-core/compare/v14.0.0...v14.0.1) (2023-07-07)
+
+
+### Fixes and Improvements
+
+* set engines in package.json not engine ([4c9cc69](https://github.com/pact-foundation/pact-js-core/commit/4c9cc695a02c52c546c30379a92c5b9008888b4e))
+
 ## [14.0.0](https://github.com/pact-foundation/pact-js-core/compare/v13.15.0...v14.0.0) (2023-07-07)
 
 
