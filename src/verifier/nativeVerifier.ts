@@ -11,10 +11,10 @@ import { setupVerification } from './argumentMapper';
 const pkg = require('../../package.json');
 
 export const verify = (opts: VerifierOptions): Promise<string> => {
-  const ffi = getFfiLib(opts.logLevel);
   if (opts.logLevel) {
     setLogLevel(opts.logLevel);
   }
+  const ffi = getFfiLib(opts.logLevel);
 
   const handle = ffi.pactffiVerifierNewForApplication(
     pkg.name.split('/')[1],
