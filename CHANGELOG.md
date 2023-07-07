@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.0.0](https://github.com/pact-foundation/pact-js-core/compare/v13.15.0...v14.0.0) (2023-07-07)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop support for node 15 and earlier
+
+### Fixes and Improvements
+
+* drop support for node 15 and earlier ([5fa91db](https://github.com/pact-foundation/pact-js-core/commit/5fa91db208bcceb176665722520519e4cfb5dc93))
+* improve logging output for pact ffi native library lookup ([fb4e338](https://github.com/pact-foundation/pact-js-core/commit/fb4e3383c5fccaa03350004b4086d01ff54cf585))
+
 ## [13.15.0](https://github.com/pact-foundation/pact-js-core/compare/v13.13.9...v13.15.0) (2023-07-06)
 
 
