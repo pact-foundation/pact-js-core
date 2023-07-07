@@ -104,7 +104,6 @@ const initialiseFfi = (logLevel: LogLevel): typeof ffi => {
         }
         return true;
       } catch (error) {
-        // renderBinaryErrorMessage(error, bindingPath);
         return true;
       }
     });

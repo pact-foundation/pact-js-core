@@ -21,10 +21,10 @@ PREBUILD_AND_TEST: &PREBUILD_AND_TEST
   test_16_script:  NODE_VERSION=16 script/ci/build-and-test.sh && script/ci/clean.sh
 
 linux_arm_task:
+  only_if: $CIRRUS_CHANGE_TITLE !=~ 'chore\(release\):.*'
   env:
     SET_NVM: "true"
   arm_container:
-  # container:
     image: node:20-slim
   cirrus_setup_script: chmod +x script/**/* && chmod +x script/**
   setup_script: apt update --yes && apt install --yes curl python3 make build-essential g++ unzip zip git
@@ -35,6 +35,7 @@ linux_arm_task:
     path: prebuilds/*.tar.gz
 
 macos_arm_task:
+  only_if: $CIRRUS_CHANGE_TITLE !=~ 'chore\(release\):.*'
   macos_instance:
     image: ghcr.io/cirruslabs/macos-ventura-base:latest
   env:
