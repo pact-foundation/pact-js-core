@@ -156,7 +156,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           expect(requestMismatches.mismatches).to.deep.include({
             actual: 'wrongValue',
             expected: 'someValue',
-            mismatch: "Expected 'someValue' to be equal to 'wrongValue'",
+            mismatch:
+              "Expected query parameter 'someParam' with value 'someValue' but was 'wrongValue'",
             parameter: 'someParam',
             type: 'QueryMismatch',
           });
