@@ -93,6 +93,9 @@ else
     exit 1
   fi
   npm run release
+  # Emit tag to next step
+  VERSION="$("$SCRIPT_DIR/lib/get-version.sh")"
+  TAG="v${VERSION}"
 fi
 
 "$SCRIPT_DIR"/lib/publish.sh
