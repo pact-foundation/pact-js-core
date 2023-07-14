@@ -92,16 +92,10 @@ else
     echo "*** STOPPING RELEASE PROCESS ***"
     exit 1
   fi
-  # This is github actions' method for emitting multi-line values
-  RELEASE_NOTES="${RELEASE_NOTES//'%'/'%25'}"
-  RELEASE_NOTES="${RELEASE_NOTES//$'\n'/'%0A'}"
-  RELEASE_NOTES="${RELEASE_NOTES//$'\r'/'%0D'}"
-  echo "notes=$RELEASE_NOTES" >> $GITHUB_OUTPUT
   npm run release
-  # Emit version to next step
+  # Emit tag to next step
   VERSION="$("$SCRIPT_DIR/lib/get-version.sh")"
   TAG="v${VERSION}"
-  echo "version=$VERSION" >> $GITHUB_OUTPUT
 fi
 
 "$SCRIPT_DIR"/lib/publish.sh
@@ -112,5 +106,5 @@ if [[ ${DRY_RUN:-} == 'true' ]]; then
   echo "not pushing tags as in dry run mode"
 else
   git push --follow-tags
-  gh release edit ${TAG} --title "Release ${TAG}" --repo ${REPO} --notes "${RELEASE_NOTES}" --draft=false --prerelease=false --target ${GIT_SHA}
+  gh release edit ${TAG} --title "Release ${TAG}" --repo ${REPO} --notes "${RELEASE_NOTES}" --draft=false --prerelease=false --target ${GIT_SHA} --latest
 fi
