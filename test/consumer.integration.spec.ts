@@ -166,7 +166,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
             expected: 'header',
             key: 'x-special-header',
             mismatch:
-              "Mismatch with header 'x-special-header': Expected 'header' to be equal to 'WrongHeader'",
+              "Mismatch with header 'x-special-header': Expected 'WrongHeader' to be equal to 'header'",
             type: 'HeaderMismatch',
           });
         })
