@@ -49,7 +49,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       pact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V3'],
+        'trace'
       );
 
       const interaction = pact.newInteraction('some description');
@@ -57,7 +58,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       interaction.uponReceiving('a request to get a create with JSON data');
       interaction.given('fido exists');
       interaction.withRequest('POST', '/dogs/1234');
-      interaction.withRequestHeader('x-special-header', 0, 'header');
+      interaction.withRequestHeader('x-special-header', 0, JSON.stringify({foo: "bar", baz: "bat"}));
       interaction.withQuery('someParam', 0, 'someValue');
       interaction.withResponseBody(
         JSON.stringify({
@@ -79,7 +80,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       port = pact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', () =>
+    it.only('generates a pact with success', () =>
       axios
         .request({
           baseURL: `http://${HOST}:${port}`,
@@ -88,7 +89,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
               ? 'application/octet-stream'
               : 'application/gzip',
             Accept: 'application/json',
-            'x-special-header': 'header',
+            'x-special-header': JSON.stringify({foo: "bar", quz: "qux"}),
+            // 'x-special-header': JSON.stringify({foo: "bar", baz: "bat"}),
           },
           params: {
             someParam: 'someValue',
