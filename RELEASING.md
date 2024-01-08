@@ -1,4 +1,6 @@
-<img src="https://raw.githubusercontent.com/pact-foundation/pact-logo/master/media/logo-black.png" width="200"># Releasing
+<img src="https://raw.githubusercontent.com/pact-foundation/pact-logo/master/media/logo-black.png" width="200">
+
+# Releasing
 
 We use Github Actions for releases.
 
