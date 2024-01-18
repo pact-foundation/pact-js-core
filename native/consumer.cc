@@ -679,6 +679,64 @@ Napi::Value PactffiGivenWithParam(const Napi::CallbackInfo& info) {
 }
 
 /**
+ * Adds a provider state to the Interaction with a set of parameter key and value pairs in JSON
+ * form. If the params is not an JSON object, it will add it as a single parameter with a `value`
+ * key.
+ *
+ * # Parameters
+ * * `description` - The provider state description.
+ * * `params` - Parameter values as a JSON fragment.
+ *
+ * # Errors
+ * Returns EXIT_FAILURE (1) if the interaction or Pact can't be modified (i.e. the mock server
+ * for it has already started).
+ * Returns 2 and sets the error message (which can be retrieved with `pactffi_get_error_message`)
+ * if the parameter values con't be parsed as JSON.
+ * Returns 3 if any of the C strings are not valid.
+ *
+ *
+ * C interface:
+ *
+ * int pactffi_given_with_params(InteractionHandle interaction,
+ *                               const char *description,
+ *                               const char *params);
+ */
+Napi::Value PactffiGivenWithParams(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 4) {
+    throw Napi::Error::New(env, "PactffiGivenWithParams received < 4 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGivenWithParams(arg 0) expected a InteractionHandle (uint32_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiGivenWithParams(arg 1) expected a string");
+  }
+
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "PactffiGivenWithParams(arg 2) expected a string");
+  }
+
+  if (!info[3].IsString()) {
+    throw Napi::Error::New(env, "PactffiGivenWithParams(arg 3) expected a string");
+  }
+
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  std::string description = info[1].As<Napi::String>().Utf8Value();
+  std::string params = info[2].As<Napi::String>().Utf8Value();
+
+  int res = pactffi_given_with_params(interaction, description.c_str(), params.c_str());
+
+  if (res > 0) {
+    return Napi::Boolean::New(env, false);
+  }
+  return Napi::Boolean::New(env, true);
+}
+
+/**
  * Configures the request for the Interaction. Returns false if the interaction or Pact can't be
  * modified (i.e. the mock server for it has already started)
  *

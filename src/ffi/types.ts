@@ -163,6 +163,11 @@ export type FfiConsumerFunctions = {
     name: string,
     value: string
   ): boolean;
+  pactffiGivenWithParams(
+    handle: FfiInteractionHandle,
+    description: string,
+    params: string
+  ): boolean;
   pactffiWithRequest(
     handle: FfiInteractionHandle,
     method: string,
@@ -277,6 +282,11 @@ export type FfiConsumerFunctions = {
     description: string,
     key: string,
     value: string
+  ): void;
+  pactffiMessageGivenWithParams(
+    handle: FfiMessageHandle,
+    description: string,
+    params: string
   ): void;
   pactffiMessageWithContents(
     handle: FfiMessageHandle,

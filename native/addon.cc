@@ -22,6 +22,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiUponReceiving"), Napi::Function::New(env, PactffiUponReceiving));
   exports.Set(Napi::String::New(env, "pactffiGiven"), Napi::Function::New(env, PactffiGiven));
   exports.Set(Napi::String::New(env, "pactffiGivenWithParam"), Napi::Function::New(env, PactffiGivenWithParam));
+  exports.Set(Napi::String::New(env, "pactffiGivenWithParams"), Napi::Function::New(env, PactffiGivenWithParams));
   exports.Set(Napi::String::New(env, "pactffiWithRequest"), Napi::Function::New(env, PactffiWithRequest));
   exports.Set(Napi::String::New(env, "pactffiWithQueryParameter"), Napi::Function::New(env, PactffiWithQueryParameter));
   exports.Set(Napi::String::New(env, "pactffiWithSpecification"), Napi::Function::New(env, PactffiWithSpecification));
