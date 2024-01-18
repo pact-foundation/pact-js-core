@@ -42,6 +42,8 @@ const asyncMessage = (ffi: Ffi, interactionPtr: number) => ({
   given: (state: string) => ffi.pactffiMessageGiven(interactionPtr, state),
   givenWithParam: (state: string, name: string, value: string) =>
     ffi.pactffiMessageGivenWithParam(interactionPtr, state, name, value),
+  givenWithParams: (state: string, params: string) =>
+    ffi.pactffiMessageGivenWithParams(interactionPtr, state, params),
   withContents: (body: string, contentType: string) =>
     ffi.pactffiMessageWithContents(interactionPtr, contentType, body),
   withBinaryContents: (body: Buffer, contentType: string) =>
@@ -181,6 +183,8 @@ export const makeConsumerPact = (
         given: (state: string) => ffi.pactffiGiven(interactionPtr, state),
         givenWithParam: (state: string, name: string, value: string) =>
           ffi.pactffiGivenWithParam(interactionPtr, state, name, value),
+        givenWithParams: (state: string, params: string) =>
+          ffi.pactffiGivenWithParams(interactionPtr, state, params),
         withRequestContents: (body: string, contentType: string) =>
           ffi.pactffiWithBody(
             interactionPtr,
@@ -241,6 +245,8 @@ export const makeConsumerPact = (
         given: (state: string) => ffi.pactffiGiven(interactionPtr, state),
         givenWithParam: (state: string, name: string, value: string) =>
           ffi.pactffiGivenWithParam(interactionPtr, state, name, value),
+        givenWithParams: (state: string, params: string) =>
+          ffi.pactffiGivenWithParams(interactionPtr, state, params),
         withRequest: (method: string, path: string) =>
           ffi.pactffiWithRequest(interactionPtr, method, path),
         withQuery: (name: string, index: number, value: string) =>
@@ -451,6 +457,8 @@ export const makeConsumerMessagePact = (
         given: (state: string) => ffi.pactffiGiven(interactionPtr, state),
         givenWithParam: (state: string, name: string, value: string) =>
           ffi.pactffiGivenWithParam(interactionPtr, state, name, value),
+        givenWithParams: (state: string, params: string) =>
+          ffi.pactffiGivenWithParams(interactionPtr, state, params),
         withRequestContents: (body: string, contentType: string) =>
           ffi.pactffiWithBody(
             interactionPtr,

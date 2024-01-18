@@ -17,6 +17,7 @@ Napi::Value PactffiCreateMockServerForPact(const Napi::CallbackInfo& info);
 Napi::Value PactffiCreateMockServer(const Napi::CallbackInfo& info);
 Napi::Value PactffiGiven(const Napi::CallbackInfo& info);
 Napi::Value PactffiGivenWithParam(const Napi::CallbackInfo& info);
+Napi::Value PactffiGivenWithParams(const Napi::CallbackInfo& info);
 Napi::Value PactffiMockServerLogs(const Napi::CallbackInfo& info);
 Napi::Value PactffiMockServerMatched(const Napi::CallbackInfo& info);
 Napi::Value PactffiMockServerMismatches(const Napi::CallbackInfo& info);
