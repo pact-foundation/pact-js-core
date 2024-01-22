@@ -704,8 +704,8 @@ Napi::Value PactffiGivenWithParam(const Napi::CallbackInfo& info) {
 Napi::Value PactffiGivenWithParams(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
 
-  if (info.Length() < 4) {
-    throw Napi::Error::New(env, "PactffiGivenWithParams received < 4 arguments");
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiGivenWithParams received < 3 arguments");
   }
 
   if (!info[0].IsNumber()) {
@@ -718,10 +718,6 @@ Napi::Value PactffiGivenWithParams(const Napi::CallbackInfo& info) {
 
   if (!info[2].IsString()) {
     throw Napi::Error::New(env, "PactffiGivenWithParams(arg 2) expected a string");
-  }
-
-  if (!info[3].IsString()) {
-    throw Napi::Error::New(env, "PactffiGivenWithParams(arg 3) expected a string");
   }
 
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
