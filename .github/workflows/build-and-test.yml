@@ -49,6 +49,10 @@ jobs:
 
       - run: ./script/ci/prebuild.sh
 
+      - if: runner.os == 'Linux'
+        name: prebuild arm64
+        run: docker run -v $PWD:/home --rm -it node:20 bin/bash -c 'cd /home && /home/script/ci/prebuild.sh'
+
       - name: Upload prebuild for ${{ runner.os }}-${{ runner.arch }}
         uses: actions/upload-artifact@v3
         with:
