@@ -11,7 +11,7 @@ jobs:
   create_pre_release:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - run: GH_CREATE_PRE_RELEASE=true ./script/ci/release.sh
@@ -29,18 +29,18 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [20]
-        os: [macos-latest,ubuntu-latest,windows-latest]
+        os: [macos-14,macos-12,ubuntu-latest,windows-latest]
 
     env:
       NODE_VERSION: ${{ matrix.node-version }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -48,6 +48,16 @@ jobs:
         run: echo "ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true" >> $GITHUB_ENV
 
       - run: ./script/ci/prebuild.sh
+
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        if: runner.os == 'Linux'
+        uses: docker/setup-buildx-action@v3
+      - if: runner.os == 'Linux'
+        name: prebuild arm64
+        run: docker run -v $PWD:/home --platform linux/arm64 --rm node:20 bin/bash -c 'cd /home && /home/script/ci/prebuild.sh'
 
       - name: Upload prebuild for ${{ runner.os }}-${{ runner.arch }}
         uses: actions/upload-artifact@v3
@@ -69,13 +79,13 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [16,18,20]
-        os: [macos-latest,ubuntu-latest,windows-latest]
+        os: [macos-14, macos-12, ubuntu-latest,windows-latest]
 
     env:
       NODE_VERSION: ${{ matrix.node-version }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -83,13 +93,26 @@ jobs:
         uses: actions/download-artifact@v3
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
       - if: runner.os == 'Windows'
         run: echo "ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true" >> $GITHUB_ENV
       - run: ./script/ci/unpack-and-test.sh
+
+
+      # Linux aarch64 tests are skipped as QEMU fails when executing the ruby binaries
+      # Related comment: https://github.com/phusion/passenger/issues/2288#issuecomment-1387625121 
+      # - name: Set up QEMU
+      #   if: runner.os == 'Linux'
+      #   uses: docker/setup-qemu-action@v3
+      # - name: Set up Docker Buildx
+      #   if: runner.os == 'Linux'
+      #   uses: docker/setup-buildx-action@v3
+      # - if: runner.os == 'Linux'
+      #   name: test arm64
+      #   run: docker run -v $PWD:/home --platform linux/arm64 --rm node:20 bin/bash -c 'cd /home && /home/script/ci/unpack-and-test.sh'
 
   release_dry_run:
     runs-on: ubuntu-latest
@@ -100,12 +123,12 @@ jobs:
       NODE_VERSION: 20
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: 'https://registry.npmjs.org'
