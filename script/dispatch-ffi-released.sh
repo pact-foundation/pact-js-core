@@ -9,19 +9,15 @@
 if [ -n "$1" ]; then
   name="\"${1}\""
 else
-  name="null"
+  echo "name not provided as first param"
+  exit 1
 fi
 
 if [ -n "$2" ]; then
   version="\"${2}\""
 else
-  version="null"
-fi
-
-if [ -n "$3" ]; then
-  increment="\"${3}\""
-else
-  increment="null"
+  echo "name not provided as second param"
+  exit 1
 fi
 
 repository_slug=$(git remote get-url origin | cut -d':' -f2 | sed 's/\.git//')
