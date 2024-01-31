@@ -40,7 +40,7 @@ jobs:
           fetch-depth: 0
       
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -60,7 +60,7 @@ jobs:
         run: docker run -v $PWD:/home --platform linux/arm64 --rm node:20 bin/bash -c 'cd /home && /home/script/ci/prebuild.sh'
 
       - name: Upload prebuild for ${{ runner.os }}-${{ runner.arch }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: prebuilds/*.tar.gz
           
@@ -93,7 +93,7 @@ jobs:
         uses: actions/download-artifact@v3
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
@@ -126,7 +126,7 @@ jobs:
           fetch-depth: 0
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: 'https://registry.npmjs.org'
