@@ -60,10 +60,9 @@ jobs:
         run: docker run -v $PWD:/home --platform linux/arm64 --rm node:20 bin/bash -c 'cd /home && /home/script/ci/prebuild.sh'
 
       - name: Upload prebuild for ${{ runner.os }}-${{ runner.arch }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3
         with:
           path: prebuilds/*.tar.gz
-          overwrite: true
           
       - run: GH_PRE_RELEASE_UPLOAD=true ./script/ci/release.sh
         if: github.ref == 'refs/heads/master' && env.ACT != 'true'
@@ -91,7 +90,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download prebuilds
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v3
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
