@@ -63,6 +63,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           path: prebuilds/*.tar.gz
+          overwrite: true
           
       - run: GH_PRE_RELEASE_UPLOAD=true ./script/ci/release.sh
         if: github.ref == 'refs/heads/master' && env.ACT != 'true'
