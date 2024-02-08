@@ -1,7 +1,7 @@
 import chalk = require('chalk');
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = '2.1.0';
+export const PACT_STANDALONE_VERSION = '2.2.0';
 
 function makeError(msg: string): Error {
   return new Error(chalk.red(`Error while locating pact binary: ${msg}`));
