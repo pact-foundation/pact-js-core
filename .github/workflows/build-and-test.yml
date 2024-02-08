@@ -74,12 +74,13 @@ jobs:
     needs: [prebuild]
     defaults:
       run:
-        shell: bash
+        shell: ${{ matrix.shell }}
     strategy:
       fail-fast: false
       matrix:
         node-version: [16,18,20]
         os: [macos-14, macos-12, ubuntu-latest,windows-latest]
+        shell: [sh, bash]
 
     env:
       NODE_VERSION: ${{ matrix.node-version }}
