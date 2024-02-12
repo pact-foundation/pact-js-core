@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.1.3](https://github.com/pact-foundation/pact-js-core/compare/v14.1.2...v14.1.3) (2024-02-12)
+
+
+### Fixes and Improvements
+
+* update pact-ffi to 0.4.16 ([502f354](https://github.com/pact-foundation/pact-js-core/commit/502f354290b872a6ca2830d5f880560aa0401df1))
+* update standalone to 2.4.0 ([f9a8e27](https://github.com/pact-foundation/pact-js-core/commit/f9a8e27a606feb5ababc1f87b49c746dd33a04ce))
+
 ## [14.1.2](https://github.com/pact-foundation/pact-js-core/compare/v14.1.1...v14.1.2) (2024-02-07)
 
 
