@@ -321,8 +321,8 @@ export const makeConsumerPact = (
             filename,
             mimePartName
           ) === undefined,
-        withStatus: (status: number) =>
-          ffi.pactffiResponseStatus(interactionPtr, status),
+        withStatus: (status: number | string) =>
+          ffi.pactffiResponseStatus(interactionPtr, JSON.stringify(status)),
         withPluginRequestInteractionContents: (
           contentType: string,
           contents: string

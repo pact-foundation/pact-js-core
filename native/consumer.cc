@@ -1163,9 +1163,23 @@ Napi::Value PactffiWithMultipartFile(const Napi::CallbackInfo& info) {
  *
  * * `status` - the response status. Defaults to 200.
  *
+ * To include matching rules for the status (only statusCode or integer really makes sense to use), include the
+ * matching rule JSON format with the value as a single JSON document. I.e.
+ *
+ * ```c
+ * const char* status = "{ \"pact:generator:type\": \"RandomInt\", \"min\": 100, \"max\": 399, \"pact:matcher:type\":\"statusCode\", \"status\": \"nonError\"}";
+ * pactffi_response_status_v2(handle, status);
+ * ```
+ * See [IntegrationJson.md](https://github.com/pact-foundation/pact-reference/blob/master/rust/pact_ffi/IntegrationJson.md)
+ *
+ * # Safety
+ * The status parameter must be valid pointers to NULL terminated strings.
+ *
+ *
  * C interface:
  *
- *    bool pactffi_response_status(InteractionHandle interaction, unsigned short status);
+ *    bool pactffi_response_status_v2(InteractionHandle interaction,
+ *                                const char *status);
  */
 Napi::Value PactffiResponseStatus(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
@@ -1178,14 +1192,14 @@ Napi::Value PactffiResponseStatus(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiResponseStatus(arg 0) expected a number");
   }
 
-  if (!info[1].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiResponseStatus(arg 1) expected a number");
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiResponseStatus(arg 1) expected a string");
   }
 
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
-  unsigned short status = info[1].As<Napi::Number>().Uint32Value();
+  std::string status = info[1].As<Napi::String>().Utf8Value();
 
-  bool res = pactffi_response_status(interaction, status);
+  bool res = pactffi_response_status_v2(interaction, status.c_str());
 
   return Napi::Boolean::New(env, res);
 }
