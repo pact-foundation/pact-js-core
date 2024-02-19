@@ -206,7 +206,7 @@ export type FfiConsumerFunctions = {
     file: string,
     partName: string
   ): void;
-  pactffiResponseStatus(handle: FfiInteractionHandle, status: number): boolean;
+  pactffiResponseStatus(handle: FfiInteractionHandle, status: string): boolean;
   pactffiWritePactFile(
     handle: FfiPactHandle,
     dir: string,
