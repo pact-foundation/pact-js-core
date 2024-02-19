@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.2.0](https://github.com/pact-foundation/pact-js-core/compare/v14.1.4...v14.2.0) (2024-02-19)
+
+
+### Features
+
+* support status code matcher via pactffi_response_status_v2 ([#486](https://github.com/pact-foundation/pact-js-core/issues/486)) ([0edd3ac](https://github.com/pact-foundation/pact-js-core/commit/0edd3aca29fad38211a87b44d187c5851814876d))
+
 ## [14.1.4](https://github.com/pact-foundation/pact-js-core/compare/v14.1.3...v14.1.4) (2024-02-13)
 
 
