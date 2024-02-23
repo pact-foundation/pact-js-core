@@ -22,8 +22,10 @@ export class CanDeploy {
   public static convertForSpawnBinary(
     options: CanDeployOptions
   ): CanDeployOptions[] {
+    // @ts-expect-error Property 'pacticipants' is missing in type
     return _.flatten(
       [_.omit(options, 'pacticipants')].concat(
+        // @ts-expect-error Property 'pactBroker' is missing in type
         options.pacticipants.map(({ name, latest, version }) => [
           { name },
           version

@@ -146,7 +146,9 @@ export class Pact {
 
   // Remove all the servers and stubs
   public removeAll(): q.Promise<AbstractService[]> {
+    // @ts-expect-error Type 'Promise<[AbstractService, unknown, unknown, unknown, unknown, unknown]>' is not assignable to type 'Promise<AbstractService[]>'
     return q.all<AbstractService>(
+      // @ts-expect-error Argument of type '(Promise<Server[]> | Promise<Stub[]>)[]' is not assignable to parameter of type 'IWhenable<IWhenable<AbstractService>[]>'.
       _.flatten([this.removeAllStubs(), this.removeAllServers()])
     );
     // .tap(endDestination);
