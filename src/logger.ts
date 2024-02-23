@@ -1,5 +1,4 @@
-import pino = require('pino');
-
+import { pino } from 'pino';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkg = require('../package.json');
 
@@ -11,9 +10,12 @@ const DEFAULT_LEVEL: LogLevels = (process.env.LOGLEVEL || 'info') as LogLevels;
 const createLogger = (level: LogLevels = DEFAULT_LEVEL): Logger =>
   pino({
     level: level.toLowerCase(),
-    prettyPrint: {
-      messageFormat: `pact-node@${pkg.version}: {msg}`,
-      translateTime: true,
+    transport: {
+      target: 'pino-pretty',
+      options: {
+        messageFormat: `pact-node@${pkg.version}: {msg}`,
+        translateTime: true,
+      },
     },
   });
 
