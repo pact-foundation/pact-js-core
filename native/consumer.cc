@@ -1661,15 +1661,28 @@ Napi::Value PactffiMessageWithContents(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
+
 /**
  * Adds expected metadata to the Message
  *
  * * `key` - metadata key
- * * `value` - metadata value.
+ * * `value` - metadata value, supports JSON structures with matchers and generators
+ *
+ * To include matching rules for the value, include the
+ * matching rule JSON format with the value as a single JSON document. I.e.
+ *
+ * ```c
+ * const char* value = "{\"value\": { \"ID\": \"sjhdjkshsdjh\", \"weight\": 100.5 }, \"pact:matcher:type\":\"type\"}";
+ * pactffi_message_with_metadata_v2(handle, "TagData", value);
+ * ```
+ * See [IntegrationJson.md](https://github.com/pact-foundation/pact-reference/blob/master/rust/pact_ffi/IntegrationJson.md)
+ *
+ * # Safety
+ * The key and value parameters must be valid pointers to NULL terminated strings.
  *
  * C interface:
  *
- * void pactffi_message_with_metadata(MessageHandle message_handle,
+ * void pactffi_message_with_metadata_v2(MessageHandle message_handle,
  *                                    const char *key,
  *                                    const char *value);
  */
@@ -1696,7 +1709,7 @@ Napi::Value PactffiMessageWithMetadata(const Napi::CallbackInfo& info) {
   std::string key = info[1].As<Napi::String>().Utf8Value();
   std::string value = info[2].As<Napi::String>().Utf8Value();
 
-  pactffi_message_with_metadata(handle, key.c_str(), value.c_str());
+  pactffi_message_with_metadata_v2(handle, key.c_str(), value.c_str());
 
   return env.Undefined();
 }
