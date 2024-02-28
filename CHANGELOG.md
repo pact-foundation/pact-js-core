@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.3.0](https://github.com/pact-foundation/pact-js-core/compare/v14.2.0...v14.3.0) (2024-02-28)
+
+
+### Features
+
+* add pactffi_message_with_metadata_v2 ([#493](https://github.com/pact-foundation/pact-js-core/issues/493)) ([613b7bd](https://github.com/pact-foundation/pact-js-core/commit/613b7bd25e8ad2d673961e4c06be83d10ceb5b7b))
+
 ## [14.2.0](https://github.com/pact-foundation/pact-js-core/compare/v14.1.4...v14.2.0) (2024-02-19)
 
 
