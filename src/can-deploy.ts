@@ -22,8 +22,10 @@ export class CanDeploy {
   public static convertForSpawnBinary(
     options: CanDeployOptions
   ): CanDeployOptions[] {
+    // @ts-expect-error Property 'pacticipants' is missing in type
     return _.flatten(
       [_.omit(options, 'pacticipants')].concat(
+        // @ts-expect-error Property 'pactBroker' is missing in type
         options.pacticipants.map(({ name, latest, version }) => [
           { name },
           version
@@ -98,6 +100,10 @@ export class CanDeploy {
       `Asking broker at ${this.options.pactBroker} if it is possible to deploy`
     );
     const deferred = q.defer<CanDeployResponse | string>();
+    if (this.options.output === 'json') {
+      logger.warn('both json and verbose options were set, unsetting verbose');
+      this.options.verbose = false;
+    }
     const instance = spawn.spawnBinary(
       pactStandalone.brokerFullPath,
       [

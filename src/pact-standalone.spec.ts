@@ -1,17 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-/* global describe:true, before:true, after:true, it:true, global:true, process:true */
 import * as fs from 'fs';
 import * as path from 'path';
 import * as chai from 'chai';
-import install from '../standalone/install';
 import pactEnvironment from './pact-environment';
 import { PactStandalone, standalone } from './pact-standalone';
+import install from '../standalone/install';
 
-const expect = chai.expect;
+const { expect } = chai;
 const basePath = pactEnvironment.cwd;
 
 // Needs to stay a function and not an arrow function to access mocha 'this' context
-describe('Pact Standalone', function() {
+describe('Pact Standalone', function forMocha() {
   // Set timeout to 10 minutes because downloading binaries might take a while.
   this.timeout(600000);
 
@@ -44,7 +42,9 @@ describe('Pact Standalone', function() {
     describe('OSX', () => {
       before(() => install('darwin'));
 
-      beforeEach(() => (pact = standalone('darwin')));
+      beforeEach(() => {
+        pact = standalone('darwin');
+      });
 
       it('broker relative path', () => {
         expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
@@ -93,7 +93,9 @@ describe('Pact Standalone', function() {
     describe('Linux X64', () => {
       before(() => install('linux', 'x64'));
 
-      beforeEach(() => (pact = standalone('linux', 'x64')));
+      beforeEach(() => {
+        pact = standalone('linux', 'x64');
+      });
 
       it('broker relative path', () => {
         expect(fs.existsSync(path.resolve(basePath, pact.brokerPath))).to.be
@@ -142,7 +144,9 @@ describe('Pact Standalone', function() {
     describe('Windows', () => {
       before(() => install('win32'));
 
-      beforeEach(() => (pact = standalone('win32')));
+      beforeEach(() => {
+        pact = standalone('win32');
+      });
 
       it("should add '.bat' to the end of the binary names", () => {
         expect(pact.brokerPath).to.contain('pact-broker.bat');

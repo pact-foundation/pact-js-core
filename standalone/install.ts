@@ -25,7 +25,7 @@ if (environmentProxy) {
 }
 
 // Get latest version from https://github.com/pact-foundation/pact-ruby-standalone/releases
-export const PACT_STANDALONE_VERSION = '1.91.0';
+export const PACT_STANDALONE_VERSION = '2.4.1';
 const PACT_DEFAULT_LOCATION = `https://github.com/pact-foundation/pact-ruby-standalone/releases/download/v${PACT_STANDALONE_VERSION}/`;
 const HTTP_REGEX = /^http(s?):\/\//;
 
@@ -87,25 +87,42 @@ export function createConfig(location: string = process.cwd()): Config {
     binaries: [
       {
         platform: 'win32',
-        binary: `pact-${PACT_STANDALONE_VERSION}-win32.zip`,
-        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-win32.zip${CHECKSUM_SUFFIX}`,
+        binary: `pact-${PACT_STANDALONE_VERSION}-windows-x86.zip`,
+        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-windows-x86.zip${CHECKSUM_SUFFIX}`,
+        folderName: `windows-x64-${PACT_STANDALONE_VERSION}`,
         downloadLocation: PACT_BINARY_LOCATION,
-        folderName: `win32-${PACT_STANDALONE_VERSION}`,
       },
       {
         platform: 'darwin',
-        binary: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz`,
-        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-osx.tar.gz${CHECKSUM_SUFFIX}`,
+        arch: 'x64',
+        binary: `pact-${PACT_STANDALONE_VERSION}-osx-x86_64.tar.gz`,
+        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-osx-x86_64.tar.gz${CHECKSUM_SUFFIX}`,
+        folderName: `darwin-x64-${PACT_STANDALONE_VERSION}`,
         downloadLocation: PACT_BINARY_LOCATION,
-        folderName: `darwin-${PACT_STANDALONE_VERSION}`,
+      },
+      {
+        platform: 'darwin',
+        arch: 'arm64',
+        binary: `pact-${PACT_STANDALONE_VERSION}-osx-arm64.tar.gz`,
+        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-osx-arm64.tar.gz${CHECKSUM_SUFFIX}`,
+        folderName: `darwin-arm64-${PACT_STANDALONE_VERSION}`,
+        downloadLocation: PACT_BINARY_LOCATION,
       },
       {
         platform: 'linux',
         arch: 'x64',
         binary: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz`,
         binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-x86_64.tar.gz${CHECKSUM_SUFFIX}`,
-        downloadLocation: PACT_BINARY_LOCATION,
         folderName: `linux-x64-${PACT_STANDALONE_VERSION}`,
+        downloadLocation: PACT_BINARY_LOCATION,
+      },
+      {
+        platform: 'linux',
+        arch: 'arm64',
+        binary: `pact-${PACT_STANDALONE_VERSION}-linux-arm64.tar.gz`,
+        binaryChecksum: `pact-${PACT_STANDALONE_VERSION}-linux-arm64.tar.gz${CHECKSUM_SUFFIX}`,
+        folderName: `linux-arm64-${PACT_STANDALONE_VERSION}`,
+        downloadLocation: PACT_BINARY_LOCATION,
       },
     ],
   };
