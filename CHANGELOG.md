@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.3.1](https://github.com/pact-foundation/pact-js-core/compare/v14.3.0...v14.3.1) (2024-03-13)
+
+
+### Fixes and Improvements
+
+* 🐛 avoid node-gyp rebuild install script ([f5f5e7c](https://github.com/pact-foundation/pact-js-core/commit/f5f5e7cc387a7e694552fd5f69ba9c83ba490006))
+* update standalone to 2.4.2 ([#492](https://github.com/pact-foundation/pact-js-core/issues/492)) ([fcccc34](https://github.com/pact-foundation/pact-js-core/commit/fcccc34cf0891b277c3cd7053d4d5262ee23eac5))
+
 ## [14.3.0](https://github.com/pact-foundation/pact-js-core/compare/v14.2.0...v14.3.0) (2024-02-28)
 
 
