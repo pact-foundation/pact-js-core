@@ -1,8 +1,10 @@
 import path from 'node:path';
-import bindings = require('node-gyp-build');
 import logger, { DEFAULT_LOG_LEVEL } from '../logger';
 import { LogLevel } from '../logger/types';
 import { Ffi } from './types';
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const bindings = require('./node-gyp-build/index');
 
 export const PACT_FFI_VERSION = '0.4.16';
 
