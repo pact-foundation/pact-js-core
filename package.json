@@ -138,7 +138,8 @@
     "snyk-protect": "snyk-protect",
     "format:base": "prettier --parser typescript",
     "format:check": "npm run format:base -- --list-different \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
-    "format:fix": "npm run format:base -- --write \"{src,standalone,bin,test}/**/*.{ts,tsx}\""
+    "format:fix": "npm run format:base -- --write \"{src,standalone,bin,test}/**/*.{ts,tsx}\"",
+    "install": ""
   },
   "prettier": "@pact-foundation/pact-js-prettier-config",
   "commit-and-tag-version": {
