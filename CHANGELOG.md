@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.3.2](https://github.com/pact-foundation/pact-js-core/compare/v14.3.1...v14.3.2) (2024-03-14)
+
+
+### Fixes and Improvements
+
+* prevent node-gyp rebuild on fresh install ([c24c638](https://github.com/pact-foundation/pact-js-core/commit/c24c638bc86cab98793ace6b5488de25ca242c85)), closes [/www.linen.dev/s/pact-foundation/t/16633868/hell-all-quick-question-in-the-migration-guide-for-v12-it-s-#100081d7-2fee-4420-8eac-d55858dcc483](https://github.com/pact-foundation//www.linen.dev/s/pact-foundation/t/16633868/hell-all-quick-question-in-the-migration-guide-for-v12-it-s-/issues/100081d7-2fee-4420-8eac-d55858dcc483) [/github.com/npm/cli/issues/5234#issuecomment-1291139150](https://github.com/pact-foundation//github.com/npm/cli/issues/5234/issues/issuecomment-1291139150)
+
 ## [14.3.1](https://github.com/pact-foundation/pact-js-core/compare/v14.3.0...v14.3.1) (2024-03-13)
 
 
