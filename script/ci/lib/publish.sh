@@ -15,9 +15,11 @@ echo "    Publishing pact-core@${VERSION}..."
 if [[ ${DRY_RUN:-} == 'true' ]]; then
   echo "publishing in dry run mode"
   npm publish --access-public --dry-run
-  else
+ else
   echo "--> Preparing npmrc file"
   "$SCRIPT_DIR"/create_npmrc_file.sh
+  echo "--> Removing binding.gyp to prevent rebuild. See https://github.com/npm/cli/issues/5234#issuecomment-1291139150"
+  rm "${SCRIPT_DIR}/../../../binding.gyp"
   npm publish --access public --tag latest
 fi
 echo "    done!"
