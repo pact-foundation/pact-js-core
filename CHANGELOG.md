@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.3.3](https://github.com/pact-foundation/pact-js-core/compare/v14.3.2...v14.3.3) (2024-03-25)
+
+
+### Fixes and Improvements
+
+* export pactffiMessageGivenWithParams ([9b77d8c](https://github.com/pact-foundation/pact-js-core/commit/9b77d8cfa0897661d4f73a8d7483ff9bacff7e66))
+
 ## [14.3.2](https://github.com/pact-foundation/pact-js-core/compare/v14.3.1...v14.3.2) (2024-03-14)
 
 
