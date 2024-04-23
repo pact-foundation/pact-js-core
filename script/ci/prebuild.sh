@@ -29,10 +29,12 @@ node --version
 npm --version
 echo "OS: $OS"
 echo "ARCH: $ARCH"
-PREBUILDIFY_VERSION=5.0.1
+PREBUILDIFY_VERSION=6.0.1
+NODE_VERSION=$(node -p process.version)
 
 ./script/download-libs.sh
 npm ci --ignore-scripts
+export npm_config_target=${NODE_VERSION}
 npx --yes prebuildify@${PREBUILDIFY_VERSION} --napi
 ls prebuilds/**/*
 case $OS in
@@ -86,4 +88,4 @@ case $OS in
     ;;
 esac
 ls
-rm -rf ffi build 
+rm -rf ffi build
