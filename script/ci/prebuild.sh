@@ -35,7 +35,7 @@ NODE_VERSION=$(node -p process.version)
 ./script/download-libs.sh
 npm ci --ignore-scripts
 export npm_config_target=${NODE_VERSION}
-npx --yes prebuildify@${PREBUILDIFY_VERSION} --napi
+npx --yes prebuildify@${PREBUILDIFY_VERSION} --napi --name node.napi.node
 ls prebuilds/**/*
 case $OS in
   darwin)
