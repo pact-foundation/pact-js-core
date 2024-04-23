@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.3.4](https://github.com/pact-foundation/pact-js-core/compare/v14.3.3...v14.3.4) (2024-04-23)
+
+
+### Fixes and Improvements
+
+* normalise PREBUILD_NAME to node.napi ([3812b0d](https://github.com/pact-foundation/pact-js-core/commit/3812b0def2559492c0ad4608db062e7c53526fec))
+* upgrade to latest ffi 0.4.19 ([7a7d9b0](https://github.com/pact-foundation/pact-js-core/commit/7a7d9b0af6e5d9bfd2356f21808c48a407cf8a03))
+
 ## [14.3.3](https://github.com/pact-foundation/pact-js-core/compare/v14.3.2...v14.3.3) (2024-03-25)
 
 
