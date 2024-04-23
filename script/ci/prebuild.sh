@@ -17,25 +17,28 @@ elif [[ ${SET_NVM:-} == 'true' && "$(uname -s)" == 'Linux' ]]; then
   nvm use $NODE_VERSION
 fi
 
+PREBUILDIFY_VERSION=6.0.1
+NODE_VERSION=$(node -p process.version)
+PREBUILD_NAME="node.napi.node"
+
 ## normalise OS and ARCH names
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
 case $OS in
   "windows"* | "mingw64"*)
     OS=win32
+    PREBUILD_NAME="node.napi"
     ;;
 esac
 node --version
 npm --version
 echo "OS: $OS"
 echo "ARCH: $ARCH"
-PREBUILDIFY_VERSION=6.0.1
-NODE_VERSION=$(node -p process.version)
 
 ./script/download-libs.sh
 npm ci --ignore-scripts
 export npm_config_target=${NODE_VERSION}
-npx --yes prebuildify@${PREBUILDIFY_VERSION} --napi --name node.napi.node
+npx --yes prebuildify@${PREBUILDIFY_VERSION} --napi --name ${PREBUILD_NAME}
 ls prebuilds/**/*
 case $OS in
   darwin)

@@ -100,7 +100,7 @@ jobs:
 
       - if: runner.os == 'Windows'
         run: echo "ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true" >> $GITHUB_ENV
-      - run: ./script/ci/unpack-and-test.sh
+      - run: LOG_LEVEL=debug ./script/ci/unpack-and-test.sh
 
 
       # Linux aarch64 tests are skipped as QEMU fails when executing the ruby binaries
