@@ -19,7 +19,7 @@ fi
 
 PREBUILDIFY_VERSION=6.0.1
 NODE_VERSION=$(node -p process.version)
-PREBUILD_NAME="node.napi.node"
+PREBUILD_NAME="node.napi"
 
 ## normalise OS and ARCH names
 OS=$(uname -s | tr '[:upper:]' '[:lower:]')
@@ -27,7 +27,6 @@ ARCH=$(uname -m | tr '[:upper:]' '[:lower:]')
 case $OS in
   "windows"* | "mingw64"*)
     OS=win32
-    PREBUILD_NAME="node.napi"
     ;;
 esac
 node --version
