@@ -1,6 +1,6 @@
 {
   "name": "@pact-foundation/pact-core",
-  "version": "14.3.4",
+  "version": "14.3.5",
   "description": "Core of @pact-foundation/pact. You almost certainly don't want to depend on this directly.",
   "main": "src/index.js",
   "homepage": "https://github.com/pact-foundation/pact-js-core#readme",

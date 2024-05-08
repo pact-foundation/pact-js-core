@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.3.5](https://github.com/pact-foundation/pact-js-core/compare/v14.3.4...v14.3.5) (2024-05-08)
+
+
+### Fixes and Improvements
+
+* node doesn't run .bat files on windows ([#504](https://github.com/pact-foundation/pact-js-core/issues/504)) ([4f125b3](https://github.com/pact-foundation/pact-js-core/commit/4f125b32bc3bdfc5e9bfbbef4e0302073783dcf1))
+
 ## [14.3.4](https://github.com/pact-foundation/pact-js-core/compare/v14.3.3...v14.3.4) (2024-04-23)
 
 
