@@ -67,4 +67,49 @@ export const standalone = (
   };
 };
 
+const isWindows = process.platform === 'win32';
+
+function quoteCmdArg(arg: string) {
+  return `"${arg.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+}
+
+function quotePwshArg(arg: string) {
+  return `'${arg.replace(/'/g, "''")}'`;
+}
+
+function quotePosixShArg(arg: string) {
+  return `'${arg.replace(/'/g, "'\\''")}'`;
+}
+
+function testWindowsExe(cmd: string, file: string) {
+  return new RegExp(`^(?:.*\\\\)?${cmd}(?:\\.exe)?$`, 'i').test(file);
+}
+
+function parseArgs(unparsed_args: string[]) {
+  if (isWindows === true) {
+    const file = process.env['comspec'] || 'cmd.exe';
+    if (testWindowsExe('cmd', file) === true) {
+      return unparsed_args.map((i) => quoteCmdArg(i));
+    }
+    if (testWindowsExe('(powershell|pwsh)', file) || file.endsWith('/pwsh')) {
+      return unparsed_args.map((i) => quotePwshArg(i));
+    }
+    return unparsed_args;
+  }
+  return unparsed_args.map((i) => quotePosixShArg(i));
+}
+
+export function setStandaloneArgs(
+  unparsed_args: string[],
+  shell: boolean
+): string[] {
+  let parsedArgs = unparsed_args;
+  if (shell === true) {
+    parsedArgs = parseArgs(unparsed_args);
+  }
+  return parsedArgs;
+}
+
+export const standaloneUseShell = isWindows;
+
 export default standalone();
