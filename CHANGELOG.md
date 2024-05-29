@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.3.7](https://github.com/pact-foundation/pact-js-core/compare/v14.3.6...v14.3.7) (2024-05-29)
+
+
+### Fixes and Improvements
+
+* set process.stdout._handle.setBlocking(true) on ffi init ([#510](https://github.com/pact-foundation/pact-js-core/issues/510)) ([af76abd](https://github.com/pact-foundation/pact-js-core/commit/af76abd64b034d2c0e1ffdbe795d68ed8d791b1e))
+* shell escaping ([#511](https://github.com/pact-foundation/pact-js-core/issues/511)) ([3829d20](https://github.com/pact-foundation/pact-js-core/commit/3829d2024b6f8cb9790899ae068d14e74f9837d0))
+* update standalone to 2.4.4 ([e7872d2](https://github.com/pact-foundation/pact-js-core/commit/e7872d2cfcc107313b7bedc57291adc041fe68c3))
+
 ## [14.3.6](https://github.com/pact-foundation/pact-js-core/compare/v14.3.5...v14.3.6) (2024-05-09)
 
 
