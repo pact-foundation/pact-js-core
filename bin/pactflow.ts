@@ -1,14 +1,21 @@
 #!/usr/bin/env node
 
 import childProcess = require('child_process');
-import rubyStandalone from '../src/pact-standalone';
+import {
+  standalone,
+  standaloneUseShell,
+  setStandaloneArgs,
+} from '../src/pact-standalone';
+
+const args = process.argv.slice(2);
+const opts = standaloneUseShell ? { shell: true } : {};
 
 const { error, status } = childProcess.spawnSync(
-  rubyStandalone.pactflowFullPath,
-  process.argv.slice(2),
+  standalone().pactflowPath,
+  setStandaloneArgs(args, standaloneUseShell),
   {
     stdio: 'inherit',
-    shell: true,
+    ...opts,
   }
 );
 if (error) throw error;
