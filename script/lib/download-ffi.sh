@@ -52,7 +52,7 @@ function download_ffi {
 
   download_ffi_file "${PREFIX}pact_ffi-$SUFFIX" "${OUTPUT_FILENAME}"
   debug_log " ... unzipping '$DOWNLOAD_LOCATION'"
-  gunzip "$DOWNLOAD_LOCATION"
+  gunzip -f "$DOWNLOAD_LOCATION"
 }
 
 if [[ ${RUNNER_OS:-} == 'Windows' ]]; then
