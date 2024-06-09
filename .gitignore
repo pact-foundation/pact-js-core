@@ -54,16 +54,6 @@ bin/**/**.js
 # ts-node cache
 ts-node-*
 
-# pact standalone binaries
-# standalone/*
-standalone/darwin*
-standalone/linux*
-standalone/windows*
-standalone/*.d.ts
-standalone/*.js
-standalone/*.checksum
-standalone/*.gz
-standalone/README.md
 # FFI native bindings
 *.so
 *.dll*

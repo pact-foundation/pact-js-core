@@ -79,7 +79,7 @@ if [ ! -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
 fi
 
 FETCH_ASSETS=true ./script/ci/check-release-libs.sh --fetch-assets -t "${NEXT_TAG}"
-"$SCRIPT_DIR"/download-standalone-and-test.sh
+"$SCRIPT_DIR"/build-and-test.sh
 
 if [[ ${DRY_RUN:-} == 'true' ]]; then
   VERSION=$NEXT_VERSION

@@ -43,6 +43,7 @@
     "access": "public"
   },
   "dependencies": {
+    "check-types": "7.3.0",
     "node-gyp-build": "^4.6.0",
     "pino": "^8.7.0",
     "pino-pretty": "^9.1.1",
@@ -111,7 +112,7 @@
     "lint:fix": "npm run lint -- --fix",
     "prebuild": "npm run clean",
     "download-libs": "npm run clean && bash script/download-libs.sh",
-    "clean-libs": "rimraf standalone/*.{js,map,d.ts} standalone/{windows**,linux**,darwin**} 'ffi'",
+    "clean-libs": "rimraf 'ffi'",
     "build": "tsc --project tsconfig.build.json",
     "prerelease": "npm run snyk-protect",
     "release": "commit-and-tag-version",

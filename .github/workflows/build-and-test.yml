@@ -103,17 +103,15 @@ jobs:
       - run: LOG_LEVEL=debug ./script/ci/unpack-and-test.sh
 
 
-      # Linux aarch64 tests are skipped as QEMU fails when executing the ruby binaries
-      # Related comment: https://github.com/phusion/passenger/issues/2288#issuecomment-1387625121 
-      # - name: Set up QEMU
-      #   if: runner.os == 'Linux'
-      #   uses: docker/setup-qemu-action@v3
-      # - name: Set up Docker Buildx
-      #   if: runner.os == 'Linux'
-      #   uses: docker/setup-buildx-action@v3
-      # - if: runner.os == 'Linux'
-      #   name: test arm64
-      #   run: docker run -v $PWD:/home --platform linux/arm64 --rm node:20 bin/bash -c 'cd /home && /home/script/ci/unpack-and-test.sh'
+      - name: Set up QEMU
+        if: runner.os == 'Linux'
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        if: runner.os == 'Linux'
+        uses: docker/setup-buildx-action@v3
+      - if: runner.os == 'Linux'
+        name: test arm64
+        run: docker run -v $PWD:/home --platform linux/arm64 --rm node:20 bin/bash -c 'cd /home && /home/script/ci/unpack-and-test.sh'
 
   release_dry_run:
     runs-on: ubuntu-latest

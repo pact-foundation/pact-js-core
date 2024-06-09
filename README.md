@@ -36,7 +36,7 @@
 
 # Pact-JS Core
 
-A wrapper for the [Pact](http://pact.io) [CLI Tools](https://github.com/pact-foundation/pact-ruby-standalone).
+A wrapper for the [Pact](http://pact.io) [Reference Core Library](https://github.com/pact-foundation/pact-reference).
 
 <!-- TOC -->
 
