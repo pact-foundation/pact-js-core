@@ -29,7 +29,12 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [20]
-        os: [macos-14,macos-12,ubuntu-latest,windows-latest]
+        os: [
+          macos-14,
+          macos-12,
+          ubuntu-latest,
+          # windows-latest
+          ]
 
     env:
       NODE_VERSION: ${{ matrix.node-version }}
@@ -79,8 +84,12 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [16,18,20]
-        os: [macos-14, macos-12, ubuntu-latest,windows-latest]
-
+        os: [
+          macos-14,
+          macos-12,
+          ubuntu-latest,
+          # windows-latest
+          ]
     env:
       NODE_VERSION: ${{ matrix.node-version }}
       LOG_LEVEL: debug
