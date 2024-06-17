@@ -2,6 +2,24 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [15.0.0](https://github.com/pact-foundation/pact-js-core/compare/v14.3.8...v15.0.0) (2024-06-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* Remove all classes that were backed by the Ruby implementation (Publisher; Message; Server; AbstractService; Stub; CanDeploy; CannotDeployError). Also remove the Pact() methods that called them (createServer; listServer; removeAllServers; createStub; listStub; createMessage; publishPacts). If you need these features, please use @pact-foundation/pact-cli
+* Remove the Ruby verifier and the associated CLI stubs (pact-broker, pact-message, pact-mock-service, pact-provider-verifier, pact-stub-service, pact, and pactflow). These have moved to @pact-foundation/pact-cli
+
+### Features
+
+* Remove all classes that were backed by the Ruby implementation (Publisher; Message; Server; AbstractService; Stub; CanDeploy; CannotDeployError). Also remove the Pact() methods that called them (createServer; listServer; removeAllServers; createStub; listStub; createMessage; publishPacts). If you need these features, please use @pact-foundation/pact-cli ([e9f569b](https://github.com/pact-foundation/pact-js-core/commit/e9f569b5a72279b522a21ad18809279acfe54be1))
+* Remove the Ruby verifier and the associated CLI stubs (pact-broker, pact-message, pact-mock-service, pact-provider-verifier, pact-stub-service, pact, and pactflow). These have moved to @pact-foundation/pact-cli ([8e4f735](https://github.com/pact-foundation/pact-js-core/commit/8e4f735c3628d7155b4451d7254a801b86b19d8a))
+
+
+### Fixes and Improvements
+
+* Remove check for windows long paths as it was only relevant to the Ruby binaries ([e7778da](https://github.com/pact-foundation/pact-js-core/commit/e7778dacf5428282080ba7b3feaf5447a4968fb3))
+
 ## [14.3.8](https://github.com/pact-foundation/pact-js-core/compare/v14.3.7...v14.3.8) (2024-06-17)
 
 
