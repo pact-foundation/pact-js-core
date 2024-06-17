@@ -1,6 +1,7 @@
 import * as path from 'path';
 import { getBinaryEntry } from '../standalone/install';
 import pactEnvironment from './pact-environment';
+import logger from './logger';
 
 export interface PactStandalone {
   cwd: string;
@@ -108,6 +109,17 @@ export function setStandaloneArgs(
     parsedArgs = parseArgs(unparsed_args);
   }
   return parsedArgs;
+}
+
+export function showStandaloneDeprecationWarning(): void {
+  const silenceDeprecationWarnings =
+    process.env['PACT_SILENCE_DEPRECATION_WARNINGS'] === 'true';
+
+  if (!silenceDeprecationWarnings) {
+    logger.warn(
+      'DEPRECATION NOTICE: \n  pact standalone tools will be removed in pact-js-core 15.x. \n  Please update imports to @pact-foundation/pact-cli \n  https://github.com/pact-foundation/pact-js-core/issues/488'
+    );
+  }
 }
 
 export const standaloneUseShell = isWindows;

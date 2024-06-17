@@ -12,6 +12,7 @@ import spawn, { CliVerbOptions } from './spawn';
 import { LogLevel } from './logger/types';
 import logger, { setLogLevel } from './logger';
 import { ServiceOptions } from './types';
+import { showStandaloneDeprecationWarning } from './pact-standalone';
 
 // Get a reference to the global setTimeout object in case it is mocked by a testing library later
 const { setTimeout } = global;
@@ -93,6 +94,8 @@ export abstract class AbstractService extends events.EventEmitter {
           'Like a Boss, you used a port outside of the recommended range (1024 to 49151); I too like to live dangerously.'
         );
       }
+
+      showStandaloneDeprecationWarning();
     }
 
     // ssl check

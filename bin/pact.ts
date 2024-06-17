@@ -5,8 +5,10 @@ import {
   standalone,
   standaloneUseShell,
   setStandaloneArgs,
+  showStandaloneDeprecationWarning,
 } from '../src/pact-standalone';
 
+showStandaloneDeprecationWarning();
 const args = process.argv.slice(2);
 const opts = standaloneUseShell ? { shell: true } : {};
 
