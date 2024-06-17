@@ -10,4 +10,4 @@ ls -1 artifact
 mkdir -p prebuilds
 mv artifact*/*.tar.gz . || echo "no mac prebuilds"
 ls *.gz |xargs -n1 tar -xzf
-./script/ci/download-standalone-and-test.sh
+"$SCRIPT_DIR"/build-and-test.sh
