@@ -117,7 +117,7 @@
     "prerelease": "npm run snyk-protect",
     "release": "commit-and-tag-version",
     "test": "cross-env LOGLEVEL=debug PACT_DO_NOT_TRACK=true mocha \"{src,test}/**/*.spec.ts\"",
-    "snyk-protect": "snyk protect",
+    "snyk-protect": "snyk-protect",
     "format:base": "prettier --parser typescript",
     "format:check": "npm run format:base -- --list-different \"{src,test}/**/*.{ts,tsx}\"",
     "format:fix": "npm run format:base -- --write \"{src,test}/**/*.{ts,tsx}\"",
