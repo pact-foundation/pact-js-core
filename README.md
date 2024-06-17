@@ -29,11 +29,6 @@
 [![Build and test](https://github.com/pact-foundation/pact-js-core/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/pact-foundation/pact-js-core/actions/workflows/build-and-test.yml)
 [![Publish and release](https://github.com/pact-foundation/pact-js-core/actions/workflows/publish.yml/badge.svg)](https://github.com/pact-foundation/pact-js-core/actions/workflows/publish.yml)
 
-[![Linux](https://svgshare.com/i/Zhy.svg)](https://svgshare.com/i/Zhy.svg)
-[![macOS](https://svgshare.com/i/ZjP.svg)](https://svgshare.com/i/ZjP.svg)
-[![Windows](https://svgshare.com/i/ZhY.svg)](https://svgshare.com/i/ZhY.svg)
-
-
 # Pact-JS Core
 
 A wrapper for the [Pact](http://pact.io) [Reference Core Library](https://github.com/pact-foundation/pact-reference).
