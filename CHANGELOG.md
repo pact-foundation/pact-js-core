@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [14.3.8](https://github.com/pact-foundation/pact-js-core/compare/v14.3.7...v14.3.8) (2024-06-17)
+
+
+### Fixes and Improvements
+
+* add deprecation warnings for pact cli tools in pact-js-core ([6292535](https://github.com/pact-foundation/pact-js-core/commit/62925355646d7cb6abd4331cbfaf9c29a91926a9))
+* update standalone to 2.4.6 ([46cb62c](https://github.com/pact-foundation/pact-js-core/commit/46cb62c710245c1b72d74574d599bfa564ac2263))
+
 ## [14.3.7](https://github.com/pact-foundation/pact-js-core/compare/v14.3.6...v14.3.7) (2024-05-29)
 
 
