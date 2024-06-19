@@ -52,7 +52,8 @@ const startTCPServer = (host: string, port: number) => {
   });
 };
 
-describe.skip('MATT protocol test', () => {
+const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
+(skipPluginTests ? describe.skip : describe)('MATT protocol test', () => {
   setLogLevel('info');
 
   describe('HTTP and TCP Provider', () => {
