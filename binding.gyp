@@ -56,7 +56,7 @@
                             ]
                         },
                         "copies": [{
-                            "files": ["<(module_root_dir)/ffi/osx-x86_64/libpact_ffi.dylib"],
+                            "files": ["<(module_root_dir)/ffi/macos-x86_64/libpact_ffi.dylib"],
                             "destination": "<(PRODUCT_DIR)"
                         }],
                     }
@@ -79,7 +79,7 @@
                             ]
                         },
                         "copies": [{
-                            "files": ["<(module_root_dir)/ffi/osx-aarch64/libpact_ffi.dylib"],
+                            "files": ["<(module_root_dir)/ffi/macos-aarch64/libpact_ffi.dylib"],
                             "destination": "<(PRODUCT_DIR)"
                         }],
                     }
