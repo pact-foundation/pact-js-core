@@ -89,10 +89,7 @@ describe('FFI integration test for the Message Consumer API', () => {
         message.expectsToReceive('a binary event');
         message.given('some state');
         message.givenWithParam('some state 2', 'state2 key', 'state2 val');
-        message.withBinaryContents(
-          bytes,
-          'application/gzip'
-        );
+        message.withBinaryContents(bytes, 'application/gzip');
         message.withMetadata('meta-key', 'meta-val');
 
         const reified = message.reifyMessage();
@@ -197,6 +194,7 @@ describe('FFI integration test for the Message Consumer API', () => {
 
           pact.writePactFile(path.join(__dirname, '__testoutput__'));
         });
-      });
+      }
+    );
   });
 });

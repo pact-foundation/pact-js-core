@@ -20,7 +20,6 @@ const { expect } = chai;
 
 const HOST = '127.0.0.1';
 
-
 describe('FFI integration test for the HTTP Consumer API', () => {
   setLogLevel('trace');
 
@@ -188,10 +187,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
       interaction.withQuery('someParam', 0, 'someValue');
-      interaction.withRequestBinaryBody(
-        bytes,
-        'application/gzip'
-      );
+      interaction.withRequestBinaryBody(bytes, 'application/gzip');
       interaction.withResponseBody(
         JSON.stringify({
           name: like('fido'),
@@ -320,7 +316,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
             pact.cleanupMockServer(port);
           });
       });
-    });
+    }
+  );
 
   describe('with multipart data', () => {
     const form = new FormData();

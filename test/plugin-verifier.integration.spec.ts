@@ -135,4 +135,5 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
         });
       });
     });
-  });
+  }
+);
