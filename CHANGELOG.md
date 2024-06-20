@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [15.1.0](https://github.com/pact-foundation/pact-js-core/compare/v15.0.0...v15.1.0) (2024-06-20)
+
+
+### Features
+
+* provide musl arm64/x86_64 prebuilds ([2d4db39](https://github.com/pact-foundation/pact-js-core/commit/2d4db3918b28afe25e770ed3fbadca025faed20d))
+
+
+### Fixes and Improvements
+
+* update to libpact_ffi 0.4.21 ([34c7612](https://github.com/pact-foundation/pact-js-core/commit/34c7612a4b4c12c324a076d5c0234a9520509d83))
+
 ## [15.0.0](https://github.com/pact-foundation/pact-js-core/compare/v14.3.8...v15.0.0) (2024-06-17)
 
 
