@@ -42,7 +42,8 @@ const sendMattMessageTCP = (
   });
 };
 
-describe.skip('MATT protocol test', () => {
+const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
+(skipPluginTests ? describe.skip : describe)('MATT protocol test', () => {
   setLogLevel('trace');
 
   let provider: ConsumerPact;
@@ -60,7 +61,7 @@ describe.skip('MATT protocol test', () => {
         'matt-provider',
         FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
       );
-      provider.addPlugin('matt', '0.0.2');
+      provider.addPlugin('matt', '0.1.1');
 
       const interaction = provider.newInteraction('');
       interaction.uponReceiving('A request to communicate via MATT');
@@ -131,7 +132,7 @@ describe.skip('MATT protocol test', () => {
 
       beforeEach(() => {
         const mattMessage = `{"request": {"body": "hellotcp"}, "response":{"body":"tcpworld"}}`;
-        tcpProvider.addPlugin('matt', '0.0.2');
+        tcpProvider.addPlugin('matt', '0.1.1');
 
         const message = tcpProvider.newSynchronousMessage('a MATT message');
         message.withPluginRequestResponseInteractionContents(
@@ -148,7 +149,7 @@ describe.skip('MATT protocol test', () => {
       });
 
       it('generates a pact with success', async () => {
-        const message = await sendMattMessageTCP('hello', HOST, port);
+        const message = await sendMattMessageTCP('hellotcp', HOST, port);
         expect(message).to.eq('tcpworld');
 
         const res = tcpProvider.mockServerMatchedSuccessfully(port);

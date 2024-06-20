@@ -99,37 +99,41 @@ const getFeature = async (address: string, protoFile: string) => {
   });
 };
 
-describe.skip('Plugin Verifier Integration Spec', () => {
-  context('plugin tests', () => {
-    describe('grpc interaction', () => {
-      before(async () => {
-        const server = getGRPCServer();
-        startGRPCServer(server, GRPC_PORT);
-        await startHTTPServer(HTTP_PORT);
-      });
+const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
+(skipPluginTests ? describe.skip : describe)(
+  'Plugin Verifier Integration Spec',
+  () => {
+    context('plugin tests', () => {
+      describe('grpc interaction', () => {
+        before(async () => {
+          const server = getGRPCServer();
+          startGRPCServer(server, GRPC_PORT);
+          await startHTTPServer(HTTP_PORT);
+        });
 
-      it('should verify the gRPC interactions', async () => {
-        await verifierFactory({
-          providerBaseUrl: `http://127.0.0.1:${HTTP_PORT}`,
-          transports: [
-            {
-              port: GRPC_PORT,
-              protocol: 'grpc',
-            },
-          ],
-          logLevel: 'debug',
-          pactUrls: [`${__dirname}/integration/grpc/grpc.json`],
-        }).verify();
+        it('should verify the gRPC interactions', async () => {
+          await verifierFactory({
+            providerBaseUrl: `http://127.0.0.1:${HTTP_PORT}`,
+            transports: [
+              {
+                port: GRPC_PORT,
+                protocol: 'grpc',
+              },
+            ],
+            logLevel: 'debug',
+            pactUrls: [`${__dirname}/integration/grpc/grpc.json`],
+          }).verify();
 
-        expect('').to.eq('');
-      });
+          expect('').to.eq('');
+        });
 
-      it('runs the grpc client', async () => {
-        const protoFile = `${__dirname}/integration/grpc/route_guide.proto`;
-        const feature = await getFeature(`127.0.0.1:${GRPC_PORT}`, protoFile);
+        it('runs the grpc client', async () => {
+          const protoFile = `${__dirname}/integration/grpc/route_guide.proto`;
+          const feature = await getFeature(`127.0.0.1:${GRPC_PORT}`, protoFile);
 
-        console.log(feature);
+          console.log(feature);
+        });
       });
     });
-  });
-});
+  }
+);

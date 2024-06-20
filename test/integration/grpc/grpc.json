@@ -5,7 +5,6 @@
   "interactions": [
     {
       "description": "A request to do a foo",
-      "key": "539a26be10e0124e",
       "pending": false,
       "request": {
         "body": {
@@ -47,7 +46,6 @@
         "markup": "```protobuf\nmessage Feature {\n    string name = 1;\n    message .routeguide.Point location = 2;\n}\n```\n",
         "markupType": "COMMON_MARK"
       },
-      "key": "d81a62841ce862db",
       "pending": false,
       "pluginConfiguration": {
         "protobuf": {
@@ -143,7 +141,7 @@
           }
         },
         "name": "protobuf",
-        "version": "0.1.14"
+        "version": "0.3.15"
       }
     ]
   },
