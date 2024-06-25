@@ -247,6 +247,7 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
     verbose: [deprecatedFunction],
     monkeypatch: [deprecatedFunction],
     logDir: [deprecatedFunction],
+    logFile: [assertNonEmptyString],
     consumerFilters: [assertNonEmptyString],
     failIfNoPactsFound: [assertBoolean],
     transports: [],

@@ -14,7 +14,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
   if (opts.logLevel) {
     setLogLevel(opts.logLevel);
   }
-  const ffi = getFfiLib(opts.logLevel);
+  const ffi = getFfiLib(opts.logLevel, opts.logFile);
 
   const handle = ffi.pactffiVerifierNewForApplication(
     pkg.name.split('/')[1],

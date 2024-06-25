@@ -49,6 +49,64 @@ Napi::Value PactffiInitWithLogLevel(const Napi::CallbackInfo& info) {
   return env.Undefined();
 }
 
+LevelFilter integerToLevelFilter(Napi::Env &env, uint32_t number) {
+  LevelFilter logLevel = LevelFilter::LevelFilter_Off;
+
+  switch(number) {
+    case 0:
+      logLevel = LevelFilter::LevelFilter_Off;
+      break;
+    case 1:
+      logLevel = LevelFilter::LevelFilter_Error;
+      break;
+    case 2:
+      logLevel = LevelFilter::LevelFilter_Warn;
+      break;
+    case 3:
+      logLevel = LevelFilter::LevelFilter_Info;
+      break;
+    case 4:
+      logLevel = LevelFilter::LevelFilter_Debug;
+      break;
+    case 5:
+      logLevel = LevelFilter::LevelFilter_Trace;
+      break;
+    default:
+      std::string err =  "pact-js-core C integration: Unable to parse log level number: ";
+      err += number;
+
+      throw Napi::Error::New(env, err);
+  }
+
+  return logLevel;
+}
+
+
+Napi::Value PactffiLogToFile(const Napi::CallbackInfo& info) {
+   // return: int
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiLogToFile(envVar) received < 2 arguments");
+  }
+
+    if (!info[0].IsString()) {
+    throw Napi::Error::New(env, "PactffiLogToFile(envVar) expected a string");
+  }
+
+  if (!info[1].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiLogToFile(envVar) expected a number");
+  }
+
+  // Extract log level
+  std::string fileName = info[0].As<Napi::String>().Utf8Value();
+  uint32_t levelFilterNumber = info[1].As<Napi::Number>().Uint32Value();
+  LevelFilter levelFilter = integerToLevelFilter(env, levelFilterNumber);
+
+  int res = pactffi_log_to_file(fileName.c_str(), levelFilter);
+
+  return Napi::Number::New(env, res);
+}
 /*
 
 Napi::Value Pactffi_log_message(const Napi::CallbackInfo& info) {
