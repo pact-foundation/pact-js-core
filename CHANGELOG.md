@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [15.1.1](https://github.com/pact-foundation/pact-js-core/compare/v15.1.0...v15.1.1) (2024-07-19)
+
+
+### Fixes and Improvements
+
+* **deps:** pin to node 22.4.1 ([#518](https://github.com/pact-foundation/pact-js-core/issues/518)) ([a3d97d2](https://github.com/pact-foundation/pact-js-core/commit/a3d97d2d91d06e1dd0875fa0cd3e2cc331435bb4))
+
 ## [15.1.0](https://github.com/pact-foundation/pact-js-core/compare/v15.0.0...v15.1.0) (2024-06-20)
 
 
