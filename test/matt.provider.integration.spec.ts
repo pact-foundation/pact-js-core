@@ -40,6 +40,7 @@ const startTCPServer = (host: string, port: number) => {
         sock.write(generateMattMessage('message not understood'));
       }
       sock.write('\n');
+      sock.destroy();
     });
   });
 
