@@ -108,7 +108,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18, 20, 22.4.1]
+        node-version: [16, 18, 20, 22]
         os: [macos-14, macos-12, ubuntu-latest, windows-latest]
         docker: [false]
         include:
@@ -116,17 +116,17 @@ jobs:
             docker: true
             alpine: false
             arch: arm64
-            node-version: 22.4.1
+            node-version: 22
           - os: ubuntu-latest
             docker: true
             alpine: true
             arch: arm64
-            node-version: 22.4.1
+            node-version: 22
           - os: ubuntu-latest
             docker: true
             alpine: true
             arch: amd64
-            node-version: 22.4.1
+            node-version: 22
           - os: ubuntu-latest
             docker: true
             alpine: false
