@@ -8,6 +8,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiVersion"), Napi::Function::New(env, PactffiVersion));
   exports.Set(Napi::String::New(env, "pactffiInit"), Napi::Function::New(env, PactffiInit));
   exports.Set(Napi::String::New(env, "pactffiInitWithLogLevel"), Napi::Function::New(env, PactffiInitWithLogLevel));
+  exports.Set(Napi::String::New(env, "pactffiLogToFile"), Napi::Function::New(env, PactffiLogToFile));
 
   // Consumer
   exports.Set(Napi::String::New(env, "pactffiMockServerMatched"), Napi::Function::New(env, PactffiMockServerMatched));

@@ -7,7 +7,6 @@ import zlib = require('zlib');
 import FormData = require('form-data');
 import fs = require('fs');
 import { load } from 'protobufjs';
-import { setLogLevel } from '../src/logger';
 import {
   ConsumerPact,
   makeConsumerPact,
@@ -21,8 +20,6 @@ const { expect } = chai;
 const HOST = '127.0.0.1';
 
 describe('FFI integration test for the HTTP Consumer API', () => {
-  setLogLevel('trace');
-
   let port: number;
   let pact: ConsumerPact;
   const bytes: Buffer = zlib.gzipSync('this is an encoded string');
