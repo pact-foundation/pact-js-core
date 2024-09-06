@@ -132,11 +132,14 @@ export const getFfiLib = (
       logFile
     );
     if (logFile) {
-      logger.debug(
-        `writing log file at level ${FfiLogLevelFilter[logLevel]} to ${logFile}`
+      logger.debug(`writing log file at level ${logLevel} to ${logFile}`);
+      const res = ffiLib.pactffiLogToFile(
+        logFile,
+        FfiLogLevelFilter[logLevel] ?? 3
       );
-      const res = ffiLib.pactffiLogToFile(logFile, FfiLogLevelFilter[logLevel]);
-      logger.debug(`result of writing to file '${res}'`);
+      if (res !== 0) {
+        logger.warn(`Failed to write log file to ${logFile}, reason: ${res}`);
+      }
     } else {
       ffiLib.pactffiInitWithLogLevel(logLevel);
     }

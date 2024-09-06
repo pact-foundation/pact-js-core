@@ -110,12 +110,11 @@ export enum FfiFunctionResult {
 }
 
 export enum FfiLogLevelFilter {
-  LOG_LEVEL_OFF = 0,
-  LOG_LEVEL_ERROR,
-  LOG_LEVEL_WARN,
-  LOG_LEVEL_INFO,
-  LOG_LEVEL_DEBUG,
-  LOG_LEVEL_TRACE,
+  'error' = 1,
+  'warn' = 2,
+  'info' = 3,
+  'debug' = 4,
+  'trace' = 5,
 }
 
 export type Ffi = {
