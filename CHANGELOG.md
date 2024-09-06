@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [15.2.0](https://github.com/pact-foundation/pact-js-core/compare/v15.1.1...v15.2.0) (2024-09-06)
+
+
+### Features
+
+* add optional logFile argument for ConsumerPact/ConsumerMessagePact/VerifierOptions ([02c8d19](https://github.com/pact-foundation/pact-js-core/commit/02c8d194fe76a0a8e42ebdbe90080dd52c640b6f))
+
 ## [15.1.1](https://github.com/pact-foundation/pact-js-core/compare/v15.1.0...v15.1.1) (2024-07-19)
 
 
