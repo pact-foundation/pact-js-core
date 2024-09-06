@@ -46,6 +46,7 @@ export interface VerifierOptions {
   consumerVersionSelectors?: ConsumerVersionSelector[];
   timeout?: number;
   logLevel?: LogLevel;
+  logFile?: string;
   disableSslVerification?: boolean;
   buildUrl?: string;
   customProviderHeaders?: CustomHeaders | string[];
