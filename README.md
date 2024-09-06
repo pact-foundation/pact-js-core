@@ -93,7 +93,7 @@ pact.logLevel("debug");
 
 ### Provider Verification
 
-Read more about [Verify Pacts](https://github.com/realestate-com-au/pact/wiki/Verifying-pacts).
+Read more about [Verify Pacts](https://docs.pact.io/implementation_guides/ruby/verifying_pacts).
 
 ```js
 var pact = require('@pact-foundation/pact-core');
