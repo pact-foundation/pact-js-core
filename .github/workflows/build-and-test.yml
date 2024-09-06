@@ -90,9 +90,10 @@ jobs:
         if: ${{ matrix.docker != true }}
 
       - name: Upload prebuild for ${{ runner.os }}-${{ runner.arch }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: prebuilds/*.tar.gz
+          name: artifact-${{ matrix.docker == true && matrix.alpine == true && 'linux-musl' || matrix.docker == true && matrix.alpine == false && 'linux' || matrix.os }}-${{ matrix.arch }}
 
       - run: GH_PRE_RELEASE_UPLOAD=true ./script/ci/release.sh
         if: github.ref == 'refs/heads/master' && env.ACT != true
