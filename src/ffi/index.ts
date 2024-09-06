@@ -2,7 +2,7 @@ import path from 'node:path';
 import bindings = require('node-gyp-build');
 import logger, { DEFAULT_LOG_LEVEL } from '../logger';
 import { LogLevel } from '../logger/types';
-import { Ffi } from './types';
+import { Ffi, FfiLogLevelFilter } from './types';
 
 export const PACT_FFI_VERSION = '0.4.22';
 
@@ -85,9 +85,8 @@ const renderBinaryErrorMessage = (error: unknown) => {
 };
 
 let ffi: typeof ffiLib;
-let ffiLogLevel: LogLevel;
 
-const initialiseFfi = (logLevel: LogLevel): typeof ffi => {
+const initialiseFfi = (): typeof ffi => {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   if (process.stdout._handle) {
@@ -95,8 +94,6 @@ const initialiseFfi = (logLevel: LogLevel): typeof ffi => {
     // @ts-ignore
     process.stdout._handle.setBlocking(true);
   }
-  logger.debug(`Initalising native core at log level '${logLevel}'`);
-  ffiLogLevel = logLevel;
   try {
     bindingPaths.every((bindingPath, i) => {
       try {
@@ -114,7 +111,6 @@ const initialiseFfi = (logLevel: LogLevel): typeof ffi => {
         return true;
       }
     });
-    ffiLib.pactffiInitWithLogLevel(logLevel);
   } catch (error) {
     renderBinaryErrorMessage(error);
     throw new Error(
@@ -125,18 +121,24 @@ const initialiseFfi = (logLevel: LogLevel): typeof ffi => {
 };
 
 export const getFfiLib = (
-  logLevel: LogLevel = DEFAULT_LOG_LEVEL
+  logLevel: LogLevel = DEFAULT_LOG_LEVEL,
+  logFile: string | undefined = undefined
 ): typeof ffi => {
   if (!ffi) {
-    logger.trace('Initiliasing ffi for the first time');
-    ffi = initialiseFfi(logLevel);
-  } else {
-    logger.trace('Ffi has already been initialised, no need to repeat it');
-    if (logLevel !== ffiLogLevel) {
-      logger.warn(
-        `The pact native core has already been initialised at log level '${ffiLogLevel}'`
+    logger.trace('Initialising ffi for the first time');
+    ffi = initialiseFfi();
+    logger.debug(
+      `Initialising native core at log level '${logLevel}'`,
+      logFile
+    );
+    if (logFile) {
+      logger.debug(
+        `writing log file at level ${FfiLogLevelFilter[logLevel]} to ${logFile}`
       );
-      logger.warn(`The new requested log level '${logLevel}' will be ignored`);
+      const res = ffiLib.pactffiLogToFile(logFile, FfiLogLevelFilter[logLevel]);
+      logger.debug(`result of writing to file '${res}'`);
+    } else {
+      ffiLib.pactffiInitWithLogLevel(logLevel);
     }
   }
   return ffi;

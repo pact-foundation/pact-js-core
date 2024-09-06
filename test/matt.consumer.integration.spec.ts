@@ -9,7 +9,6 @@ import {
   makeConsumerMessagePact,
   makeConsumerPact,
 } from '../src';
-import { setLogLevel } from '../src/logger';
 import { FfiSpecificationVersion } from '../src/ffi/types';
 
 chai.use(chaiAsPromised);
@@ -45,8 +44,6 @@ const sendMattMessageTCP = (
 
 const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
 (skipPluginTests ? describe.skip : describe)('MATT protocol test', () => {
-  setLogLevel('trace');
-
   let provider: ConsumerPact;
   let tcpProvider: ConsumerMessagePact;
   let port: number;

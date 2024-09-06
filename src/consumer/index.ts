@@ -62,12 +62,13 @@ export const makeConsumerPact = (
   consumer: string,
   provider: string,
   version: FfiSpecificationVersion = 3,
-  logLevel = getLogLevel()
+  logLevel = getLogLevel(),
+  logFile?: string
 ): ConsumerPact => {
-  const ffi = getFfiLib(logLevel);
   if (logLevel) {
     setLogLevel(logLevel);
   }
+  const ffi = getFfiLib(logLevel, logFile);
 
   const pactPtr = ffi.pactffiNewPact(consumer, provider);
   if (!ffi.pactffiWithSpecification(pactPtr, version)) {
@@ -370,12 +371,13 @@ export const makeConsumerMessagePact = (
   consumer: string,
   provider: string,
   version: FfiSpecificationVersion = 4,
-  logLevel = getLogLevel()
+  logLevel = getLogLevel(),
+  logFile?: string
 ): ConsumerMessagePact => {
-  const ffi = getFfiLib(logLevel);
   if (logLevel) {
     setLogLevel(logLevel);
   }
+  const ffi = getFfiLib(logLevel, logFile);
 
   const pactPtr = ffi.pactffiNewPact(consumer, provider);
   if (!ffi.pactffiWithSpecification(pactPtr, version) || version < 4) {
