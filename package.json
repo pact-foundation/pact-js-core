@@ -97,7 +97,7 @@
     "node-addon-api": "^6.1.0",
     "nodemon": "^2.0.4",
     "prettier": "^2.3.0",
-    "protobufjs": "^7.2.4",
+    "protobufjs": "^7.4.0",
     "rimraf": "2.7.1",
     "sinon": "9.2.4",
     "ts-node": "10.9.1",
