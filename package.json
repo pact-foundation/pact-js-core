@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@grpc/grpc-js": "^1.8.0",
-    "@grpc/proto-loader": "^0.7.3",
+    "@grpc/proto-loader": "^0.7.7",
     "@pact-foundation/pact-js-prettier-config": "^1.0.0",
     "@snyk/protect": "^1.1118.0",
     "@tsconfig/node14": "^1.0.3",
