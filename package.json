@@ -65,7 +65,7 @@
     "@types/mocha": "9.0.0",
     "@types/needle": "2.5.2",
     "@types/node": "^18.11.10",
-    "@types/rimraf": "^2.0.2",
+    "@types/rimraf": "^4.0.0",
     "@types/sinon": "^9.0.11",
     "@types/tar": "^4.0.3",
     "@types/underscore": "1.8.7",
