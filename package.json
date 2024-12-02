@@ -45,7 +45,7 @@
   "dependencies": {
     "check-types": "7.3.0",
     "node-gyp-build": "^4.6.0",
-    "pino": "^8.7.0",
+    "pino": "^9.0.0",
     "pino-pretty": "^9.1.1",
     "underscore": "1.12.1"
   },
