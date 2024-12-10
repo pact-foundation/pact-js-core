@@ -53,7 +53,7 @@
     "@grpc/grpc-js": "1.12.4",
     "@grpc/proto-loader": "0.7.13",
     "@pact-foundation/pact-js-prettier-config": "1.0.0",
-    "@snyk/protect": "1.1186.0",
+    "@snyk/protect": "1.1294.2",
     "@tsconfig/node14": "1.0.3",
     "@types/basic-auth": "1.1.8",
     "@types/chai": "4.1.2",
