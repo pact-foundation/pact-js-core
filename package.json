@@ -47,7 +47,7 @@
     "node-gyp-build": "^4.6.0",
     "pino": "^8.7.0",
     "pino-pretty": "^9.1.1",
-    "underscore": "1.12.1"
+    "underscore": "1.13.7"
   },
   "devDependencies": {
     "@grpc/grpc-js": "1.12.4",
@@ -68,7 +68,7 @@
     "@types/rimraf": "2.0.5",
     "@types/sinon": "9.0.11",
     "@types/tar": "4.0.5",
-    "@types/underscore": "1.8.7",
+    "@types/underscore": "1.13.0",
     "@types/unixify": "1.0.2",
     "@types/url-join": "4.0.3",
     "@typescript-eslint/eslint-plugin": "5.62.0",
