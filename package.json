@@ -67,7 +67,7 @@
     "@types/node": "22.10.1",
     "@types/rimraf": "2.0.5",
     "@types/sinon": "17.0.3",
-    "@types/tar": "4.0.5",
+    "@types/tar": "6.1.13",
     "@types/underscore": "1.13.0",
     "@types/unixify": "1.0.2",
     "@types/url-join": "4.0.3",
