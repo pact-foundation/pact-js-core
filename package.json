@@ -43,7 +43,7 @@
     "access": "public"
   },
   "dependencies": {
-    "check-types": "7.3.0",
+    "check-types": "7.4.0",
     "node-gyp-build": "^4.6.0",
     "pino": "^8.7.0",
     "pino-pretty": "^9.1.1",
@@ -58,7 +58,7 @@
     "@types/basic-auth": "1.1.8",
     "@types/chai": "4.3.20",
     "@types/chai-as-promised": "7.1.8",
-    "@types/check-types": "7.3.4",
+    "@types/check-types": "7.3.7",
     "@types/cors": "2.8.17",
     "@types/decompress": "4.2.7",
     "@types/express": "4.17.21",
