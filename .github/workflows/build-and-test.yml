@@ -35,17 +35,17 @@ jobs:
         os: [
             macos-13,
             ubuntu-latest,
-            windows-latest,
+            windows-latest
           ]
         docker: [false]
         alpine: [false]
         arch: ['amd64']
         include:
-          - os: ubuntu-latest
-            docker: true
+          - os: ubuntu-24.04-arm
+            docker: false
             alpine: false
             arch: arm64
-          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
             docker: true
             alpine: true
             arch: arm64
@@ -75,9 +75,6 @@ jobs:
       - if: runner.os == 'Windows'
         run: echo "ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true" >> $GITHUB_ENV
 
-      - name: Set up QEMU
-        if: ${{ matrix.docker == true && matrix.arch == 'arm64' }}
-        uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
       - if: ${{ matrix.docker == true && matrix.alpine == true }}
         name: prebuild linux ${{ matrix.arch }} musl
         run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:20-alpine bin/sh -c 'apk add bash && cd /home && bash -c "/home/script/ci/prebuild-alpine.sh" && rm -rf ffi node_modules'
@@ -113,15 +110,10 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [16, 18, 20, 22]
-        os: [macos-14, macos-13, ubuntu-latest, windows-latest]
+        os: [macos-14, macos-13, ubuntu-latest, windows-latest, ubuntu-24.04-arm]
         docker: [false]
         include:
-          - os: ubuntu-latest
-            docker: true
-            alpine: false
-            arch: arm64
-            node-version: 22
-          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
             docker: true
             alpine: true
             arch: arm64
@@ -131,12 +123,7 @@ jobs:
             alpine: true
             arch: amd64
             node-version: 22
-          - os: ubuntu-latest
-            docker: true
-            alpine: false
-            arch: arm64
-            node-version: 20
-          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
             docker: true
             alpine: true
             arch: arm64
@@ -146,7 +133,7 @@ jobs:
             alpine: true
             arch: amd64
             node-version: 20
-          - os: ubuntu-latest
+          - os: ubuntu-24.04-arm
             docker: true
             alpine: true
             arch: arm64
@@ -184,19 +171,11 @@ jobs:
       - run: LOG_LEVEL=debug ./script/ci/unpack-and-test.sh
         if: ${{ matrix.docker != true }}
 
-      - name: Set up QEMU
-        if: ${{ matrix.docker == true && matrix.arch == 'arm64' }}
-        uses: docker/setup-qemu-action@49b3bc8e6bdd4a60e6116a5414239cba5943d3cf # v3
-
-      - if: ${{ matrix.docker == true && matrix.alpine != true && matrix.arch == 'arm64' }}
-        name: test arm64
-        run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }} bin/bash -c 'cd /home && /home/script/ci/unpack-and-test.sh'
-
-      - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'amd64' }}
+      - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'amd64' && matrix.os == 'ubuntu-latest' }}
         name: test linux amd64 musl
         run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add bash curl gcompat file && cd /home && /home/script/ci/unpack-and-test.sh'
 
-      - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'arm64' }}
+      - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'arm64' && matrix.os == 'ubuntu-24.04-arm' }}
         name: test linux arm64 musl
         run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add bash curl file protoc protobuf-dev && cd /home && /home/script/ci/unpack-and-test.sh'
 
