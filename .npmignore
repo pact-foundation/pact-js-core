@@ -84,10 +84,17 @@ script
 binding.gyp
 native
 
-.cirrus
 .gitattributes
 DEVELOPER.md
 RELEASING.md
 test.js
 tsconfig.build.json
 tsconfig.json
+
+# Standalone Binaries - Published as seperate packages
+@pact-foundation/
+
+# Cross packaging files
+Makefile
+package.json.tmpl
+prebuilds

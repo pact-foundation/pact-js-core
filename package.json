@@ -44,6 +44,7 @@
   },
   "dependencies": {
     "check-types": "7.4.0",
+    "detect-libc": "^2.0.3",
     "node-gyp-build": "^4.6.0",
     "pino": "^8.7.0",
     "pino-pretty": "^9.1.1",
@@ -160,5 +161,14 @@
       }
     ]
   },
-  "snyk": true
+  "snyk": true,
+  "optionalDependencies": {
+    "@pact-foundation/pact-core-darwin-arm64": "15.2.1",
+    "@pact-foundation/pact-core-darwin-x64": "15.2.1",
+    "@pact-foundation/pact-core-linux-arm64-glibc": "15.2.1",
+    "@pact-foundation/pact-core-linux-arm64-musl": "15.2.1",
+    "@pact-foundation/pact-core-linux-x64-glibc": "15.2.1",
+    "@pact-foundation/pact-core-linux-x64-musl": "15.2.1",
+    "@pact-foundation/pact-core-windows-x64": "15.2.1"
+  }
 }

@@ -19,11 +19,17 @@ fi
 
 node --version
 npm --version
+# Update main package.json optional dependencies versions, with those created earlier
+current_platform=$("$SCRIPT_DIR"/build-opt-dependencies.sh determine_platform)
+supported_platforms="$current_platform" "$SCRIPT_DIR"/build-opt-dependencies.sh update
+# update lockfile post building updated opt deps
+npm ci --ignore-scripts || npm i --ignore-scripts
+# Link os/arch specific npm package, for running os/arch system
 
-npm ci --ignore-scripts
-
+supported_platforms="$current_platform" "$SCRIPT_DIR"/build-opt-dependencies.sh link
+# ensure we test against the linked npm package, not the prebuild
+rm -rf prebuilds
 npm run format:check
 npm run lint
 npm run build
 npm run test
-ls -1

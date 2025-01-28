@@ -64,33 +64,36 @@ jobs:
 
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        if: github.ref == 'refs/heads/master'
         with:
           fetch-depth: 0
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
+        if: github.ref == 'refs/heads/master'
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - if: runner.os == 'Windows'
+      - if: ${{ runner.os == 'Windows' && github.ref == 'refs/heads/master'}}
         run: echo "ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true" >> $GITHUB_ENV
 
-      - if: ${{ matrix.docker == true && matrix.alpine == true }}
+      - if: ${{ matrix.docker == true && matrix.alpine == true && github.ref == 'refs/heads/master'}}
         name: prebuild linux ${{ matrix.arch }} musl
         run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:20-alpine bin/sh -c 'apk add bash && cd /home && bash -c "/home/script/ci/prebuild-alpine.sh" && rm -rf ffi node_modules'
 
-      - if: ${{ matrix.docker == true && matrix.alpine != true }}
+      - if: ${{ matrix.docker == true && matrix.alpine != true && github.ref == 'refs/heads/master' }}
         name: prebuild linux ${{ matrix.arch }}
         run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:20 bin/bash -c 'cd /home && /home/script/ci/prebuild.sh && rm -rf ffi node_modules'
 
       - run: sudo chown -R $(id -u):$(id -g) prebuilds
-        if: ${{ matrix.docker == true }}
+        if: ${{ matrix.docker == true && github.ref == 'refs/heads/master' }}
 
       - run: ./script/ci/prebuild.sh
-        if: ${{ matrix.docker != true }}
+        if: ${{ matrix.docker != true && github.ref == 'refs/heads/master'}}
 
       - name: Upload prebuild for ${{ runner.os }}-${{ runner.arch }}
         uses: actions/upload-artifact@b4b15b8c7c6ac21ea08fcf65892d2ee8f75cf882 # v4
+        if: github.ref == 'refs/heads/master'
         with:
           path: prebuilds/*.tar.gz
           name: artifact-${{ matrix.docker == true && matrix.alpine == true && 'linux-musl' || matrix.docker == true && matrix.alpine == false && 'linux' || matrix.os }}-${{ matrix.arch }}
@@ -156,7 +159,12 @@ jobs:
           fetch-depth: 0
 
       - name: Download prebuilds
+        if: github.ref == 'refs/heads/master'
         uses: actions/download-artifact@fa0a91b85d4f404e444e00e005971372dc801d16 # v4.1.8
+      - run: FETCH_ASSETS=true REPO=pact-foundation/pact-js-core ./script/ci/check-release-libs.sh --fetch-assets
+        if: github.ref != 'refs/heads/master'
+        env:
+            GITHUB_TOKEN: ${{ github.token }}
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4
@@ -173,11 +181,11 @@ jobs:
 
       - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'amd64' && matrix.os == 'ubuntu-latest' }}
         name: test linux amd64 musl
-        run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add bash curl gcompat file && cd /home && /home/script/ci/unpack-and-test.sh'
+        run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl gcompat file && cd /home && /home/script/ci/unpack-and-test.sh'
 
       - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'arm64' && matrix.os == 'ubuntu-24.04-arm' }}
         name: test linux arm64 musl
-        run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add bash curl file protoc protobuf-dev && cd /home && /home/script/ci/unpack-and-test.sh'
+        run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl file protoc protobuf-dev && cd /home && /home/script/ci/unpack-and-test.sh'
 
   release_dry_run:
     runs-on: ubuntu-latest

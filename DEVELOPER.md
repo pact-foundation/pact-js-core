@@ -4,12 +4,24 @@ Pact-Js-Core uses FFI bindings from the pact-reference project, which are prebui
 
 Do this and you should be 👌👌👌:
 
-```
+```sh
 bash script/ci/prebuild.sh
-npm ci --ignore-scripts
+supported_platforms=$(./script/ci/build-opt-dependencies.sh determine_platform) 
+./script/ci/build-opt-dependencies.sh build
+./script/ci/build-opt-dependencies.sh link
 npm run build
-npm test
+npm run test
 ```
+
+set supported platform to one of these values
+
+- `linux-x64-glibc`
+- `linux-arm64-glibc`
+- `linux-x64-musl`
+- `linux-arm64-musl`
+- `darwin-x64`
+- `darwin-arm64`
+- `windows-x64`
 
 _notes_ - 
 
@@ -32,7 +44,89 @@ Alternatively you can run the following, which will not create a prebuild, but i
 bash script/download-libs.sh
 npm ci
 npm run build
-npm test
+npm run test
+```
+
+## Creating Platform specific packages
+
+We create cross-platform and architecture binaries which are published individually to NPM, and consumed in this project.
+
+### Download prebuilt binaries for all platforms
+
+```sh
+./script/ci/build_opt_dependencies.sh libs v15.2.1
+```
+
+Tag is optional and defaults to latest
+
+This will run the following script, which will grab the latest prebuilt binaries from GitHub.
+
+```sh
+FETCH_ASSETS=true ./script/ci/check-release-libs.sh --fetch-assets -t v15.2.1
+```
+
+### Building all platform specific npm packages
+
+```sh
+./script/ci/build_opt_dependencies.sh build
+```
+
+### Building individual platform specific npm package
+
+Supported platforms are
+
+- linux-x64-glibc
+- linux-arm64-glibc
+- linux-x64-musl
+- linux-arm64-musl
+- darwin-x64
+- darwin-arm64
+- windows-x64
+
+You can detect your platform with
+
+```sh
+./script/ci/build-opt-dependencies.sh determine_platform
+```
+
+You can build with one
+
+```sh
+supported_platforms=$(./script/ci/build-opt-dependencies.sh determine_platform) ./script/ci/build-opt-dependencies.sh build
+```
+
+or all
+
+```sh
+./script/ci/build-opt-dependencies.sh build
+```
+
+### Linking arch specific package, for your local build
+
+Make link will try to link all available packages, for all available platforms, and will link any that apply
+
+```sh
+./script/ci/build-opt-dependencies.sh
+```
+
+You can scope it with `supported_platforms`
+
+```sh
+supported_platforms=$(./script/ci/build-opt-dependencies.sh determine_platform) ./script/ci/build-opt-dependencies.sh link
+```
+
+### Publishing packages
+
+Dry run publishing optional packages, (default)
+
+```sh
+./script/ci/build-opt-dependencies.sh publish
+```
+
+Publishing packages with `--dry-run` option removed.
+
+```sh
+PUBLISH=true ./script/ci/build-opt-dependencies.sh publish
 ```
 
 ### Linux x86_64 Task
@@ -50,43 +144,3 @@ npm test
 ```sh
 act --container-architecture linux/amd64 -W .github/workflows/build-and-test.yml --artifact-server-path tmp
 ```
-
-### MacOS ARM64 Task
-
-#### Pre Reqs
-
-1. Arm64 Mac
-2. Cirrus-Cli
-3. Tart.run
-
-
-```sh
-cirrus run --output github-actions macos_arm --artifacts-dir tmp
-```
-
-### Linux ARM64 Task
-
-#### Pre Reqs
-
-1. Arm64 Machine
-
-### CI Locally
-
-1. Arm64 Machine
-2. Docker / Podman
-3. Cirrus-Cli
-
-
-```sh
-cirrus run --output github-actions linux_arm --artifacts-dir tmp
-```
-
-#### Publishing Assets
-
-MacOS ARM64
-
-`cirrus run --output github-actions macos_arm --artifacts-dir tmp --environment GITHUB_TOKEN=$GITHUB_TOKEN --environment CIRRUS_RELEASE=test --environment CIRRUS_REPO_FULL_NAME=pact-foundation/pact-js-core;`
-
-Linux ARM64
-
-`cirrus run --output github-actions linux_arm --artifacts-dir tmp --environment GITHUB_TOKEN=$GITHUB_TOKEN --environment CIRRUS_RELEASE=test --environment CIRRUS_REPO_FULL_NAME=pact-foundation/pact-js-core;`

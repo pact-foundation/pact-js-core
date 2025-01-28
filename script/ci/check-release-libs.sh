@@ -69,7 +69,7 @@ if [[ "$TAG" == "" ]]; then
 else
     GH_TAG_OPTION="$TAG"
     if [[ "$TAG" == "latest" ]]; then
-        GH_TAG_OPTION=''
+        GH_TAG_OPTION=$(gh release list --limit 1 --repo pact-foundation/pact-js-core --json tagName --jq '.[].tagName')
     fi
 
     if [[ "${LIST_ASSETS:-}" = true || "${FETCH_ASSETS:-}" = true ]]; then
