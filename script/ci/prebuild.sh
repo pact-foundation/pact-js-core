@@ -1,4 +1,4 @@
-# !/bin/bash -eu
+#!/bin/bash -eu
 set -e # This needs to be here for windows bash, which doesn't read the #! line above
 set -u
 
@@ -35,7 +35,7 @@ echo "OS: $OS"
 echo "ARCH: $ARCH"
 
 ./script/download-libs.sh
-npm ci --ignore-scripts
+npm ci --ignore-scripts || npm i --ignore-scripts
 export npm_config_target=${NODE_VERSION}
 npx --yes prebuildify@${PREBUILDIFY_VERSION} --napi --name ${PREBUILD_NAME}
 ls prebuilds/**/*

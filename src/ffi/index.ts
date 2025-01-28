@@ -1,10 +1,54 @@
 import path from 'node:path';
 import bindings = require('node-gyp-build');
+import { isNonGlibcLinuxSync } from 'detect-libc';
 import logger, { DEFAULT_LOG_LEVEL } from '../logger';
 import { LogLevel } from '../logger/types';
 import { Ffi, FfiLogLevelFilter } from './types';
 
 export const PACT_FFI_VERSION = '0.4.22';
+
+/**
+ * Returns the library path which is located inside `node_modules`
+ * The naming convention is @pact-foundation/pact-core-${os}-${arch}<-${libc}>
+ * - "-${libc}" is optional for linux only
+ * @see https://nodejs.org/api/os.html#osarch
+ * @see https://nodejs.org/api/os.html#osplatform
+ * @example "x/xx/node_modules/@pact-foundation/pact-core-darwin-arm64"
+ */
+function getPlatformArchSpecificPackage() {
+  const { arch } = process;
+  let os = process.platform as string;
+  if (['win32', 'cygwin'].includes(process.platform)) {
+    os = 'windows';
+  }
+  let platformArchSpecificPackage = `@pact-foundation/pact-core-${os}-${arch}`;
+  if (os === 'linux') {
+    platformArchSpecificPackage += isNonGlibcLinuxSync() ? '-musl' : '-glibc';
+  }
+
+  const prebuildPackageLocation = process.env['PACT_PREBUILD_PACKAGE_LOCATION'];
+  if (prebuildPackageLocation) {
+    platformArchSpecificPackage = path.join(
+      prebuildPackageLocation,
+      platformArchSpecificPackage
+    );
+  }
+
+  const packagePath = `${platformArchSpecificPackage}/package.json`;
+  try {
+    let resolvedPackagePath = require.resolve(packagePath);
+    if (os === 'windows') {
+      resolvedPackagePath = resolvedPackagePath.replace('\\package.json', '');
+    } else {
+      resolvedPackagePath = resolvedPackagePath.replace('/package.json', '');
+    }
+    return resolvedPackagePath;
+  } catch (e) {
+    throw new Error(
+      `Couldn't find npm package ${platformArchSpecificPackage} \n 💡 you can tell Pact where the npm package is located with env var $PACT_PREBUILD_PACKAGE_LOCATION`
+    );
+  }
+}
 
 // supported prebuilds
 // darwin-arm64
@@ -54,7 +98,7 @@ const bindingsResolver = (bindingsPath: string | undefined) =>
   bindings(bindingsPath);
 
 const bindingPaths = [
-  path.resolve(__dirname, '..', '..'),
+  path.resolve(getPlatformArchSpecificPackage()),
   process.env['PACT_PREBUILD_LOCATION']?.toString() ?? path.resolve(),
 ];
 let ffiLib: Ffi;

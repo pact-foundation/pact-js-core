@@ -1,0 +1,20 @@
+{
+  "name": "${node_pkg}",
+  "version": "${pkg_version}",
+  "description": "Platform/arch specific libpact_ffi binaries for @pact-foundation/pact-core",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/pact-foundation/pact-js-core.git"
+  },
+  "scripts": {},
+  "author": "Yousaf Nabi <you@saf.dev>",
+  "homepage": "https://github.com/pact-foundation/pact-js-core#readme",
+  "os": [
+    "${node_pkg_os}"
+  ],
+  ${libc}
+  "cpu": [
+    "${node_arch}"
+  ]
+}

@@ -12,7 +12,7 @@ apk add bash curl python3 make g++
 . "${SCRIPT_DIR}/../lib/export-binary-versions.sh"
 "${SCRIPT_DIR}/../lib/download-ffi.sh"
 rm -rf build node_modules
-npm ci --ignore-scripts
+npm ci --ignore-scripts || npm i --ignore-scripts
 export npm_config_target=${NODE_VERSION}
 
 npx --yes prebuildify@${PREBUILDIFY_VERSION} --napi --libc musl --strip --tag-libc --name ${PREBUILD_NAME}
