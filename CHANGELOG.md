@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [16.0.0](https://github.com/pact-foundation/pact-js-core/compare/v15.2.1...v16.0.0) (2025-02-17)
+
+
+### ⚠ BREAKING CHANGES
+
+* build platform/arch specific npm packages
+
+### Features
+
+* build platform/arch specific npm packages ([809775e](https://github.com/pact-foundation/pact-js-core/commit/809775e01e937e0b20a3305076f72c85dec8b674))
+
+
+### Fixes and Improvements
+
+* **deps:** update dependency check-types to v7.4.0 ([30ff204](https://github.com/pact-foundation/pact-js-core/commit/30ff204ea4988ecef56ebef223880e3e44abd7c7))
+* **deps:** update dependency underscore to v1.13.7 ([921f692](https://github.com/pact-foundation/pact-js-core/commit/921f6926955c74c45b33168da3aeb66c1b673ccd))
+
 ## [15.2.1](https://github.com/pact-foundation/pact-js-core/compare/v15.2.0...v15.2.1) (2024-09-06)
 
 
