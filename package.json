@@ -51,7 +51,7 @@
     "underscore": "1.13.7"
   },
   "devDependencies": {
-    "@grpc/grpc-js": "1.12.4",
+    "@grpc/grpc-js": "1.13.4",
     "@grpc/proto-loader": "0.7.15",
     "@pact-foundation/pact-js-prettier-config": "1.0.0",
     "@snyk/protect": "1.1294.2",
