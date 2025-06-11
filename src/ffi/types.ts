@@ -8,7 +8,7 @@ export type FfiMessageHandle = number;
 // TODO: Replace this pattern of type + const + lint disable with enums
 
 export type FfiSpecificationVersion = 0 | 1 | 2 | 3 | 4 | 5;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const FfiSpecificationVersion: Record<string, FfiSpecificationVersion> =
   {
     SPECIFICATION_VERSION_UNKNOWN: 0,
@@ -20,7 +20,7 @@ export const FfiSpecificationVersion: Record<string, FfiSpecificationVersion> =
   };
 
 export type FfiWritePactResponse = 0 | 1 | 2 | 3;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const FfiWritePactResponse: Record<string, FfiWritePactResponse> = {
   SUCCESS: 0,
   GENERAL_PANIC: 1,
@@ -29,7 +29,7 @@ export const FfiWritePactResponse: Record<string, FfiWritePactResponse> = {
 };
 
 export type FfiWriteMessagePactResponse = 0 | 1 | 2;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const FfiWriteMessagePactResponse: Record<
   string,
   FfiWriteMessagePactResponse
@@ -40,7 +40,7 @@ export const FfiWriteMessagePactResponse: Record<
 };
 
 export type FfiConfigurePluginResponse = 0 | 1 | 2 | 3;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const FfiConfigurePluginResponse: Record<
   string,
   FfiConfigurePluginResponse
@@ -52,7 +52,7 @@ export const FfiConfigurePluginResponse: Record<
 };
 
 export type FfiPluginInteractionResponse = 0 | 1 | 2 | 3 | 4 | 5 | 6;
-// eslint-disable-next-line @typescript-eslint/no-redeclare
+ 
 export const FfiPluginInteractionResponse: Record<
   string,
   FfiPluginInteractionResponse
@@ -87,7 +87,7 @@ export const CREATE_MOCK_SERVER_ERRORS = {
 -5	The address is not valid
 -6	Could not create the TLS configuration with the self-signed certificate
 */
-// eslint-disable-next-line @typescript-eslint/naming-convention
+ 
 export enum VERIFY_PROVIDER_RESPONSE {
   VERIFICATION_SUCCESSFUL = 0,
   VERIFICATION_FAILED,
