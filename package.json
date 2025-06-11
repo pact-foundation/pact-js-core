@@ -46,7 +46,7 @@
     "check-types": "7.4.0",
     "detect-libc": "^2.0.3",
     "node-gyp-build": "^4.6.0",
-    "pino": "^8.7.0",
+    "pino": "^9.0.0",
     "pino-pretty": "^9.1.1",
     "underscore": "1.13.7"
   },
