@@ -51,6 +51,9 @@
     "underscore": "1.13.7"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.9",
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.28.0",
     "@grpc/grpc-js": "1.13.4",
     "@grpc/proto-loader": "0.7.15",
     "@pact-foundation/pact-js-prettier-config": "1.0.0",
@@ -71,7 +74,7 @@
     "@types/tar": "6.1.13",
     "@types/underscore": "1.13.0",
     "@types/unixify": "1.0.2",
-    "@types/url-join": "4.0.3",
+    "@types/url-join": "5.0.0",
     "@typescript-eslint/eslint-plugin": "8.34.0",
     "@typescript-eslint/parser": "8.34.0",
     "axios": "1.12.2",
@@ -83,7 +86,7 @@
     "cors": "2.8.5",
     "cross-env": "7.0.3",
     "decamelize": "6.0.0",
-    "eslint": "9.28.0",
+    "eslint": "^9.28.0",
     "eslint-config-prettier": "10.1.5",
     "eslint-import-resolver-typescript": "4.4.3",
     "eslint-plugin-chai-friendly": "1.0.1",
@@ -91,6 +94,7 @@
     "eslint-plugin-mocha": "11.1.0",
     "express": "5.1.0",
     "form-data": "4.0.3",
+    "globals": "^16.2.0",
     "grpc-promise": "1.4.0",
     "mocha": "11.6.0",
     "node-addon-api": "8.5.0",
@@ -100,14 +104,15 @@
     "rimraf": "6.0.1",
     "sinon": "21.0.0",
     "ts-node": "10.9.2",
-    "typescript": "5.8.3"
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.34.0"
   },
   "overrides": {
     "semver": "7.7.2"
   },
   "scripts": {
     "clean": "rimraf '{src,test}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
-    "lint": "eslint . --ext .ts --config .eslintrc",
+    "lint": "eslint .",
     "lint:fix": "npm run lint -- --fix",
     "prebuild": "npm run clean",
     "download-libs": "npm run clean && bash script/download-libs.sh",
