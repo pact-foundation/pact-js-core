@@ -47,7 +47,7 @@
     "detect-libc": "^2.0.3",
     "node-gyp-build": "^4.6.0",
     "pino": "^8.7.0",
-    "pino-pretty": "^9.1.1",
+    "pino-pretty": "^13.0.0",
     "underscore": "1.13.7"
   },
   "devDependencies": {
