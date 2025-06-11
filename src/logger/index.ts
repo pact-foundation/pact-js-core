@@ -4,7 +4,7 @@ import { LogLevel } from './types';
 
 // TODO: Replace this hack with https://www.npmjs.com/package/@npmcli/package-json
 // TODO: abstract this so it's not repeated in src/verifier/nativeVerifier.ts
-// eslint-disable-next-line @typescript-eslint/no-var-requires
+ 
 const pkg = require('../../package.json');
 
 const logContext = `pact-core@${pkg.version}`;
