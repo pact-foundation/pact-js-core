@@ -54,7 +54,6 @@
     "@grpc/grpc-js": "1.13.4",
     "@grpc/proto-loader": "0.7.15",
     "@pact-foundation/pact-js-prettier-config": "1.0.0",
-    "@snyk/protect": "1.1297.3",
     "@tsconfig/node14": "14.1.4",
     "@types/basic-auth": "1.1.8",
     "@types/chai": "4.3.20",
@@ -115,10 +114,8 @@
     "download-libs": "npm run clean && bash script/download-libs.sh",
     "clean-libs": "rimraf 'ffi'",
     "build": "tsc --project tsconfig.build.json",
-    "prerelease": "npm run snyk-protect",
     "release": "commit-and-tag-version",
     "test": "cross-env PACT_DO_NOT_TRACK=true mocha \"{src,test}/**/*.spec.ts\"",
-    "snyk-protect": "snyk-protect",
     "format:base": "prettier --parser typescript",
     "format:check": "npm run format:base -- --list-different \"{src,test}/**/*.{ts,tsx}\"",
     "format:fix": "npm run format:base -- --write \"{src,test}/**/*.{ts,tsx}\"",
@@ -161,7 +158,6 @@
       }
     ]
   },
-  "snyk": true,
   "optionalDependencies": {
     "@pact-foundation/pact-core-darwin-arm64": "16.0.0",
     "@pact-foundation/pact-core-darwin-x64": "16.0.0",
