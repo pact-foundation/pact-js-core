@@ -24,7 +24,15 @@ import {
 import { getFfiLib } from '../ffi';
 import { mockServerMismatches, writePact } from './internals';
 
-const asyncMessage = (ffi: Ffi, interactionPtr: number) => ({
+const asyncMessage = (
+  ffi: Ffi,
+  interactionPtr: number,
+  pactPtr: number,
+  messageCount: number,
+  index: number
+) => ({
+  // todo count the number of messages (and ref them?)
+  // Required to get contents
   withPluginRequestInteractionContents: (
     contentType: string,
     contents: string
@@ -56,6 +64,8 @@ const asyncMessage = (ffi: Ffi, interactionPtr: number) => ({
   reifyMessage: () => ffi.pactffiMessageReify(interactionPtr),
   withMetadata: (name: string, value: string) =>
     ffi.pactffiMessageWithMetadata(interactionPtr, name, value),
+  getRequestContents: () =>
+    ffi.pactffiGetAsyncMessageRequestContents(pactPtr, messageCount, index),
 });
 
 export const makeConsumerPact = (
@@ -69,6 +79,9 @@ export const makeConsumerPact = (
     setLogLevel(logLevel);
   }
   const ffi = getFfiLib(logLevel, logFile);
+  // We need to track the number of messages so that we can
+  // correctly reference them when extracting contents
+  let messageCount = 0;
 
   const pactPtr = ffi.pactffiNewPact(consumer, provider);
   if (!ffi.pactffiWithSpecification(pactPtr, version)) {
@@ -137,12 +150,15 @@ export const makeConsumerPact = (
       ffi.pactffiWithPactMetadata(pactPtr, namespace, name, value),
     newAsynchronousMessage: (description: string): AsynchronousMessage => {
       const interactionPtr = ffi.pactffiNewAsyncMessage(pactPtr, description);
+      const index = messageCount;
+      messageCount += 1;
 
-      return asyncMessage(ffi, interactionPtr);
+      return asyncMessage(ffi, interactionPtr, pactPtr, messageCount, index);
     },
     newSynchronousMessage: (description: string): SynchronousMessage => {
-      // TODO: will this automatically set the correct spec version?
       const interactionPtr = ffi.pactffiNewSyncMessage(pactPtr, description);
+      const index = messageCount;
+      messageCount += 1;
 
       return {
         withPluginRequestInteractionContents: (
@@ -218,6 +234,18 @@ export const makeConsumerPact = (
           ),
         withMetadata: (name: string, value: string) =>
           ffi.pactffiMessageWithMetadata(interactionPtr, name, value),
+        getRequestContents: () =>
+          ffi.pactffiGetSyncMessageRequestContents(
+            pactPtr,
+            messageCount,
+            index
+          ),
+        getResponseContents: () =>
+          ffi.pactffiGetSyncMessageResponseContents(
+            pactPtr,
+            messageCount,
+            index
+          ),
       };
     },
     pactffiCreateMockServerForTransport(
@@ -378,6 +406,9 @@ export const makeConsumerMessagePact = (
     setLogLevel(logLevel);
   }
   const ffi = getFfiLib(logLevel, logFile);
+  // We need to track the number of messages so that we can
+  // correctly reference them when extracting contents
+  let messageCount = 0;
 
   const pactPtr = ffi.pactffiNewPact(consumer, provider);
   if (!ffi.pactffiWithSpecification(pactPtr, version) || version < 4) {
@@ -407,15 +438,22 @@ export const makeConsumerMessagePact = (
     // Alias for newAsynchronousMessage
     newMessage: (description: string): AsynchronousMessage => {
       const interactionPtr = ffi.pactffiNewAsyncMessage(pactPtr, description);
+      const index = messageCount;
+      messageCount += 1;
 
-      return asyncMessage(ffi, interactionPtr);
+      return asyncMessage(ffi, interactionPtr, pactPtr, messageCount, index);
     },
     newAsynchronousMessage: (description: string): AsynchronousMessage => {
       const interactionPtr = ffi.pactffiNewAsyncMessage(pactPtr, description);
+      const index = messageCount;
+      messageCount += 1;
 
-      return asyncMessage(ffi, interactionPtr);
+      return asyncMessage(ffi, interactionPtr, pactPtr, messageCount, index);
     },
     newSynchronousMessage: (description: string): SynchronousMessage => {
+      const index = messageCount;
+      messageCount += 1;
+
       // TODO: will this automatically set the correct spec version?
       const interactionPtr = ffi.pactffiNewSyncMessage(pactPtr, description);
 
@@ -493,6 +531,18 @@ export const makeConsumerMessagePact = (
           ),
         withMetadata: (name: string, value: string) =>
           ffi.pactffiMessageWithMetadata(interactionPtr, name, value),
+        getRequestContents: () =>
+          ffi.pactffiGetSyncMessageRequestContents(
+            pactPtr,
+            messageCount,
+            index
+          ),
+        getResponseContents: () =>
+          ffi.pactffiGetSyncMessageResponseContents(
+            pactPtr,
+            messageCount,
+            index
+          ),
       };
     },
     pactffiCreateMockServerForTransport(
