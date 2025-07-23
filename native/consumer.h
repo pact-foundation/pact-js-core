@@ -41,6 +41,9 @@ Napi::Value PactffiMessageWithBinaryContents(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageWithMetadata(const Napi::CallbackInfo& info);
 Napi::Value PactffiMessageExpectsToReceive(const Napi::CallbackInfo& info);
 Napi::Value PactffiWriteMessagePactFile(const Napi::CallbackInfo& info);
+Napi::Value PactffiGetAsyncMessageRequestContents(const Napi::CallbackInfo& info);
+Napi::Value PactffiGetSyncMessageRequestContents(const Napi::CallbackInfo& info);
+Napi::Value PactffiGetSyncMessageResponseContents(const Napi::CallbackInfo& info);
 
 // Plugins
 Napi::Value PactffiUsingPlugin(const Napi::CallbackInfo& info);
