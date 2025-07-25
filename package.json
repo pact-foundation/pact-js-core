@@ -80,7 +80,7 @@
     "chai-as-promised": "7.1.2",
     "commit-and-tag-version": "11.3.0",
     "cors": "2.8.5",
-    "cross-env": "5.2.1",
+    "cross-env": "10.0.0",
     "decamelize": "2.0.0",
     "eslint": "8.57.1",
     "eslint-config-airbnb-base": "15.0.0",
