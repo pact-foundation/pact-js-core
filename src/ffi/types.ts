@@ -304,6 +304,43 @@ export type FfiConsumerFunctions = {
     value: string
   ): void;
   pactffiMessageReify(handle: FfiMessageHandle): string;
+  pactffiGetAsyncMessageRequestContents(
+    pact: FfiPactHandle,
+    messageCount: number,
+    messageIndex: number
+  ): Buffer;
+  pactffiGetSyncMessageRequestContents(
+    pact: FfiPactHandle,
+    messageCount: number,
+    messageIndex: number
+  ): Buffer;
+  pactffiGetSyncMessageResponseContents(
+    pact: FfiPactHandle,
+    messageCount: number,
+    messageIndex: number
+  ): Buffer[];
+  // pactffiSyncMessageSetRequestContents(
+  //   message: FfiInteractionHandle,
+  //   contents: string,
+  //   contentType: string
+  // ): void;
+  // pactffiSyncMessageSetRequestContentsBin(
+  //   message: FfiInteractionHandle,
+  //   contents: Buffer,
+  //   contentType: string
+  // ): void;
+  // pactffiSyncMessageSetResponseContents(
+  //   message: FfiInteractionHandle,
+  //   index: number,
+  //   contents: string,
+  //   contentType: string
+  // ): void;
+  // pactffiSyncMessageSetResponseContentsBin(
+  //   message: FfiInteractionHandle,
+  //   index: number,
+  //   contents: Buffer,
+  //   contentType: string
+  // ): void;
 };
 
 export type FfiVerificationFunctions = {

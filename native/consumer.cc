@@ -1895,208 +1895,236 @@ Napi::Value PactffiPluginInteractionContents(const Napi::CallbackInfo& info) {
   return Napi::Boolean::New(env, res);
 }
 
-/*
-// GetMessageContents retreives the binary contents of the request for a given message
-// any matchers are stripped away if given
-// if the contents is from a plugin, the byte[] representation of the parsed
-// plugin data is returned, again, with any matchers etc. removed
-func (m *Message) GetMessageRequestContents() ([]byte, error) {
-	log.Println("[DEBUG] GetMessageRequestContents")
-	if m.messageType == MESSAGE_TYPE_ASYNC {
-		iter := C.pactffi_pact_handle_get_message_iter(m.pact.handle)
-		log.Println("[DEBUG] pactffi_pact_handle_get_message_iter")
-		if iter == nil {
-			return nil, errors.New("unable to get a message iterator")
-		}
-		log.Println("[DEBUG] pactffi_pact_handle_get_message_iter - OK")
+/**
+ * Get the message request contents for an asynchronous message
+ * 
+ * Retrieves the binary contents of the request for a given message.
+ * Any matchers are stripped away if given.
+ * If the contents is from a plugin, the byte[] representation of the parsed
+ * plugin data is returned, again, with any matchers etc. removed.
+ * 
+ * * `pact` - Handle to the Pact
+ * * `message_count` - Number of messages in the pact
+ * * `message_index` - Index of the message to retrieve (0-based)
+ * 
+ * Returns a Buffer containing the message contents, or throws an error if the message cannot be found.
+ * 
+ * C interface:
+ * 
+ *    struct PactMessageIterator *pactffi_pact_handle_get_message_iter(PactHandle pact);
+ *    struct Message *pactffi_pact_message_iter_next(struct PactMessageIterator *iter);
+ *    size_t pactffi_message_get_contents_length(Message *message);
+ *    const unsigned char *pactffi_message_get_contents_bin(const Message *message);
+ */
+Napi::Value PactffiGetAsyncMessageRequestContents(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
 
-		///////
-		// TODO: some debugging in here to see what's exploding.......
-		///////
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiGetAsyncMessageRequestContents received < 3 arguments");
+  }
 
-		log.Println("[DEBUG] pactffi_pact_handle_get_message_iter - len", len(m.server.messages))
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGetAsyncMessageRequestContents(arg 0) expected a PactHandle (uint16_t)");
+  }
 
-		for i := 0; i < len(m.server.messages); i++ {
-			log.Println("[DEBUG] pactffi_pact_handle_get_message_iter - index", i)
-			message := C.pactffi_pact_message_iter_next(iter)
-			log.Println("[DEBUG] pactffi_pact_message_iter_next - message", message)
+  if (!info[1].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGetAsyncMessageRequestContents(arg 1) expected a number (message_count)");
+  }
 
-			if i == m.index {
-				log.Println("[DEBUG] pactffi_pact_message_iter_next - index match", message)
+  if (!info[2].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGetAsyncMessageRequestContents(arg 2) expected a number (message_index)");
+  }
 
-				if message == nil {
-					return nil, errors.New("retreived a null message pointer")
-				}
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
+  uint32_t message_count = info[1].As<Napi::Number>().Uint32Value();
+  uint32_t message_index = info[2].As<Napi::Number>().Uint32Value();
 
-				len := C.pactffi_message_get_contents_length(message)
-				log.Println("[DEBUG] pactffi_message_get_contents_length - len", len)
-				if len == 0 {
-					return nil, errors.New("retreived an empty message")
-				}
-				data := C.pactffi_message_get_contents_bin(message)
-				log.Println("[DEBUG] pactffi_message_get_contents_bin - data", data)
-				if data == nil {
-					return nil, errors.New("retreived an empty pointer to the message contents")
-				}
-				ptr := unsafe.Pointer(data)
-				bytes := C.GoBytes(ptr, C.int(len))
+  struct PactMessageIterator *iter = pactffi_pact_handle_get_message_iter(pact);
+  if (iter == nullptr) {
+    throw Napi::Error::New(env, "Unable to get a message iterator");
+  }
 
-				return bytes, nil
-			}
-		}
+  for (uint32_t i = 0; i < message_count; i++) {
+    struct Message *message = pactffi_pact_message_iter_next(iter);
+    
+    if (i == message_index) {
+      if (message == nullptr) {
+        throw Napi::Error::New(env, "Retrieved a null message pointer");
+      }
 
-	} else {
-		iter := C.pactffi_pact_handle_get_sync_message_iter(m.pact.handle)
-		if iter == nil {
-			return nil, errors.New("unable to get a message iterator")
-		}
+      size_t len = pactffi_message_get_contents_length(message);
+      if (len == 0) {
+        throw Napi::Error::New(env, "Retrieved an empty message");
+      }
 
-		for i := 0; i < len(m.server.messages); i++ {
-			message := C.pactffi_pact_sync_message_iter_next(iter)
+      const unsigned char *data = pactffi_message_get_contents_bin(message);
+      if (data == nullptr) {
+        throw Napi::Error::New(env, "Retrieved an empty pointer to the message contents");
+      }
 
-			if i == m.index {
-				if message == nil {
-					return nil, errors.New("retreived a null message pointer")
-				}
+      return Napi::Buffer<uint8_t>::Copy(env, data, len);
+    }
+  }
 
-				len := C.pactffi_sync_message_get_request_contents_length(message)
-				if len == 0 {
-					return nil, errors.New("retreived an empty message")
-				}
-				data := C.pactffi_sync_message_get_request_contents_bin(message)
-				if data == nil {
-					return nil, errors.New("retreived an empty pointer to the message contents")
-				}
-				ptr := unsafe.Pointer(data)
-				bytes := C.GoBytes(ptr, C.int(len))
-
-				return bytes, nil
-			}
-		}
-	}
-
-	return nil, errors.New("unable to find the message")
+  throw Napi::Error::New(env, "Unable to find the message");
 }
 
-// GetMessageResponseContents retreives the binary contents of the response for a given message
-// any matchers are stripped away if given
-// if the contents is from a plugin, the byte[] representation of the parsed
-// plugin data is returned, again, with any matchers etc. removed
-func (m *Message) GetMessageResponseContents() ([][]byte, error) {
+/**
+ * Get the message request contents for a synchronous message
+ * 
+ * Retrieves the binary contents of the request for a given synchronous message.
+ * Any matchers are stripped away if given.
+ * If the contents is from a plugin, the byte[] representation of the parsed
+ * plugin data is returned, again, with any matchers etc. removed.
+ * 
+ * * `pact` - Handle to the Pact
+ * * `message_count` - Number of messages in the pact
+ * * `message_index` - Index of the message to retrieve (0-based)
+ * 
+ * Returns a Buffer containing the message contents, or throws an error if the message cannot be found.
+ * 
+ * C interface:
+ * 
+ *    struct PactSyncMessageIterator *pactffi_pact_handle_get_sync_message_iter(PactHandle pact);
+ *    struct SynchronousMessage *pactffi_pact_sync_message_iter_next(struct PactSyncMessageIterator *iter);
+ *    size_t pactffi_sync_message_get_request_contents_length(SynchronousMessage *message);
+ *    const unsigned char *pactffi_sync_message_get_request_contents_bin(SynchronousMessage *message);
+ */
+Napi::Value PactffiGetSyncMessageRequestContents(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
 
-	responses := make([][]byte, len(m.server.messages))
-	if m.messageType == MESSAGE_TYPE_ASYNC {
-		return nil, errors.New("invalid request: asynchronous messages do not have response")
-	}
-	iter := C.pactffi_pact_handle_get_sync_message_iter(m.pact.handle)
-	if iter == nil {
-		return nil, errors.New("unable to get a message iterator")
-	}
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiGetSyncMessageRequestContents received < 3 arguments");
+  }
 
-	for i := 0; i < len(m.server.messages); i++ {
-		message := C.pactffi_pact_sync_message_iter_next(iter)
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGetSyncMessageRequestContents(arg 0) expected a PactHandle (uint16_t)");
+  }
 
-		if message == nil {
-			return nil, errors.New("retreived a null message pointer")
-		}
+  if (!info[1].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGetSyncMessageRequestContents(arg 1) expected a number (message_count)");
+  }
 
-		// Get Response body
-		len := C.pactffi_sync_message_get_response_contents_length(message, C.ulong(i))
-		if len == 0 {
-			return nil, errors.New("retreived an empty message")
-		}
-		data := C.pactffi_sync_message_get_response_contents_bin(message, C.ulong(i))
-		if data == nil {
-			return nil, errors.New("retreived an empty pointer to the message contents")
-		}
-		ptr := unsafe.Pointer(data)
-		bytes := C.GoBytes(ptr, C.int(len))
+  if (!info[2].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGetSyncMessageRequestContents(arg 2) expected a number (message_index)");
+  }
 
-		responses[i] = bytes
-	}
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
+  uint32_t message_count = info[1].As<Napi::Number>().Uint32Value();
+  uint32_t message_index = info[2].As<Napi::Number>().Uint32Value();
 
-	return responses, nil
+  struct PactSyncMessageIterator *iter = pactffi_pact_handle_get_sync_message_iter(pact);
+  if (iter == nullptr) {
+    throw Napi::Error::New(env, "Unable to get a sync message iterator");
+  }
+
+  for (uint32_t i = 0; i < message_count; i++) {
+    struct SynchronousMessage *message = pactffi_pact_sync_message_iter_next(iter);
+    
+    if (i == message_index) {
+      if (message == nullptr) {
+        throw Napi::Error::New(env, "Retrieved a null message pointer");
+      }
+
+      size_t len = pactffi_sync_message_get_request_contents_length(message);
+      if (len == 0) {
+        throw Napi::Error::New(env, "Retrieved an empty message");
+      }
+
+      const unsigned char *data = pactffi_sync_message_get_request_contents_bin(message);
+      if (data == nullptr) {
+        throw Napi::Error::New(env, "Retrieved an empty pointer to the message contents");
+      }
+
+      return Napi::Buffer<uint8_t>::Copy(env, data, len);
+    }
+  }
+
+  throw Napi::Error::New(env, "Unable to find the message");
 }
 
-// StartTransport starts up a mock server on the given address:port for the given transport
-// https://docs.rs/pact_ffi/latest/pact_ffi/mock_server/fn.pactffi_create_mock_server_for_transport.html
-func (m *MessageServer) StartTransport(transport string, address string, port int, config map[string][]interface{}) (int, error) {
-	if len(m.messages) == 0 {
-		return 0, ErrNoInteractions
-	}
+/**
+ * Get the message response contents for synchronous messages
+ * 
+ * Retrieves the binary contents of all responses for a given synchronous message.
+ * Any matchers are stripped away if given.
+ * If the contents is from a plugin, the byte[] representation of the parsed
+ * plugin data is returned, again, with any matchers etc. removed.
+ * 
+ * * `pact` - Handle to the Pact
+ * * `message_count` - Number of messages in the pact
+ * * `message_index` - Index of the message to retrieve (0-based)
+ * 
+ * Returns an array of Buffers containing all the message response contents, or throws an error if the message cannot be found.
+ * 
+ * C interface:
+ * 
+ *    struct PactSyncMessageIterator *pactffi_pact_handle_get_sync_message_iter(PactHandle pact);
+ *    struct SynchronousMessage *pactffi_pact_sync_message_iter_next(struct PactSyncMessageIterator *iter);
+ *    size_t pactffi_sync_message_get_number_responses(const SynchronousMessage *message);
+ *    size_t pactffi_sync_message_get_response_contents_length(const struct SynchronousMessage *message, size_t index);
+ *    const unsigned char *pactffi_sync_message_get_response_contents_bin(const struct SynchronousMessage *message, size_t index);
+ */
+Napi::Value PactffiGetSyncMessageResponseContents(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
 
-	log.Println("[DEBUG] mock server starting on address:", address, port)
-	cAddress := C.CString(address)
-	defer free(cAddress)
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiGetSyncMessageResponseContents received < 3 arguments");
+  }
 
-	cTransport := C.CString(transport)
-	defer free(cTransport)
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGetSyncMessageResponseContents(arg 0) expected a PactHandle (uint16_t)");
+  }
 
-	configJson := stringFromInterface(config)
-	cConfig := C.CString(configJson)
-	defer free(cConfig)
+  if (!info[1].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGetSyncMessageResponseContents(arg 1) expected a number (message_count)");
+  }
 
-	p := C.pactffi_create_mock_server_for_transport(m.messagePact.handle, cAddress, C.int(port), cTransport, cConfig)
+  if (!info[2].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiGetSyncMessageResponseContents(arg 2) expected a number (message_index)");
+  }
 
-	// | Error | Description
-	// |-------|-------------
-	// | -1	   | An invalid handle was received. Handles should be created with pactffi_new_pact
-	// | -2	   | transport_config is not valid JSON
-	// | -3	   | The mock server could not be started
-	// | -4	   | The method panicked
-	// | -5	   | The address is not valid
-	msPort := int(p)
-	switch msPort {
-	case -1:
-		return 0, ErrInvalidMockServerConfig
-	case -2:
-		return 0, ErrInvalidMockServerConfig
-	case -3:
-		return 0, ErrMockServerUnableToStart
-	case -4:
-		return 0, ErrMockServerPanic
-	case -5:
-		return 0, ErrInvalidAddress
-	default:
-		if msPort > 0 {
-			log.Println("[DEBUG] mock server running on port:", msPort)
-			return msPort, nil
-		}
-		return msPort, fmt.Errorf("an unknown error (code: %v) occurred when starting a mock server for the test", msPort)
-	}
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
+  uint32_t message_count = info[1].As<Napi::Number>().Uint32Value();
+  uint32_t message_index = info[2].As<Napi::Number>().Uint32Value();
+
+  struct PactSyncMessageIterator *iter = pactffi_pact_handle_get_sync_message_iter(pact);
+  if (iter == nullptr) {
+    throw Napi::Error::New(env, "Unable to get a sync message iterator");
+  }
+
+  for (uint32_t i = 0; i < message_count; i++) {
+    struct SynchronousMessage *message = pactffi_pact_sync_message_iter_next(iter);
+    
+    if (i == message_index) {
+      if (message == nullptr) {
+        throw Napi::Error::New(env, "Retrieved a null message pointer");
+      }
+
+      size_t num_responses = pactffi_sync_message_get_number_responses(message);
+      if (num_responses == 0) {
+        throw Napi::Error::New(env, "Retrieved a message with no responses");
+      }
+
+      Napi::Array responses = Napi::Array::New(env, num_responses);
+
+      for (size_t response_index = 0; response_index < num_responses; response_index++) {
+        size_t len = pactffi_sync_message_get_response_contents_length(message, response_index);
+        if (len == 0) {
+          throw Napi::Error::New(env, "Retrieved an empty response");
+        }
+
+        const unsigned char *data = pactffi_sync_message_get_response_contents_bin(message, response_index);
+        if (data == nullptr) {
+          throw Napi::Error::New(env, "Retrieved an empty pointer to the response contents");
+        }
+
+        responses[response_index] = Napi::Buffer<uint8_t>::Copy(env, data, len);
+      }
+
+      return responses;
+    }
+  }
+
+  throw Napi::Error::New(env, "Unable to find the message");
 }
-
-// Get the length of the request contents of a `SynchronousMessage`.
-size_t pactffi_sync_message_get_request_contents_length(SynchronousMessage *message);
-struct PactSyncMessageIterator *pactffi_pact_handle_get_sync_message_iter(PactHandle pact);
-struct SynchronousMessage *pactffi_pact_sync_message_iter_next(struct PactSyncMessageIterator *iter);
-
-// Async
-// Get the length of the contents of a `Message`.
-size_t pactffi_message_get_contents_length(Message *message);
-
-//  Get the contents of a `Message` as a pointer to an array of bytes.
-const unsigned char *pactffi_message_get_contents_bin(const Message *message);
-struct PactMessageIterator *pactffi_pact_handle_get_message_iter(PactHandle pact);
-struct Message *pactffi_pact_message_iter_next(struct PactMessageIterator *iter);
-
-// Need the index of the body to get
-const unsigned char *pactffi_sync_message_get_response_contents_bin(const struct SynchronousMessage *message, size_t index);
-size_t pactffi_sync_message_get_response_contents_length(const struct SynchronousMessage *message, size_t index);
-
-// Sync
-// Get the request contents of a `SynchronousMessage` as a pointer to an array of bytes.
-// The number of bytes in the buffer will be returned by `pactffi_sync_message_get_request_contents_length`.
-const unsigned char *pactffi_sync_message_get_request_contents_bin(SynchronousMessage *message);
-// Set Sync message request body - non binary
-void pactffi_sync_message_set_request_contents(InteractionHandle *message, const char *contents, const char *content_type);
-
-// Set Sync message request body - binary
-void pactffi_sync_message_set_request_contents_bin(InteractionHandle *message, const unsigned char *contents, size_t len, const char *content_type);
-
-// Set sync message response contents - non binary
-void pactffi_sync_message_set_response_contents(InteractionHandle *message, size_t index, const char *contents, const char *content_type);
-
-// Set sync message response contents - binary
-void pactffi_sync_message_set_response_contents_bin(InteractionHandle *message, size_t index, const unsigned char *contents, size_t len, const char *content_type);
-*/
