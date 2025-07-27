@@ -9,7 +9,7 @@ import { ConsumerVersionSelector, VerifierOptions } from './types';
 const { expect } = chai;
 chai.use(chaiAsPromised);
 
-describe('Verifier argument validator', function() {
+describe('Verifier argument validator', function () {
   // This spec largely tests the validation capabilties of the verifier
   // It's a slightly modified version of the spec we had with the ruby
   // verifier. I'd like to update it so that it better tests the behaviour
@@ -21,24 +21,27 @@ describe('Verifier argument validator', function() {
     expect(validateOptions(options)).to.deep.equal(options);
   };
 
-  beforeEach(function() {
+  beforeEach(function () {
     sinon.restore();
   });
 
-  context('when automatically finding pacts from a broker', function() {
-    context('when not given --pact-urls and only --pact-broker-url', function() {
-      it('should fail with an error because provider is missing', function() {
-        expect(() =>
-          validateOptions({
-            providerBaseUrl: 'http://localhost',
-            pactBrokerUrl: 'http://foo.com',
-          })
-        ).to.throw(/pactBrokerUrl requires the following properties/);
-      });
-    });
+  context('when automatically finding pacts from a broker', function () {
+    context(
+      'when not given --pact-urls and only --pact-broker-url',
+      function () {
+        it('should fail with an error because provider is missing', function () {
+          expect(() =>
+            validateOptions({
+              providerBaseUrl: 'http://localhost',
+              pactBrokerUrl: 'http://foo.com',
+            })
+          ).to.throw(/pactBrokerUrl requires the following properties/);
+        });
+      }
+    );
 
-    context('when given valid arguments', function() {
-      it('should return a Verifier object', function() {
+    context('when given valid arguments', function () {
+      it('should return a Verifier object', function () {
         expectSuccessWith({
           providerBaseUrl: 'http://localhost',
           pactBrokerUrl: 'http://foo.com',
@@ -48,8 +51,8 @@ describe('Verifier argument validator', function() {
       });
     });
 
-    context('when given an unknown array argument', function() {
-      it('should return a Verifier object', function() {
+    context('when given an unknown array argument', function () {
+      it('should return a Verifier object', function () {
         expectSuccessWith({
           madeupArg: [''],
           providerBaseUrl: 'http://localhost',
@@ -61,14 +64,14 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when not given --pact-urls or --provider-base-url', function() {
-    it('should fail with an error', function() {
+  context('when not given --pact-urls or --provider-base-url', function () {
+    it('should fail with an error', function () {
       expect(() => validateOptions({} as VerifierOptions)).to.throw(Error);
     });
   });
 
-  context('when given an invalid timeout', function() {
-    it('should fail with an error', function() {
+  context('when given an invalid timeout', function () {
+    it('should fail with an error', function () {
       expect(() => {
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -79,8 +82,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context("when given remote Pact URLs that don't exist", function() {
-    it('should pass through to the Pact Verifier regardless', function() {
+  context("when given remote Pact URLs that don't exist", function () {
+    it('should pass through to the Pact Verifier regardless', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -90,8 +93,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when given local Pact URLs that do exist', function() {
-    it('should not fail', function() {
+  context('when given local Pact URLs that do exist', function () {
+    it('should not fail', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -103,9 +106,9 @@ describe('Verifier argument validator', function() {
 
   context(
     'when requested to publish verification results to a Pact Broker',
-    function() {
-      context('and specifies a provider version', function() {
-        it('should pass through to the Pact Verifier', function() {
+    function () {
+      context('and specifies a provider version', function () {
+        it('should pass through to the Pact Verifier', function () {
           expect(() =>
             validateOptions({
               providerBaseUrl: 'http://localhost',
@@ -117,8 +120,8 @@ describe('Verifier argument validator', function() {
         });
       });
 
-      context('and does not specify provider version', function() {
-        it('should fail with an error', function() {
+      context('and does not specify provider version', function () {
+        it('should fail with an error', function () {
           expect(() =>
             validateOptions({
               providerBaseUrl: 'http://localhost',
@@ -133,8 +136,8 @@ describe('Verifier argument validator', function() {
     }
   );
 
-  context('when given the correct arguments', function() {
-    it('should return a Verifier object', function() {
+  context('when given the correct arguments', function () {
+    it('should return a Verifier object', function () {
       expectSuccessWith({
         providerBaseUrl: 'http://localhost',
         pactUrls: ['http://idontexist'],
@@ -142,8 +145,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when using includeWipPactsSince', function() {
-    it('should accept a non-empty string', function() {
+  context('when using includeWipPactsSince', function () {
+    it('should accept a non-empty string', function () {
       expectSuccessWith({
         providerBaseUrl: 'http://localhost',
         pactUrls: ['http://idontexist'],
@@ -151,7 +154,7 @@ describe('Verifier argument validator', function() {
       });
     });
 
-    it('should not accept an empty string', function() {
+    it('should not accept an empty string', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -162,8 +165,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when an using format option', function() {
-    it("should work with either 'json' or 'xml'", function() {
+  context('when an using format option', function () {
+    it("should work with either 'json' or 'xml'", function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -187,7 +190,7 @@ describe('Verifier argument validator', function() {
       ).to.not.throw(Error);
     });
 
-    it('should work with a case insensitive string', function() {
+    it('should work with a case insensitive string', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -198,8 +201,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when pactBrokerUrl is not provided', function() {
-    it('should not fail', function() {
+  context('when pactBrokerUrl is not provided', function () {
+    it('should not fail', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -210,8 +213,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when pactBrokerUrl is provided', function() {
-    it('should not fail', function() {
+  context('when pactBrokerUrl is provided', function () {
+    it('should not fail', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -223,8 +226,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when consumerVersionTags is not provided', function() {
-    it('should not fail', function() {
+  context('when consumerVersionTags is not provided', function () {
+    it('should not fail', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -234,8 +237,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when consumerVersionTags is provided as an array', function() {
-    it('should not fail', function() {
+  context('when consumerVersionTags is provided as an array', function () {
+    it('should not fail', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -246,8 +249,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when providerVersionTags is not provided', function() {
-    it('should not fail', function() {
+  context('when providerVersionTags is not provided', function () {
+    it('should not fail', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -257,8 +260,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when providerVersionTags is provided as an array', function() {
-    it('should not fail', function() {
+  context('when providerVersionTags is provided as an array', function () {
+    it('should not fail', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -269,9 +272,9 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when using a bearer token', function() {
-    context('and specifies a username or password', function() {
-      it('should fail with an error', function() {
+  context('when using a bearer token', function () {
+    context('and specifies a username or password', function () {
+      it('should fail with an error', function () {
         expect(() =>
           validateOptions({
             providerBaseUrl: 'http://localhost',
@@ -284,7 +287,7 @@ describe('Verifier argument validator', function() {
       });
     });
 
-    it('should not fail', function() {
+    it('should not fail', function () {
       expectSuccessWith({
         providerBaseUrl: 'http://localhost',
         pactUrls: ['http://idontexist'],
@@ -293,9 +296,9 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when providing consumerVersionSelectors', function() {
-    context('and an unsupported selector is specified', function() {
-      it('should log out a warning that the selector is unknown', function() {
+  context('when providing consumerVersionSelectors', function () {
+    context('and an unsupported selector is specified', function () {
+      it('should log out a warning that the selector is unknown', function () {
         const warnSpy = sinon.spy(logger, 'warn');
 
         expectSuccessWith({
@@ -315,8 +318,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('and the tag of "latest" is specified', function() {
-    it('should log out a warning that using this selector is not recommended', function() {
+  context('and the tag of "latest" is specified', function () {
+    it('should log out a warning that using this selector is not recommended', function () {
       const warnSpy = sinon.spy(logger, 'warn');
 
       expectSuccessWith({
@@ -333,7 +336,7 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('and valid selectors are specified', function() {
+  context('and valid selectors are specified', function () {
     [
       { tag: 'a-tag' },
       { latest: true },
@@ -349,7 +352,7 @@ describe('Verifier argument validator', function() {
     ].forEach((consumerVersionSelector) => {
       it(`should not fail when consumerVersionSelectors is ${JSON.stringify(
         consumerVersionSelector
-      )}`, function() {
+      )}`, function () {
         expectSuccessWith({
           providerBaseUrl: 'http://localhost',
           pactUrls: ['http://idontexist'],
@@ -359,9 +362,9 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when given customProviderHeaders', function() {
-    context('using the object notation', function() {
-      it('should pass through to the Pact Verifier', function() {
+  context('when given customProviderHeaders', function () {
+    context('using the object notation', function () {
+      it('should pass through to the Pact Verifier', function () {
         expect(() =>
           validateOptions({
             providerBaseUrl: 'http://localhost',
@@ -371,8 +374,8 @@ describe('Verifier argument validator', function() {
       });
     });
 
-    context('using the legacy array notation', function() {
-      it('should pass through to the Pact Verifier', function() {
+    context('using the legacy array notation', function () {
+      it('should pass through to the Pact Verifier', function () {
         expect(() =>
           validateOptions({
             providerBaseUrl: 'http://localhost',
@@ -381,8 +384,8 @@ describe('Verifier argument validator', function() {
         ).to.not.throw(Error);
       });
 
-      context('and the format is incorrect', function() {
-        it('should throw an error', function() {
+      context('and the format is incorrect', function () {
+        it('should throw an error', function () {
           expect(() =>
             validateOptions({
               providerBaseUrl: 'http://localhost',
@@ -394,8 +397,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when given providerBranch', function() {
-    it('should not throw an error', function() {
+  context('when given providerBranch', function () {
+    it('should not throw an error', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
@@ -405,8 +408,8 @@ describe('Verifier argument validator', function() {
     });
   });
 
-  context('when given unknown properties', function() {
-    it('should ignore them and not throw an error', function() {
+  context('when given unknown properties', function () {
+    it('should ignore them and not throw an error', function () {
       expect(() =>
         validateOptions({
           providerBaseUrl: 'http://localhost',
