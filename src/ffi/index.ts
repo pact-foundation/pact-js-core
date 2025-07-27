@@ -43,7 +43,7 @@ function getPlatformArchSpecificPackage() {
       resolvedPackagePath = resolvedPackagePath.replace('/package.json', '');
     }
     return resolvedPackagePath;
-  } catch (e) {
+  } catch {
     throw new Error(
       `Couldn't find npm package ${platformArchSpecificPackage} \n 💡 you can tell Pact where the npm package is located with env var $PACT_PREBUILD_PACKAGE_LOCATION`
     );
@@ -151,7 +151,7 @@ const initialiseFfi = (): typeof ffi => {
           return false;
         }
         return true;
-      } catch (error) {
+      } catch {
         return true;
       }
     });

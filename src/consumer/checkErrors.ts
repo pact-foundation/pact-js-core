@@ -26,8 +26,8 @@ type BooleanFunctions<T> = {
 export const wrapAllWithCheck = <T extends BooleanFunctions<T>>(
   o: T
 ): BooleanFunctions<T> =>
-  Object.keys(o)
-    .map((key: string) => ({
-      [key]: wrapWithCheck(o[key], key),
+  (Object.keys(o) as Array<keyof T>)
+    .map((key: keyof T) => ({
+      [key]: wrapWithCheck(o[key] as BooleanFunction<T[keyof T]>, String(key)),
     }))
     .reduce((acc, curr) => ({ ...acc, ...curr }), {}) as T;

@@ -1,6 +1,6 @@
 import chai = require('chai');
 import * as path from 'path';
-import chaiAsPromised = require('chai-as-promised');
+import chaiAsPromised from 'chai-as-promised';
 import * as rimraf from 'rimraf';
 import zlib = require('zlib');
 import { load } from '@grpc/proto-loader';
@@ -38,18 +38,18 @@ const getFeature = async (address: string, protoFile: string) => {
   });
 };
 
-describe('FFI integration test for the Message Consumer API', function() {
+describe('FFI integration test for the Message Consumer API', function () {
   setLogLevel('error');
 
   let pact: ConsumerMessagePact;
   const secret = 'this is an encoded string';
   const bytes: Buffer = zlib.gzipSync(secret);
 
-  before(function() {
+  before(function () {
     rimraf.sync(path.join(__dirname, '__testoutput__', 'message-consumer*'));
   });
 
-  beforeEach(function() {
+  beforeEach(function () {
     pact = makeConsumerMessagePact(
       'message-consumer',
       'message-provider',
@@ -57,9 +57,9 @@ describe('FFI integration test for the Message Consumer API', function() {
     );
   });
 
-  describe('Asynchronous Messages', function() {
-    describe('with JSON data', function() {
-      it('generates a pact with success', function() {
+  describe('Asynchronous Messages', function () {
+    describe('with JSON data', function () {
+      it('generates a pact with success', function () {
         pact.addMetadata('pact-node', 'meta-key', 'meta-val');
         const message = pact.newAsynchronousMessage('');
         message.expectsToReceive('a product event');
@@ -82,8 +82,8 @@ describe('FFI integration test for the Message Consumer API', function() {
       });
     });
 
-    describe('with binary data', function() {
-      it('generates a pact with success', function() {
+    describe('with binary data', function () {
+      it('generates a pact with success', function () {
         const message = pact.newAsynchronousMessage('');
         message.expectsToReceive('a binary event');
         message.given('some state');
@@ -104,9 +104,9 @@ describe('FFI integration test for the Message Consumer API', function() {
     });
   });
 
-  describe('Synchronous Messages', function() {
-    describe('with JSON data', function() {
-      it('generates a pact with success', function() {
+  describe('Synchronous Messages', function () {
+    describe('with JSON data', function () {
+      it('generates a pact with success', function () {
         pact.addMetadata('pact-node', 'meta-key', 'meta-val');
         const message = pact.newSynchronousMessage('A synchronous message');
         message.given('some state');
@@ -147,11 +147,11 @@ describe('FFI integration test for the Message Consumer API', function() {
 
         let port: number;
 
-        afterEach(function() {
+        afterEach(function () {
           pact.cleanupPlugins();
         });
 
-        beforeEach(function() {
+        beforeEach(function () {
           const grpcInteraction = `{
           "pact:proto": "${protoFile}",
           "pact:proto-service": "RouteGuide/GetFeature",
@@ -187,7 +187,7 @@ describe('FFI integration test for the Message Consumer API', function() {
           );
         });
 
-        it('generates a pact with success', async function() {
+        it('generates a pact with success', async function () {
           const feature: any = await getFeature(`127.0.0.1:${port}`, protoFile);
           expect(feature.name).to.eq('Big Tree');
 

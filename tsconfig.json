@@ -6,7 +6,6 @@
     "removeComments": true,
     "sourceMap": true,
     "moduleResolution": "node",
-    "suppressImplicitAnyIndexErrors": true,
     "declaration": true,
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,

@@ -7,7 +7,7 @@ import { setupVerification } from './argumentMapper';
 
 // TODO: Replace this hack with https://www.npmjs.com/package/@npmcli/package-json
 // TODO: abstract this so it's not repeated in src/logger.ts
- 
+
 const pkg = require('../../package.json');
 
 export const verify = (opts: VerifierOptions): Promise<string> => {

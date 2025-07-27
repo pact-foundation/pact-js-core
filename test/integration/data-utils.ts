@@ -10,7 +10,6 @@ export function returnJson<T>(
 export function returnJsonFile(
   filename: string
 ): (req: express.Request, res: express.Response) => express.Response {
-   
   return returnJson(require(filename));
 }
 
