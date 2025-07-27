@@ -1,7 +1,7 @@
 import path = require('path');
 import net = require('net');
 import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
+import chaiAsPromised from 'chai-as-promised';
 import express = require('express');
 import * as http from 'http';
 import { setLogLevel } from '../src/logger';
@@ -57,17 +57,18 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
 (skipPluginTests ? describe.skip : describe)('MATT protocol test', () => {
   setLogLevel('info');
 
-  describe('HTTP and TCP Provider', function() {
+  describe('HTTP and TCP Provider', function () {
     const HOST = '127.0.0.1';
     const HTTP_PORT = 8888;
     const TCP_PORT = 8889;
 
-    beforeEach(async function() {
+    beforeEach(async function () {
       await startHTTPServer(HOST, HTTP_PORT);
       await startTCPServer(HOST, TCP_PORT);
     });
 
-    it('returns a valid MATT message over HTTP and TCP', function() { return verifier({
+    it('returns a valid MATT message over HTTP and TCP', function () {
+      return verifier({
         providerBaseUrl: 'http://localhost:8888',
         transports: [
           {
@@ -88,6 +89,7 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
             'matt-tcp-consumer-matt-tcp-provider.json'
           ),
         ],
-      }).verify(); });
+      }).verify();
+    });
   });
 });
