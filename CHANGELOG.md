@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [16.1.0](https://github.com/pact-foundation/pact-js-core/compare/v16.0.0...v16.1.0) (2025-08-03)
+
+
+### Features
+
+* support fetching bodies for messages ([#662](https://github.com/pact-foundation/pact-js-core/issues/662)) ([6a608a4](https://github.com/pact-foundation/pact-js-core/commit/6a608a4f72222454acaedded55022bebf0d38dd5))
+
 ## [16.0.0](https://github.com/pact-foundation/pact-js-core/compare/v15.2.1...v16.0.0) (2025-02-17)
 
 
