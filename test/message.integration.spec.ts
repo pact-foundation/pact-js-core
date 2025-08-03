@@ -5,7 +5,6 @@ import * as rimraf from 'rimraf';
 import zlib = require('zlib');
 import { load } from '@grpc/proto-loader';
 import * as grpc from '@grpc/grpc-js';
-
 import { ConsumerMessagePact, makeConsumerMessagePact } from '../src';
 import { FfiSpecificationVersion } from '../src/ffi/types';
 import { setLogLevel } from '../src/logger';
@@ -117,14 +116,20 @@ describe('FFI integration test for the Message Consumer API', () => {
           'application/json'
         );
         message.withResponseContents(
-          JSON.stringify({ foo: 'bar' }),
+          JSON.stringify({ baz: 'bat' }),
+          'application/json'
+        );
+        message.withResponseContents(
+          JSON.stringify({ qux: 'quux' }),
           'application/json'
         );
         message.withMetadata('meta-key', 'meta-val');
-
-        // const reified = message.reifyMessage();
-
-        // expect(JSON.parse(reified).contents).to.have.property('foo', 'bar');
+        const request = message.getRequestContents().toString();
+        const response = message.getResponseContents()[0].toString();
+        const response2 = message.getResponseContents()[1].toString();
+        expect(JSON.parse(request)).to.deep.eq({ foo: 'bar' });
+        expect(JSON.parse(response)).to.deep.eq({ baz: 'bat' });
+        expect(JSON.parse(response2)).to.deep.eq({ qux: 'quux' });
 
         pact.writePactFile(path.join(__dirname, '__testoutput__'));
       });

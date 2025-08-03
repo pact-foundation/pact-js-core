@@ -52,6 +52,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiMessageWithContents"), Napi::Function::New(env, PactffiMessageWithContents));
   exports.Set(Napi::String::New(env, "pactffiMessageWithMetadata"), Napi::Function::New(env, PactffiMessageWithMetadata));
   exports.Set(Napi::String::New(env, "pactffiMessageExpectsToReceive"), Napi::Function::New(env, PactffiMessageExpectsToReceive));
+  exports.Set(Napi::String::New(env, "pactffiGetAsyncMessageRequestContents"), Napi::Function::New(env, PactffiGetAsyncMessageRequestContents));
+  exports.Set(Napi::String::New(env, "pactffiGetSyncMessageRequestContents"), Napi::Function::New(env, PactffiGetSyncMessageRequestContents));
+  exports.Set(Napi::String::New(env, "pactffiGetSyncMessageResponseContents"), Napi::Function::New(env, PactffiGetSyncMessageResponseContents));
 
   // Provider
   exports.Set(Napi::String::New(env, "pactffiVerifierNewForApplication"), Napi::Function::New(env, PactffiVerifierNewForApplication));

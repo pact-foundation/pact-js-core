@@ -240,6 +240,7 @@ export type AsynchronousMessage = RequestPluginInteraction & {
   withContents: (body: string, contentType: string) => void;
   withBinaryContents: (body: Buffer, contentType: string) => void;
   reifyMessage: () => string;
+  getRequestContents: () => Buffer;
 };
 
 export type ConsumerMessage = AsynchronousMessage;
@@ -253,9 +254,8 @@ export type SynchronousMessage = PluginInteraction & {
   withResponseContents: (body: string, contentType: string) => void;
   withRequestBinaryContents: (body: Buffer, contentType: string) => void;
   withResponseBinaryContents: (body: Buffer, contentType: string) => void;
-  // TODO: need a type to return the contents back to the test
-  //       reify could be the way to do it
-  // reifyMessage: () => string;
+  getRequestContents: () => Buffer;
+  getResponseContents: () => Buffer[];
 };
 
 export type ConsumerMessagePact = PluginPact & {
