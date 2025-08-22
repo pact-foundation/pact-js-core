@@ -1,5 +1,5 @@
 import chai = require('chai');
-import path = require('path');
+import * as path from 'path';
 import chaiAsPromised = require('chai-as-promised');
 import * as http from 'http';
 import providerMock from './integration/provider-mock';

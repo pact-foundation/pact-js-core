@@ -1,5 +1,5 @@
 import axios from 'axios';
-import path = require('path');
+import * as path from 'path';
 import chai = require('chai');
 import net = require('net');
 import chaiAsPromised = require('chai-as-promised');

@@ -1,5 +1,5 @@
 import chai = require('chai');
-import path = require('path');
+import * as path from 'path';
 import chaiAsPromised = require('chai-as-promised');
 import * as rimraf from 'rimraf';
 import zlib = require('zlib');

@@ -1,4 +1,4 @@
-import path = require('path');
+import * as path from 'path';
 import chai = require('chai');
 import chaiAsPromised = require('chai-as-promised');
 import * as sinon from 'sinon';

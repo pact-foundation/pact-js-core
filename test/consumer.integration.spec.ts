@@ -2,7 +2,7 @@ import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 
 import axios from 'axios';
-import path = require('path');
+import * as path from 'path';
 import zlib = require('zlib');
 import FormData = require('form-data');
 import fs = require('fs');
