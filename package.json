@@ -46,8 +46,8 @@
     "check-types": "11.2.3",
     "detect-libc": "^2.0.3",
     "node-gyp-build": "^4.6.0",
-    "pino": "^9.0.0",
-    "pino-pretty": "^13.0.0",
+    "pino": "^9.9.0",
+    "pino-pretty": "^13.1.1",
     "underscore": "1.13.7"
   },
   "devDependencies": {
@@ -96,7 +96,7 @@
     "form-data": "4.0.4",
     "globals": "^16.2.0",
     "grpc-promise": "1.4.0",
-    "mocha": "11.6.0",
+    "mocha": "11.7.0",
     "node-addon-api": "8.5.0",
     "nodemon": "3.1.10",
     "prettier": "3.5.3",

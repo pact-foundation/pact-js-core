@@ -64,7 +64,7 @@ const startHTTPServer = (port: number): Promise<http.Server> => {
   );
 
   // Dummy server to respond to state changes etc.
-  server.all('*', (req: express.Request, res: express.Response) => {
+  server.all('/*splat', (req: express.Request, res: express.Response) => {
     res.json({});
   });
 
