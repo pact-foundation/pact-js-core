@@ -1,6 +1,6 @@
 import * as path from 'path';
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
+import * as chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import * as sinon from 'sinon';
 import logger from '../logger';
 import { validateOptions } from './validateOptions';

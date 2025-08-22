@@ -1,8 +1,8 @@
-import chai = require('chai');
+import * as chai from 'chai';
 import * as path from 'path';
-import chaiAsPromised = require('chai-as-promised');
+import chaiAsPromised from 'chai-as-promised';
 import * as rimraf from 'rimraf';
-import zlib = require('zlib');
+import * as zlib from 'zlib';
 import { load } from '@grpc/proto-loader';
 import * as grpc from '@grpc/grpc-js';
 import { ConsumerMessagePact, makeConsumerMessagePact } from '../src';

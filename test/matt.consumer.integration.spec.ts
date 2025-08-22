@@ -1,8 +1,8 @@
 import axios from 'axios';
 import * as path from 'path';
-import chai = require('chai');
-import net = require('net');
-import chaiAsPromised = require('chai-as-promised');
+import * as chai from 'chai';
+import * as net from 'net';
+import chaiAsPromised from 'chai-as-promised';
 import {
   ConsumerMessagePact,
   ConsumerPact,

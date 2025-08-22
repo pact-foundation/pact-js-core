@@ -1,9 +1,9 @@
 import * as path from 'path';
-import net = require('net');
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
-import express = require('express');
-import * as http from 'http';
+import * as net from 'net';
+import * as chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
+import express from 'express';
+import http from 'http';
 import { setLogLevel } from '../src/logger';
 import verifier from '../src/verifier';
 
