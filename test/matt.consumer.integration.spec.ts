@@ -49,8 +49,8 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
   let port: number;
   const HOST = '127.0.0.1';
 
-  describe('HTTP test', () => {
-    beforeEach(() => {
+  describe('HTTP test', function () {
+    beforeEach(function () {
       const mattRequest = `{"request": {"body": "hello"}}`;
       const mattResponse = `{"response":{"body":"world"}}`;
 
@@ -77,13 +77,13 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
       port = provider.createMockServer(HOST);
     });
 
-    afterEach(() => {
+    afterEach(function () {
       provider.cleanupPlugins();
       provider.cleanupMockServer(port);
     });
 
-    it('returns a valid MATT message over HTTP', () =>
-      axios
+    it('returns a valid MATT message over HTTP', function () {
+      return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -107,19 +107,21 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
         })
         .then(() => {
           provider.writePactFile(path.join(__dirname, '__testoutput__'));
-        }));
+        });
+    });
   });
 
-  describe('TCP Messages', () => {
-    beforeEach(() => {
+  describe('TCP Messages', function () {
+    beforeEach(function () {
       tcpProvider = makeConsumerMessagePact(
         'matt-tcp-consumer',
         'matt-tcp-provider',
         FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
       );
     });
-    describe('with MATT protocol', () => {
-      afterEach(() => {
+
+    describe('with MATT protocol', function () {
+      afterEach(function () {
         tcpProvider.writePactFileForPluginServer(
           port,
           path.join(__dirname, '__testoutput__')
@@ -128,7 +130,7 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
         // tcpProvider.cleanupMockServer(port)
       });
 
-      beforeEach(() => {
+      beforeEach(function () {
         const mattMessage = `{"request": {"body": "hellotcp"}, "response":{"body":"tcpworld"}}`;
         tcpProvider.addPlugin('matt', '0.1.1');
 
@@ -146,7 +148,7 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
         );
       });
 
-      it('generates a pact with success', async () => {
+      it('generates a pact with success', async function () {
         const message = await sendMattMessageTCP('hellotcp', HOST, port);
         expect(message).to.eq('tcpworld');
 

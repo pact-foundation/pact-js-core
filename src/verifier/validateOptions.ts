@@ -254,6 +254,11 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
   };
 
 export const validateOptions = (options: VerifierOptions): VerifierOptions => {
+  // Check that at least one of pactUrls or providerBaseUrl is provided
+  if (!options.pactUrls && !options.providerBaseUrl) {
+    throw new Error('Either pactUrls or providerBaseUrl must be provided');
+  }
+
   (
     Object.keys(options).concat('providerBaseUrl') as Array<
       keyof InternalPactVerifierOptions
@@ -262,16 +267,18 @@ export const validateOptions = (options: VerifierOptions): VerifierOptions => {
     const rules = validationRules[k];
 
     // get type of parameter (if an array, we apply the rule to each item of the array instead)
-    if (Array.isArray(options[k])) {
-      options[k].forEach((item: unknown) => {
-        (rules || []).forEach((rule) => {
-          // rule(item)  // If the messages aren't clear, we can do this
-          rule(options)(item, k);
-        });
-      });
-    } else {
+    if (k in options && Array.isArray(options[k as keyof VerifierOptions])) {
+      (options[k as keyof VerifierOptions] as unknown[]).forEach(
+        (item: unknown) => {
+          (rules || []).forEach((rule) => {
+            // rule(item)  // If the messages aren't clear, we can do this
+            rule(options)(item, k);
+          });
+        }
+      );
+    } else if (k in options) {
       (rules || []).forEach((rule) => {
-        rule(options)(options[k], k);
+        rule(options)(options[k as keyof VerifierOptions], k);
       });
     }
   });

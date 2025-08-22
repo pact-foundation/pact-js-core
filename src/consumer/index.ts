@@ -107,10 +107,11 @@ export const makeConsumerPact = (
         `${address}:${requestedPort || 0}`,
         tls
       );
-      const error: keyof typeof CREATE_MOCK_SERVER_ERRORS | undefined =
-        Object.keys(CREATE_MOCK_SERVER_ERRORS).find(
-          (key) => CREATE_MOCK_SERVER_ERRORS[key] === port
-        ) as keyof typeof CREATE_MOCK_SERVER_ERRORS;
+      const error: keyof typeof CREATE_MOCK_SERVER_ERRORS | undefined = (
+        Object.keys(CREATE_MOCK_SERVER_ERRORS) as Array<
+          keyof typeof CREATE_MOCK_SERVER_ERRORS
+        >
+      ).find((key) => CREATE_MOCK_SERVER_ERRORS[key] === port);
       if (error) {
         if (error === 'ADDRESS_NOT_VALID') {
           logErrorAndThrow(

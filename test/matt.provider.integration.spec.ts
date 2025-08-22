@@ -57,17 +57,18 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
 (skipPluginTests ? describe.skip : describe)('MATT protocol test', () => {
   setLogLevel('info');
 
-  describe('HTTP and TCP Provider', () => {
+  describe('HTTP and TCP Provider', function () {
     const HOST = '127.0.0.1';
     const HTTP_PORT = 8888;
     const TCP_PORT = 8889;
-    beforeEach(async () => {
+
+    beforeEach(async function () {
       await startHTTPServer(HOST, HTTP_PORT);
       await startTCPServer(HOST, TCP_PORT);
     });
 
-    it('returns a valid MATT message over HTTP and TCP', () =>
-      verifier({
+    it('returns a valid MATT message over HTTP and TCP', function () {
+      return verifier({
         providerBaseUrl: 'http://localhost:8888',
         transports: [
           {
@@ -88,6 +89,7 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
             'matt-tcp-consumer-matt-tcp-provider.json'
           ),
         ],
-      }).verify());
+      }).verify();
+    });
   });
 });
