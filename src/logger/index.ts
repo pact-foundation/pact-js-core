@@ -46,7 +46,7 @@ const logFunctions = {
 };
 
 export const logErrorAndThrow = (message: string, context?: string): never => {
-  logger.error(message, context);
+  logger.error(message, context as unknown as undefined);
   throw new Error(message);
 };
 
