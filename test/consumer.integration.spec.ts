@@ -3,9 +3,9 @@ import chaiAsPromised from 'chai-as-promised';
 
 import axios from 'axios';
 import * as path from 'path';
-import zlib = require('zlib');
-import FormData = require('form-data');
-import fs = require('fs');
+import * as zlib from 'zlib';
+import FormData from 'form-data';
+import * as fs from 'fs';
 import { load } from 'protobufjs';
 import {
   ConsumerPact,
