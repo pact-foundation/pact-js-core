@@ -1,11 +1,11 @@
-import chai = require('chai');
-import chaiAsPromised = require('chai-as-promised');
+import * as chai from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import { loadSync } from '@grpc/proto-loader';
 import * as grpc from '@grpc/grpc-js';
-import express = require('express');
+import express from 'express';
 import * as http from 'http';
-import cors = require('cors');
-import bodyParser = require('body-parser');
+import cors from 'cors';
+import bodyParser from 'body-parser';
 import { returnJson } from './integration/data-utils';
 import verifierFactory from '../src/verifier';
 
