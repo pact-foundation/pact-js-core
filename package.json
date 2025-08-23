@@ -56,7 +56,7 @@
     "@pact-foundation/pact-js-prettier-config": "1.0.0",
     "@tsconfig/node14": "14.1.5",
     "@types/basic-auth": "1.1.8",
-    "@types/chai": "4.3.20",
+    "@types/chai": "5.2.2",
     "@types/chai-as-promised": "7.1.8",
     "@types/check-types": "7.3.7",
     "@types/cors": "2.8.19",
