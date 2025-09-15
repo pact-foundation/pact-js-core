@@ -74,14 +74,14 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - if: ${{ (runner.os == 'Windows' && github.ref == 'refs/heads/master') || contains(github.event.pull_request.title, '(rebuild)') }}
+      - if: ${{ runner.os == 'Windows' && ( github.ref == 'refs/heads/master' || contains(github.event.pull_request.title, '(rebuild)')) }}
         run: echo "ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true" >> $GITHUB_ENV
 
-      - if: ${{ matrix.docker == true && matrix.alpine == true && (github.ref == 'refs/heads/master'  || contains(github.event.pull_request.title, '(rebuild)')) }}
+      - if: ${{ (matrix.docker == true && matrix.alpine == true) && (github.ref == 'refs/heads/master'  || contains(github.event.pull_request.title, '(rebuild)')) }}
         name: prebuild linux ${{ matrix.arch }} musl
         run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:20-alpine bin/sh -c 'apk add bash && cd /home && bash -c "/home/script/ci/prebuild-alpine.sh" && rm -rf ffi node_modules'
 
-      - if: ${{ matrix.docker == true && matrix.alpine != true && (github.ref == 'refs/heads/master'  || contains(github.event.pull_request.title, '(rebuild)')) }}
+      - if: ${{ (matrix.docker == true && matrix.alpine != true )&& (github.ref == 'refs/heads/master'  || contains(github.event.pull_request.title, '(rebuild)')) }}
         name: prebuild linux ${{ matrix.arch }}
         run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:20 bin/bash -c 'cd /home && /home/script/ci/prebuild.sh && rm -rf ffi node_modules'
 
