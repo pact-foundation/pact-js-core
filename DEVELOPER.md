@@ -129,6 +129,15 @@ Publishing packages with `--dry-run` option removed.
 PUBLISH=true ./script/ci/build-opt-dependencies.sh publish
 ```
 
+### Generating new prebuilds in CI
+
+For speed, CI runs use prebuilds from master for test runs. If you wish to force a rebuild of the ffi package because
+
+- the ffi library has been updated
+- the ffi binding code has been updated
+
+Raise a pull request and add `(rebuild)`, anywhere in the title'
+
 ### Linux x86_64 Task
 
 #### Pre Reqs

@@ -5,7 +5,7 @@ import logger, { DEFAULT_LOG_LEVEL } from '../logger';
 import { LogLevel } from '../logger/types';
 import { Ffi, FfiLogLevelFilter } from './types';
 
-export const PACT_FFI_VERSION = '0.4.22';
+export const PACT_FFI_VERSION = '0.4.28';
 
 /**
  * Returns the library path which is located inside `node_modules`

@@ -19,9 +19,9 @@ cat src/ffi/index.ts | sed "s/export const PACT_FFI_VERSION.*/export const PACT_
 mv tmp-install src/ffi/index.ts
 
 git add src/ffi/index.ts
-git commit -m "${TYPE}: update pact-ffi to ${FFI_VERSION}"
+git commit -m "${TYPE}: (rebuild) - update pact-ffi to ${FFI_VERSION}"
 git push --set-upstream origin ${BRANCH_NAME}
 
-gh pr create --title "${TYPE}: update pact-ffi to ${FFI_VERSION}" --fill
+gh pr create --title "${TYPE}: (rebuild) - update pact-ffi to ${FFI_VERSION}" --fill
 
 git checkout master
