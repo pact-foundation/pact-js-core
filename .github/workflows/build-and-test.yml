@@ -112,7 +112,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18, 20, 22]
+        node-version: [20, 22, 24]
         os: [macos-14, macos-13, ubuntu-latest, windows-latest, ubuntu-24.04-arm]
         docker: [false]
         include:
@@ -140,12 +140,12 @@ jobs:
             docker: true
             alpine: true
             arch: arm64
-            node-version: 18
+            node-version: 24
           - os: ubuntu-latest
             docker: true
             alpine: true
             arch: amd64
-            node-version: 18
+            node-version: 24
 
     name: Test ${{ matrix.docker == true && matrix.alpine == true && 'linux-musl' || matrix.docker == true && matrix.alpine == false && 'linux' || matrix.os }}-${{ matrix.arch }}-node-${{ matrix.node-version }}
 

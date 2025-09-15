@@ -16,7 +16,7 @@
     "arm64"
   ],
   "engines": {
-    "node": ">=16"
+    "node": ">=20"
   },
   "repository": {
     "type": "git",
