@@ -14,7 +14,7 @@ export const setupVerification = (
   const functionsToCall = invert(orderOfExecution);
 
   order.forEach((k) => {
-    const fn = functionsToCall[k];
+    const fn = functionsToCall[k] as keyof typeof ffiFnMapping;
     const validation: FnValidationResult = ffiFnMapping[fn].validateAndExecute(
       ffi,
       handle,

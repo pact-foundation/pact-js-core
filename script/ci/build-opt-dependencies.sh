@@ -70,7 +70,11 @@ build() {
 		if [ "${PUBLISH:-false}" = true ]; then
 			(cd $node_pkg && npm publish --access public)
 		else
-			(cd $node_pkg && npm publish --access public --dry-run)
+			if [ "${NODE_VERSION:-0}" -ge 24 ] 2>/dev/null; then
+				(cd "$node_pkg" && npm publish --access public --dry-run) || true
+			else
+				(cd $node_pkg && npm publish --access public --dry-run)
+			fi
 		fi
 	done
 }

@@ -19,7 +19,7 @@ const { expect } = chai;
 
 const HOST = '127.0.0.1';
 
-describe('FFI integration test for the HTTP Consumer API', () => {
+describe('FFI integration test for the HTTP Consumer API', function () {
   let port: number;
   let pact: ConsumerPact;
   const bytes: Buffer = zlib.gzipSync('this is an encoded string');
@@ -28,8 +28,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
     value,
   });
 
-  describe('with JSON data', () => {
-    beforeEach(() => {
+  describe('with JSON data', function () {
+    beforeEach(function () {
       pact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
@@ -63,8 +63,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       port = pact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', () =>
-      axios
+    it('generates a pact with success', function () {
+      return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -101,10 +101,11 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        }));
+        });
+    });
 
-    it('generates a pact with failure', () =>
-      axios
+    it('generates a pact with failure', function () {
+      return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -159,7 +160,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        }));
+        });
+    });
   });
 
   // See https://github.com/pact-foundation/pact-reference/issues/171 for why we have an OS switch here
@@ -169,8 +171,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
   // OSX x86_64 - CI GitHub Actions: has magic mime matcher, sniffs content
   // Linux: has magic mime matcher, sniffs content
   // Linux - CI Cirrus: does not have magic mime matcher, uses content-type
-  describe('with binary data', () => {
-    beforeEach(() => {
+  describe('with binary data', function () {
+    beforeEach(function () {
       pact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
@@ -199,8 +201,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       port = pact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', () =>
-      axios
+    it('generates a pact with success', function () {
+      return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -235,7 +237,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        }));
+        });
+    });
   });
 
   // Should only run this if the plugin is installed
@@ -245,7 +248,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
     () => {
       const protoFile = `${__dirname}/integration/plugin.proto`;
 
-      beforeEach(() => {
+      beforeEach(function () {
         pact = makeConsumerPact(
           'foo-consumer',
           'bar-provider',
@@ -274,11 +277,11 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         port = pact.createMockServer(HOST);
       });
 
-      afterEach(() => {
+      afterEach(function () {
         pact.cleanupPlugins();
       });
 
-      it('generates a pact with success', async () => {
+      it('generates a pact with success', async function () {
         const root = await load(protoFile);
 
         // Obtain a message type
@@ -316,13 +319,13 @@ describe('FFI integration test for the HTTP Consumer API', () => {
     }
   );
 
-  describe('with multipart data', () => {
+  describe('with multipart data', function () {
     const form = new FormData();
     const f: string = path.resolve(__dirname, './monkeypatch.rb');
     form.append('my_file', fs.createReadStream(f));
     const formHeaders = form.getHeaders();
 
-    beforeEach(() => {
+    beforeEach(function () {
       const consumerPact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
@@ -351,8 +354,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
       port = consumerPact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', () =>
-      axios
+    it('generates a pact with success', function () {
+      return axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -389,6 +392,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        }));
+        });
+    });
   });
 });

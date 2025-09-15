@@ -1,10 +1,8 @@
-import * as chai from 'chai';
-import index from './index';
+import { expect } from 'chai';
+import pact from './index';
 
-const { expect } = chai;
-
-describe('Index Spec', () => {
-  it('Typescript import should work', () => {
-    expect(index).to.be.ok;
+describe('Index Spec', function () {
+  it('Typescript import should work', function () {
+    expect(pact).to.be.ok;
   });
 });

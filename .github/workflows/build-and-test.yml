@@ -112,7 +112,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [16, 18, 20, 22]
+        node-version: [20, 22, 24]
         os: [macos-14, macos-13, ubuntu-latest, windows-latest, ubuntu-24.04-arm]
         docker: [false]
         include:
@@ -140,12 +140,12 @@ jobs:
             docker: true
             alpine: true
             arch: arm64
-            node-version: 18
+            node-version: 24
           - os: ubuntu-latest
             docker: true
             alpine: true
             arch: amd64
-            node-version: 18
+            node-version: 24
 
     name: Test ${{ matrix.docker == true && matrix.alpine == true && 'linux-musl' || matrix.docker == true && matrix.alpine == false && 'linux' || matrix.os }}-${{ matrix.arch }}-node-${{ matrix.node-version }}
 
@@ -181,11 +181,11 @@ jobs:
 
       - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'amd64' && matrix.os == 'ubuntu-latest' }}
         name: test linux amd64 musl
-        run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl gcompat file && cd /home && /home/script/ci/unpack-and-test.sh'
+        run: docker run -v $PWD:/home -e NODE_VERSION=${{ matrix.node-version }} --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl gcompat file && cd /home && /home/script/ci/unpack-and-test.sh'
 
       - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'arm64' && matrix.os == 'ubuntu-24.04-arm' }}
         name: test linux arm64 musl
-        run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl file protoc protobuf-dev && cd /home && /home/script/ci/unpack-and-test.sh'
+        run: docker run -v $PWD:/home -e NODE_VERSION=${{ matrix.node-version }} --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl file protoc protobuf-dev && cd /home && /home/script/ci/unpack-and-test.sh'
 
   release_dry_run:
     runs-on: ubuntu-latest

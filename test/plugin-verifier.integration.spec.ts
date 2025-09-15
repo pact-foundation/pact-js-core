@@ -6,7 +6,6 @@ import express from 'express';
 import * as http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import { returnJson } from './integration/data-utils';
 import verifierFactory from '../src/verifier';
 
 const { expect } = chai;
@@ -65,7 +64,9 @@ const startHTTPServer = (port: number): Promise<http.Server> => {
   );
 
   // Dummy server to respond to state changes etc.
-  server.all('/*', returnJson({}));
+  server.all('/*splat', (req: express.Request, res: express.Response) => {
+    res.json({});
+  });
 
   let s: http.Server;
   return new Promise<void>((resolve) => {
@@ -103,15 +104,15 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
 (skipPluginTests ? describe.skip : describe)(
   'Plugin Verifier Integration Spec',
   () => {
-    context('plugin tests', () => {
-      describe('grpc interaction', () => {
-        before(async () => {
+    context('plugin tests', function () {
+      describe('grpc interaction', function () {
+        before(async function () {
           const server = getGRPCServer();
           startGRPCServer(server, GRPC_PORT);
           await startHTTPServer(HTTP_PORT);
         });
 
-        it('should verify the gRPC interactions', async () => {
+        it('should verify the gRPC interactions', async function () {
           await verifierFactory({
             providerBaseUrl: `http://127.0.0.1:${HTTP_PORT}`,
             transports: [
@@ -127,7 +128,7 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
           expect('').to.eq('');
         });
 
-        it('runs the grpc client', async () => {
+        it('runs the grpc client', async function () {
           const protoFile = `${__dirname}/integration/grpc/route_guide.proto`;
           const feature = await getFeature(`127.0.0.1:${GRPC_PORT}`, protoFile);
 
