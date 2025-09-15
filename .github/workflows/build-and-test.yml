@@ -162,7 +162,7 @@ jobs:
         if: github.ref == 'refs/heads/master' || contains(github.event.pull_request.title, '(rebuild)')
         uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
       - run: FETCH_ASSETS=true REPO=pact-foundation/pact-js-core ./script/ci/check-release-libs.sh --fetch-assets
-        if: github.ref != 'refs/heads/master' || !contains(github.event.pull_request.title, '(rebuild)')
+        if: ${{ github.ref != 'refs/heads/master' && !contains(github.event.pull_request.title, '(rebuild)')}}
         env:
             GITHUB_TOKEN: ${{ github.token }}
 
