@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [17.0.0](https://github.com/pact-foundation/pact-js-core/compare/v16.1.1...v17.0.0) (2025-09-15)
+
+
+### ⚠ BREAKING CHANGES
+
+* lock node engines >=20
+
+### Fixes and Improvements
+
+* lock node engines >=20 ([36b0e4d](https://github.com/pact-foundation/pact-js-core/commit/36b0e4deaf5eb50c8cb4201994d6b468168db7ab))
+
 ## [16.1.1](https://github.com/pact-foundation/pact-js-core/compare/v16.1.0...v16.1.1) (2025-09-15)
 
 
