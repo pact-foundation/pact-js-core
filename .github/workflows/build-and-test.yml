@@ -181,11 +181,11 @@ jobs:
 
       - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'amd64' && matrix.os == 'ubuntu-latest' }}
         name: test linux amd64 musl
-        run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl gcompat file && cd /home && /home/script/ci/unpack-and-test.sh'
+        run: docker run -v $PWD:/home -e NODE_VERSION=${{ matrix.node-version }} --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl gcompat file && cd /home && /home/script/ci/unpack-and-test.sh'
 
       - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'arm64' && matrix.os == 'ubuntu-24.04-arm' }}
         name: test linux arm64 musl
-        run: docker run -v $PWD:/home --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl file protoc protobuf-dev && cd /home && /home/script/ci/unpack-and-test.sh'
+        run: docker run -v $PWD:/home -e NODE_VERSION=${{ matrix.node-version }} --platform linux/${{ matrix.arch }} --rm node:${{ matrix.node-version }}-alpine bin/sh -c 'apk add jq gettext-envsubst bash curl file protoc protobuf-dev && cd /home && /home/script/ci/unpack-and-test.sh'
 
   release_dry_run:
     runs-on: ubuntu-latest
