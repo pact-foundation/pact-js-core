@@ -81,7 +81,7 @@
     "basic-auth": "2.0.1",
     "body-parser": "2.2.0",
     "chai": "5.2.0",
-    "chai-as-promised": "8.0.1",
+    "chai-as-promised": "8.0.2",
     "commit-and-tag-version": "12.5.1",
     "cors": "2.8.5",
     "cross-env": "7.0.3",
