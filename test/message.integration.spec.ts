@@ -46,7 +46,9 @@ describe('FFI integration test for the Message Consumer API', function () {
   const bytes: Buffer = zlib.gzipSync(secret);
 
   before(function () {
-    rimraf.sync(path.join(__dirname, '__testoutput__', 'message-consumer*'));
+    rimraf.sync(path.join(__dirname, '__testoutput__', 'message-consumer*'), {
+      glob: true,
+    });
   });
 
   beforeEach(function () {
