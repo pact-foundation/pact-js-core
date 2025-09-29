@@ -82,7 +82,7 @@
     "body-parser": "2.2.0",
     "chai": "6.2.0",
     "chai-as-promised": "8.0.2",
-    "commit-and-tag-version": "12.5.1",
+    "commit-and-tag-version": "12.6.0",
     "cors": "2.8.5",
     "cross-env": "7.0.3",
     "decamelize": "6.0.1",
