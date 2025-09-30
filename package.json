@@ -84,7 +84,7 @@
     "chai-as-promised": "8.0.2",
     "commit-and-tag-version": "12.6.0",
     "cors": "2.8.5",
-    "cross-env": "7.0.3",
+    "cross-env": "10.1.0",
     "decamelize": "6.0.1",
     "eslint": "9.36.0",
     "eslint-config-prettier": "10.1.8",
