@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [17.0.1](https://github.com/pact-foundation/pact-js-core/compare/v17.0.0...v17.0.1) (2025-10-18)
+
+
+### Fixes and Improvements
+
+* **deps:** update dependency pino to v10 ([#717](https://github.com/pact-foundation/pact-js-core/issues/717)) ([8888877](https://github.com/pact-foundation/pact-js-core/commit/888887719db1bf6cd7137e8bdec534f0432c141b))
+* prevent missing pino logs ([#729](https://github.com/pact-foundation/pact-js-core/issues/729)) ([4f81dfe](https://github.com/pact-foundation/pact-js-core/commit/4f81dfe359da5c40ad7c5310ec1350e2e2cb1d73))
+
 ## [17.0.0](https://github.com/pact-foundation/pact-js-core/compare/v16.1.1...v17.0.0) (2025-09-15)
 
 
