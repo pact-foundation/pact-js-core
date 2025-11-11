@@ -98,7 +98,7 @@
     "grpc-promise": "1.4.0",
     "mocha": "11.7.5",
     "node-addon-api": "8.5.0",
-    "nodemon": "3.1.10",
+    "nodemon": "3.1.11",
     "prettier": "3.6.2",
     "protobufjs": "7.5.4",
     "rimraf": "6.1.0",
