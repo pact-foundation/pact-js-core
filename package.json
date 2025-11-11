@@ -80,7 +80,7 @@
     "axios": "1.13.2",
     "basic-auth": "2.0.1",
     "body-parser": "2.2.0",
-    "chai": "6.2.0",
+    "chai": "6.2.1",
     "chai-as-promised": "8.0.2",
     "commit-and-tag-version": "12.6.0",
     "cors": "2.8.5",
