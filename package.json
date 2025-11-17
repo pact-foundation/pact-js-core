@@ -93,7 +93,7 @@
     "eslint-plugin-import": "2.32.0",
     "eslint-plugin-mocha": "11.2.0",
     "express": "5.1.0",
-    "form-data": "4.0.4",
+    "form-data": "4.0.5",
     "globals": "16.5.0",
     "grpc-promise": "1.4.0",
     "mocha": "11.7.5",
