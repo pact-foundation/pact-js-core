@@ -203,7 +203,8 @@ export type FfiConsumerFunctions = {
     part: FfiInteractionPart,
     contentType: string,
     file: string,
-    partName: string
+    partName: string,
+    boundary?: string
   ): void;
   pactffiResponseStatus(handle: FfiInteractionHandle, status: string): boolean;
   pactffiWritePactFile(
