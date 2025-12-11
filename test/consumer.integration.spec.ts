@@ -324,10 +324,10 @@ describe('FFI integration test for the HTTP Consumer API', function () {
     const f: string = path.resolve(__dirname, './monkeypatch.rb');
     form.append('my_file', fs.createReadStream(f));
     const formHeaders = form.getHeaders();
-    const boundaryMatch = formHeaders["content-type"].match(/boundary=(\S+)/);
+    const boundaryMatch = formHeaders['content-type'].match(/boundary=(\S+)/);
     let boundary = undefined;
     if (boundaryMatch && boundaryMatch[1]) {
-        boundary = boundaryMatch[1];
+      boundary = boundaryMatch[1];
     }
 
     beforeEach(function () {
@@ -344,7 +344,12 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
       interaction.withQuery('someParam', 0, 'someValue');
-      interaction.withRequestMultipartBody('text/plain', f, 'my_file', boundary);
+      interaction.withRequestMultipartBody(
+        'text/plain',
+        f,
+        'my_file',
+        boundary
+      );
       interaction.withResponseBody(
         JSON.stringify({
           name: like('fido'),
