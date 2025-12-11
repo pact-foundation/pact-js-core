@@ -325,7 +325,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
     form.append('my_file', fs.createReadStream(f));
     const formHeaders = form.getHeaders();
     const boundaryMatch = formHeaders["content-type"].match(/boundary=(\S+)/);
-    let boundary = null;
+    let boundary = undefined;
     if (boundaryMatch && boundaryMatch[1]) {
         boundary = boundaryMatch[1];
     }
@@ -344,7 +344,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
       interaction.withQuery('someParam', 0, 'someValue');
-      interaction.withRequestMultipartBody('text/plain', f, 'my_file', boundary ?? undefined);
+      interaction.withRequestMultipartBody('text/plain', f, 'my_file', boundary);
       interaction.withResponseBody(
         JSON.stringify({
           name: like('fido'),
