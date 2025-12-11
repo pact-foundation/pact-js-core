@@ -153,3 +153,16 @@ Raise a pull request and add `(rebuild)`, anywhere in the title'
 ```sh
 act --container-architecture linux/amd64 -W .github/workflows/build-and-test.yml --artifact-server-path tmp
 ```
+
+### Testing with Pact-js
+
+#### Pre Reqs
+
+- Finish the steps listed in the beginning to create prebuilds binaries specific to your platform
+
+You can test this library with pact-js by doing the following steps:-
+
+- run `npm run download-libs` to download all prebuild binaries
+- run `npm link @pact-foundation/pact-core`
+- from pact-js repository
+  - add an entry manually or by running npm install to point to the local pact-js-core repo

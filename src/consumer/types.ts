@@ -171,7 +171,8 @@ export type ConsumerInteraction = PluginInteraction & {
   withRequestMultipartBody: (
     contentType: string,
     filename: string,
-    mimePartName: string
+    mimePartName: string,
+    boundary?: string
   ) => boolean;
   withResponseHeader: (name: string, index: number, value: string) => boolean;
   withResponseBody: (body: string, contentType: string) => boolean;
@@ -179,7 +180,8 @@ export type ConsumerInteraction = PluginInteraction & {
   withResponseMultipartBody: (
     contentType: string,
     filename: string,
-    mimePartName: string
+    mimePartName: string,
+    boundary?: string
   ) => boolean;
 };
 

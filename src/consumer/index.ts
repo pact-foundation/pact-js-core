@@ -307,15 +307,30 @@ export const makeConsumerPact = (
         withRequestMultipartBody: (
           contentType: string,
           filename: string,
-          mimePartName: string
-        ) =>
-          ffi.pactffiWithMultipartFile(
-            interactionPtr,
-            INTERACTION_PART_REQUEST,
-            contentType,
-            filename,
-            mimePartName
-          ) === undefined,
+          mimePartName: string,
+          boundary?: string
+        ) => {
+          if (boundary)
+            return (
+              ffi.pactffiWithMultipartFile(
+                interactionPtr,
+                INTERACTION_PART_REQUEST,
+                contentType,
+                filename,
+                mimePartName,
+                boundary
+              ) === undefined
+            );
+          return (
+            ffi.pactffiWithMultipartFile(
+              interactionPtr,
+              INTERACTION_PART_REQUEST,
+              contentType,
+              filename,
+              mimePartName
+            ) === undefined
+          );
+        },
         withResponseHeader: (name: string, index: number, value: string) =>
           ffi.pactffiWithHeader(
             interactionPtr,
@@ -342,15 +357,30 @@ export const makeConsumerPact = (
         withResponseMultipartBody: (
           contentType: string,
           filename: string,
-          mimePartName: string
-        ) =>
-          ffi.pactffiWithMultipartFile(
-            interactionPtr,
-            INTERACTION_PART_RESPONSE,
-            contentType,
-            filename,
-            mimePartName
-          ) === undefined,
+          mimePartName: string,
+          boundary?: string
+        ) => {
+          if (boundary)
+            return (
+              ffi.pactffiWithMultipartFile(
+                interactionPtr,
+                INTERACTION_PART_REQUEST,
+                contentType,
+                filename,
+                mimePartName,
+                boundary
+              ) === undefined
+            );
+          return (
+            ffi.pactffiWithMultipartFile(
+              interactionPtr,
+              INTERACTION_PART_REQUEST,
+              contentType,
+              filename,
+              mimePartName
+            ) === undefined
+          );
+        },
         withStatus: (status: number | string) =>
           ffi.pactffiResponseStatus(interactionPtr, JSON.stringify(status)),
         withPluginRequestInteractionContents: (

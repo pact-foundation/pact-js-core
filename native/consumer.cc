@@ -1,6 +1,7 @@
 #include <napi.h>
 #include "pact-cpp.h"
 
+
 using namespace Napi;
 
 PactSpecification integerToSpecification(Napi::Env &env, uint32_t number) {
@@ -54,6 +55,7 @@ InteractionPart integerToInteractionPart(Napi::Env &env, uint32_t number) {
 
   return part;
 }
+
 
 /**
  * Fetch the in-memory logger buffer contents. This will only have any contents if the `buffer`
@@ -1102,11 +1104,12 @@ Napi::Value PactffiWithBinaryFile(const Napi::CallbackInfo& info) {
  *
  * C interface:
  *
- * StringResult pactffi_with_multipart_file(InteractionHandle interaction,
+ * StringResult pactffi_with_multipart_file_v2(InteractionHandle interaction,
  *                                          InteractionPart part,
  *                                          const char *content_type,
  *                                          const char *file,
- *                                          const char part_name);
+ *                                          const char part_name,
+ *                                          const char boundary);
  */
 Napi::Value PactffiWithMultipartFile(const Napi::CallbackInfo& info) {
    Napi::Env env = info.Env();
@@ -1135,6 +1138,10 @@ Napi::Value PactffiWithMultipartFile(const Napi::CallbackInfo& info) {
     throw Napi::Error::New(env, "PactffiWithMultipartFile(arg 4) expected a string");
   }
 
+  if (info.Length() > 5 && !info[5].IsString()) {
+    throw Napi::Error::New(env, "PactffiWithMultipartFile(arg 5) expected a string");
+  }
+
   InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
   uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
   InteractionPart part = integerToInteractionPart(env, partNumber);
@@ -1142,8 +1149,10 @@ Napi::Value PactffiWithMultipartFile(const Napi::CallbackInfo& info) {
   std::string contentType = info[2].As<Napi::String>().Utf8Value();
   std::string file = info[3].As<Napi::String>().Utf8Value();
   std::string partName = info[4].As<Napi::String>().Utf8Value();
+  std::string boundary = info.Length() > 5 ? info[5].As<Napi::String>().Utf8Value() : "";
+  const char* boundaryPtr = boundary.empty() ? nullptr : boundary.c_str();
 
-  StringResult res = pactffi_with_multipart_file(interaction, part, contentType.c_str(), file.c_str(), partName.c_str());
+  StringResult res = pactffi_with_multipart_file_v2(interaction, part, contentType.c_str(), file.c_str(), partName.c_str(), boundaryPtr);
 
   // TODO: this will also break the https://github.com/pact-foundation/pact-js-core/tree/feat/ffi-consumer/src/consumer branch
   //       which expects a struct
