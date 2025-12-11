@@ -118,6 +118,7 @@
     "download-libs": "npm run clean && bash script/download-libs.sh",
     "clean-libs": "rimraf 'ffi'",
     "build": "tsc --project tsconfig.build.json",
+    "local-build": "rimraf dist/ && tsc --project tsconfig.local-build.json && cp package.json dist/",
     "release": "commit-and-tag-version",
     "test": "cross-env PACT_DO_NOT_TRACK=true mocha \"{src,test}/**/*.spec.ts\"",
     "format:base": "prettier --parser typescript",

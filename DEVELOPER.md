@@ -153,3 +153,16 @@ Raise a pull request and add `(rebuild)`, anywhere in the title'
 ```sh
 act --container-architecture linux/amd64 -W .github/workflows/build-and-test.yml --artifact-server-path tmp
 ```
+
+### Testing with Pact-js
+
+#### Pre Reqs
+
+- Finish the steps listed in the beginning to create prebuilds binaries specific to your platform
+
+You can test this library with pact-js by doing the following steps:-
+
+- run `npm run local-build`
+- from pact-js repository
+  - do a local install for your prebuilt binaries for your platform eg:- if your platform is darwin-arm64  command will be `npm install <location-to-pact-js-core>/@pact-foundation/pact-core-darwin-arm64`
+  - do a local install of pact-js-core by running `npm install <location-to-pact-js-core>/dist`

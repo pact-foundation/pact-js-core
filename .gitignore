@@ -75,3 +75,4 @@ test/__testoutput__
 
 # platform-arch specific packages
 @pact-foundation/*
+dist/
