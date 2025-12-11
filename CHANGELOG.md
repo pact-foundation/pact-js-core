@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [17.0.2](https://github.com/pact-foundation/pact-js-core/compare/v17.0.1...v17.0.2) (2025-12-11)
+
+
+### Fixes and Improvements
+
+* remove deprecated macos build ([#783](https://github.com/pact-foundation/pact-js-core/issues/783)) ([4dbecd0](https://github.com/pact-foundation/pact-js-core/commit/4dbecd00feeba42565e356bc675b86b0c6aecdcc))
+* replace pactffi_with_multipart_file with v2 version ([e1a47d9](https://github.com/pact-foundation/pact-js-core/commit/e1a47d9411f8d5d43abad85c64b68a06620e3b94))
+
 ## [17.0.1](https://github.com/pact-foundation/pact-js-core/compare/v17.0.0...v17.0.1) (2025-10-18)
 
 
