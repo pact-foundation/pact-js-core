@@ -9,7 +9,13 @@ if [ ! -d "prebuilds" ]; then
     ls -1
     ls -1 artifact*
     mkdir -p prebuilds
-    mv artifact*/*.tar.gz .
+    # Fix: Move files one by one to avoid the "just-created" error
+    # This also allows the script to continue if a later file should overwrite an earlier one
+    for file in artifact*/*.tar.gz; do
+        if [ -f "$file" ]; then
+            mv -f "$file" .
+        fi
+    done
     ls *.gz | xargs -n1 tar -xzf
 fi
 
