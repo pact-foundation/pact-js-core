@@ -34,6 +34,8 @@ jobs:
         node-version: [20]
         os: [
             ubuntu-latest,
+            macos-latest,
+            macos-15-intel,
             windows-latest
           ]
         docker: [false]
@@ -112,7 +114,7 @@ jobs:
       fail-fast: false
       matrix:
         node-version: [20, 22, 24]
-        os: [macos-14, ubuntu-latest, windows-latest, ubuntu-24.04-arm]
+        os: [macos-14, macos-latest, macos-15-intel, ubuntu-latest, windows-latest, ubuntu-24.04-arm]
         docker: [false]
         include:
           - os: ubuntu-24.04-arm
