@@ -1092,6 +1092,49 @@ Napi::Value PactffiWithBinaryFile(const Napi::CallbackInfo& info) {
 }
 
 /**
+ * Add matching rules to the interaction. Matching rules are used to specify how the request
+ * or response should be matched. This is useful for specifying that certain parts of the request 
+ * or response are flexible, such as the date or time.
+ *
+ * * `interaction` - Interaction handle to set the body for.
+ * * `part` - Request or response part.
+ * * `rules` - JSON string of the matching rules to add to the interaction.
+ *
+ * C interface:
+ *
+ * bool pactffi_with_matching_rules(InteractionHandle interaction,
+ *                                  InteractionPart part,
+ *                                  const char *rules);
+ */
+Napi::Value PactffiWithMatchingRules(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiWithMatchingRules received < 3 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiWithMatchingRules(arg 0) expected a PactHandle (uint16_t)");
+  }
+
+  if (!info[1].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiWithMatchingRules(arg 1) expected an InteractionPart (uint32_t)");
+  }
+
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "PactffiWithMatchingRules(arg 2) expected a string");
+  }
+
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  uint32_t partNumber = info[1].As<Napi::Number>().Uint32Value();
+  InteractionPart part = integerToInteractionPart(env, partNumber);
+  std::string rules = info[2].As<Napi::String>().Utf8Value();
+  bool res = pactffi_with_matching_rules(interaction, part, rules.c_str());
+
+  return Napi::Boolean::New(env, res);
+}
+
+/**
  * Adds a binary file as the body as a MIME multipart with the expected content type and example contents. Will use
  * a mime type matcher to match the body. Returns an error if the interaction or Pact can't be
  * modified (i.e. the mock server for it has already started)

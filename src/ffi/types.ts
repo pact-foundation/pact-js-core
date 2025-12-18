@@ -198,6 +198,11 @@ export type FfiConsumerFunctions = {
     body: Buffer,
     size: number
   ): boolean;
+  pactffiWithMatchingRules(
+    handle: FfiInteractionHandle,
+    part: FfiInteractionPart,
+    rules: string
+  ): boolean;
   pactffiWithMultipartFile(
     handle: FfiInteractionHandle,
     part: FfiInteractionPart,

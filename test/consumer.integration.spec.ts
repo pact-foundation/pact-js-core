@@ -28,6 +28,70 @@ describe('FFI integration test for the HTTP Consumer API', function () {
     value,
   });
 
+  describe('with matching rules', function () {
+    beforeEach(function () {
+      pact = makeConsumerPact(
+        'matcher-consumer',
+        'matcher-provider',
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
+      );
+
+      const interaction = pact.newInteraction('matcher test');
+      interaction.uponReceiving('a write request');
+      interaction.given('a request to write test.txt');
+      interaction.withRequest('POST', '/write');
+      interaction.withResponseMatchingRules(
+        JSON.stringify({
+          '$.body.contents': like('Hello World'),
+        })
+      );
+      interaction.withStatus(201);
+      interaction.withResponseBody(
+        JSON.stringify({
+          action: 'WRITE',
+          path: 'my_file.txt',
+          contents: 'Hello World',
+        }),
+        'application/json'
+      );
+      port = pact.createMockServer(HOST);
+    });
+
+    it('generates a pact with success', function () {
+      return axios
+        .request({
+          baseURL: `http://${HOST}:${port}`,
+          headers: {
+            Accept: 'application/json',
+          },
+          method: 'POST',
+          url: '/write',
+        })
+        .then((res) => {
+          expect(res.data).to.deep.equal({
+            action: 'WRITE',
+            contents: 'Hello World',
+            path: 'my_file.txt',
+          });
+        })
+        .then(() => {
+          // You don't have to call this, it's just here to check it works
+          const mismatches = pact.mockServerMismatches(port);
+          console.dir(mismatches, { depth: 10 });
+          expect(mismatches).to.have.length(0);
+        })
+        .then(() => {
+          expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
+        })
+        .then(() => {
+          pact.writePactFile(path.join(__dirname, '__testoutput__'));
+        })
+        .then(() => {
+          pact.cleanupMockServer(port);
+        });
+    });
+  });
+
   describe('with JSON data', function () {
     beforeEach(function () {
       pact = makeConsumerPact(

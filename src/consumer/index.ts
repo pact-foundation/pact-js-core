@@ -217,6 +217,18 @@ export const makeConsumerPact = (
             contentType,
             body
           ),
+        withRequestMatchingRules: (rules: string) =>
+          ffi.pactffiWithMatchingRules(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            rules
+          ),
+        withResponseMatchingRules: (rules: string) =>
+          ffi.pactffiWithMatchingRules(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            rules
+          ),
         withRequestBinaryContents: (body: Buffer, contentType: string) =>
           ffi.pactffiWithBinaryFile(
             interactionPtr,
@@ -303,6 +315,18 @@ export const makeConsumerPact = (
             contentType,
             body,
             body.length
+          ),
+        withRequestMatchingRules: (rules: string) =>
+          ffi.pactffiWithMatchingRules(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            rules
+          ),
+        withResponseMatchingRules: (rules: string) =>
+          ffi.pactffiWithMatchingRules(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            rules
           ),
         withRequestMultipartBody: (
           contentType: string,
@@ -543,6 +567,18 @@ export const makeConsumerMessagePact = (
             INTERACTION_PART_RESPONSE,
             contentType,
             body
+          ),
+        withRequestMatchingRules: (rules: string) =>
+          ffi.pactffiWithMatchingRules(
+            interactionPtr,
+            INTERACTION_PART_REQUEST,
+            rules
+          ),
+        withResponseMatchingRules: (rules: string) =>
+          ffi.pactffiWithMatchingRules(
+            interactionPtr,
+            INTERACTION_PART_RESPONSE,
+            rules
           ),
         withRequestBinaryContents: (body: Buffer, contentType: string) =>
           ffi.pactffiWithBinaryFile(

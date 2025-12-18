@@ -174,6 +174,8 @@ export type ConsumerInteraction = PluginInteraction & {
     mimePartName: string,
     boundary?: string
   ) => boolean;
+  withRequestMatchingRules: (rules: string) => boolean;
+  withResponseMatchingRules: (rules: string) => boolean;
   withResponseHeader: (name: string, index: number, value: string) => boolean;
   withResponseBody: (body: string, contentType: string) => boolean;
   withResponseBinaryBody: (body: Buffer, contentType: string) => boolean;
@@ -255,6 +257,8 @@ export type SynchronousMessage = PluginInteraction & {
   withRequestContents: (body: string, contentType: string) => void;
   withResponseContents: (body: string, contentType: string) => void;
   withRequestBinaryContents: (body: Buffer, contentType: string) => void;
+  withRequestMatchingRules: (rules: string) => void;
+  withResponseMatchingRules: (rules: string) => void;
   withResponseBinaryContents: (body: Buffer, contentType: string) => void;
   getRequestContents: () => Buffer;
   getResponseContents: () => Buffer[];

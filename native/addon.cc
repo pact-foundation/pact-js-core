@@ -31,6 +31,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiWithHeader"), Napi::Function::New(env, PactffiWithHeader));
   exports.Set(Napi::String::New(env, "pactffiWithBody"), Napi::Function::New(env, PactffiWithBody));
   exports.Set(Napi::String::New(env, "pactffiWithBinaryFile"), Napi::Function::New(env, PactffiWithBinaryFile));
+  exports.Set(Napi::String::New(env, "pactffiWithMatchingRules"), Napi::Function::New(env, PactffiWithMatchingRules));
   exports.Set(Napi::String::New(env, "pactffiWithMultipartFile"), Napi::Function::New(env, PactffiWithMultipartFile));
   exports.Set(Napi::String::New(env, "pactffiResponseStatus"), Napi::Function::New(env, PactffiResponseStatus));
   exports.Set(Napi::String::New(env, "pactffiUsingPlugin"), Napi::Function::New(env, PactffiUsingPlugin));
