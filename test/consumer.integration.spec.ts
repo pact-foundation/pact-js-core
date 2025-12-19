@@ -37,8 +37,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       );
 
       const interaction = pact.newInteraction('matcher test');
-      interaction.uponReceiving('a write request');
-      interaction.given('a request to write test.txt');
+      interaction.uponReceiving('a request to /test');
       interaction.withRequest('POST', '/test');
       interaction.withResponseMatchingRules(
         JSON.stringify({
