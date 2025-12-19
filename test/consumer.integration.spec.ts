@@ -39,18 +39,16 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       const interaction = pact.newInteraction('matcher test');
       interaction.uponReceiving('a write request');
       interaction.given('a request to write test.txt');
-      interaction.withRequest('POST', '/write');
+      interaction.withRequest('POST', '/test');
       interaction.withResponseMatchingRules(
         JSON.stringify({
-          '$.body.contents': like('Hello World'),
+          '$.body.id': like(1),
         })
       );
       interaction.withStatus(201);
       interaction.withResponseBody(
         JSON.stringify({
-          action: 'WRITE',
-          path: 'my_file.txt',
-          contents: 'Hello World',
+          id: 1,
         }),
         'application/json'
       );
@@ -65,13 +63,11 @@ describe('FFI integration test for the HTTP Consumer API', function () {
             Accept: 'application/json',
           },
           method: 'POST',
-          url: '/write',
+          url: '/test',
         })
         .then((res) => {
           expect(res.data).to.deep.equal({
-            action: 'WRITE',
-            contents: 'Hello World',
-            path: 'my_file.txt',
+            id: 1,
           });
         })
         .then(() => {
