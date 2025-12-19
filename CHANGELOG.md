@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [17.1.0](https://github.com/pact-foundation/pact-js-core/compare/v17.0.2...v17.1.0) (2025-12-19)
+
+
+### Features
+
+* add support for with_matching_rules for request and response interactions ([#791](https://github.com/pact-foundation/pact-js-core/issues/791)) ([36aca11](https://github.com/pact-foundation/pact-js-core/commit/36aca1116e59ba70b13e612d370be4c0f13a98eb))
+
 ## [17.0.2](https://github.com/pact-foundation/pact-js-core/compare/v17.0.1...v17.0.2) (2025-12-11)
 
 
