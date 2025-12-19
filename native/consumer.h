@@ -2,6 +2,7 @@
 
 Napi::Value PactffiUponReceiving(const Napi::CallbackInfo& info);
 Napi::Value PactffiWithBinaryFile(const Napi::CallbackInfo& info);
+Napi::Value PactffiWithMatchingRules(const Napi::CallbackInfo& info);
 Napi::Value PactffiWithBody(const Napi::CallbackInfo& info);
 Napi::Value PactffiWithHeader(const Napi::CallbackInfo& info);
 Napi::Value PactffiWithMessagePactMetadata(const Napi::CallbackInfo& info);
