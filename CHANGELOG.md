@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [18.0.0](https://github.com/pact-foundation/pact-js-core/compare/v17.1.0...v18.0.0) (2025-12-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* add macos 15 intel and latest runner
+
+### Fixes and Improvements
+
+* add macos 15 intel and latest runner ([ad48e1f](https://github.com/pact-foundation/pact-js-core/commit/ad48e1fde3cd434ca80f1669376632512921c520))
+
 ## [17.1.0](https://github.com/pact-foundation/pact-js-core/compare/v17.0.2...v17.1.0) (2025-12-19)
 
 
