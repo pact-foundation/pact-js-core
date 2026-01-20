@@ -30,7 +30,13 @@ const getGRPCServer = () => {
   const server = new grpc.Server();
 
   server.addService(routeguide['RouteGuide'].service, {
-    getFeature: (_: unknown, callback: any) => {
+    getFeature: (
+      _: unknown,
+      callback: (
+        error: Error | null,
+        response: { name: string; latitude: number; longitude: number }
+      ) => void
+    ) => {
       callback(null, {
         name: 'A place',
         latitude: 200,
@@ -42,7 +48,7 @@ const getGRPCServer = () => {
   return server;
 };
 
-const startGRPCServer = (server: any, port: number) => {
+const startGRPCServer = (server: grpc.Server, port: number) => {
   server.bindAsync(
     `127.0.0.1:${port}`,
     grpc.ServerCredentials.createInsecure(),
@@ -83,21 +89,23 @@ const getFeature = async (address: string, protoFile: string) => {
     grpc.credentials.createInsecure()
   );
 
-  return new Promise<any>((resolve, reject) => {
-    client.GetFeature(
-      {
-        latitude: 180,
-        longitude: 200,
-      },
-      (e: Error, feature: any) => {
-        if (e) {
-          reject(e);
-        } else {
-          resolve(feature);
+  return new Promise<{ name: string; latitude: number; longitude: number }>(
+    (resolve, reject) => {
+      client.GetFeature(
+        {
+          latitude: 180,
+          longitude: 200,
+        },
+        (e: Error, feature: { name: string; latitude: number; longitude: number }) => {
+          if (e) {
+            reject(e);
+          } else {
+            resolve(feature);
+          }
         }
-      }
-    );
-  });
+      );
+    }
+  );
 };
 
 const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';

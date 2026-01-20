@@ -356,7 +356,10 @@ describe('FFI integration test for the HTTP Consumer API', function () {
             responseType: 'arraybuffer',
           })
           .then((res) => {
-            const message: any = InitPluginRequest.decode(res.data);
+            const message = InitPluginRequest.decode(res.data) as unknown as {
+              implementation: string;
+              version: string;
+            };
             expect(message.implementation).to.equal('pact-js-driver');
             expect(message.version).to.equal('0.0.0');
           })

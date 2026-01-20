@@ -1,11 +1,16 @@
 import verifierFactory from './verifier';
 import { VerifierOptions } from './verifier/types';
-import logger, { setLogLevel } from './logger';
+import logger, { setLogLevel, getLogLevel } from './logger';
 import { LogLevel } from './logger/types';
 
 export class Pact {
-  public logLevel(level?: LogLevel): void {
-    return setLogLevel(level);
+  public logLevel(): LogLevel;
+  public logLevel(level: LogLevel): void;
+  public logLevel(level?: LogLevel): LogLevel | void {
+    if (level === undefined) {
+      return getLogLevel();
+    }
+    setLogLevel(level);
   }
 
   // Run the Pact Verification process

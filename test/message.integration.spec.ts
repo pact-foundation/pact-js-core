@@ -21,21 +21,23 @@ const getFeature = async (address: string, protoFile: string) => {
     grpc.credentials.createInsecure()
   );
 
-  return new Promise<any>((resolve, reject) => {
-    client.GetFeature(
-      {
-        latitude: 180,
-        longitude: 200,
-      },
-      (e: Error, feature: any) => {
-        if (e) {
-          reject(e);
-        } else {
-          resolve(feature);
+  return new Promise<{ name: string; latitude: number; longitude: number }>(
+    (resolve, reject) => {
+      client.GetFeature(
+        {
+          latitude: 180,
+          longitude: 200,
+        },
+        (e: Error, feature: { name: string; latitude: number; longitude: number }) => {
+          if (e) {
+            reject(e);
+          } else {
+            resolve(feature);
+          }
         }
-      }
-    );
-  });
+      );
+    }
+  );
 };
 
 describe('FFI integration test for the Message Consumer API', function () {
@@ -190,7 +192,8 @@ describe('FFI integration test for the Message Consumer API', function () {
         });
 
         it('generates a pact with success', async function () {
-          const feature: any = await getFeature(`127.0.0.1:${port}`, protoFile);
+          const feature: { name: string; latitude: number; longitude: number } =
+            await getFeature(`127.0.0.1:${port}`, protoFile);
           expect(feature.name).to.eq('Big Tree');
 
           const res = pact.mockServerMatchedSuccessfully(port);
