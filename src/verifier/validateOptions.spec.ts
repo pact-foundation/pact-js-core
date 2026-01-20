@@ -414,7 +414,7 @@ describe('Verifier argument validator', function () {
         validateOptions({
           providerBaseUrl: 'http://localhost',
           randomobjectwithnorules: 'poop',
-        } as any as VerifierOptions)
+        } as unknown as VerifierOptions)
       ).to.not.throw(Error);
     });
   });

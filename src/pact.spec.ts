@@ -1,12 +1,13 @@
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import pact from './pact';
+import { LogLevel } from './logger/types';
 
 chai.use(chaiAsPromised);
 
 describe('Pact Spec', function () {
   describe('Set Log Level', function () {
-    let originalLogLevel: any;
+    let originalLogLevel: LogLevel;
     // Reset log level after the tests
     before(function () {
       originalLogLevel = pact.logLevel();
