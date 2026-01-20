@@ -135,9 +135,10 @@ const renderBinaryErrorMessage = (error: unknown) => {
 let ffi: typeof ffiLib;
 
 const initialiseFfi = (): typeof ffi => {
-  // @ts-ignore
+  // Accessing internal Node.js properties to ensure blocking stdout behavior
+  // @ts-ignore - _handle is an undocumented internal property of process.stdout
   if (process.stdout._handle) {
-    // @ts-ignore
+    // @ts-ignore - setBlocking is an undocumented internal method
     process.stdout._handle.setBlocking(true);
   }
   try {
