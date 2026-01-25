@@ -94,8 +94,12 @@ const loadPathMessage = (bindingsPath: string) =>
       : `\n   source: pact-js-core binding lookup \n\n - You can override via PACT_PREBUILD_LOCATION\n`
   }`;
 
-const bindingsResolver = (bindingsPath: string | undefined) =>
-  bindings(bindingsPath);
+const bindingsResolver = (bindingsPath: string | undefined) => {
+  if (bindingsPath === undefined) {
+    throw new Error('Bindings path is undefined');
+  }
+  return bindings(bindingsPath);
+};
 
 const bindingPaths = [
   path.resolve(getPlatformArchSpecificPackage()),
@@ -131,11 +135,10 @@ const renderBinaryErrorMessage = (error: unknown) => {
 let ffi: typeof ffiLib;
 
 const initialiseFfi = (): typeof ffi => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
+  // Accessing internal Node.js properties to ensure blocking stdout behavior
+  // @ts-ignore - _handle is an undocumented internal property of process.stdout
   if (process.stdout._handle) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-ignore - setBlocking is an undocumented internal method
     process.stdout._handle.setBlocking(true);
   }
   try {

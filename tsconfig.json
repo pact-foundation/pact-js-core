@@ -1,22 +1,14 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "extends": "@tsconfig/node20/tsconfig.json",
   "compilerOptions": {
     "types": ["node", "mocha"],
-    "module": "commonjs",
     "removeComments": true,
     "sourceMap": true,
-    "moduleResolution": "node",
     "declaration": true,
     "noImplicitReturns": true,
     "noPropertyAccessFromIndexSignature": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "strict": true,
     "noUnusedLocals": true,
-    "stripInternal": true,
-    "esModuleInterop": true
+    "stripInternal": true
   },
   "include": ["**/*.ts"],
   "exclude": ["node_modules"]

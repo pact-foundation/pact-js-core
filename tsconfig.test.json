@@ -1,11 +1,15 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
     "noImplicitAny": false,
     "allowJs": true
   },
   "ts-node": {
     "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "node",
       "noImplicitAny": false,
       "strict": true
     }
