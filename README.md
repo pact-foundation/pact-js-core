@@ -2,7 +2,7 @@
 
 | :information_source: Usage notice  |
 |:-----------------------------------------|
-| This is a core library, designed for use in the bowels of another package. Unless you are wanting to develop tools for the pact ecosystem, you almost certainly want to install [`@pact-foundation/pact`](https://github.com/pact-foundation/pact-js/) instead|
+| This is a core library, designed for use in the bowels of another package. Unless you are wanting to develop tools for the pact ecosystem, you almost certainly want to install [`@pact-foundation/pact-js`](https://github.com/pact-foundation/pact-js/) instead|
 
 ![Build and test](https://github.com/pact-foundation/pact-js-core/workflows/Build%20and%20test/badge.svg)
 [![GitHub release](https://img.shields.io/github/release/pact-foundation/pact-js-core)](https://github.com/pact-foundation/pact-js-core)
