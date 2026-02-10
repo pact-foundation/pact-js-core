@@ -131,10 +131,8 @@ const renderBinaryErrorMessage = (error: unknown) => {
 let ffi: typeof ffiLib;
 
 const initialiseFfi = (): typeof ffi => {
-   
   // @ts-ignore
   if (process.stdout._handle) {
-     
     // @ts-ignore
     process.stdout._handle.setBlocking(true);
   }
