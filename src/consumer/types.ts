@@ -243,6 +243,7 @@ export type AsynchronousMessage = RequestPluginInteraction & {
   withMetadata: (name: string, value: string) => void;
   withContents: (body: string, contentType: string) => void;
   withBinaryContents: (body: Buffer, contentType: string) => void;
+  withMatchingRules: (rules: string) => void;
   reifyMessage: () => string;
   getRequestContents: () => Buffer;
 };
