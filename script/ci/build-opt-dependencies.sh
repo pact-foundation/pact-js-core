@@ -68,12 +68,12 @@ build() {
 		fi
 		envsubst < package.json.tmpl > "$node_pkg/package.json"
 		if [ "${PUBLISH:-false}" = true ]; then
-			(cd $node_pkg && npm publish --access public --provenance --userconfig "$HOME/.npmrc")
+			(cd $node_pkg && npm publish --access public --provenance)
 		else
 			if [ "${NODE_VERSION:-0}" -ge 24 ] 2>/dev/null; then
-				(cd "$node_pkg" && npm publish --access public --dry-run --userconfig "$HOME/.npmrc") || true
+				(cd "$node_pkg" && npm publish --access public --dry-run) || true
 			else
-				(cd $node_pkg && npm publish --access public --dry-run --userconfig "$HOME/.npmrc")
+				(cd $node_pkg && npm publish --access public --dry-run)
 			fi
 		fi
 	done
@@ -94,9 +94,9 @@ publish() {
 		echo "Building for $node_os-$node_arch"
 		echo "Building $node_pkg for $node_os-$node_arch"
 		if [ "${PUBLISH:-false}" = true ]; then
-			(cd $node_pkg && npm publish --access public --provenance --userconfig "$HOME/.npmrc")
+			(cd $node_pkg && npm publish --access public --provenance)
 		else
-			(cd $node_pkg && npm publish --access public --dry-run --userconfig "$HOME/.npmrc")
+			(cd $node_pkg && npm publish --access public --dry-run)
 		fi
 	done
 }
