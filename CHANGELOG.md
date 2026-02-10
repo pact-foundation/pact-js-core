@@ -2,6 +2,19 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [18.1.0](https://github.com/pact-foundation/pact-js-core/compare/v18.0.0...v18.1.0) (2026-02-10)
+
+
+### Features
+
+* add matching rules support to async messages ([#832](https://github.com/pact-foundation/pact-js-core/issues/832)) ([505fe7d](https://github.com/pact-foundation/pact-js-core/commit/505fe7dbd9ac68e84a948a53bd4b187629bde8bb))
+
+
+### Fixes and Improvements
+
+* npm authentication for platform packages by upgrading to Node 24 ([#834](https://github.com/pact-foundation/pact-js-core/issues/834)) ([63c6e7d](https://github.com/pact-foundation/pact-js-core/commit/63c6e7d676660615ca9903aed8cd0b25fdaa2fcc))
+* npm trusted publishing from subdirectories ([#833](https://github.com/pact-foundation/pact-js-core/issues/833)) ([42d191f](https://github.com/pact-foundation/pact-js-core/commit/42d191fb40c1bb7a122760c45c286e76c2888fa8))
+
 ## [18.0.0](https://github.com/pact-foundation/pact-js-core/compare/v17.1.0...v18.0.0) (2025-12-19)
 
 
