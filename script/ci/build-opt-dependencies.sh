@@ -94,7 +94,7 @@ publish() {
 		echo "Building for $node_os-$node_arch"
 		echo "Building $node_pkg for $node_os-$node_arch"
 		if [ "${PUBLISH:-false}" = true ]; then
-			(cd $node_pkg && npm publish --access public)
+			(cd $node_pkg && npm publish --access public --provenance)
 		else
 			(cd $node_pkg && npm publish --access public --dry-run)
 		fi
