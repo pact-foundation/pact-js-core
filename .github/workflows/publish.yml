@@ -9,7 +9,7 @@ on:
 # Setup npm trusted publishing
 permissions:
   id-token: write
-  contents: read
+  contents: write
 
 jobs:
   release:
