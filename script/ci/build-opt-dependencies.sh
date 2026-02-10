@@ -68,7 +68,7 @@ build() {
 		fi
 		envsubst < package.json.tmpl > "$node_pkg/package.json"
 		if [ "${PUBLISH:-false}" = true ]; then
-			(cd $node_pkg && npm publish --access public)
+			(cd $node_pkg && npm publish --access public --provenance)
 		else
 			if [ "${NODE_VERSION:-0}" -ge 24 ] 2>/dev/null; then
 				(cd "$node_pkg" && npm publish --access public --dry-run) || true
