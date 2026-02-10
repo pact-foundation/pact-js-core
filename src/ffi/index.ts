@@ -131,10 +131,10 @@ const renderBinaryErrorMessage = (error: unknown) => {
 let ffi: typeof ffiLib;
 
 const initialiseFfi = (): typeof ffi => {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+   
   // @ts-ignore
   if (process.stdout._handle) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+     
     // @ts-ignore
     process.stdout._handle.setBlocking(true);
   }

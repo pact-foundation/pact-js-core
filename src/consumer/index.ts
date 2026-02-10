@@ -61,6 +61,12 @@ const asyncMessage = (
       body,
       body.length
     ),
+  withMatchingRules: (rules: string) =>
+    ffi.pactffiWithMatchingRules(
+      interactionPtr,
+      INTERACTION_PART_REQUEST,
+      rules
+    ),
   reifyMessage: () => ffi.pactffiMessageReify(interactionPtr),
   withMetadata: (name: string, value: string) =>
     ffi.pactffiMessageWithMetadata(interactionPtr, name, value),
