@@ -16,8 +16,6 @@ if [[ ${DRY_RUN:-} == 'true' ]]; then
   "$SCRIPT_DIR"/../build-opt-dependencies.sh publish
   npm publish --access-public --dry-run
  else
-  echo "--> Preparing npmrc file"
-  "$SCRIPT_DIR"/create_npmrc_file.sh
   echo "--> Removing binding.gyp to prevent rebuild. See https://github.com/npm/cli/issues/5234#issuecomment-1291139150"
   rm "${SCRIPT_DIR}/../../../binding.gyp"
   # Publish os/arch specific npm packages
