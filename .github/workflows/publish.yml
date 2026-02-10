@@ -6,6 +6,11 @@ on:
     types:
       - release-triggered
 
+# Setup npm trusted publishing
+permissions:
+  id-token: write
+  contents: read
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -23,8 +28,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           registry-url: 'https://registry.npmjs.org'
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.NPM_AUTOMATION_TOKEN}}
+
       - name: "release"
         id: publish
         run: script/ci/release.sh
