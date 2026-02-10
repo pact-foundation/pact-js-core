@@ -20,6 +20,6 @@ if [[ ${DRY_RUN:-} == 'true' ]]; then
   rm "${SCRIPT_DIR}/../../../binding.gyp"
   # Publish os/arch specific npm packages
   PUBLISH=true "$SCRIPT_DIR"/../build-opt-dependencies.sh publish
-  npm publish --access public --tag latest
+  npm publish --access public --tag latest --provenance
 fi
 echo "    done!"

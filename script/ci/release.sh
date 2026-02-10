@@ -52,10 +52,6 @@ elif [ "${GH_PRE_RELEASE_UPLOAD:-}" = true ]; then
   exit 0
 fi
 
-if [[ ${CI:-} == 'true' ]]; then
-  require_env_var NODE_AUTH_TOKEN
-fi
-
 if [[ ${RUNNER_OS:-} == 'Windows' ]]; then
   ONLY_DOWNLOAD_PACT_FOR_WINDOWS=true
 fi
