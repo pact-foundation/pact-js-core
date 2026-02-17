@@ -75,6 +75,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiVerifierBrokerSourceWithSelectors"), Napi::Function::New(env, PactffiVerifierBrokerSourceWithSelectors));
   exports.Set(Napi::String::New(env, "pactffiVerifierAddProviderTransport"), Napi::Function::New(env, PactffiVerifierAddProviderTransport));
   exports.Set(Napi::String::New(env, "pactffiVerifierSetNoPactsIsError"), Napi::Function::New(env, PactffiVerifierSetNoPactsIsError));
+  exports.Set(Napi::String::New(env, "pactffiVerifierJson"), Napi::Function::New(env, PactffiVerifierJson));
 
   return exports;
 }

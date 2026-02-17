@@ -27,6 +27,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
     ffi.pactffiVerifierExecute(handle, (err: Error, res: number) => {
       logger.debug(`shutting down verifier with handle ${handle}`);
 
+      const results = ffi.pactffiVerifierJson(handle);
       ffi.pactffiVerifierShutdown(handle);
 
       logger.debug(`response from verifier: ${err}, ${res}`);
@@ -45,11 +46,11 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
         switch (res) {
           case VERIFY_PROVIDER_RESPONSE.VERIFICATION_SUCCESSFUL:
             logger.info('Verification successful');
-            resolve(`finished: ${res}`);
+            resolve(results);
             break;
           case VERIFY_PROVIDER_RESPONSE.VERIFICATION_FAILED:
             logger.error('Verification unsuccessful');
-            reject(new Error('Verfication failed'));
+            reject(new Error(results));
             break;
           case VERIFY_PROVIDER_RESPONSE.INVALID_ARGUMENTS:
             logger.pactCrash(

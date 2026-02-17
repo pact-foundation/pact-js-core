@@ -18,6 +18,7 @@ Napi::Value PactffiVerifierSetNoPactsIsError(const Napi::CallbackInfo& info);
 // Napi::Value PactffiVerifierBrokerSource(const Napi::CallbackInfo& info);
 Napi::Value PactffiVerifierBrokerSourceWithSelectors(const Napi::CallbackInfo& info);
 Napi::Value PactffiVerifierSetFailIfNoPactsFound(const Napi::CallbackInfo& info);
+Napi::Value PactffiVerifierJson(const Napi::CallbackInfo &info);
 // Unimplemented
 // Napi::Value PactffiVerifierShutdown(const Napi::CallbackInfo& info);
 // Napi::Value PactffiVerifierNewForApplication(const Napi::CallbackInfo& info);

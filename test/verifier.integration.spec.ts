@@ -74,7 +74,7 @@ describe('Verifier Integration Spec', function () {
     });
 
     context('without provider states', function () {
-      it('should return a successful promise', function () {
+      it('should return a successful promise with detailed JSON results', function () {
         return expect(
           verifierFactory({
             providerBaseUrl,
@@ -82,12 +82,17 @@ describe('Verifier Integration Spec', function () {
               path.resolve(__dirname, 'integration/me-they-success.json'),
             ],
           }).verify()
-        ).to.eventually.be.fulfilled;
+        ).to.eventually.satisfy((results: string) => {
+          const parsed = JSON.parse(results);
+          expect(parsed).to.have.property('result', true);
+          expect(parsed).to.have.property('interactionResults');
+          return true;
+        });
       });
     });
 
     context('with Provider States', function () {
-      it('should return a successful promise', function () {
+      it('should return a successful promise with detailed JSON results', function () {
         return expect(
           verifierFactory({
             providerBaseUrl,
@@ -96,7 +101,11 @@ describe('Verifier Integration Spec', function () {
             ],
             providerStatesSetupUrl,
           }).verify()
-        ).to.eventually.be.fulfilled;
+        ).to.eventually.satisfy((results: string) => {
+          const parsed = JSON.parse(results);
+          expect(parsed).to.have.property('result', true);
+          return true;
+        });
       });
     });
 
@@ -145,13 +154,18 @@ describe('Verifier Integration Spec', function () {
   });
 
   context('when given a failing contract', function () {
-    it('should return a rejected promise', function () {
+    it('should return a rejected promise with detailed JSON results in the error message', function () {
       return expect(
         verifierFactory({
           providerBaseUrl,
           pactUrls: [path.resolve(__dirname, 'integration/me-they-fail.json')],
         }).verify()
-      ).to.eventually.be.rejected;
+      ).to.eventually.be.rejected.and.satisfy((err: Error) => {
+        const parsed = JSON.parse(err.message);
+        expect(parsed).to.have.property('result', false);
+        expect(parsed).to.have.property('errors');
+        return true;
+      });
     });
   });
 
