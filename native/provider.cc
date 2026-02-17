@@ -126,6 +126,39 @@ Napi::Value PactffiVerifierExecute(const Napi::CallbackInfo& info) {
   return info.Env().Undefined();
 }
 
+/**
+ * Extracts the verification result as a JSON document. The returned string will need to be
+ * freed with the `pactffi_string_delete` function call to avoid leaking memory.
+ *
+ * Will return a NULL pointer if the handle is invalid.
+ *
+ * C interface:
+ *
+ *    const char *pactffi_verifier_json(const struct VerifierHandle *handle);
+ */
+Napi::Value PactffiVerifierJson(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "PactffiVerifierJson received < 1 argument");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "pactffiVerifierJson(arg 0) expected a VerifierHandle");
+  }
+
+  uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
+  const char* res = pactffi_verifier_json(handles[handleId]);
+
+  if (res == NULL) {
+    return env.Null();
+  }
+
+  Napi::String json = Napi::String::New(env, res);
+  pactffi_string_delete((char*)res);
+
+  return json;
+}
+
 
 /**
  * Shutdown the verifier and release all resources
