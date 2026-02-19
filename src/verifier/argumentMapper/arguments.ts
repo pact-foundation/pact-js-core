@@ -17,6 +17,7 @@ type IgnoredFfiFunctions = {
   pactffiVerifierNewForApplication: 1;
   pactffiVerifierExecute: 1;
   pactffiVerifierShutdown: 1;
+  pactffiVerifierJson: 1;
 };
 
 type MergedFfiSourceFunctions = {

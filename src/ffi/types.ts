@@ -428,6 +428,7 @@ export type FfiVerificationFunctions = {
     handle: FfiVerifierHandle,
     callback: (e: Error, res: number) => void
   ): number;
+  pactffiVerifierJson(handle: FfiVerifierHandle): string;
   pactffiVerifierShutdown(handle: FfiVerifierHandle): void;
   pactffiVerifierAddProviderTransport(
     handle: FfiVerifierHandle,
