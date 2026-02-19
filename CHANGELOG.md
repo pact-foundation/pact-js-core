@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [19.0.0](https://github.com/pact-foundation/pact-js-core/compare/v18.1.0...v19.0.0) (2026-02-19)
+
+
+### ⚠ BREAKING CHANGES
+
+* removed deprecated ffi pactffiCreateMockServerForPact
+
+### Features
+
+* extract verification JSON from ffi pactffiVerifierJson ([131873f](https://github.com/pact-foundation/pact-js-core/commit/131873f237585ae0bb4bf0f5ee2f8c849c1d02f5)), closes [#840](https://github.com/pact-foundation/pact-js-core/issues/840)
+
+
+### Fixes and Improvements
+
+* update pact-ffi to 0.5.3 ([797eb0a](https://github.com/pact-foundation/pact-js-core/commit/797eb0a99a26e715bf2141f1e49b3762488a9a1d))
+
 ## [18.1.0](https://github.com/pact-foundation/pact-js-core/compare/v18.0.0...v18.1.0) (2026-02-10)
 
 
