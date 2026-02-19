@@ -124,11 +124,6 @@ export type Ffi = {
   FfiVerificationFunctions;
 
 export type FfiConsumerFunctions = {
-  pactffiCreateMockServerForPact(
-    handle: FfiPactHandle,
-    address: string,
-    tls: boolean
-  ): number;
   pactffiCreateMockServerForTransport(
     handle: FfiPactHandle,
     address: string,

@@ -14,7 +14,6 @@ Napi::Value PactffiWithSpecification(const Napi::CallbackInfo& info);
 Napi::Value PactffiWritePactFile(const Napi::CallbackInfo& info);
 Napi::Value PactffiWritePactFileByPort(const Napi::CallbackInfo& info);
 Napi::Value PactffiCleanupMockServer(const Napi::CallbackInfo& info);
-Napi::Value PactffiCreateMockServerForPact(const Napi::CallbackInfo& info);
 Napi::Value PactffiCreateMockServer(const Napi::CallbackInfo& info);
 Napi::Value PactffiGiven(const Napi::CallbackInfo& info);
 Napi::Value PactffiGivenWithParam(const Napi::CallbackInfo& info);

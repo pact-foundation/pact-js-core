@@ -108,10 +108,12 @@ export const makeConsumerPact = (
       requestedPort?: number,
       tls = false
     ) => {
-      const port = ffi.pactffiCreateMockServerForPact(
+      const port = ffi.pactffiCreateMockServerForTransport(
         pactPtr,
-        `${address}:${requestedPort || 0}`,
-        tls
+        address,
+        requestedPort || 0,
+        tls ? 'https' : 'http',
+        ''
       );
       const error: keyof typeof CREATE_MOCK_SERVER_ERRORS | undefined = (
         Object.keys(CREATE_MOCK_SERVER_ERRORS) as Array<

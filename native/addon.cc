@@ -13,7 +13,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   // Consumer
   exports.Set(Napi::String::New(env, "pactffiMockServerMatched"), Napi::Function::New(env, PactffiMockServerMatched));
   exports.Set(Napi::String::New(env, "pactffiMockServerMismatches"), Napi::Function::New(env, PactffiMockServerMismatches));
-  exports.Set(Napi::String::New(env, "pactffiCreateMockServerForPact"), Napi::Function::New(env, PactffiCreateMockServerForPact));
   exports.Set(Napi::String::New(env, "pactffiCreateMockServerForTransport"), Napi::Function::New(env, PactffiCreateMockServerForTransport));
   exports.Set(Napi::String::New(env, "pactffiCleanupMockServer"), Napi::Function::New(env, PactffiCleanupMockServer));
   exports.Set(Napi::String::New(env, "pactffiWritePactFile"), Napi::Function::New(env, PactffiWritePactFile));

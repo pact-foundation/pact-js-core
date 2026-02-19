@@ -185,61 +185,6 @@ Napi::Value PactffiMockServerMismatches(const Napi::CallbackInfo& info) {
 }
 
 /**
- * External interface to create a mock server. A Pact handle is passed in,
- * as well as the port for the mock server to run on. A value of 0 for the port will result in a
- * port being allocated by the operating system. The port of the mock server is returned.
- *
- * * `pact` - Handle to a Pact model
- * * `addr_str` - Address to bind to in the form name:port (i.e. 127.0.0.1:0)
- * * `tls` - boolean flag to indicate of the mock server should use TLS (using a self-signed certificate)
- *
- * # Errors
- *
- * Errors are returned as negative values.
- *
- * | Error | Description |
- * |-------|-------------|
- * | -1 | An invalid handle was received |
- * | -3 | The mock server could not be started |
- * | -4 | The method panicked |
- * | -5 | The address is not valid |
- * | -6 | Could not create the TLS configuration with the self-signed certificate |
- *
- * C interface:
- *
- *    int32_t pactffi_create_mock_server_for_pact(PactHandle pact, const char *addr_str, bool tls);
- */
-Napi::Value PactffiCreateMockServerForPact(const Napi::CallbackInfo& info) {
-   Napi::Env env = info.Env();
-
-  if (info.Length() < 3) {
-    throw Napi::Error::New(env, "PactffiCreateMockServerForPact received < 3 arguments");
-  }
-
-  if (!info[0].IsNumber()) {
-    throw Napi::Error::New(env, "PactffiCreateMockServerForPact(arg 0) expected a PactHandle (uint16_t)");
-  }
-
-  if (!info[1].IsString()) {
-    throw Napi::Error::New(env, "PactffiCreateMockServerForPact(arg 1) expected a string");
-  }
-
-  if (!info[2].IsBoolean()) {
-    throw Napi::Error::New(env, "PactffiCreateMockServerForPact(arg 2) expected a boolean");
-  }
-
-  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
-  std::string addr = info[1].As<Napi::String>().Utf8Value();
-  bool tls = info[2].As<Napi::Boolean>().Value();
-
-  // int32_t pactffi_create_mock_server_for_pact(PactHandle pact, const char *addr_str, bool tls);
-
-  uint16_t result = pactffi_create_mock_server_for_pact(pact, addr.c_str(), tls);
-
-  return Number::New(env, result);
-}
-
-/**
  * Create a mock server for the provided Pact handle and transport. If the transport is not
  * provided (it is a NULL pointer or an empty string), will default to an HTTP transport. The
  * address is the interface bind to, and will default to the loopback adapter if not specified.
