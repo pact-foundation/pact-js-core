@@ -113,7 +113,7 @@ export const makeConsumerPact = (
         address,
         requestedPort || 0,
         tls ? 'https' : 'http',
-        ""
+        ''
       );
       const error: keyof typeof CREATE_MOCK_SERVER_ERRORS | undefined = (
         Object.keys(CREATE_MOCK_SERVER_ERRORS) as Array<
