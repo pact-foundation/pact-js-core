@@ -48,7 +48,7 @@
     "node-gyp-build": "^4.6.0",
     "pino": "^10.0.0",
     "pino-pretty": "^13.1.1",
-    "underscore": "1.13.7"
+    "underscore": "1.13.8"
   },
   "devDependencies": {
     "@eslint/compat": "2.0.2",
