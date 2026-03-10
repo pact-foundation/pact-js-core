@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [19.1.0](https://github.com/pact-foundation/pact-js-core/compare/v19.0.0...v19.1.0) (2026-03-10)
+
+
+### Features
+
+* support pending interactions, comments and test names ([#851](https://github.com/pact-foundation/pact-js-core/issues/851)) ([a668c26](https://github.com/pact-foundation/pact-js-core/commit/a668c265da59b4d310aab5c1683f6f090a55709b))
+
+
+### Fixes and Improvements
+
+* **deps:** update dependency underscore to v1.13.8 ([#847](https://github.com/pact-foundation/pact-js-core/issues/847)) ([56c95c5](https://github.com/pact-foundation/pact-js-core/commit/56c95c57a2ed9de6943e479953896cf68c12310f))
+
 ## [19.0.0](https://github.com/pact-foundation/pact-js-core/compare/v18.1.0...v19.0.0) (2026-02-19)
 
 
