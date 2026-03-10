@@ -1,5 +1,6 @@
 import * as chai from 'chai';
 import * as path from 'path';
+import * as fs from 'fs';
 import chaiAsPromised from 'chai-as-promised';
 import * as rimraf from 'rimraf';
 import * as zlib from 'zlib';
@@ -82,6 +83,86 @@ describe('FFI integration test for the Message Consumer API', function () {
 
         pact.writePactFile(path.join(__dirname, '__testoutput__'));
       });
+
+      it('writes pending state to the pact file', function () {
+        const message = pact.newAsynchronousMessage('pending async message');
+        message.expectsToReceive('a pending async event');
+        message.given('some state');
+        message.withContents(
+          JSON.stringify({ foo: 'bar' }),
+          'application/json'
+        );
+        message.setPending(true);
+
+        pact.writePactFile(path.join(__dirname, '__testoutput__'));
+
+        const pactPath = path.join(
+          __dirname,
+          '__testoutput__',
+          'message-consumer-message-provider.json'
+        );
+        const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
+        const interaction = (
+          pactJson.interactions as Array<{
+            description?: string;
+            pending?: boolean;
+          }>
+        ).find((entry) =>
+          ['a pending async event', 'pending async message'].includes(
+            entry.description ?? ''
+          )
+        );
+
+        expect(
+          interaction,
+          'Expected pending async interaction to exist in pact file'
+        ).to.exist;
+        expect(interaction?.pending).to.equal(true);
+      });
+
+      it('writes comments and interaction test name for async message', function () {
+        const message = pact.newAsynchronousMessage('commented async message');
+        message.expectsToReceive('a commented async event');
+        message.given('some state');
+        message.withContents(
+          JSON.stringify({ foo: 'bar' }),
+          'application/json'
+        );
+        message.setComment('why', 'async comment');
+        message.addTextComment('async text');
+        message.setInteractionTestName('async test name');
+
+        pact.writePactFile(path.join(__dirname, '__testoutput__'));
+
+        const pactPath = path.join(
+          __dirname,
+          '__testoutput__',
+          'message-consumer-message-provider.json'
+        );
+        const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
+        const interaction = (
+          pactJson.interactions as Array<{
+            description?: string;
+            comments?: {
+              text?: string[];
+              why?: string;
+              testname?: string;
+            };
+          }>
+        ).find((entry) =>
+          ['a commented async event', 'commented async message'].includes(
+            entry.description ?? ''
+          )
+        );
+
+        expect(
+          interaction,
+          'Expected commented async interaction to exist in pact file'
+        ).to.exist;
+        expect(interaction?.comments?.why).to.equal('async comment');
+        expect(interaction?.comments?.text).to.deep.equal(['async text']);
+        expect(interaction?.comments?.testname).to.equal('async test name');
+      });
     });
 
     describe('with binary data', function () {
@@ -134,6 +215,84 @@ describe('FFI integration test for the Message Consumer API', function () {
         expect(JSON.parse(response2)).to.deep.eq({ qux: 'quux' });
 
         pact.writePactFile(path.join(__dirname, '__testoutput__'));
+      });
+
+      it('writes pending state to the pact file', function () {
+        const message = pact.newSynchronousMessage('pending sync message');
+        message.given('some state');
+        message.withRequestContents(
+          JSON.stringify({ foo: 'bar' }),
+          'application/json'
+        );
+        message.withResponseContents(
+          JSON.stringify({ baz: 'bat' }),
+          'application/json'
+        );
+        message.setPending(true);
+
+        pact.writePactFile(path.join(__dirname, '__testoutput__'));
+
+        const pactPath = path.join(
+          __dirname,
+          '__testoutput__',
+          'message-consumer-message-provider.json'
+        );
+        const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
+        const interaction = (
+          pactJson.interactions as Array<{
+            description?: string;
+            pending?: boolean;
+          }>
+        ).find((entry) => entry.description === 'pending sync message');
+
+        expect(
+          interaction,
+          'Expected pending sync interaction to exist in pact file'
+        ).to.exist;
+        expect(interaction?.pending).to.equal(true);
+      });
+
+      it('writes comments and interaction test name for sync message', function () {
+        const message = pact.newSynchronousMessage('commented sync message');
+        message.given('some state');
+        message.withRequestContents(
+          JSON.stringify({ foo: 'bar' }),
+          'application/json'
+        );
+        message.withResponseContents(
+          JSON.stringify({ baz: 'bat' }),
+          'application/json'
+        );
+        message.setComment('why', 'sync comment');
+        message.addTextComment('sync text');
+        message.setInteractionTestName('sync test name');
+
+        pact.writePactFile(path.join(__dirname, '__testoutput__'));
+
+        const pactPath = path.join(
+          __dirname,
+          '__testoutput__',
+          'message-consumer-message-provider.json'
+        );
+        const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
+        const interaction = (
+          pactJson.interactions as Array<{
+            description?: string;
+            comments?: {
+              text?: string[];
+              why?: string;
+              testname?: string;
+            };
+          }>
+        ).find((entry) => entry.description === 'commented sync message');
+
+        expect(
+          interaction,
+          'Expected commented sync interaction to exist in pact file'
+        ).to.exist;
+        expect(interaction?.comments?.why).to.equal('sync comment');
+        expect(interaction?.comments?.text).to.deep.equal(['sync text']);
+        expect(interaction?.comments?.testname).to.equal('sync test name');
       });
     });
 

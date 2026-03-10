@@ -97,9 +97,11 @@ const loadPathMessage = (bindingsPath: string) =>
 const bindingsResolver = (bindingsPath: string | undefined) =>
   bindings(bindingsPath);
 
+const localBindingPath =
+  process.env['PACT_PREBUILD_LOCATION']?.toString() ?? path.resolve();
 const bindingPaths = [
+  localBindingPath,
   path.resolve(getPlatformArchSpecificPackage()),
-  process.env['PACT_PREBUILD_LOCATION']?.toString() ?? path.resolve(),
 ];
 let ffiLib: Ffi;
 

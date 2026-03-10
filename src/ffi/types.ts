@@ -162,6 +162,17 @@ export type FfiConsumerFunctions = {
     description: string,
     params: string
   ): boolean;
+  pactffiSetPending(handle: FfiInteractionHandle, pending: boolean): boolean;
+  pactffiSetComment(
+    handle: FfiInteractionHandle,
+    key: string,
+    value: string
+  ): boolean;
+  pactffiAddTextComment(handle: FfiInteractionHandle, comment: string): boolean;
+  pactffiInteractionTestName(
+    handle: FfiInteractionHandle,
+    name: string
+  ): number;
   pactffiWithRequest(
     handle: FfiInteractionHandle,
     method: string,

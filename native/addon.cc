@@ -23,6 +23,10 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiGiven"), Napi::Function::New(env, PactffiGiven));
   exports.Set(Napi::String::New(env, "pactffiGivenWithParam"), Napi::Function::New(env, PactffiGivenWithParam));
   exports.Set(Napi::String::New(env, "pactffiGivenWithParams"), Napi::Function::New(env, PactffiGivenWithParams));
+  exports.Set(Napi::String::New(env, "pactffiSetPending"), Napi::Function::New(env, PactffiSetPending));
+  exports.Set(Napi::String::New(env, "pactffiSetComment"), Napi::Function::New(env, PactffiSetComment));
+  exports.Set(Napi::String::New(env, "pactffiAddTextComment"), Napi::Function::New(env, PactffiAddTextComment));
+  exports.Set(Napi::String::New(env, "pactffiInteractionTestName"), Napi::Function::New(env, PactffiInteractionTestName));
   exports.Set(Napi::String::New(env, "pactffiWithRequest"), Napi::Function::New(env, PactffiWithRequest));
   exports.Set(Napi::String::New(env, "pactffiWithQueryParameter"), Napi::Function::New(env, PactffiWithQueryParameter));
   exports.Set(Napi::String::New(env, "pactffiWithSpecification"), Napi::Function::New(env, PactffiWithSpecification));
