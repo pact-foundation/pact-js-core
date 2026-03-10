@@ -305,9 +305,7 @@ export const makeConsumerPact = (
         interactionDescription
       );
 
-      const interaction = wrapAllWithCheck<
-        Omit<ConsumerInteraction, 'setInteractionTestName'>
-      >({
+      return wrapAllWithCheck<ConsumerInteraction>({
         uponReceiving: (recieveDescription: string) =>
           ffi.pactffiUponReceiving(interactionPtr, recieveDescription),
         given: (state: string) => ffi.pactffiGiven(interactionPtr, state),
@@ -321,6 +319,8 @@ export const makeConsumerPact = (
           ffi.pactffiSetComment(interactionPtr, key, value),
         addTextComment: (comment: string) =>
           ffi.pactffiAddTextComment(interactionPtr, comment),
+        setInteractionTestName: (name: string) =>
+          ffi.pactffiInteractionTestName(interactionPtr, name),
         withRequest: (method: string, path: string) =>
           ffi.pactffiWithRequest(interactionPtr, method, path),
         withQuery: (name: string, index: number, value: string) =>
@@ -478,12 +478,6 @@ export const makeConsumerPact = (
           return true;
         },
       });
-
-      return {
-        ...interaction,
-        setInteractionTestName: (name: string) =>
-          ffi.pactffiInteractionTestName(interactionPtr, name),
-      };
     },
   };
 };
