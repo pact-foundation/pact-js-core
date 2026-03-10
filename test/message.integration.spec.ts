@@ -102,10 +102,12 @@ describe('FFI integration test for the Message Consumer API', function () {
           'message-consumer-message-provider.json'
         );
         const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
-        const interaction = (pactJson.interactions as Array<{
-          description?: string;
-          pending?: boolean;
-        }>).find((entry) =>
+        const interaction = (
+          pactJson.interactions as Array<{
+            description?: string;
+            pending?: boolean;
+          }>
+        ).find((entry) =>
           ['a pending async event', 'pending async message'].includes(
             entry.description ?? ''
           )
@@ -138,14 +140,16 @@ describe('FFI integration test for the Message Consumer API', function () {
           'message-consumer-message-provider.json'
         );
         const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
-        const interaction = (pactJson.interactions as Array<{
-          description?: string;
-          comments?: {
-            text?: string[];
-            why?: string;
-            testname?: string;
-          };
-        }>).find((entry) =>
+        const interaction = (
+          pactJson.interactions as Array<{
+            description?: string;
+            comments?: {
+              text?: string[];
+              why?: string;
+              testname?: string;
+            };
+          }>
+        ).find((entry) =>
           ['a commented async event', 'commented async message'].includes(
             entry.description ?? ''
           )
@@ -234,10 +238,12 @@ describe('FFI integration test for the Message Consumer API', function () {
           'message-consumer-message-provider.json'
         );
         const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
-        const interaction = (pactJson.interactions as Array<{
-          description?: string;
-          pending?: boolean;
-        }>).find((entry) => entry.description === 'pending sync message');
+        const interaction = (
+          pactJson.interactions as Array<{
+            description?: string;
+            pending?: boolean;
+          }>
+        ).find((entry) => entry.description === 'pending sync message');
 
         expect(
           interaction,
@@ -269,14 +275,16 @@ describe('FFI integration test for the Message Consumer API', function () {
           'message-consumer-message-provider.json'
         );
         const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
-        const interaction = (pactJson.interactions as Array<{
-          description?: string;
-          comments?: {
-            text?: string[];
-            why?: string;
-            testname?: string;
-          };
-        }>).find((entry) => entry.description === 'commented sync message');
+        const interaction = (
+          pactJson.interactions as Array<{
+            description?: string;
+            comments?: {
+              text?: string[];
+              why?: string;
+              testname?: string;
+            };
+          }>
+        ).find((entry) => entry.description === 'commented sync message');
 
         expect(
           interaction,

@@ -271,12 +271,12 @@ describe('FFI integration test for the HTTP Consumer API', function () {
             'pending-consumer-pending-provider.json'
           );
           const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
-          const interaction = (pactJson.interactions as Array<{
-            description?: string;
-            pending?: boolean;
-          }>).find(
-            (entry) => entry.description === 'a request to /pending'
-          );
+          const interaction = (
+            pactJson.interactions as Array<{
+              description?: string;
+              pending?: boolean;
+            }>
+          ).find((entry) => entry.description === 'a request to /pending');
 
           expect(
             interaction,
@@ -338,14 +338,16 @@ describe('FFI integration test for the HTTP Consumer API', function () {
             'comment-consumer-comment-provider.json'
           );
           const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
-          const interaction = (pactJson.interactions as Array<{
-            description?: string;
-            comments?: {
-              text?: string[];
-              why?: string;
-              testname?: string;
-            };
-          }>).find((entry) => entry.description === 'a request to /comments');
+          const interaction = (
+            pactJson.interactions as Array<{
+              description?: string;
+              comments?: {
+                text?: string[];
+                why?: string;
+                testname?: string;
+              };
+            }>
+          ).find((entry) => entry.description === 'a request to /comments');
 
           expect(
             interaction,
