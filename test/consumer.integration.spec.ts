@@ -223,6 +223,146 @@ describe('FFI integration test for the HTTP Consumer API', function () {
     });
   });
 
+  describe('with a pending interaction', function () {
+    beforeEach(function () {
+      const consumerName = 'pending-consumer';
+      const providerName = 'pending-provider';
+      pact = makeConsumerPact(
+        consumerName,
+        providerName,
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
+      );
+
+      const interaction = pact.newInteraction('pending interaction');
+      interaction.uponReceiving('a request to /pending');
+      interaction.withRequest('GET', '/pending');
+      interaction.withStatus(200);
+      interaction.withResponseBody(
+        JSON.stringify({
+          ok: true,
+        }),
+        'application/json'
+      );
+      interaction.setPending(true);
+
+      port = pact.createMockServer(HOST);
+    });
+
+    it('writes pending state to the pact file', function () {
+      return axios
+        .request({
+          baseURL: `http://${HOST}:${port}`,
+          headers: {
+            Accept: 'application/json',
+          },
+          method: 'GET',
+          url: '/pending',
+        })
+        .then((res) => {
+          expect(res.data).to.deep.equal({
+            ok: true,
+          });
+        })
+        .then(() => {
+          pact.writePactFile(path.join(__dirname, '__testoutput__'));
+          const pactPath = path.join(
+            __dirname,
+            '__testoutput__',
+            'pending-consumer-pending-provider.json'
+          );
+          const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
+          const interaction = (pactJson.interactions as Array<{
+            description?: string;
+            pending?: boolean;
+          }>).find(
+            (entry) => entry.description === 'a request to /pending'
+          );
+
+          expect(
+            interaction,
+            'Expected pending interaction to exist in pact file'
+          ).to.exist;
+          expect(interaction?.pending).to.equal(true);
+        })
+        .then(() => {
+          pact.cleanupMockServer(port);
+        });
+    });
+  });
+
+  describe('with interaction comments and test name', function () {
+    beforeEach(function () {
+      pact = makeConsumerPact(
+        'comment-consumer',
+        'comment-provider',
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
+      );
+
+      const interaction = pact.newInteraction('commented interaction');
+      interaction.uponReceiving('a request to /comments');
+      interaction.withRequest('GET', '/comments');
+      interaction.withStatus(200);
+      interaction.withResponseBody(
+        JSON.stringify({
+          ok: true,
+        }),
+        'application/json'
+      );
+      interaction.setComment('why', 'test comment');
+      interaction.addTextComment('extra context');
+      interaction.setInteractionTestName('http interaction test');
+
+      port = pact.createMockServer(HOST);
+    });
+
+    it('writes comments and interaction test name to the pact file', function () {
+      return axios
+        .request({
+          baseURL: `http://${HOST}:${port}`,
+          headers: {
+            Accept: 'application/json',
+          },
+          method: 'GET',
+          url: '/comments',
+        })
+        .then((res) => {
+          expect(res.data).to.deep.equal({
+            ok: true,
+          });
+        })
+        .then(() => {
+          pact.writePactFile(path.join(__dirname, '__testoutput__'));
+          const pactPath = path.join(
+            __dirname,
+            '__testoutput__',
+            'comment-consumer-comment-provider.json'
+          );
+          const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
+          const interaction = (pactJson.interactions as Array<{
+            description?: string;
+            comments?: {
+              text?: string[];
+              why?: string;
+              testname?: string;
+            };
+          }>).find((entry) => entry.description === 'a request to /comments');
+
+          expect(
+            interaction,
+            'Expected commented interaction to exist in pact file'
+          ).to.exist;
+          expect(interaction?.comments?.why).to.equal('test comment');
+          expect(interaction?.comments?.text).to.deep.equal(['extra context']);
+          expect(interaction?.comments?.testname).to.equal(
+            'http interaction test'
+          );
+        })
+        .then(() => {
+          pact.cleanupMockServer(port);
+        });
+    });
+  });
+
   // See https://github.com/pact-foundation/pact-reference/issues/171 for why we have an OS switch here
   // Windows: does not have magic mime matcher, uses content-type
   // OSX arm64: does not magic mime matcher, uses content-type

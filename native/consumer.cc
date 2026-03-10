@@ -680,6 +680,131 @@ Napi::Value PactffiGivenWithParams(const Napi::CallbackInfo& info) {
 }
 
 /**
+ * Sets the pending status for an interaction.
+ *
+ * C interface:
+ *
+ *    bool pactffi_set_pending(InteractionHandle interaction, bool pending);
+ */
+Napi::Value PactffiSetPending(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiSetPending received < 2 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiSetPending(arg 0) expected a InteractionHandle (uint32_t)");
+  }
+
+  if (!info[1].IsBoolean()) {
+    throw Napi::Error::New(env, "PactffiSetPending(arg 1) expected a boolean");
+  }
+
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  bool pending = info[1].As<Napi::Boolean>().Value();
+
+  bool res = pactffi_set_pending(interaction, pending);
+
+  return Napi::Boolean::New(env, res);
+}
+
+/**
+ * Sets metadata comment key/value pair for an interaction.
+ *
+ * C interface:
+ *
+ *    bool pactffi_set_comment(InteractionHandle interaction, const char *key, const char *value);
+ */
+Napi::Value PactffiSetComment(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 3) {
+    throw Napi::Error::New(env, "PactffiSetComment received < 3 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiSetComment(arg 0) expected a InteractionHandle (uint32_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiSetComment(arg 1) expected a string");
+  }
+
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "PactffiSetComment(arg 2) expected a string");
+  }
+
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  std::string key = info[1].As<Napi::String>().Utf8Value();
+  std::string value = info[2].As<Napi::String>().Utf8Value();
+
+  bool res = pactffi_set_comment(interaction, key.c_str(), value.c_str());
+
+  return Napi::Boolean::New(env, res);
+}
+
+/**
+ * Adds a plain text comment to interaction metadata.
+ *
+ * C interface:
+ *
+ *    bool pactffi_add_text_comment(InteractionHandle interaction, const char *comment);
+ */
+Napi::Value PactffiAddTextComment(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiAddTextComment received < 2 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiAddTextComment(arg 0) expected a InteractionHandle (uint32_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiAddTextComment(arg 1) expected a string");
+  }
+
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  std::string comment = info[1].As<Napi::String>().Utf8Value();
+
+  bool res = pactffi_add_text_comment(interaction, comment.c_str());
+
+  return Napi::Boolean::New(env, res);
+}
+
+/**
+ * Sets test name metadata for an interaction.
+ *
+ * C interface:
+ *
+ *    unsigned int pactffi_interaction_test_name(InteractionHandle interaction, const char *test_name);
+ */
+Napi::Value PactffiInteractionTestName(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiInteractionTestName received < 2 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiInteractionTestName(arg 0) expected a InteractionHandle (uint32_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiInteractionTestName(arg 1) expected a string");
+  }
+
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  std::string testName = info[1].As<Napi::String>().Utf8Value();
+
+  unsigned int res = pactffi_interaction_test_name(interaction, testName.c_str());
+
+  return Napi::Number::New(env, res);
+}
+
+/**
  * Configures the request for the Interaction. Returns false if the interaction or Pact can't be
  * modified (i.e. the mock server for it has already started)
  *

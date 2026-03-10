@@ -52,6 +52,14 @@ const asyncMessage = (
     ffi.pactffiMessageGivenWithParam(interactionPtr, state, name, value),
   givenWithParams: (state: string, params: string) =>
     ffi.pactffiMessageGivenWithParams(interactionPtr, state, params),
+  setPending: (pending: boolean) =>
+    ffi.pactffiSetPending(interactionPtr, pending),
+  setComment: (key: string, value: string) =>
+    ffi.pactffiSetComment(interactionPtr, key, value),
+  addTextComment: (comment: string) =>
+    ffi.pactffiAddTextComment(interactionPtr, comment),
+  setInteractionTestName: (name: string) =>
+    ffi.pactffiInteractionTestName(interactionPtr, name),
   withContents: (body: string, contentType: string) =>
     ffi.pactffiMessageWithContents(interactionPtr, contentType, body),
   withBinaryContents: (body: Buffer, contentType: string) =>
@@ -211,6 +219,14 @@ export const makeConsumerPact = (
           ffi.pactffiGivenWithParam(interactionPtr, state, name, value),
         givenWithParams: (state: string, params: string) =>
           ffi.pactffiGivenWithParams(interactionPtr, state, params),
+        setPending: (pending: boolean) =>
+          ffi.pactffiSetPending(interactionPtr, pending),
+        setComment: (key: string, value: string) =>
+          ffi.pactffiSetComment(interactionPtr, key, value),
+        addTextComment: (comment: string) =>
+          ffi.pactffiAddTextComment(interactionPtr, comment),
+        setInteractionTestName: (name: string) =>
+          ffi.pactffiInteractionTestName(interactionPtr, name),
         withRequestContents: (body: string, contentType: string) =>
           ffi.pactffiWithBody(
             interactionPtr,
@@ -289,7 +305,9 @@ export const makeConsumerPact = (
         interactionDescription
       );
 
-      return wrapAllWithCheck<ConsumerInteraction>({
+      const interaction = wrapAllWithCheck<
+        Omit<ConsumerInteraction, 'setInteractionTestName'>
+      >({
         uponReceiving: (recieveDescription: string) =>
           ffi.pactffiUponReceiving(interactionPtr, recieveDescription),
         given: (state: string) => ffi.pactffiGiven(interactionPtr, state),
@@ -297,6 +315,12 @@ export const makeConsumerPact = (
           ffi.pactffiGivenWithParam(interactionPtr, state, name, value),
         givenWithParams: (state: string, params: string) =>
           ffi.pactffiGivenWithParams(interactionPtr, state, params),
+        setPending: (pending: boolean) =>
+          ffi.pactffiSetPending(interactionPtr, pending),
+        setComment: (key: string, value: string) =>
+          ffi.pactffiSetComment(interactionPtr, key, value),
+        addTextComment: (comment: string) =>
+          ffi.pactffiAddTextComment(interactionPtr, comment),
         withRequest: (method: string, path: string) =>
           ffi.pactffiWithRequest(interactionPtr, method, path),
         withQuery: (name: string, index: number, value: string) =>
@@ -454,6 +478,12 @@ export const makeConsumerPact = (
           return true;
         },
       });
+
+      return {
+        ...interaction,
+        setInteractionTestName: (name: string) =>
+          ffi.pactffiInteractionTestName(interactionPtr, name),
+      };
     },
   };
 };
@@ -562,6 +592,14 @@ export const makeConsumerMessagePact = (
           ffi.pactffiGivenWithParam(interactionPtr, state, name, value),
         givenWithParams: (state: string, params: string) =>
           ffi.pactffiGivenWithParams(interactionPtr, state, params),
+        setPending: (pending: boolean) =>
+          ffi.pactffiSetPending(interactionPtr, pending),
+        setComment: (key: string, value: string) =>
+          ffi.pactffiSetComment(interactionPtr, key, value),
+        addTextComment: (comment: string) =>
+          ffi.pactffiAddTextComment(interactionPtr, comment),
+        setInteractionTestName: (name: string) =>
+          ffi.pactffiInteractionTestName(interactionPtr, name),
         withRequestContents: (body: string, contentType: string) =>
           ffi.pactffiWithBody(
             interactionPtr,
