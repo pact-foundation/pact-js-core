@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@eslint/compat": "2.0.2",
-    "@eslint/eslintrc": "3.3.3",
+    "@eslint/eslintrc": "3.3.5",
     "@eslint/js": "9.39.2",
     "@grpc/grpc-js": "1.14.3",
     "@grpc/proto-loader": "0.8.0",
