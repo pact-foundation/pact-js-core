@@ -51,7 +51,7 @@
     "underscore": "1.13.8"
   },
   "devDependencies": {
-    "@eslint/compat": "2.0.2",
+    "@eslint/compat": "2.0.3",
     "@eslint/eslintrc": "3.3.5",
     "@eslint/js": "9.39.2",
     "@grpc/grpc-js": "1.14.3",
