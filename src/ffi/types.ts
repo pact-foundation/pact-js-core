@@ -169,6 +169,12 @@ export type FfiConsumerFunctions = {
     value: string
   ): boolean;
   pactffiAddTextComment(handle: FfiInteractionHandle, comment: string): boolean;
+  pactffiAddInteractionReference(
+    handle: FfiInteractionHandle,
+    group: string,
+    name: string,
+    value: string
+  ): boolean;
   pactffiInteractionTestName(
     handle: FfiInteractionHandle,
     name: string
