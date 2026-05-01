@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [19.2.0](https://github.com/pact-foundation/pact-js-core/compare/v19.1.0...v19.2.0) (2026-05-01)
+
+
+### Features
+
+* Update FFI lib to 0.5.4 and add the addInteractionReference function ([#861](https://github.com/pact-foundation/pact-js-core/issues/861)) ([e5035cc](https://github.com/pact-foundation/pact-js-core/commit/e5035cc9dbebda04527848f4192f5f39605d64a0))
+
 ## [19.1.0](https://github.com/pact-foundation/pact-js-core/compare/v19.0.0...v19.1.0) (2026-03-10)
 
 
