@@ -165,7 +165,11 @@ export type ConsumerInteraction = PluginInteraction & {
   setPending: (pending: boolean) => boolean;
   setComment: (key: string, value: string) => boolean;
   addTextComment: (comment: string) => boolean;
-  addInteractionReference: (group: string, name: string, value: string) => boolean;
+  addInteractionReference: (
+    group: string,
+    name: string,
+    value: string
+  ) => boolean;
   setInteractionTestName: (name: string) => number;
   withRequest: (method: string, path: string) => boolean;
   withQuery: (name: string, index: number, value: string) => boolean;
@@ -247,7 +251,11 @@ export type AsynchronousMessage = RequestPluginInteraction & {
   setPending: (pending: boolean) => void;
   setComment: (key: string, value: string) => boolean;
   addTextComment: (comment: string) => boolean;
-  addInteractionReference: (group: string, name: string, value: string) => boolean;
+  addInteractionReference: (
+    group: string,
+    name: string,
+    value: string
+  ) => boolean;
   setInteractionTestName: (name: string) => number;
   expectsToReceive: (description: string) => void;
   withMetadata: (name: string, value: string) => void;
@@ -267,7 +275,11 @@ export type SynchronousMessage = PluginInteraction & {
   setPending: (pending: boolean) => void;
   setComment: (key: string, value: string) => boolean;
   addTextComment: (comment: string) => boolean;
-  addInteractionReference: (group: string, name: string, value: string) => boolean;
+  addInteractionReference: (
+    group: string,
+    name: string,
+    value: string
+  ) => boolean;
   setInteractionTestName: (name: string) => number;
   withMetadata: (name: string, value: string) => void;
   withRequestContents: (body: string, contentType: string) => void;

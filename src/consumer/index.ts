@@ -228,7 +228,12 @@ export const makeConsumerPact = (
         addTextComment: (comment: string) =>
           ffi.pactffiAddTextComment(interactionPtr, comment),
         addInteractionReference: (group: string, name: string, value: string) =>
-          ffi.pactffiAddInteractionReference(interactionPtr, group, name, value),
+          ffi.pactffiAddInteractionReference(
+            interactionPtr,
+            group,
+            name,
+            value
+          ),
         setInteractionTestName: (name: string) =>
           ffi.pactffiInteractionTestName(interactionPtr, name),
         withRequestContents: (body: string, contentType: string) =>
@@ -324,7 +329,12 @@ export const makeConsumerPact = (
         addTextComment: (comment: string) =>
           ffi.pactffiAddTextComment(interactionPtr, comment),
         addInteractionReference: (group: string, name: string, value: string) =>
-          ffi.pactffiAddInteractionReference(interactionPtr, group, name, value),
+          ffi.pactffiAddInteractionReference(
+            interactionPtr,
+            group,
+            name,
+            value
+          ),
         setInteractionTestName: (name: string) =>
           ffi.pactffiInteractionTestName(interactionPtr, name),
         withRequest: (method: string, path: string) =>
@@ -599,7 +609,12 @@ export const makeConsumerMessagePact = (
         addTextComment: (comment: string) =>
           ffi.pactffiAddTextComment(interactionPtr, comment),
         addInteractionReference: (group: string, name: string, value: string) =>
-          ffi.pactffiAddInteractionReference(interactionPtr, group, name, value),
+          ffi.pactffiAddInteractionReference(
+            interactionPtr,
+            group,
+            name,
+            value
+          ),
         setInteractionTestName: (name: string) =>
           ffi.pactffiInteractionTestName(interactionPtr, name),
         withRequestContents: (body: string, contentType: string) =>

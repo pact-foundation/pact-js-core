@@ -100,7 +100,11 @@ describe('FFI integration test for the HTTP Consumer API', function () {
 
       interaction.uponReceiving('a request to get a create with JSON data');
       interaction.given('fido exists 444444');
-      interaction.addInteractionReference('Jira', 'TICKET-123', 'https://myjira/browse/TICKET-123');
+      interaction.addInteractionReference(
+        'Jira',
+        'TICKET-123',
+        'https://myjira/browse/TICKET-123'
+      );
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
       interaction.withQuery('someParam', 0, 'someValue');
