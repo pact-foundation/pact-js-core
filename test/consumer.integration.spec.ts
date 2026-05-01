@@ -92,13 +92,15 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       pact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V4'],
+        'trace'
       );
 
       const interaction = pact.newInteraction('some description');
 
       interaction.uponReceiving('a request to get a create with JSON data');
-      interaction.given('fido exists');
+      interaction.given('fido exists 444444');
+      interaction.addInteractionReference('Jira', 'TICKET-123', 'https://myjira/browse/TICKET-123');
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
       interaction.withQuery('someParam', 0, 'someValue');
