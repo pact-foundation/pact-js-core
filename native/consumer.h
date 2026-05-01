@@ -21,6 +21,7 @@ Napi::Value PactffiGivenWithParams(const Napi::CallbackInfo& info);
 Napi::Value PactffiSetPending(const Napi::CallbackInfo& info);
 Napi::Value PactffiSetComment(const Napi::CallbackInfo& info);
 Napi::Value PactffiAddTextComment(const Napi::CallbackInfo& info);
+Napi::Value PactffiAddInteractionReference(const Napi::CallbackInfo& info);
 Napi::Value PactffiInteractionTestName(const Napi::CallbackInfo& info);
 Napi::Value PactffiMockServerLogs(const Napi::CallbackInfo& info);
 Napi::Value PactffiMockServerMatched(const Napi::CallbackInfo& info);

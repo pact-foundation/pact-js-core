@@ -58,6 +58,8 @@ const asyncMessage = (
     ffi.pactffiSetComment(interactionPtr, key, value),
   addTextComment: (comment: string) =>
     ffi.pactffiAddTextComment(interactionPtr, comment),
+  addInteractionReference: (group: string, name: string, value: string) =>
+    ffi.pactffiAddInteractionReference(interactionPtr, group, name, value),
   setInteractionTestName: (name: string) =>
     ffi.pactffiInteractionTestName(interactionPtr, name),
   withContents: (body: string, contentType: string) =>
@@ -225,6 +227,8 @@ export const makeConsumerPact = (
           ffi.pactffiSetComment(interactionPtr, key, value),
         addTextComment: (comment: string) =>
           ffi.pactffiAddTextComment(interactionPtr, comment),
+        addInteractionReference: (group: string, name: string, value: string) =>
+          ffi.pactffiAddInteractionReference(interactionPtr, group, name, value),
         setInteractionTestName: (name: string) =>
           ffi.pactffiInteractionTestName(interactionPtr, name),
         withRequestContents: (body: string, contentType: string) =>
@@ -319,6 +323,8 @@ export const makeConsumerPact = (
           ffi.pactffiSetComment(interactionPtr, key, value),
         addTextComment: (comment: string) =>
           ffi.pactffiAddTextComment(interactionPtr, comment),
+        addInteractionReference: (group: string, name: string, value: string) =>
+          ffi.pactffiAddInteractionReference(interactionPtr, group, name, value),
         setInteractionTestName: (name: string) =>
           ffi.pactffiInteractionTestName(interactionPtr, name),
         withRequest: (method: string, path: string) =>
@@ -592,6 +598,8 @@ export const makeConsumerMessagePact = (
           ffi.pactffiSetComment(interactionPtr, key, value),
         addTextComment: (comment: string) =>
           ffi.pactffiAddTextComment(interactionPtr, comment),
+        addInteractionReference: (group: string, name: string, value: string) =>
+          ffi.pactffiAddInteractionReference(interactionPtr, group, name, value),
         setInteractionTestName: (name: string) =>
           ffi.pactffiInteractionTestName(interactionPtr, name),
         withRequestContents: (body: string, contentType: string) =>
