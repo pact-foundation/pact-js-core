@@ -775,6 +775,46 @@ Napi::Value PactffiAddTextComment(const Napi::CallbackInfo& info) {
 }
 
 /**
+ * Adds an external reference to an interaction.
+ *
+ * C interface:
+ *
+ *    bool pactffi_add_interaction_reference(InteractionHandle interaction, const char *group, const char *name, const char *value);
+ */
+Napi::Value PactffiAddInteractionReference(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 4) {
+    throw Napi::Error::New(env, "PactffiAddInteractionReference received < 4 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiAddInteractionReference(arg 0) expected a InteractionHandle (uint32_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiAddInteractionReference(arg 1) expected a string");
+  }
+
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "PactffiAddInteractionReference(arg 2) expected a string");
+  }
+
+  if (!info[3].IsString()) {
+    throw Napi::Error::New(env, "PactffiAddInteractionReference(arg 3) expected a string");
+  }
+
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  std::string group = info[1].As<Napi::String>().Utf8Value();
+  std::string name = info[2].As<Napi::String>().Utf8Value();
+  std::string value = info[3].As<Napi::String>().Utf8Value();
+
+  bool res = pactffi_add_interaction_reference(interaction, group.c_str(), name.c_str(), value.c_str());
+
+  return Napi::Boolean::New(env, res);
+}
+
+/**
  * Sets test name metadata for an interaction.
  *
  * C interface:
