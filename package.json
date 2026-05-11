@@ -55,7 +55,7 @@
     "@eslint/eslintrc": "3.3.5",
     "@eslint/js": "9.39.4",
     "@grpc/grpc-js": "1.14.3",
-    "@grpc/proto-loader": "0.8.0",
+    "@grpc/proto-loader": "0.8.1",
     "@pact-foundation/pact-js-prettier-config": "1.0.0",
     "@snyk/protect": "1.1302.1",
     "@tsconfig/node18": "18.2.6",
