@@ -34,4 +34,7 @@ export const wrapAllWithCheck = <T extends CheckableFunctions<T>>(
         String(key),
       ),
     }))
-    .reduce((acc, curr) => ({ ...acc, ...curr }), {}) as T;
+    .reduce(
+      (acc, curr) => Object.assign(acc, curr),
+      {} as CheckableFunctions<T>,
+    ) as T;
