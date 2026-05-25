@@ -25,6 +25,7 @@ const getGRPCServer = () => {
   const server = new grpc.Server();
 
   server.addService(routeguide.RouteGuide.service, {
+    // biome-ignore lint/suspicious/noExplicitAny: gRPC service handlers loaded via dynamic proto definition have no static type for their callback
     getFeature: (_: unknown, callback: any) => {
       callback(null, {
         name: 'A place',
@@ -37,7 +38,7 @@ const getGRPCServer = () => {
   return server;
 };
 
-const startGRPCServer = (server: any, port: number) => {
+const startGRPCServer = (server: grpc.Server, port: number) => {
   server.bindAsync(
     `127.0.0.1:${port}`,
     grpc.ServerCredentials.createInsecure(),
@@ -78,13 +79,13 @@ const getFeature = async (address: string, protoFile: string) => {
     grpc.credentials.createInsecure(),
   );
 
-  return new Promise<any>((resolve, reject) => {
+  return new Promise<unknown>((resolve, reject) => {
     client.GetFeature(
       {
         latitude: 180,
         longitude: 200,
       },
-      (e: Error, feature: any) => {
+      (e: Error, feature: unknown) => {
         if (e) {
           reject(e);
         } else {

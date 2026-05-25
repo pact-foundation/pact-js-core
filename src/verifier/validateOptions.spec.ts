@@ -402,7 +402,7 @@ describe('Verifier argument validator', () => {
         validateOptions({
           providerBaseUrl: 'http://localhost',
           randomobjectwithnorules: 'poop',
-        } as any as VerifierOptions),
+        } as unknown as VerifierOptions),
       ).not.toThrow(Error);
     });
   });

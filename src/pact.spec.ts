@@ -1,11 +1,14 @@
+import type { LogLevel } from './logger/types';
 import pact from './pact';
 
 describe('Pact Spec', () => {
   describe('Set Log Level', () => {
-    let originalLogLevel: any;
+    let originalLogLevel: LogLevel | undefined;
     // Reset log level after the tests
     beforeAll(() => {
-      originalLogLevel = pact.logLevel();
+      // logLevel() returns void — the current level cannot be read via the public API;
+      // afterAll will restore to undefined (default).
+      pact.logLevel();
     });
 
     afterAll(() => pact.logLevel(originalLogLevel));

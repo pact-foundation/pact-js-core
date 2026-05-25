@@ -17,13 +17,13 @@ const getFeature = async (address: string, protoFile: string) => {
     grpc.credentials.createInsecure(),
   );
 
-  return new Promise<any>((resolve, reject) => {
+  return new Promise<unknown>((resolve, reject) => {
     client.GetFeature(
       {
         latitude: 180,
         longitude: 200,
       },
-      (e: Error, feature: any) => {
+      (e: Error, feature: unknown) => {
         if (e) {
           reject(e);
         } else {
@@ -332,8 +332,8 @@ describe('FFI integration test for the Message Consumer API', () => {
         });
 
         it('generates a pact with success', async () => {
-          const feature: any = await getFeature(`127.0.0.1:${port}`, protoFile);
-          expect(feature.name).toBe('Big Tree');
+          const feature = await getFeature(`127.0.0.1:${port}`, protoFile);
+          expect((feature as { name: string }).name).toBe('Big Tree');
 
           const res = pact.mockServerMatchedSuccessfully(port);
           expect(res).toBe(true);

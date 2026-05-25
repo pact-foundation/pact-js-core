@@ -492,6 +492,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
             responseType: 'arraybuffer',
           })
           .then((res) => {
+            // biome-ignore lint/suspicious/noExplicitAny: protobufjs Message.decode() returns a dynamically-typed message; no static type exists for decoded fields without code generation
             const message: any = InitPluginRequest.decode(res.data);
             expect(message.implementation).toBe('pact-js-driver');
             expect(message.version).toBe('0.0.0');
