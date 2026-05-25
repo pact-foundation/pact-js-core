@@ -1,8 +1,6 @@
 import * as net from 'node:net';
 import * as path from 'node:path';
 import axios from 'axios';
-import * as chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import {
   type ConsumerMessagePact,
   type ConsumerPact,
@@ -10,9 +8,6 @@ import {
   makeConsumerPact,
 } from '../src';
 import { FfiSpecificationVersion } from '../src/ffi/types';
-
-chai.use(chaiAsPromised);
-const { expect } = chai;
 
 const parseMattMessage = (raw: string): string =>
   raw.replace(/(MATT)+/g, '').trim();
@@ -95,15 +90,15 @@ const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
           url: '/matt',
         })
         .then((res) => {
-          expect(parseMattMessage(res.data)).to.eq('world');
+          expect(parseMattMessage(res.data)).toBe('world');
         })
         .then(() => {
-          expect(provider.mockServerMatchedSuccessfully(port)).to.be.true;
+          expect(provider.mockServerMatchedSuccessfully(port)).toBe(true);
         })
         .then(() => {
           // You don't have to call this, it's just here to check it works
           const mismatches = provider.mockServerMismatches(port);
-          expect(mismatches).to.have.length(0);
+          expect(mismatches).toHaveLength(0);
         })
         .then(() => {
           provider.writePactFile(path.join(__dirname, '__testoutput__'));
@@ -149,13 +144,13 @@ const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
 
       it('generates a pact with success', async () => {
         const message = await sendMattMessageTCP('hellotcp', HOST, port);
-        expect(message).to.eq('tcpworld');
+        expect(message).toBe('tcpworld');
 
         const res = tcpProvider.mockServerMatchedSuccessfully(port);
-        expect(res).to.eq(true);
+        expect(res).toBe(true);
 
         const mismatches = tcpProvider.mockServerMismatches(port);
-        expect(mismatches.length).to.eq(0);
+        expect(mismatches.length).toBe(0);
       });
     });
   });

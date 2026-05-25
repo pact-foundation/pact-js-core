@@ -1,4 +1,3 @@
-import { expect } from 'chai';
 import logger from '../logger';
 import { wrapWithCheck } from './checkErrors';
 
@@ -18,8 +17,8 @@ describe('checkErrors', () => {
     const wrapped = wrapWithCheck(() => 0, 'num');
 
     const result = wrapped();
-    expect(result).to.equal(0);
-    expect(called).to.equal(false);
+    expect(result).toBe(0);
+    expect(called).toBe(false);
   });
 
   it('treats non-zero numeric status as failure', () => {
@@ -31,7 +30,7 @@ describe('checkErrors', () => {
     const wrapped = wrapWithCheck(() => 1, 'num');
 
     const result = wrapped();
-    expect(result).to.equal(1);
-    expect(called).to.equal(true);
+    expect(result).toBe(1);
+    expect(called).toBe(true);
   });
 });

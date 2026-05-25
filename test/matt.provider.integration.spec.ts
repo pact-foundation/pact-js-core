@@ -1,13 +1,9 @@
 import type http from 'node:http';
 import * as net from 'node:net';
 import * as path from 'node:path';
-import * as chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import express from 'express';
 import { setLogLevel } from '../src/logger';
 import verifier from '../src/verifier';
-
-chai.use(chaiAsPromised);
 
 const parseMattMessage = (raw: string): string =>
   raw.replace(/(MATT)+/g, '').trim();

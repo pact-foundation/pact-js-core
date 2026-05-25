@@ -2,14 +2,9 @@ import type * as http from 'node:http';
 import * as grpc from '@grpc/grpc-js';
 import { loadSync } from '@grpc/proto-loader';
 import bodyParser from 'body-parser';
-import * as chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import cors from 'cors';
 import express from 'express';
 import verifierFactory from '../src/verifier';
-
-const { expect } = chai;
-chai.use(chaiAsPromised);
 
 const HTTP_PORT = 50051;
 const GRPC_PORT = 50052;
@@ -104,9 +99,9 @@ const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
 (skipPluginTests ? describe.skip : describe)(
   'Plugin Verifier Integration Spec',
   () => {
-    context('plugin tests', () => {
+    describe('plugin tests', () => {
       describe('grpc interaction', () => {
-        before(async () => {
+        beforeAll(async () => {
           const server = getGRPCServer();
           startGRPCServer(server, GRPC_PORT);
           await startHTTPServer(HTTP_PORT);
@@ -125,7 +120,7 @@ const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
             pactUrls: [`${__dirname}/integration/grpc/grpc.json`],
           }).verify();
 
-          expect('').to.eq('');
+          expect('').toBe('');
         });
 
         it('runs the grpc client', async () => {

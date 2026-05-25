@@ -2,8 +2,6 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as zlib from 'node:zlib';
 import axios from 'axios';
-import * as chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import FormData from 'form-data';
 import { load } from 'protobufjs';
 import {
@@ -12,9 +10,6 @@ import {
   makeConsumerPact,
 } from '../src';
 import { FfiSpecificationVersion } from '../src/ffi/types';
-
-chai.use(chaiAsPromised);
-const { expect } = chai;
 
 const HOST = '127.0.0.1';
 
@@ -64,7 +59,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           url: '/test',
         })
         .then((res) => {
-          expect(res.data).to.deep.equal({
+          expect(res.data).toEqual({
             id: 1,
           });
         })
@@ -72,10 +67,10 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           // You don't have to call this, it's just here to check it works
           const mismatches = pact.mockServerMismatches(port);
           console.dir(mismatches, { depth: 10 });
-          expect(mismatches).to.have.length(0);
+          expect(mismatches).toHaveLength(0);
         })
         .then(() => {
-          expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
+          expect(pact.mockServerMatchedSuccessfully(port)).toBe(true);
         })
         .then(() => {
           pact.writePactFile(path.join(__dirname, '__testoutput__'));
@@ -145,19 +140,19 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           url: '/dogs/1234',
         })
         .then((res) => {
-          expect(res.data).to.deep.equal({
+          expect(res.data).toEqual({
             name: 'fido',
             age: 23,
             alive: true,
           });
         })
         .then(() => {
-          expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
+          expect(pact.mockServerMatchedSuccessfully(port)).toBe(true);
         })
         .then(() => {
           // You don't have to call this, it's just here to check it works
           const mismatches = pact.mockServerMismatches(port);
-          expect(mismatches).to.have.length(0);
+          expect(mismatches).toHaveLength(0);
         })
         .then(() => {
           pact.writePactFile(path.join(__dirname, '__testoutput__'));
@@ -187,7 +182,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
             );
           },
           (err) => {
-            expect(err.message).to.equal('Request failed with status code 500');
+            expect(err.message).toBe('Request failed with status code 500');
           },
         )
         .then(() => {
@@ -195,25 +190,33 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           const requestMismatches =
             mismatches[0] as MatchingResultRequestMismatch;
 
-          expect(requestMismatches.type).to.equal('request-mismatch');
-          expect(requestMismatches.method).to.equal('POST');
-          expect(requestMismatches.path).to.equal('/dogs/1234');
-          expect(requestMismatches.mismatches).to.deep.include({
-            actual: 'wrongValue',
-            expected: 'someValue',
-            mismatch:
-              "Expected query parameter 'someParam' with value 'someValue' but was 'wrongValue'",
-            parameter: 'someParam',
-            type: 'QueryMismatch',
-          });
-          expect(requestMismatches.mismatches).to.deep.include({
-            actual: 'WrongHeader',
-            expected: 'header',
-            key: 'x-special-header',
-            mismatch:
-              "Mismatch with header 'x-special-header': Expected 'WrongHeader' to be equal to 'header'",
-            type: 'HeaderMismatch',
-          });
+          expect(requestMismatches.type).toBe('request-mismatch');
+          expect(requestMismatches.method).toBe('POST');
+          expect(requestMismatches.path).toBe('/dogs/1234');
+          expect(requestMismatches.mismatches).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                actual: 'wrongValue',
+                expected: 'someValue',
+                mismatch:
+                  "Expected query parameter 'someParam' with value 'someValue' but was 'wrongValue'",
+                parameter: 'someParam',
+                type: 'QueryMismatch',
+              }),
+            ]),
+          );
+          expect(requestMismatches.mismatches).toEqual(
+            expect.arrayContaining([
+              expect.objectContaining({
+                actual: 'WrongHeader',
+                expected: 'header',
+                key: 'x-special-header',
+                mismatch:
+                  "Mismatch with header 'x-special-header': Expected 'WrongHeader' to be equal to 'header'",
+                type: 'HeaderMismatch',
+              }),
+            ]),
+          );
         })
         .then(() => {
           // Yes, this writes the pact file.
@@ -261,7 +264,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           url: '/pending',
         })
         .then((res) => {
-          expect(res.data).to.deep.equal({
+          expect(res.data).toEqual({
             ok: true,
           });
         })
@@ -280,11 +283,8 @@ describe('FFI integration test for the HTTP Consumer API', () => {
             }>
           ).find((entry) => entry.description === 'a request to /pending');
 
-          expect(
-            interaction,
-            'Expected pending interaction to exist in pact file',
-          ).to.exist;
-          expect(interaction?.pending).to.equal(true);
+          expect(interaction).toBeDefined();
+          expect(interaction?.pending).toBe(true);
         })
         .then(() => {
           pact.cleanupMockServer(port);
@@ -327,7 +327,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           url: '/comments',
         })
         .then((res) => {
-          expect(res.data).to.deep.equal({
+          expect(res.data).toEqual({
             ok: true,
           });
         })
@@ -350,15 +350,10 @@ describe('FFI integration test for the HTTP Consumer API', () => {
             }>
           ).find((entry) => entry.description === 'a request to /comments');
 
-          expect(
-            interaction,
-            'Expected commented interaction to exist in pact file',
-          ).to.exist;
-          expect(interaction?.comments?.why).to.equal('test comment');
-          expect(interaction?.comments?.text).to.deep.equal(['extra context']);
-          expect(interaction?.comments?.testname).to.equal(
-            'http interaction test',
-          );
+          expect(interaction).toBeDefined();
+          expect(interaction?.comments?.why).toBe('test comment');
+          expect(interaction?.comments?.text).toEqual(['extra context']);
+          expect(interaction?.comments?.testname).toBe('http interaction test');
         })
         .then(() => {
           pact.cleanupMockServer(port);
@@ -419,19 +414,19 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           url: '/dogs/1234',
         })
         .then((res) => {
-          expect(res.data).to.deep.equal({
+          expect(res.data).toEqual({
             name: 'fido',
             age: 23,
             alive: true,
           });
         })
         .then(() => {
-          expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
+          expect(pact.mockServerMatchedSuccessfully(port)).toBe(true);
         })
         .then(() => {
           // You don't have to call this, it's just here to check it works
           const mismatches = pact.mockServerMismatches(port);
-          expect(mismatches).to.have.length(0);
+          expect(mismatches).toHaveLength(0);
         })
         .then(() => {
           pact.writePactFile(path.join(__dirname, '__testoutput__'));
@@ -498,16 +493,16 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           })
           .then((res) => {
             const message: any = InitPluginRequest.decode(res.data);
-            expect(message.implementation).to.equal('pact-js-driver');
-            expect(message.version).to.equal('0.0.0');
+            expect(message.implementation).toBe('pact-js-driver');
+            expect(message.version).toBe('0.0.0');
           })
           .then(() => {
-            expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
+            expect(pact.mockServerMatchedSuccessfully(port)).toBe(true);
           })
           .then(() => {
             // You don't have to call this, it's just here to check it works
             const mismatches = pact.mockServerMismatches(port);
-            expect(mismatches).to.have.length(0);
+            expect(mismatches).toHaveLength(0);
           })
           .then(() => {
             pact.writePactFile(path.join(__dirname, '__testoutput__'));
@@ -582,7 +577,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           url: '/dogs/1234',
         })
         .then((res) => {
-          expect(res.data).to.deep.equal({
+          expect(res.data).toEqual({
             name: 'fido',
             age: 23,
             alive: true,
@@ -592,10 +587,10 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           // You don't have to call this, it's just here to check it works
           const mismatches = pact.mockServerMismatches(port);
           console.dir(mismatches, { depth: 10 });
-          expect(mismatches).to.have.length(0);
+          expect(mismatches).toHaveLength(0);
         })
         .then(() => {
-          expect(pact.mockServerMatchedSuccessfully(port)).to.be.true;
+          expect(pact.mockServerMatchedSuccessfully(port)).toBe(true);
         })
         .then(() => {
           pact.writePactFile(path.join(__dirname, '__testoutput__'));

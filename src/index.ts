@@ -1,8 +1,5 @@
 import pact from './pact';
 
-// biome-ignore lint/suspicious/noGlobalAssign: CJS/ESM interop pattern required for backwards compatibility
-module.exports = exports = pact;
-
 export default pact;
 
 export * from './consumer';

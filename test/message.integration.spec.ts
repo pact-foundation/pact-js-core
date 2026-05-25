@@ -3,15 +3,10 @@ import * as path from 'node:path';
 import * as zlib from 'node:zlib';
 import * as grpc from '@grpc/grpc-js';
 import { load } from '@grpc/proto-loader';
-import * as chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import * as rimraf from 'rimraf';
 import { type ConsumerMessagePact, makeConsumerMessagePact } from '../src';
 import { FfiSpecificationVersion } from '../src/ffi/types';
 import { setLogLevel } from '../src/logger';
-
-chai.use(chaiAsPromised);
-const { expect } = chai;
 
 const getFeature = async (address: string, protoFile: string) => {
   const def = await load(protoFile);
@@ -46,7 +41,7 @@ describe('FFI integration test for the Message Consumer API', () => {
   const secret = 'this is an encoded string';
   const bytes: Buffer = zlib.gzipSync(secret);
 
-  before(() => {
+  beforeAll(() => {
     rimraf.sync(path.join(__dirname, '__testoutput__', 'message-consumer*'), {
       glob: true,
     });
@@ -76,7 +71,7 @@ describe('FFI integration test for the Message Consumer API', () => {
 
         const reified = message.reifyMessage();
 
-        expect(JSON.parse(reified).contents.content).to.have.property(
+        expect(JSON.parse(reified).contents.content).toHaveProperty(
           'foo',
           'bar',
         );
@@ -113,11 +108,8 @@ describe('FFI integration test for the Message Consumer API', () => {
           ),
         );
 
-        expect(
-          interaction,
-          'Expected pending async interaction to exist in pact file',
-        ).to.exist;
-        expect(interaction?.pending).to.equal(true);
+        expect(interaction).toBeDefined();
+        expect(interaction?.pending).toBe(true);
       });
 
       it('writes comments and interaction test name for async message', () => {
@@ -155,13 +147,10 @@ describe('FFI integration test for the Message Consumer API', () => {
           ),
         );
 
-        expect(
-          interaction,
-          'Expected commented async interaction to exist in pact file',
-        ).to.exist;
-        expect(interaction?.comments?.why).to.equal('async comment');
-        expect(interaction?.comments?.text).to.deep.equal(['async text']);
-        expect(interaction?.comments?.testname).to.equal('async test name');
+        expect(interaction).toBeDefined();
+        expect(interaction?.comments?.why).toBe('async comment');
+        expect(interaction?.comments?.text).toEqual(['async text']);
+        expect(interaction?.comments?.testname).toBe('async test name');
       });
     });
 
@@ -180,7 +169,7 @@ describe('FFI integration test for the Message Consumer API', () => {
         // Check the base64 encoded contents can be decoded, unzipped and equals the secret
         const buf = Buffer.from(contents.content, 'base64');
         const deflated = zlib.gunzipSync(buf).toString('utf8');
-        expect(deflated).to.equal(secret);
+        expect(deflated).toBe(secret);
 
         pact.writePactFile(path.join(__dirname, '__testoutput__'));
       });
@@ -210,9 +199,9 @@ describe('FFI integration test for the Message Consumer API', () => {
         const request = message.getRequestContents().toString();
         const response = message.getResponseContents()[0].toString();
         const response2 = message.getResponseContents()[1].toString();
-        expect(JSON.parse(request)).to.deep.eq({ foo: 'bar' });
-        expect(JSON.parse(response)).to.deep.eq({ baz: 'bat' });
-        expect(JSON.parse(response2)).to.deep.eq({ qux: 'quux' });
+        expect(JSON.parse(request)).toEqual({ foo: 'bar' });
+        expect(JSON.parse(response)).toEqual({ baz: 'bat' });
+        expect(JSON.parse(response2)).toEqual({ qux: 'quux' });
 
         pact.writePactFile(path.join(__dirname, '__testoutput__'));
       });
@@ -245,11 +234,8 @@ describe('FFI integration test for the Message Consumer API', () => {
           }>
         ).find((entry) => entry.description === 'pending sync message');
 
-        expect(
-          interaction,
-          'Expected pending sync interaction to exist in pact file',
-        ).to.exist;
-        expect(interaction?.pending).to.equal(true);
+        expect(interaction).toBeDefined();
+        expect(interaction?.pending).toBe(true);
       });
 
       it('writes comments and interaction test name for sync message', () => {
@@ -286,13 +272,10 @@ describe('FFI integration test for the Message Consumer API', () => {
           }>
         ).find((entry) => entry.description === 'commented sync message');
 
-        expect(
-          interaction,
-          'Expected commented sync interaction to exist in pact file',
-        ).to.exist;
-        expect(interaction?.comments?.why).to.equal('sync comment');
-        expect(interaction?.comments?.text).to.deep.equal(['sync text']);
-        expect(interaction?.comments?.testname).to.equal('sync test name');
+        expect(interaction).toBeDefined();
+        expect(interaction?.comments?.why).toBe('sync comment');
+        expect(interaction?.comments?.text).toEqual(['sync text']);
+        expect(interaction?.comments?.testname).toBe('sync test name');
       });
     });
 
@@ -350,13 +333,13 @@ describe('FFI integration test for the Message Consumer API', () => {
 
         it('generates a pact with success', async () => {
           const feature: any = await getFeature(`127.0.0.1:${port}`, protoFile);
-          expect(feature.name).to.eq('Big Tree');
+          expect(feature.name).toBe('Big Tree');
 
           const res = pact.mockServerMatchedSuccessfully(port);
-          expect(res).to.eq(true);
+          expect(res).toBe(true);
 
           const mismatches = pact.mockServerMismatches(port);
-          expect(mismatches.length).to.eq(0);
+          expect(mismatches.length).toBe(0);
 
           pact.writePactFile(path.join(__dirname, '__testoutput__'));
         });
