@@ -5,7 +5,7 @@
     "outDir": "dist",
     "sourceMap": true,
     "declaration": true,
-    "types": ["node"],
+    "types": ["node", "vitest/globals"],
     "stripInternal": true,
     "noPropertyAccessFromIndexSignature": true
   },
