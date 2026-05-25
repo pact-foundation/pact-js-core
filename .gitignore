@@ -71,7 +71,9 @@ log
 reports
 tmp
 .tmp
-test/__testoutput__
+test/__testoutput__/*
+!test/__testoutput__/matt-consumer-matt-provider.json
+!test/__testoutput__/matt-tcp-consumer-matt-tcp-provider.json
 
 # platform-arch specific packages
 @pact-foundation/*

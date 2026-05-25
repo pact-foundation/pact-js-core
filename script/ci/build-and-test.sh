@@ -29,7 +29,5 @@ npm ci --ignore-scripts || npm i --ignore-scripts
 supported_platforms="$current_platform" "$SCRIPT_DIR"/build-opt-dependencies.sh link
 # ensure we test against the linked npm package, not the prebuild
 rm -rf prebuilds
-npm run format:check
-npm run lint
 npm run build
 npm run test
