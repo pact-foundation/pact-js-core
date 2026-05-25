@@ -1,9 +1,11 @@
 import path from 'node:path';
-import bindings = require('node-gyp-build');
 import { isNonGlibcLinuxSync } from 'detect-libc';
 import logger, { DEFAULT_LOG_LEVEL } from '../logger';
 import { LogLevel } from '../logger/types';
 import { Ffi, FfiLogLevelFilter } from './types';
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const bindings = require('node-gyp-build') as (dir?: string) => Ffi;
 
 export const PACT_FFI_VERSION = '0.5.4';
 

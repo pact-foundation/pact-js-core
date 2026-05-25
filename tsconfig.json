@@ -1,23 +1,14 @@
 {
-  "extends": "@tsconfig/node18/tsconfig.json",
+  "$schema": "https://www.schemastore.org/tsconfig",
+  "extends": "@tsconfig/node22",
   "compilerOptions": {
-    "types": ["node", "mocha"],
-    "module": "commonjs",
-    "removeComments": true,
+    "outDir": "dist",
     "sourceMap": true,
-    "moduleResolution": "node",
     "declaration": true,
-    "noImplicitReturns": true,
-    "noPropertyAccessFromIndexSignature": true,
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "skipLibCheck": true,
-    "strictNullChecks": true,
-    "strict": true,
-    "noUnusedLocals": true,
+    "types": ["node"],
     "stripInternal": true,
-    "esModuleInterop": true
+    "noPropertyAccessFromIndexSignature": true
   },
-  "include": ["**/*.ts"],
+  "include": ["src", "test"],
   "exclude": ["node_modules"]
 }

@@ -31,7 +31,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20]
+        node-version: [22]
         os: [
             ubuntu-latest,
             macos-latest,
@@ -112,7 +112,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [20, 22, 24]
+        node-version: [22, 24, 26]
         os: [macos-14, macos-15-intel, macos-latest, ubuntu-latest, windows-latest, ubuntu-24.04-arm]
         docker: [false]
         include:
@@ -130,22 +130,22 @@ jobs:
             docker: true
             alpine: true
             arch: arm64
-            node-version: 20
+            node-version: 24
           - os: ubuntu-latest
             docker: true
             alpine: true
             arch: amd64
-            node-version: 20
+            node-version: 24
           - os: ubuntu-24.04-arm
             docker: true
             alpine: true
             arch: arm64
-            node-version: 24
+            node-version: 26
           - os: ubuntu-latest
             docker: true
             alpine: true
             arch: amd64
-            node-version: 24
+            node-version: 26
 
     name: Test ${{ matrix.docker == true && matrix.alpine == true && 'linux-musl' || matrix.docker == true && matrix.alpine == false && 'linux' || matrix.os }}-${{ matrix.arch }}-node-${{ matrix.node-version }}
 
@@ -193,7 +193,7 @@ jobs:
     if: github.ref == 'refs/heads/master'
 
     env:
-      NODE_VERSION: 20
+      NODE_VERSION: 22
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
