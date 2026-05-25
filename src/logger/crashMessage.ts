@@ -1,5 +1,5 @@
 export const pactCrashMessage = (
-  extraMessage: string
+  extraMessage: string,
 ): string => `!!!!!!!!! PACT CRASHED !!!!!!!!!
 
 ${extraMessage}

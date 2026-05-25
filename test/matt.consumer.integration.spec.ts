@@ -1,11 +1,11 @@
+import * as net from 'node:net';
+import * as path from 'node:path';
 import axios from 'axios';
-import * as path from 'path';
 import * as chai from 'chai';
-import * as net from 'net';
 import chaiAsPromised from 'chai-as-promised';
 import {
-  ConsumerMessagePact,
-  ConsumerPact,
+  type ConsumerMessagePact,
+  type ConsumerPact,
   makeConsumerMessagePact,
   makeConsumerPact,
 } from '../src';
@@ -21,7 +21,7 @@ const generateMattMessage = (raw: string): string => `MATT${raw}MATT`;
 const sendMattMessageTCP = (
   message: string,
   host: string,
-  port: number
+  port: number,
 ): Promise<string> => {
   const socket = net.connect({
     port,
@@ -42,22 +42,22 @@ const sendMattMessageTCP = (
   });
 };
 
-const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
+const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
 (skipPluginTests ? describe.skip : describe)('MATT protocol test', () => {
   let provider: ConsumerPact;
   let tcpProvider: ConsumerMessagePact;
   let port: number;
   const HOST = '127.0.0.1';
 
-  describe('HTTP test', function () {
-    beforeEach(function () {
+  describe('HTTP test', () => {
+    beforeEach(() => {
       const mattRequest = `{"request": {"body": "hello"}}`;
       const mattResponse = `{"response":{"body":"world"}}`;
 
       provider = makeConsumerPact(
         'matt-consumer',
         'matt-provider',
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V4,
       );
       provider.addPlugin('matt', '0.1.1');
 
@@ -66,24 +66,24 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
       interaction.withRequest('POST', '/matt');
       interaction.withPluginRequestInteractionContents(
         'application/matt',
-        mattRequest
+        mattRequest,
       );
       interaction.withStatus(200);
       interaction.withPluginResponseInteractionContents(
         'application/matt',
-        mattResponse
+        mattResponse,
       );
 
       port = provider.createMockServer(HOST);
     });
 
-    afterEach(function () {
+    afterEach(() => {
       provider.cleanupPlugins();
       provider.cleanupMockServer(port);
     });
 
-    it('returns a valid MATT message over HTTP', function () {
-      return axios
+    it('returns a valid MATT message over HTTP', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -107,48 +107,47 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
         })
         .then(() => {
           provider.writePactFile(path.join(__dirname, '__testoutput__'));
-        });
-    });
+        }));
   });
 
-  describe('TCP Messages', function () {
-    beforeEach(function () {
+  describe('TCP Messages', () => {
+    beforeEach(() => {
       tcpProvider = makeConsumerMessagePact(
         'matt-tcp-consumer',
         'matt-tcp-provider',
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V4,
       );
     });
 
-    describe('with MATT protocol', function () {
-      afterEach(function () {
+    describe('with MATT protocol', () => {
+      afterEach(() => {
         tcpProvider.writePactFileForPluginServer(
           port,
-          path.join(__dirname, '__testoutput__')
+          path.join(__dirname, '__testoutput__'),
         );
         tcpProvider.cleanupPlugins();
         // tcpProvider.cleanupMockServer(port)
       });
 
-      beforeEach(function () {
+      beforeEach(() => {
         const mattMessage = `{"request": {"body": "hellotcp"}, "response":{"body":"tcpworld"}}`;
         tcpProvider.addPlugin('matt', '0.1.1');
 
         const message = tcpProvider.newSynchronousMessage('a MATT message');
         message.withPluginRequestResponseInteractionContents(
           'application/matt',
-          mattMessage
+          mattMessage,
         );
 
         // TODO: this seems not to be written to the pact file
         port = tcpProvider.pactffiCreateMockServerForTransport(
           HOST,
           'matt',
-          ''
+          '',
         );
       });
 
-      it('generates a pact with success', async function () {
+      it('generates a pact with success', async () => {
         const message = await sendMattMessageTCP('hellotcp', HOST, port);
         expect(message).to.eq('tcpworld');
 

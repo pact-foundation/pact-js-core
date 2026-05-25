@@ -1,10 +1,9 @@
 import path from 'node:path';
 import { isNonGlibcLinuxSync } from 'detect-libc';
 import logger, { DEFAULT_LOG_LEVEL } from '../logger';
-import { LogLevel } from '../logger/types';
-import { Ffi, FfiLogLevelFilter } from './types';
+import type { LogLevel } from '../logger/types';
+import { type Ffi, FfiLogLevelFilter } from './types';
 
-// eslint-disable-next-line @typescript-eslint/no-require-imports
 const bindings = require('node-gyp-build') as (dir?: string) => Ffi;
 
 export const PACT_FFI_VERSION = '0.5.4';
@@ -28,11 +27,11 @@ function getPlatformArchSpecificPackage() {
     platformArchSpecificPackage += isNonGlibcLinuxSync() ? '-musl' : '-glibc';
   }
 
-  const prebuildPackageLocation = process.env['PACT_PREBUILD_PACKAGE_LOCATION'];
+  const prebuildPackageLocation = process.env.PACT_PREBUILD_PACKAGE_LOCATION;
   if (prebuildPackageLocation) {
     platformArchSpecificPackage = path.join(
       prebuildPackageLocation,
-      platformArchSpecificPackage
+      platformArchSpecificPackage,
     );
   }
 
@@ -47,7 +46,7 @@ function getPlatformArchSpecificPackage() {
     return resolvedPackagePath;
   } catch {
     throw new Error(
-      `Couldn't find npm package ${platformArchSpecificPackage} \n 💡 you can tell Pact where the npm package is located with env var $PACT_PREBUILD_PACKAGE_LOCATION`
+      `Couldn't find npm package ${platformArchSpecificPackage} \n 💡 you can tell Pact where the npm package is located with env var $PACT_PREBUILD_PACKAGE_LOCATION`,
     );
   }
 }
@@ -85,13 +84,13 @@ const loadPathMessage = (bindingsPath: string) =>
   `: attempting to load native module from: \n\n - ${path.join(
     bindingsPath,
     'prebuilds',
-    platform
+    platform,
   )} ${
-    process.env['PACT_PREBUILD_LOCATION']
+    process.env.PACT_PREBUILD_LOCATION
       ? `\n - source: PACT_PREBUILD_LOCATION \n - You must have a supported prebuild for your platform at this location in the path ${path.join(
-          process.env['PACT_PREBUILD_LOCATION'],
+          process.env.PACT_PREBUILD_LOCATION,
           'prebuilds',
-          platform
+          platform,
         )}`
       : `\n   source: pact-js-core binding lookup \n\n - You can override via PACT_PREBUILD_LOCATION\n`
   }`;
@@ -100,7 +99,7 @@ const bindingsResolver = (bindingsPath: string | undefined) =>
   bindings(bindingsPath);
 
 const localBindingPath =
-  process.env['PACT_PREBUILD_LOCATION']?.toString() ?? path.resolve();
+  process.env.PACT_PREBUILD_LOCATION?.toString() ?? path.resolve();
 const bindingPaths = [
   localBindingPath,
   path.resolve(getPlatformArchSpecificPackage()),
@@ -115,8 +114,8 @@ const renderBinaryErrorMessage = (error: unknown) => {
       `We looked for a supported build in this location ${path.join(
         bindingPath ?? path.resolve(),
         'prebuilds',
-        platform
-      )}`
+        platform,
+      )}`,
     );
   });
   logger.debug(
@@ -125,19 +124,19 @@ const renderBinaryErrorMessage = (error: unknown) => {
       Wrong Path?: set the load path with PACT_PREBUILD_LOCATION ensuring that ${path.join(
         '$PACT_PREBUILD_LOCATION',
         'prebuilds',
-        platform
+        platform,
       )} exists\n
       - Note: You dont need to include the prebuilds/${platform} part of the path, just the parent directory\n
-      - Let us know: We can add more supported path lookups easily, chat to us on slack or raise an issue on github`
+      - Let us know: We can add more supported path lookups easily, chat to us on slack or raise an issue on github`,
   );
 };
 
 let ffi: typeof ffiLib;
 
 const initialiseFfi = (): typeof ffi => {
-  // @ts-ignore
+  // @ts-expect-error
   if (process.stdout._handle) {
-    // @ts-ignore
+    // @ts-expect-error
     process.stdout._handle.setBlocking(true);
   }
   try {
@@ -148,7 +147,7 @@ const initialiseFfi = (): typeof ffi => {
         if (ffiLib.pactffiVersion() === PACT_FFI_VERSION) {
           logger.info(
             'pact native library successfully found, and the correct version',
-            ffiLib.pactffiVersion()
+            ffiLib.pactffiVersion(),
           );
           return false;
         }
@@ -160,7 +159,7 @@ const initialiseFfi = (): typeof ffi => {
   } catch (error) {
     renderBinaryErrorMessage(error);
     throw new Error(
-      `Failed to load native module, try setting LOG_LEVEL=debug for more info`
+      `Failed to load native module, try setting LOG_LEVEL=debug for more info`,
     );
   }
   return ffiLib;
@@ -168,20 +167,20 @@ const initialiseFfi = (): typeof ffi => {
 
 export const getFfiLib = (
   logLevel: LogLevel = DEFAULT_LOG_LEVEL,
-  logFile: string | undefined = undefined
+  logFile: string | undefined = undefined,
 ): typeof ffi => {
   if (!ffi) {
     logger.trace('Initialising ffi for the first time');
     ffi = initialiseFfi();
     logger.debug(
       `Initialising native core at log level '${logLevel}'`,
-      logFile
+      logFile,
     );
     if (logFile) {
       logger.debug(`writing log file at level ${logLevel} to ${logFile}`);
       const res = ffiLib.pactffiLogToFile(
         logFile,
-        FfiLogLevelFilter[logLevel] ?? 3
+        FfiLogLevelFilter[logLevel] ?? 3,
       );
       if (res !== 0) {
         logger.warn(`Failed to write log file to ${logFile}, reason: ${res}`);

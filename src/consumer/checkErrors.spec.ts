@@ -2,14 +2,14 @@ import { expect } from 'chai';
 import logger from '../logger';
 import { wrapWithCheck } from './checkErrors';
 
-describe('checkErrors', function () {
+describe('checkErrors', () => {
   const originalPactCrash = logger.pactCrash;
 
-  afterEach(function () {
+  afterEach(() => {
     logger.pactCrash = originalPactCrash;
   });
 
-  it('treats numeric status code 0 as success', function () {
+  it('treats numeric status code 0 as success', () => {
     let called = false;
     logger.pactCrash = () => {
       called = true;
@@ -22,7 +22,7 @@ describe('checkErrors', function () {
     expect(called).to.equal(false);
   });
 
-  it('treats non-zero numeric status as failure', function () {
+  it('treats non-zero numeric status as failure', () => {
     let called = false;
     logger.pactCrash = () => {
       called = true;

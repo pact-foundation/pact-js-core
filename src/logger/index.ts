@@ -1,6 +1,6 @@
 import { pactCrashMessage } from './crashMessage';
 import { createLogger } from './pino';
-import { LogLevel } from './types';
+import type { LogLevel } from './types';
 
 // TODO: Replace this hack with https://www.npmjs.com/package/@npmcli/package-json
 // TODO: abstract this so it's not repeated in src/verifier/nativeVerifier.ts
@@ -8,13 +8,13 @@ import { LogLevel } from './types';
 const pkg = require('../../package.json');
 
 const logContext = `pact-core@${pkg.version}`;
-let currentLogLevel: LogLevel = process.env['LOG_LEVEL']
-  ? (process.env['LOG_LEVEL'] as LogLevel)
+let currentLogLevel: LogLevel = process.env.LOG_LEVEL
+  ? (process.env.LOG_LEVEL as LogLevel)
   : 'info';
 let logger = createLogger(currentLogLevel);
 
-export const DEFAULT_LOG_LEVEL: LogLevel = process.env['LOG_LEVEL']
-  ? (process.env['LOG_LEVEL'] as LogLevel)
+export const DEFAULT_LOG_LEVEL: LogLevel = process.env.LOG_LEVEL
+  ? (process.env.LOG_LEVEL as LogLevel)
   : 'info';
 
 export const setLogLevel = (level: LogLevel = 'info'): void => {

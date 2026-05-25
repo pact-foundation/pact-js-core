@@ -110,11 +110,11 @@ export enum FfiFunctionResult {
 }
 
 export enum FfiLogLevelFilter {
-  'error' = 1,
-  'warn' = 2,
-  'info' = 3,
-  'debug' = 4,
-  'trace' = 5,
+  error = 1,
+  warn = 2,
+  info = 3,
+  debug = 4,
+  trace = 5,
 }
 
 export type Ffi = {
@@ -129,91 +129,91 @@ export type FfiConsumerFunctions = {
     address: string,
     port: number,
     transport: string,
-    config: string
+    config: string,
   ): number;
   pactffiNewPact(consumer: string, provider: string): FfiPactHandle;
   pactffiWithSpecification(
     handle: FfiPactHandle,
-    specification: FfiSpecificationVersion
+    specification: FfiSpecificationVersion,
   ): boolean;
   pactffiWithPactMetadata(
     handle: FfiPactHandle,
     namespace_: string,
     name: string,
-    value: string
+    value: string,
   ): boolean;
   pactffiNewInteraction(
     handle: FfiPactHandle,
-    description: string
+    description: string,
   ): FfiInteractionHandle;
   pactffiUponReceiving(
     handle: FfiInteractionHandle,
-    description: string
+    description: string,
   ): boolean;
   pactffiGiven(handle: FfiInteractionHandle, providerState: string): boolean;
   pactffiGivenWithParam(
     handle: FfiInteractionHandle,
     description: string,
     name: string,
-    value: string
+    value: string,
   ): boolean;
   pactffiGivenWithParams(
     handle: FfiInteractionHandle,
     description: string,
-    params: string
+    params: string,
   ): boolean;
   pactffiSetPending(handle: FfiInteractionHandle, pending: boolean): boolean;
   pactffiSetComment(
     handle: FfiInteractionHandle,
     key: string,
-    value: string
+    value: string,
   ): boolean;
   pactffiAddTextComment(handle: FfiInteractionHandle, comment: string): boolean;
   pactffiAddInteractionReference(
     handle: FfiInteractionHandle,
     group: string,
     name: string,
-    value: string
+    value: string,
   ): boolean;
   pactffiInteractionTestName(
     handle: FfiInteractionHandle,
-    name: string
+    name: string,
   ): number;
   pactffiWithRequest(
     handle: FfiInteractionHandle,
     method: string,
-    path: string
+    path: string,
   ): boolean;
   pactffiWithQueryParameter(
     handle: FfiInteractionHandle,
     name: string,
     index: number,
-    value: string
+    value: string,
   ): boolean;
   pactffiWithHeader(
     handle: FfiInteractionHandle,
     part: FfiInteractionPart,
     name: string,
     index: number,
-    value: string
+    value: string,
   ): boolean;
   pactffiWithBody(
     handle: FfiInteractionHandle,
     part: FfiInteractionPart,
     contentType: string,
-    body: string
+    body: string,
   ): boolean;
   pactffiWithBinaryFile(
     handle: FfiInteractionHandle,
     part: FfiInteractionPart,
     contentType: string,
     body: Buffer,
-    size: number
+    size: number,
   ): boolean;
   pactffiWithMatchingRules(
     handle: FfiInteractionHandle,
     part: FfiInteractionPart,
-    rules: string
+    rules: string,
   ): boolean;
   pactffiWithMultipartFile(
     handle: FfiInteractionHandle,
@@ -221,18 +221,18 @@ export type FfiConsumerFunctions = {
     contentType: string,
     file: string,
     partName: string,
-    boundary?: string
+    boundary?: string,
   ): void;
   pactffiResponseStatus(handle: FfiInteractionHandle, status: string): boolean;
   pactffiWritePactFile(
     handle: FfiPactHandle,
     dir: string,
-    overwrite: boolean
+    overwrite: boolean,
   ): FfiWritePactResponse;
   pactffiWritePactFileByPort(
     port: number,
     dir: string,
-    overwrite: boolean
+    overwrite: boolean,
   ): FfiWritePactResponse;
   pactffiCleanupMockServer(port: number): boolean;
   pactffiMockServerMatched(port: number): boolean;
@@ -247,22 +247,22 @@ export type FfiConsumerFunctions = {
   pactffiUsingPlugin(
     handle: FfiPactHandle,
     name: string,
-    version: string
+    version: string,
   ): FfiConfigurePluginResponse;
   pactffiCleanupPlugins(handle: FfiPactHandle): void;
   pactffiPluginInteractionContents(
     handle: FfiInteractionHandle,
     part: FfiInteractionPart,
     contentType: string,
-    contents: string
+    contents: string,
   ): void;
   pactffiNewAsyncMessage(
     handle: FfiPactHandle,
-    description: string
+    description: string,
   ): FfiMessageHandle;
   pactffiNewSyncMessage(
     handle: FfiPactHandle,
-    description: string
+    description: string,
   ): FfiInteractionHandle;
   // TODO: need to look at how we return and handle a synchronous message
   // pactffiSyncMessageSetDescription(
@@ -291,51 +291,51 @@ export type FfiConsumerFunctions = {
   // ): FfiMessageHandle;
   pactffiMessageExpectsToReceive(
     handle: FfiMessageHandle,
-    description: string
+    description: string,
   ): void;
   pactffiMessageGiven(handle: FfiMessageHandle, description: string): void;
   pactffiMessageGivenWithParam(
     handle: FfiMessageHandle,
     description: string,
     key: string,
-    value: string
+    value: string,
   ): void;
   pactffiMessageGivenWithParams(
     handle: FfiMessageHandle,
     description: string,
-    params: string
+    params: string,
   ): void;
   pactffiMessageWithContents(
     handle: FfiMessageHandle,
     contentType: string,
-    data: string
+    data: string,
   ): void;
   pactffiMessageWithBinaryContents(
     handle: FfiMessageHandle,
     contentType: string,
     data: Buffer,
-    size: number
+    size: number,
   ): void;
   pactffiMessageWithMetadata(
     handle: FfiMessageHandle,
     key: string,
-    value: string
+    value: string,
   ): void;
   pactffiMessageReify(handle: FfiMessageHandle): string;
   pactffiGetAsyncMessageRequestContents(
     pact: FfiPactHandle,
     messageCount: number,
-    messageIndex: number
+    messageIndex: number,
   ): Buffer;
   pactffiGetSyncMessageRequestContents(
     pact: FfiPactHandle,
     messageCount: number,
-    messageIndex: number
+    messageIndex: number,
   ): Buffer;
   pactffiGetSyncMessageResponseContents(
     pact: FfiPactHandle,
     messageCount: number,
-    messageIndex: number
+    messageIndex: number,
   ): Buffer[];
   // pactffiSyncMessageSetRequestContents(
   //   message: FfiInteractionHandle,
@@ -364,7 +364,7 @@ export type FfiConsumerFunctions = {
 export type FfiVerificationFunctions = {
   pactffiVerifierNewForApplication(
     libraryName: string,
-    version: string
+    version: string,
   ): FfiVerifierHandle;
   pactffiVerifierSetProviderInfo(
     handle: FfiVerifierHandle,
@@ -372,56 +372,56 @@ export type FfiVerificationFunctions = {
     scheme: string,
     host: string,
     port: number,
-    path: string
+    path: string,
   ): void;
   pactffiVerifierSetFilterInfo(
     handle: FfiVerifierHandle,
     description: string,
     state: string,
-    noState: boolean
+    noState: boolean,
   ): void;
   pactffiVerifierSetProviderState(
     handle: FfiVerifierHandle,
     url: string,
     teardown: boolean,
-    body: boolean
+    body: boolean,
   ): void;
   pactffiVerifierSetVerificationOptions(
     handle: FfiVerifierHandle,
     disableSslVerification: boolean,
-    requestTimeout: number
+    requestTimeout: number,
   ): void;
   pactffiVerifierSetPublishOptions(
     handle: FfiVerifierHandle,
     providerVersion: string,
     buildUrl: string,
     providerTags: string[],
-    providerVersionBranch: string
+    providerVersionBranch: string,
   ): void;
   pactffiVerifierSetConsumerFilters(
     handle: FfiVerifierHandle,
-    consumers: string[]
+    consumers: string[],
   ): void;
   pactffiVerifierSetFailIfNoPactsFound(
     handle: FfiVerifierHandle,
-    failIfNoPactsFound: boolean
+    failIfNoPactsFound: boolean,
   ): void;
   pactffiVerifierAddCustomHeader(
     handle: FfiVerifierHandle,
     header: string,
-    value: string
+    value: string,
   ): void;
   pactffiVerifierAddFileSource(handle: FfiVerifierHandle, file: string): void;
   pactffiVerifierAddDirectorySource(
     handle: FfiVerifierHandle,
-    dir: string
+    dir: string,
   ): void;
   pactffiVerifierUrlSource(
     handle: FfiVerifierHandle,
     url: string,
     username: string,
     password: string,
-    token: string
+    token: string,
   ): void;
   pactffiVerifierBrokerSourceWithSelectors(
     handle: FfiVerifierHandle,
@@ -434,11 +434,11 @@ export type FfiVerificationFunctions = {
     providerTags: string[],
     providerVersionBranch: string,
     consumerVersionSelectors: string[],
-    consumerVersionTags: string[]
+    consumerVersionTags: string[],
   ): void;
   pactffiVerifierExecute(
     handle: FfiVerifierHandle,
-    callback: (e: Error, res: number) => void
+    callback: (e: Error, res: number) => void,
   ): number;
   pactffiVerifierJson(handle: FfiVerifierHandle): string;
   pactffiVerifierShutdown(handle: FfiVerifierHandle): void;
@@ -447,6 +447,6 @@ export type FfiVerificationFunctions = {
     protocol: string,
     port: number,
     path: string,
-    scheme: string
+    scheme: string,
   ): void;
 };

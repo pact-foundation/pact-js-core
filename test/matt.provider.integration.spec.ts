@@ -1,9 +1,9 @@
-import * as path from 'path';
-import * as net from 'net';
+import type http from 'node:http';
+import * as net from 'node:net';
+import * as path from 'node:path';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import express from 'express';
-import http from 'http';
 import { setLogLevel } from '../src/logger';
 import verifier from '../src/verifier';
 
@@ -16,7 +16,7 @@ const generateMattMessage = (raw: string): string => `MATT${raw}MATT`;
 const startHTTPServer = (host: string, port: number): Promise<http.Server> => {
   const server: express.Express = express();
 
-  server.post('/matt', (req, res) => {
+  server.post('/matt', (_req, res) => {
     res.setHeader('content-type', 'application/matt');
     res.send(generateMattMessage('world'));
   });
@@ -53,22 +53,22 @@ const startTCPServer = (host: string, port: number) => {
   });
 };
 
-const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
+const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
 (skipPluginTests ? describe.skip : describe)('MATT protocol test', () => {
   setLogLevel('info');
 
-  describe('HTTP and TCP Provider', function () {
+  describe('HTTP and TCP Provider', () => {
     const HOST = '127.0.0.1';
     const HTTP_PORT = 8888;
     const TCP_PORT = 8889;
 
-    beforeEach(async function () {
+    beforeEach(async () => {
       await startHTTPServer(HOST, HTTP_PORT);
       await startTCPServer(HOST, TCP_PORT);
     });
 
-    it('returns a valid MATT message over HTTP and TCP', function () {
-      return verifier({
+    it('returns a valid MATT message over HTTP and TCP', () =>
+      verifier({
         providerBaseUrl: 'http://localhost:8888',
         transports: [
           {
@@ -81,15 +81,14 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
           path.join(
             __dirname,
             '__testoutput__',
-            'matt-consumer-matt-provider.json'
+            'matt-consumer-matt-provider.json',
           ),
           path.join(
             __dirname,
             '__testoutput__',
-            'matt-tcp-consumer-matt-tcp-provider.json'
+            'matt-tcp-consumer-matt-tcp-provider.json',
           ),
         ],
-      }).verify();
-    });
+      }).verify());
   });
 });

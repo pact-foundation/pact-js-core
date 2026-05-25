@@ -1,8 +1,9 @@
 import checkTypes = require('check-types');
+
 import { pick } from 'underscore';
 import logger, { logErrorAndThrow } from '../logger';
-import { LogLevel } from '../logger/types';
-import {
+import type { LogLevel } from '../logger/types';
+import type {
   ConsumerVersionSelector,
   InternalPactVerifierOptions,
   VerifierOptions,
@@ -34,8 +35,8 @@ export const incompatibleWith =
     if (Object.keys(incompatibilities).length > 0) {
       logErrorAndThrow(
         `${property} is incompatible with the following properties: ${keys.join(
-          ','
-        )}`
+          ',',
+        )}`,
       );
       return false;
     }
@@ -51,7 +52,7 @@ export const requires =
 
     if (keys.length !== Object.keys(required).length) {
       logErrorAndThrow(
-        `${property} requires the following properties: ${keys.join(',')}`
+        `${property} requires the following properties: ${keys.join(',')}`,
       );
       return false;
     }
@@ -68,8 +69,8 @@ export const requiresOneOf =
     if (Object.keys(required).length === 0) {
       logErrorAndThrow(
         `${property} requires one of the following properties: ${keys.join(
-          ','
-        )}`
+          ',',
+        )}`,
       );
       return false;
     }
@@ -101,8 +102,8 @@ const logLevelValidator =
     }
     throw new Error(
       `The logLevel '${l}' is not a valid logLevel. The valid options are: ${LogLevels.join(
-        ', '
-      )}`
+        ', ',
+      )}`,
     );
   };
 
@@ -128,10 +129,10 @@ const consumerVersionSelectorValidator =
       options.consumerVersionSelectors.forEach((selector) => {
         if (selector.tag === 'latest') {
           logger.warn(
-            "Using the tag 'latest' is not recommended and probably does not do what you intended."
+            "Using the tag 'latest' is not recommended and probably does not do what you intended.",
           );
           logger.warn(
-            '    See https://docs.pact.io/pact_broker/tags/#latest-pacts'
+            '    See https://docs.pact.io/pact_broker/tags/#latest-pacts',
           );
           logger.warn('    If you need to specify latest, try:');
           logger.warn('       consumerVersionSelectors: [{ lastest: true }]');
@@ -140,8 +141,8 @@ const consumerVersionSelectorValidator =
           if (!PROPS.includes(key as keyof ConsumerVersionSelector)) {
             logger.warn(
               `The consumer version selector '${key}' is unknown but will be sent through to the validation. Allowed properties are ${PROPS.join(
-                ', '
-              )})`
+                ', ',
+              )})`,
             );
           }
         });
@@ -159,15 +160,15 @@ const consumerVersionTagsValidator =
         !checkTypes.array.of.string(options.consumerVersionTags)
       ) {
         throw new Error(
-          'consumerVersionTags should be a string or an array of strings'
+          'consumerVersionTags should be a string or an array of strings',
         );
       }
       if (options.consumerVersionTags.includes('latest')) {
         logger.warn(
-          "Using the tag 'latest' is not recommended and probably does not do what you intended."
+          "Using the tag 'latest' is not recommended and probably does not do what you intended.",
         );
         logger.warn(
-          '    See https://docs.pact.io/pact_broker/tags/#latest-pacts'
+          '    See https://docs.pact.io/pact_broker/tags/#latest-pacts',
         );
         logger.warn('    If you need to specify latest, try:');
         logger.warn('       consumerVersionSelectors: [{ lastest: true }]');
@@ -274,7 +275,7 @@ export const validateOptions = (options: VerifierOptions): VerifierOptions => {
             // rule(item)  // If the messages aren't clear, we can do this
             rule(options)(item, k);
           });
-        }
+        },
       );
     } else if (k in options) {
       (rules || []).forEach((rule) => {

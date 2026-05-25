@@ -1,11 +1,11 @@
+import type * as http from 'node:http';
+import * as grpc from '@grpc/grpc-js';
+import { loadSync } from '@grpc/proto-loader';
+import bodyParser from 'body-parser';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import { loadSync } from '@grpc/proto-loader';
-import * as grpc from '@grpc/grpc-js';
-import express from 'express';
-import * as http from 'http';
 import cors from 'cors';
-import bodyParser from 'body-parser';
+import express from 'express';
 import verifierFactory from '../src/verifier';
 
 const { expect } = chai;
@@ -29,7 +29,7 @@ const getGRPCServer = () => {
 
   const server = new grpc.Server();
 
-  server.addService(routeguide['RouteGuide'].service, {
+  server.addService(routeguide.RouteGuide.service, {
     getFeature: (_: unknown, callback: any) => {
       callback(null, {
         name: 'A place',
@@ -49,7 +49,7 @@ const startGRPCServer = (server: any, port: number) => {
     (_: unknown, grpcPort: number) => {
       console.log(`Server running at http://127.0.0.1:${grpcPort}`);
       server.start();
-    }
+    },
   );
 };
 
@@ -60,11 +60,11 @@ const startHTTPServer = (port: number): Promise<http.Server> => {
   server.use(
     bodyParser.urlencoded({
       extended: true,
-    })
+    }),
   );
 
   // Dummy server to respond to state changes etc.
-  server.all('/*splat', (req: express.Request, res: express.Response) => {
+  server.all('/*splat', (_req: express.Request, res: express.Response) => {
     res.json({});
   });
 
@@ -78,9 +78,9 @@ const getFeature = async (address: string, protoFile: string) => {
   const def = loadSync(protoFile);
   const { routeguide } = grpc.loadPackageDefinition(def);
 
-  const client = new routeguide['RouteGuide'](
+  const client = new routeguide.RouteGuide(
     address,
-    grpc.credentials.createInsecure()
+    grpc.credentials.createInsecure(),
   );
 
   return new Promise<any>((resolve, reject) => {
@@ -95,24 +95,24 @@ const getFeature = async (address: string, protoFile: string) => {
         } else {
           resolve(feature);
         }
-      }
+      },
     );
   });
 };
 
-const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
+const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
 (skipPluginTests ? describe.skip : describe)(
   'Plugin Verifier Integration Spec',
   () => {
-    context('plugin tests', function () {
-      describe('grpc interaction', function () {
-        before(async function () {
+    context('plugin tests', () => {
+      describe('grpc interaction', () => {
+        before(async () => {
           const server = getGRPCServer();
           startGRPCServer(server, GRPC_PORT);
           await startHTTPServer(HTTP_PORT);
         });
 
-        it('should verify the gRPC interactions', async function () {
+        it('should verify the gRPC interactions', async () => {
           await verifierFactory({
             providerBaseUrl: `http://127.0.0.1:${HTTP_PORT}`,
             transports: [
@@ -128,7 +128,7 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
           expect('').to.eq('');
         });
 
-        it('runs the grpc client', async function () {
+        it('runs the grpc client', async () => {
           const protoFile = `${__dirname}/integration/grpc/route_guide.proto`;
           const feature = await getFeature(`127.0.0.1:${GRPC_PORT}`, protoFile);
 
@@ -136,5 +136,5 @@ const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
         });
       });
     });
-  }
+  },
 );

@@ -1,12 +1,11 @@
-import fs = require('fs');
-import url = require('url');
-import { URL } from 'url';
+import fs = require('node:fs');
+import url = require('node:url');
+
+import { URL } from 'node:url';
+import type { FfiVerificationFunctions } from '../../ffi/types';
 import logger from '../../logger';
-
-import { FnMapping, FnValidationStatus } from './types';
-import { InternalPactVerifierOptions } from '../types';
-
-import { FfiVerificationFunctions } from '../../ffi/types';
+import type { InternalPactVerifierOptions } from '../types';
+import { type FnMapping, FnValidationStatus } from './types';
 
 const DEFAULT_TIMEOUT = 30000;
 
@@ -62,7 +61,7 @@ export const ffiFnMapping: FnMapping<
             const parts = item.split(':');
             if (parts.length !== 2) {
               messages.push(
-                `${item} is not a valid custom header. Must be in the format 'Header-Name: Value'`
+                `${item} is not a valid custom header. Must be in the format 'Header-Name: Value'`,
               );
             } else {
               ffi.pactffiVerifierAddCustomHeader(handle, parts[0], parts[1]);
@@ -72,7 +71,7 @@ export const ffiFnMapping: FnMapping<
           Object.entries(options.customProviderHeaders).forEach(
             ([key, value]) => {
               ffi.pactffiVerifierAddCustomHeader(handle, key, value);
-            }
+            },
           );
         }
         if (messages.length > 0) {
@@ -106,14 +105,14 @@ export const ffiFnMapping: FnMapping<
                   handle,
                   file,
                   options.pactBrokerUsername ||
-                    process.env['PACT_BROKER_USERNAME'] ||
+                    process.env.PACT_BROKER_USERNAME ||
                     '',
                   options.pactBrokerPassword ||
-                    process.env['PACT_BROKER_PASSWORD'] ||
+                    process.env.PACT_BROKER_PASSWORD ||
                     '',
                   options.pactBrokerToken ||
-                    process.env['PACT_BROKER_TOKEN'] ||
-                    ''
+                    process.env.PACT_BROKER_TOKEN ||
+                    '',
                 );
               }
             } catch {
@@ -132,7 +131,7 @@ export const ffiFnMapping: FnMapping<
               }
             } catch {
               messages.push(
-                `'${file}' does not exist, or is not a file or directory`
+                `'${file}' does not exist, or is not a file or directory`,
               );
             }
           }
@@ -153,16 +152,15 @@ export const ffiFnMapping: FnMapping<
   },
   pactffiVerifierBrokerSourceWithSelectors: {
     validateAndExecute(ffi, handle, opts) {
-      const brokerUrl =
-        opts.pactBrokerUrl || process.env['PACT_BROKER_BASE_URL'];
+      const brokerUrl = opts.pactBrokerUrl || process.env.PACT_BROKER_BASE_URL;
 
       if (brokerUrl && opts.provider) {
         ffi.pactffiVerifierBrokerSourceWithSelectors(
           handle,
           brokerUrl,
-          opts.pactBrokerUsername || process.env['PACT_BROKER_USERNAME'] || '',
-          opts.pactBrokerPassword || process.env['PACT_BROKER_PASSWORD'] || '',
-          opts.pactBrokerToken || process.env['PACT_BROKER_TOKEN'] || '',
+          opts.pactBrokerUsername || process.env.PACT_BROKER_USERNAME || '',
+          opts.pactBrokerPassword || process.env.PACT_BROKER_PASSWORD || '',
+          opts.pactBrokerToken || process.env.PACT_BROKER_TOKEN || '',
           opts.enablePending || false,
           opts.includeWipPactsSince || '',
           opts.providerVersionTags || [],
@@ -170,7 +168,7 @@ export const ffiFnMapping: FnMapping<
           opts.consumerVersionSelectors
             ? objArrayToStringArray(opts.consumerVersionSelectors)
             : [],
-          opts.consumerVersionTags || []
+          opts.consumerVersionTags || [],
         );
         return { status: FnValidationStatus.SUCCESS };
       }
@@ -201,7 +199,7 @@ export const ffiFnMapping: FnMapping<
       if (options.failIfNoPactsFound !== undefined) {
         ffi.pactffiVerifierSetFailIfNoPactsFound(
           handle,
-          options.failIfNoPactsFound
+          options.failIfNoPactsFound,
         );
         return { status: FnValidationStatus.SUCCESS };
       }
@@ -214,19 +212,19 @@ export const ffiFnMapping: FnMapping<
   pactffiVerifierSetFilterInfo: {
     validateAndExecute(ffi, handle) {
       if (
-        process.env['PACT_DESCRIPTION'] ||
-        process.env['PACT_PROVIDER_STATE'] ||
-        process.env['PACT_PROVIDER_NO_STATE']
+        process.env.PACT_DESCRIPTION ||
+        process.env.PACT_PROVIDER_STATE ||
+        process.env.PACT_PROVIDER_NO_STATE
       ) {
-        const filterDescription = process.env['PACT_DESCRIPTION'] || '';
-        const filterState = process.env['PACT_PROVIDER_STATE'] || '';
-        const filterNoState = !!process.env['PACT_PROVIDER_NO_STATE'];
+        const filterDescription = process.env.PACT_DESCRIPTION || '';
+        const filterState = process.env.PACT_PROVIDER_STATE || '';
+        const filterNoState = !!process.env.PACT_PROVIDER_NO_STATE;
 
         ffi.pactffiVerifierSetFilterInfo(
           handle,
           filterDescription,
           filterState,
-          filterNoState
+          filterNoState,
         );
 
         return { status: FnValidationStatus.SUCCESS };
@@ -250,7 +248,7 @@ export const ffiFnMapping: FnMapping<
         uri.protocol.split(':')[0],
         uri.hostname,
         parseInt(uri.port, 10),
-        uri.pathname
+        uri.pathname,
       );
 
       return { status: FnValidationStatus.SUCCESS };
@@ -263,7 +261,7 @@ export const ffiFnMapping: FnMapping<
           handle,
           options.providerStatesSetupUrl,
           true,
-          true
+          true,
         );
         return { status: FnValidationStatus.SUCCESS };
       }
@@ -278,7 +276,7 @@ export const ffiFnMapping: FnMapping<
     validateAndExecute(ffi, handle, options) {
       if (
         (options.publishVerificationResult ||
-          process.env['PACT_BROKER_PUBLISH_VERIFICATION_RESULTS']) &&
+          process.env.PACT_BROKER_PUBLISH_VERIFICATION_RESULTS) &&
         options.providerVersion
       ) {
         ffi.pactffiVerifierSetPublishOptions(
@@ -286,7 +284,7 @@ export const ffiFnMapping: FnMapping<
           options.providerVersion,
           options.buildUrl || '',
           options.providerVersionTags || [],
-          options.providerVersionBranch || options.providerBranch || ''
+          options.providerVersionBranch || options.providerBranch || '',
         );
         return { status: FnValidationStatus.SUCCESS };
       }
@@ -304,7 +302,7 @@ export const ffiFnMapping: FnMapping<
         ffi.pactffiVerifierSetVerificationOptions(
           handle,
           opts.disableSslVerification || false,
-          opts.timeout || DEFAULT_TIMEOUT
+          opts.timeout || DEFAULT_TIMEOUT,
         );
         return { status: FnValidationStatus.SUCCESS };
       }
@@ -324,7 +322,7 @@ export const ffiFnMapping: FnMapping<
             transport.protocol,
             transport.port,
             transport.path || '',
-            transport.scheme || ''
+            transport.scheme || '',
           );
         });
         return { status: FnValidationStatus.SUCCESS };

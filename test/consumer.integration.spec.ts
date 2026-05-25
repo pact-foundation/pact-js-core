@@ -1,16 +1,15 @@
+import * as fs from 'node:fs';
+import * as path from 'node:path';
+import * as zlib from 'node:zlib';
+import axios from 'axios';
 import * as chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-
-import axios from 'axios';
-import * as path from 'path';
-import * as zlib from 'zlib';
 import FormData from 'form-data';
-import * as fs from 'fs';
 import { load } from 'protobufjs';
 import {
-  ConsumerPact,
+  type ConsumerPact,
+  type MatchingResultRequestMismatch,
   makeConsumerPact,
-  MatchingResultRequestMismatch,
 } from '../src';
 import { FfiSpecificationVersion } from '../src/ffi/types';
 
@@ -19,7 +18,7 @@ const { expect } = chai;
 
 const HOST = '127.0.0.1';
 
-describe('FFI integration test for the HTTP Consumer API', function () {
+describe('FFI integration test for the HTTP Consumer API', () => {
   let port: number;
   let pact: ConsumerPact;
   const bytes: Buffer = zlib.gzipSync('this is an encoded string');
@@ -28,12 +27,12 @@ describe('FFI integration test for the HTTP Consumer API', function () {
     value,
   });
 
-  describe('with matching rules', function () {
-    beforeEach(function () {
+  describe('with matching rules', () => {
+    beforeEach(() => {
       pact = makeConsumerPact(
         'matcher-consumer',
         'matcher-provider',
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V3,
       );
 
       const interaction = pact.newInteraction('matcher test');
@@ -42,20 +41,20 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       interaction.withResponseMatchingRules(
         JSON.stringify({
           '$.body.id': like(1),
-        })
+        }),
       );
       interaction.withStatus(201);
       interaction.withResponseBody(
         JSON.stringify({
           id: 1,
         }),
-        'application/json'
+        'application/json',
       );
       port = pact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', function () {
-      return axios
+    it('generates a pact with success', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -83,17 +82,16 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
   });
 
-  describe('with JSON data', function () {
-    beforeEach(function () {
+  describe('with JSON data', () => {
+    beforeEach(() => {
       pact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V4'],
-        'trace'
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V4,
+        'trace',
       );
 
       const interaction = pact.newInteraction('some description');
@@ -103,7 +101,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       interaction.addInteractionReference(
         'Jira',
         'TICKET-123',
-        'https://myjira/browse/TICKET-123'
+        'https://myjira/browse/TICKET-123',
       );
       interaction.withRequest('POST', '/dogs/1234');
       interaction.withRequestHeader('x-special-header', 0, 'header');
@@ -112,7 +110,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         JSON.stringify({
           id: like(1234),
         }),
-        'application/json'
+        'application/json',
       );
       interaction.withResponseBody(
         JSON.stringify({
@@ -120,7 +118,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
           age: like(23),
           alive: like(true),
         }),
-        'application/json'
+        'application/json',
       );
       interaction.withResponseHeader('x-special-response-header', 0, 'header');
       interaction.withStatus(200);
@@ -128,8 +126,8 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       port = pact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', function () {
-      return axios
+    it('generates a pact with success', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -166,11 +164,10 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
 
-    it('generates a pact with failure', function () {
-      return axios
+    it('generates a pact with failure', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -186,12 +183,12 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         .then(
           () => {
             throw new Error(
-              'This call is not supposed to succeed during testing'
+              'This call is not supposed to succeed during testing',
             );
           },
           (err) => {
             expect(err.message).to.equal('Request failed with status code 500');
-          }
+          },
         )
         .then(() => {
           const mismatches = pact.mockServerMismatches(port);
@@ -225,18 +222,17 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
   });
 
-  describe('with a pending interaction', function () {
-    beforeEach(function () {
+  describe('with a pending interaction', () => {
+    beforeEach(() => {
       const consumerName = 'pending-consumer';
       const providerName = 'pending-provider';
       pact = makeConsumerPact(
         consumerName,
         providerName,
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V4,
       );
 
       const interaction = pact.newInteraction('pending interaction');
@@ -247,15 +243,15 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         JSON.stringify({
           ok: true,
         }),
-        'application/json'
+        'application/json',
       );
       interaction.setPending(true);
 
       port = pact.createMockServer(HOST);
     });
 
-    it('writes pending state to the pact file', function () {
-      return axios
+    it('writes pending state to the pact file', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -274,7 +270,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
           const pactPath = path.join(
             __dirname,
             '__testoutput__',
-            'pending-consumer-pending-provider.json'
+            'pending-consumer-pending-provider.json',
           );
           const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
           const interaction = (
@@ -286,22 +282,21 @@ describe('FFI integration test for the HTTP Consumer API', function () {
 
           expect(
             interaction,
-            'Expected pending interaction to exist in pact file'
+            'Expected pending interaction to exist in pact file',
           ).to.exist;
           expect(interaction?.pending).to.equal(true);
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
   });
 
-  describe('with interaction comments and test name', function () {
-    beforeEach(function () {
+  describe('with interaction comments and test name', () => {
+    beforeEach(() => {
       pact = makeConsumerPact(
         'comment-consumer',
         'comment-provider',
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V4']
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V4,
       );
 
       const interaction = pact.newInteraction('commented interaction');
@@ -312,7 +307,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         JSON.stringify({
           ok: true,
         }),
-        'application/json'
+        'application/json',
       );
       interaction.setComment('why', 'test comment');
       interaction.addTextComment('extra context');
@@ -321,8 +316,8 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       port = pact.createMockServer(HOST);
     });
 
-    it('writes comments and interaction test name to the pact file', function () {
-      return axios
+    it('writes comments and interaction test name to the pact file', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -341,7 +336,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
           const pactPath = path.join(
             __dirname,
             '__testoutput__',
-            'comment-consumer-comment-provider.json'
+            'comment-consumer-comment-provider.json',
           );
           const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
           const interaction = (
@@ -357,18 +352,17 @@ describe('FFI integration test for the HTTP Consumer API', function () {
 
           expect(
             interaction,
-            'Expected commented interaction to exist in pact file'
+            'Expected commented interaction to exist in pact file',
           ).to.exist;
           expect(interaction?.comments?.why).to.equal('test comment');
           expect(interaction?.comments?.text).to.deep.equal(['extra context']);
           expect(interaction?.comments?.testname).to.equal(
-            'http interaction test'
+            'http interaction test',
           );
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
   });
 
   // See https://github.com/pact-foundation/pact-reference/issues/171 for why we have an OS switch here
@@ -378,12 +372,12 @@ describe('FFI integration test for the HTTP Consumer API', function () {
   // OSX x86_64 - CI GitHub Actions: has magic mime matcher, sniffs content
   // Linux: has magic mime matcher, sniffs content
   // Linux - CI Cirrus: does not have magic mime matcher, uses content-type
-  describe('with binary data', function () {
-    beforeEach(function () {
+  describe('with binary data', () => {
+    beforeEach(() => {
       pact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V3,
       );
 
       const interaction = pact.newInteraction('some description');
@@ -400,7 +394,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
           age: like(23),
           alive: like(true),
         }),
-        'application/json'
+        'application/json',
       );
       interaction.withResponseHeader('x-special-response-header', 0, 'header');
       interaction.withStatus(200);
@@ -408,8 +402,8 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       port = pact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', function () {
-      return axios
+    it('generates a pact with success', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -444,22 +438,21 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
   });
 
   // Should only run this if the plugin is installed
-  const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
+  const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
   (skipPluginTests ? describe.skip : describe)(
     'using a plugin (protobufs)',
     () => {
       const protoFile = `${__dirname}/integration/plugin.proto`;
 
-      beforeEach(function () {
+      beforeEach(() => {
         pact = makeConsumerPact(
           'foo-consumer',
           'bar-provider',
-          FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
+          FfiSpecificationVersion.SPECIFICATION_VERSION_V3,
         );
         pact.addPlugin('protobuf', '0.3.15');
 
@@ -477,23 +470,23 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         interaction.withRequest('GET', '/protobuf');
         interaction.withPluginResponseInteractionContents(
           'application/protobuf',
-          JSON.stringify(protobufContents)
+          JSON.stringify(protobufContents),
         );
         interaction.withStatus(200);
 
         port = pact.createMockServer(HOST);
       });
 
-      afterEach(function () {
+      afterEach(() => {
         pact.cleanupPlugins();
       });
 
-      it('generates a pact with success', async function () {
+      it('generates a pact with success', async () => {
         const root = await load(protoFile);
 
         // Obtain a message type
         const InitPluginRequest = root.lookupType(
-          'io.pact.plugin.InitPluginRequest'
+          'io.pact.plugin.InitPluginRequest',
         );
 
         return axios
@@ -523,25 +516,25 @@ describe('FFI integration test for the HTTP Consumer API', function () {
             pact.cleanupMockServer(port);
           });
       });
-    }
+    },
   );
 
-  describe('with multipart data', function () {
+  describe('with multipart data', () => {
     const form = new FormData();
     const f: string = path.resolve(__dirname, './monkeypatch.rb');
     form.append('my_file', fs.createReadStream(f));
     const formHeaders = form.getHeaders();
     const boundaryMatch = formHeaders['content-type'].match(/boundary=(\S+)/);
-    let boundary = undefined;
-    if (boundaryMatch && boundaryMatch[1]) {
+    let boundary: string | undefined;
+    if (boundaryMatch?.[1]) {
       boundary = boundaryMatch[1];
     }
 
-    beforeEach(function () {
+    beforeEach(() => {
       const consumerPact = makeConsumerPact(
         'foo-consumer',
         'bar-provider',
-        FfiSpecificationVersion['SPECIFICATION_VERSION_V3']
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V3,
       );
 
       const interaction = consumerPact.newInteraction('some description');
@@ -555,7 +548,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         'text/plain',
         f,
         'my_file',
-        boundary
+        boundary,
       );
       interaction.withResponseBody(
         JSON.stringify({
@@ -563,7 +556,7 @@ describe('FFI integration test for the HTTP Consumer API', function () {
           age: like(23),
           alive: like(true),
         }),
-        'application/json'
+        'application/json',
       );
       interaction.withResponseHeader('x-special-header', 0, 'header');
       interaction.withStatus(200);
@@ -571,8 +564,8 @@ describe('FFI integration test for the HTTP Consumer API', function () {
       port = consumerPact.createMockServer(HOST);
     });
 
-    it('generates a pact with success', function () {
-      return axios
+    it('generates a pact with success', () =>
+      axios
         .request({
           baseURL: `http://${HOST}:${port}`,
           headers: {
@@ -609,7 +602,6 @@ describe('FFI integration test for the HTTP Consumer API', function () {
         })
         .then(() => {
           pact.cleanupMockServer(port);
-        });
-    });
+        }));
   });
 });

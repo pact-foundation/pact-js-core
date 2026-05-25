@@ -1,6 +1,6 @@
 import logger from '../logger';
-import { VerifierOptions } from './types';
 import { verify } from './nativeVerifier';
+import type { VerifierOptions } from './types';
 import { validateOptions } from './validateOptions';
 
 const applyDefaults = (options: VerifierOptions): VerifierOptions => ({

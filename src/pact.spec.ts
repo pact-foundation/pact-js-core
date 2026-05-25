@@ -4,40 +4,38 @@ import pact from './pact';
 
 chai.use(chaiAsPromised);
 
-describe('Pact Spec', function () {
-  describe('Set Log Level', function () {
+describe('Pact Spec', () => {
+  describe('Set Log Level', () => {
     let originalLogLevel: any;
     // Reset log level after the tests
-    before(function () {
+    before(() => {
       originalLogLevel = pact.logLevel();
     });
 
-    after(function () {
-      return pact.logLevel(originalLogLevel);
-    });
+    after(() => pact.logLevel(originalLogLevel));
 
-    context('when setting a log level', function () {
-      it("should be able to set log level 'trace'", function () {
+    context('when setting a log level', () => {
+      it("should be able to set log level 'trace'", () => {
         pact.logLevel('trace');
         pact.logLevel();
       });
 
-      it("should be able to set log level 'debug'", function () {
+      it("should be able to set log level 'debug'", () => {
         pact.logLevel('debug');
         pact.logLevel();
       });
 
-      it("should be able to set log level 'info'", function () {
+      it("should be able to set log level 'info'", () => {
         pact.logLevel('info');
         pact.logLevel();
       });
 
-      it("should be able to set log level 'warn'", function () {
+      it("should be able to set log level 'warn'", () => {
         pact.logLevel('warn');
         pact.logLevel();
       });
 
-      it("should be able to set log level 'error'", function () {
+      it("should be able to set log level 'error'", () => {
         pact.logLevel('error');
         pact.logLevel();
       });

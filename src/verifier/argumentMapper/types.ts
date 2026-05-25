@@ -1,5 +1,5 @@
+import type { Ffi, FfiHandle } from '../../ffi/types';
 import logger from '../../logger';
-import { Ffi, FfiHandle } from '../../ffi/types';
 
 export const deprecatedFunction = (_: unknown, property: string): boolean => {
   logger.warn(`${property} is deprecated and no longer has any effect`);
@@ -15,7 +15,7 @@ type FnArgumentMapping<O> = {
   validateAndExecute: (
     ffi: Ffi,
     handle: FfiHandle,
-    options: O
+    options: O,
   ) => FnValidationResult;
 };
 
