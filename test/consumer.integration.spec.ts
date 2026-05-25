@@ -449,7 +449,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           'bar-provider',
           FfiSpecificationVersion.SPECIFICATION_VERSION_V3,
         );
-        pact.addPlugin('protobuf', '0.3.15');
+        pact.addPlugin('protobuf', '0.8.0');
 
         const interaction = pact.newInteraction('some description');
         const protobufContents = {
