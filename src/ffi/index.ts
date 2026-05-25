@@ -27,7 +27,7 @@ function getPlatformArchSpecificPackage() {
     platformArchSpecificPackage += isNonGlibcLinuxSync() ? '-musl' : '-glibc';
   }
 
-  const prebuildPackageLocation = process.env.PACT_PREBUILD_PACKAGE_LOCATION;
+  const prebuildPackageLocation = process.env['PACT_PREBUILD_PACKAGE_LOCATION'];
   if (prebuildPackageLocation) {
     platformArchSpecificPackage = path.join(
       prebuildPackageLocation,
@@ -86,9 +86,9 @@ const loadPathMessage = (bindingsPath: string) =>
     'prebuilds',
     platform,
   )} ${
-    process.env.PACT_PREBUILD_LOCATION
+    process.env['PACT_PREBUILD_LOCATION']
       ? `\n - source: PACT_PREBUILD_LOCATION \n - You must have a supported prebuild for your platform at this location in the path ${path.join(
-          process.env.PACT_PREBUILD_LOCATION,
+          process.env['PACT_PREBUILD_LOCATION'],
           'prebuilds',
           platform,
         )}`
@@ -99,7 +99,7 @@ const bindingsResolver = (bindingsPath: string | undefined) =>
   bindings(bindingsPath);
 
 const localBindingPath =
-  process.env.PACT_PREBUILD_LOCATION?.toString() ?? path.resolve();
+  process.env['PACT_PREBUILD_LOCATION']?.toString() ?? path.resolve();
 const bindingPaths = [
   localBindingPath,
   path.resolve(getPlatformArchSpecificPackage()),

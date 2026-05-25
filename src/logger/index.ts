@@ -8,13 +8,13 @@ import type { LogLevel } from './types';
 const pkg = require('../../package.json');
 
 const logContext = `pact-core@${pkg.version}`;
-let currentLogLevel: LogLevel = process.env.LOG_LEVEL
-  ? (process.env.LOG_LEVEL as LogLevel)
+let currentLogLevel: LogLevel = process.env['LOG_LEVEL']
+  ? (process.env['LOG_LEVEL'] as LogLevel)
   : 'info';
 let logger = createLogger(currentLogLevel);
 
-export const DEFAULT_LOG_LEVEL: LogLevel = process.env.LOG_LEVEL
-  ? (process.env.LOG_LEVEL as LogLevel)
+export const DEFAULT_LOG_LEVEL: LogLevel = process.env['LOG_LEVEL']
+  ? (process.env['LOG_LEVEL'] as LogLevel)
   : 'info';
 
 export const setLogLevel = (level: LogLevel = 'info'): void => {
