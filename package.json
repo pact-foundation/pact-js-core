@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.14",
-    "@grpc/grpc-js": "1.14.3",
+    "@grpc/grpc-js": "1.14.4",
     "@grpc/proto-loader": "0.8.1",
     "@snyk/protect": "1.1304.3",
     "@tsconfig/node22": "^22.0.5",
