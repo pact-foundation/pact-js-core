@@ -1,8 +1,11 @@
 import express = require('express');
-import * as http from 'http';
+
+import type * as http from 'node:http';
+
 import cors = require('cors');
 import bodyParser = require('body-parser');
-import { returnJson, returnJsonFile, auth } from './data-utils';
+
+import { auth, returnJson, returnJsonFile } from './data-utils';
 
 export default (port: number): Promise<http.Server> => {
   const server: express.Express = express();
@@ -11,7 +14,7 @@ export default (port: number): Promise<http.Server> => {
   server.use(
     bodyParser.urlencoded({
       extended: true,
-    })
+    }),
   );
 
   let stateData = '';
@@ -25,35 +28,35 @@ export default (port: number): Promise<http.Server> => {
     returnJson({
       me: ['There is a greeting'],
       anotherclient: ['There is a greeting'],
-    })
+    }),
   );
 
   server.post(
     '/provider-state',
-    (req: express.Request, res: express.Response) => {
+    (_req: express.Request, res: express.Response) => {
       stateData = 'State data!';
       return res.json({
         greeting: stateData,
       });
-    }
+    },
   );
 
-  server.get('/somestate', (req: express.Request, res: express.Response) =>
+  server.get('/somestate', (_req: express.Request, res: express.Response) =>
     res.json({
       greeting: stateData,
-    })
+    }),
   );
 
   server.post('/', (req: express.Request, res: express.Response) =>
     res.json({
       greeting: `Hello ${req.body.name}`,
-    })
+    }),
   );
 
   server.get(
     '/contract/:name',
     (req: express.Request, res: express.Response) => {
-      const fileName = req.params['name'];
+      const fileName = req.params.name;
       res.sendFile(
         fileName,
         {
@@ -71,37 +74,37 @@ export default (port: number): Promise<http.Server> => {
           } else {
             console.log('Sent:', fileName);
           }
-        }
+        },
       );
-    }
+    },
   );
 
   // Verification result
   server.post(
     '/pacts/provider/:provider/consumer/:consumer/pact-version/:version/verification-results',
-    returnJsonFile('./data/get-provider_they-consumer_me-latest.json')
+    returnJsonFile('./data/get-provider_they-consumer_me-latest.json'),
   );
   server.get(
     '/pacts/provider/they/consumer/me/latest',
     auth,
-    returnJsonFile('./data/get-provider_they-consumer_me-latest.json')
+    returnJsonFile('./data/get-provider_they-consumer_me-latest.json'),
   );
   server.get(
     '/pacts/provider/they/consumer/anotherclient/latest',
     auth,
     returnJsonFile(
-      './data/get-provider_they-consumer_anotherclient-latest.json'
-    )
+      './data/get-provider_they-consumer_anotherclient-latest.json',
+    ),
   );
   server.get(
     '/noauth/pacts/provider/they/consumer/me/latest',
-    returnJsonFile('./data/get-noauth-provider_they-consumer_me-latest.json')
+    returnJsonFile('./data/get-noauth-provider_they-consumer_me-latest.json'),
   );
   server.get(
     '/noauth/pacts/provider/they/consumer/anotherclient/latest',
     returnJsonFile(
-      './data/get-noauth-provider_they-consumer_anotherclient-latest.json'
-    )
+      './data/get-noauth-provider_they-consumer_anotherclient-latest.json',
+    ),
   );
 
   let s: http.Server;

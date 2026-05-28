@@ -1,0 +1,28 @@
+{
+  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": true,
+      "complexity": {
+        // Conflicts with TypeScript's noPropertyAccessFromIndexSignature
+        "useLiteralKeys": "off"
+      }
+    }
+  },
+  "formatter": {
+    "useEditorconfig": true,
+    "indentStyle": "space",
+    "indentWidth": 2
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  }
+}

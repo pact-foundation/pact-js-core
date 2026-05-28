@@ -1,16 +1,11 @@
-import * as chai from 'chai';
-import * as path from 'path';
-import chaiAsPromised from 'chai-as-promised';
-import * as http from 'http';
-import providerMock from './integration/provider-mock';
+import type * as http from 'node:http';
+import * as path from 'node:path';
+import type { LogLevel } from '../src/logger/types';
 import verifierFactory from '../src/verifier';
-import { VerifierOptions } from '../src/verifier/types';
-import { LogLevel } from '../src/logger/types';
+import type { VerifierOptions } from '../src/verifier/types';
+import providerMock from './integration/provider-mock';
 
-const { expect } = chai;
-chai.use(chaiAsPromised);
-
-describe('Verifier Integration Spec', function () {
+describe('Verifier Integration Spec', () => {
   let server: http.Server;
   const PORT = 9123;
   const providerBaseUrl = `http://localhost:${PORT}`;
@@ -22,183 +17,153 @@ describe('Verifier Integration Spec', function () {
     providerVersion: 'VERSION',
   };
 
-  before(function () {
-    return providerMock(PORT).then((s) => {
+  beforeAll(() =>
+    providerMock(PORT).then((s) => {
       console.log(`Pact Broker Mock listening on port: ${PORT}`);
       server = s;
-    });
-  });
+    }),
+  );
 
-  after(function () {
-    return server.close();
-  });
+  afterAll(() => server.close());
 
-  context('when given a successful contract', function () {
-    context('with spaces in the file path', function () {
-      it('should return a successful promise', function () {
-        return expect(
-          verifierFactory({
+  describe('when given a successful contract', () => {
+    describe('with spaces in the file path', () => {
+      it('should return a successful promise', async () => {
+        await verifierFactory({
+          ...DEFAULT_ARGS,
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(
+              __dirname,
+              'integration/me-they-weird path-success.json',
+            ),
+          ],
+        }).verify();
+      });
+
+      describe('with some broker args but no broker URL', () => {
+        it('should return a successful promise', async () => {
+          await verifierFactory({
             ...DEFAULT_ARGS,
             providerBaseUrl,
             pactUrls: [
               path.resolve(
                 __dirname,
-                'integration/me-they-weird path-success.json'
+                'integration/me-they-weird path-success.json',
               ),
             ],
-          }).verify()
-        ).to.eventually.be.fulfilled;
-      });
-
-      context('with some broker args but no broker URL', function () {
-        it('should return a successful promise', function () {
-          return expect(
-            verifierFactory({
-              ...DEFAULT_ARGS,
-              providerBaseUrl,
-              pactUrls: [
-                path.resolve(
-                  __dirname,
-                  'integration/me-they-weird path-success.json'
-                ),
-              ],
-              // These don't mean anything without a broker URL, but should not fail the verification
-              enablePending: true,
-              consumerVersionSelectors: [{ latest: true }],
-              consumerVersionTags: ['main'],
-              publishVerificationResult: true,
-            }).verify()
-          ).to.eventually.be.fulfilled;
+            // These don't mean anything without a broker URL, but should not fail the verification
+            enablePending: true,
+            consumerVersionSelectors: [{ latest: true }],
+            consumerVersionTags: ['main'],
+            publishVerificationResult: true,
+          }).verify();
         });
       });
     });
 
-    context('without provider states', function () {
-      it('should return a successful promise with detailed JSON results', function () {
-        return expect(
-          verifierFactory({
-            providerBaseUrl,
-            pactUrls: [
-              path.resolve(__dirname, 'integration/me-they-success.json'),
-            ],
-          }).verify()
-        ).to.eventually.satisfy((results: string) => {
-          const parsed = JSON.parse(results);
-          expect(parsed).to.have.property('result', true);
-          expect(parsed).to.have.property('interactionResults');
-          return true;
-        });
-      });
-    });
-
-    context('with Provider States', function () {
-      it('should return a successful promise with detailed JSON results', function () {
-        return expect(
-          verifierFactory({
-            providerBaseUrl,
-            pactUrls: [
-              path.resolve(__dirname, 'integration/me-they-states.json'),
-            ],
-            providerStatesSetupUrl,
-          }).verify()
-        ).to.eventually.satisfy((results: string) => {
-          const parsed = JSON.parse(results);
-          expect(parsed).to.have.property('result', true);
-          return true;
-        });
-      });
-    });
-
-    context('with POST data', function () {
-      it('should return a successful promise', function () {
-        return expect(
-          verifierFactory({
-            providerBaseUrl,
-            pactUrls: [
-              path.resolve(__dirname, 'integration/me-they-post-success.json'),
-            ],
-          }).verify()
-        ).to.eventually.be.fulfilled;
-      });
-    });
-
-    context('with POST data and regex validation', function () {
-      it('should return a successful promise', function () {
-        return expect(
-          verifierFactory({
-            providerBaseUrl,
-            pactUrls: [
-              path.resolve(
-                __dirname,
-                'integration/me-they-post-regex-success.json'
-              ),
-            ],
-          }).verify()
-        ).to.eventually.be.fulfilled;
-      });
-    });
-
-    context('with monkeypatch file specified', function () {
-      it('should return a successful promise', function () {
-        return expect(
-          verifierFactory({
-            providerBaseUrl,
-            pactUrls: [
-              path.resolve(__dirname, 'integration/me-they-success.json'),
-            ],
-            monkeypatch: monkeypatchFile,
-          } as VerifierOptions).verify()
-        ).to.eventually.be.fulfilled;
-      });
-    });
-  });
-
-  context('when given a failing contract', function () {
-    it('should return a rejected promise with detailed JSON results in the error message', function () {
-      return expect(
-        verifierFactory({
+    describe('without provider states', () => {
+      it('should return a successful promise with detailed JSON results', async () => {
+        const results = await verifierFactory({
           providerBaseUrl,
-          pactUrls: [path.resolve(__dirname, 'integration/me-they-fail.json')],
-        }).verify()
-      ).to.eventually.be.rejected.and.satisfy((err: Error) => {
-        const parsed = JSON.parse(err.message);
-        expect(parsed).to.have.property('result', false);
-        expect(parsed).to.have.property('errors');
-        return true;
+          pactUrls: [
+            path.resolve(__dirname, 'integration/me-they-success.json'),
+          ],
+        }).verify();
+        const parsed = JSON.parse(results);
+        expect(parsed).toHaveProperty('result', true);
+        expect(parsed).toHaveProperty('interactionResults');
+      });
+    });
+
+    describe('with Provider States', () => {
+      it('should return a successful promise with detailed JSON results', async () => {
+        const results = await verifierFactory({
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(__dirname, 'integration/me-they-states.json'),
+          ],
+          providerStatesSetupUrl,
+        }).verify();
+        const parsed = JSON.parse(results);
+        expect(parsed).toHaveProperty('result', true);
+      });
+    });
+
+    describe('with POST data', () => {
+      it('should return a successful promise', async () => {
+        await verifierFactory({
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(__dirname, 'integration/me-they-post-success.json'),
+          ],
+        }).verify();
+      });
+    });
+
+    describe('with POST data and regex validation', () => {
+      it('should return a successful promise', async () => {
+        await verifierFactory({
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(
+              __dirname,
+              'integration/me-they-post-regex-success.json',
+            ),
+          ],
+        }).verify();
+      });
+    });
+
+    describe('with monkeypatch file specified', () => {
+      it('should return a successful promise', async () => {
+        await verifierFactory({
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(__dirname, 'integration/me-they-success.json'),
+          ],
+          monkeypatch: monkeypatchFile,
+        } as VerifierOptions).verify();
       });
     });
   });
 
-  context(
-    'when given multiple successful API calls in a contract',
-    function () {
-      it('should return a successful promise', function () {
-        return expect(
-          verifierFactory({
-            providerBaseUrl,
-            pactUrls: [
-              path.resolve(__dirname, 'integration/me-they-multi.json'),
-            ],
-            providerStatesSetupUrl,
-          }).verify()
-        ).to.eventually.be.fulfilled;
-      });
-    }
-  );
+  describe('when given a failing contract', () => {
+    it('should return a rejected promise with detailed JSON results in the error message', async () => {
+      const err = await verifierFactory({
+        providerBaseUrl,
+        pactUrls: [path.resolve(__dirname, 'integration/me-they-fail.json')],
+      })
+        .verify()
+        .catch((e: Error) => e);
+      expect(err).toBeInstanceOf(Error);
+      const parsed = JSON.parse((err as Error).message);
+      expect(parsed).toHaveProperty('result', false);
+      expect(parsed).toHaveProperty('errors');
+    });
+  });
 
-  context('when given multiple contracts', function () {
-    context('from a local file', function () {
-      it('should return a successful promise', function () {
-        return expect(
-          verifierFactory({
-            providerBaseUrl,
-            pactUrls: [
-              path.resolve(__dirname, 'integration/me-they-success.json'),
-              path.resolve(__dirname, 'integration/me-they-multi.json'),
-            ],
-            providerStatesSetupUrl,
-          }).verify()
-        ).to.eventually.be.fulfilled;
+  describe('when given multiple successful API calls in a contract', () => {
+    it('should return a successful promise', async () => {
+      await verifierFactory({
+        providerBaseUrl,
+        pactUrls: [path.resolve(__dirname, 'integration/me-they-multi.json')],
+        providerStatesSetupUrl,
+      }).verify();
+    });
+  });
+
+  describe('when given multiple contracts', () => {
+    describe('from a local file', () => {
+      it('should return a successful promise', async () => {
+        await verifierFactory({
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(__dirname, 'integration/me-they-success.json'),
+            path.resolve(__dirname, 'integration/me-they-multi.json'),
+          ],
+          providerStatesSetupUrl,
+        }).verify();
       });
     });
 
@@ -207,43 +172,39 @@ describe('Verifier Integration Spec', function () {
     // thread '<unnamed>' panicked at 'Cannot drop a runtime in a context where blocking is not allowed. This happens when a runtime is dropped from within an asynchronous context
     // with RUST_BACKTRACE=1 it seems that it relates to fetching from the broker, and something bad
     // is happening in reqwest
-    context('from a Pact Broker', function () {
-      context('without authentication', function () {
-        it('should return a successful promise', function () {
-          return expect(
-            verifierFactory({
-              providerBaseUrl,
-              pactUrls: [
-                `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/me/latest`,
-                `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/anotherclient/latest`,
-              ],
-              providerStatesSetupUrl,
-            }).verify()
-          ).to.eventually.be.fulfilled;
+    describe('from a Pact Broker', () => {
+      describe('without authentication', () => {
+        it('should return a successful promise', async () => {
+          await verifierFactory({
+            providerBaseUrl,
+            pactUrls: [
+              `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/me/latest`,
+              `${pactBrokerBaseUrl}/noauth/pacts/provider/they/consumer/anotherclient/latest`,
+            ],
+            providerStatesSetupUrl,
+          }).verify();
         });
       });
 
-      context('with authentication', function () {
-        context('and a valid user/password', function () {
-          it('should return a successful promise', function () {
-            return expect(
-              verifierFactory({
-                providerBaseUrl,
-                pactUrls: [
-                  `${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`,
-                  `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`,
-                ],
-                providerStatesSetupUrl,
-                pactBrokerUsername: 'foo',
-                pactBrokerPassword: 'bar',
-              }).verify()
-            ).to.eventually.be.fulfilled;
+      describe('with authentication', () => {
+        describe('and a valid user/password', () => {
+          it('should return a successful promise', async () => {
+            await verifierFactory({
+              providerBaseUrl,
+              pactUrls: [
+                `${pactBrokerBaseUrl}/pacts/provider/they/consumer/me/latest`,
+                `${pactBrokerBaseUrl}/pacts/provider/they/consumer/anotherclient/latest`,
+              ],
+              providerStatesSetupUrl,
+              pactBrokerUsername: 'foo',
+              pactBrokerPassword: 'bar',
+            }).verify();
           });
         });
 
-        context('and an invalid user/password', function () {
-          it('should return a rejected promise', function () {
-            return expect(
+        describe('and an invalid user/password', () => {
+          it('should return a rejected promise', async () => {
+            await expect(
               verifierFactory({
                 providerBaseUrl,
                 pactUrls: [
@@ -253,12 +214,12 @@ describe('Verifier Integration Spec', function () {
                 providerStatesSetupUrl,
                 pactBrokerUsername: 'foo',
                 pactBrokerPassword: 'baaoeur',
-              }).verify()
-            ).to.eventually.be.rejected;
+              }).verify(),
+            ).rejects.toBeDefined();
           });
 
-          it('should return the verifier error output in the returned promise', function () {
-            return expect(
+          it('should return the verifier error output in the returned promise', async () => {
+            await expect(
               verifierFactory({
                 providerBaseUrl,
                 pactUrls: [
@@ -268,73 +229,58 @@ describe('Verifier Integration Spec', function () {
                 providerStatesSetupUrl,
                 pactBrokerUsername: 'foo',
                 pactBrokerPassword: 'baaoeur',
-              }).verify()
-            ).to.eventually.be.rejected;
+              }).verify(),
+            ).rejects.toBeDefined();
           });
         });
       });
     });
   });
 
-  context('when publishing verification results to a Pact Broker', function () {
-    context(
-      'and there is a valid Pact file with spaces in the path',
-      function () {
-        it('should return a successful promise', function () {
-          return expect(
-            verifierFactory({
-              providerBaseUrl,
-              pactUrls: [
-                path.resolve(
-                  __dirname,
-                  'integration/publish-verification-example weird path-success.json'
-                ),
-              ],
-              providerStatesSetupUrl,
-            }).verify()
-          ).to.eventually.be.fulfilled;
-        });
-      }
-    );
+  describe('when publishing verification results to a Pact Broker', () => {
+    describe('and there is a valid Pact file with spaces in the path', () => {
+      it('should return a successful promise', async () => {
+        await verifierFactory({
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(
+              __dirname,
+              'integration/publish-verification-example weird path-success.json',
+            ),
+          ],
+          providerStatesSetupUrl,
+        }).verify();
+      });
+    });
 
-    context(
-      'and there is a valid verification HAL link in the Pact file',
-      function () {
-        it('should return a successful promise', function () {
-          return expect(
-            verifierFactory({
-              providerBaseUrl,
-              pactUrls: [
-                path.resolve(
-                  __dirname,
-                  'integration/publish-verification-example-success.json'
-                ),
-              ],
-              providerStatesSetupUrl,
-            }).verify()
-          ).to.eventually.be.fulfilled;
-        });
-      }
-    );
+    describe('and there is a valid verification HAL link in the Pact file', () => {
+      it('should return a successful promise', async () => {
+        await verifierFactory({
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(
+              __dirname,
+              'integration/publish-verification-example-success.json',
+            ),
+          ],
+          providerStatesSetupUrl,
+        }).verify();
+      });
+    });
 
-    context(
-      'and there is an invalid verification HAL link in the Pact file',
-      function () {
-        it('should fail with an error', function () {
-          return expect(
-            verifierFactory({
-              providerBaseUrl,
-              pactUrls: [
-                path.resolve(
-                  __dirname,
-                  'integration/publish-verification-example-fail.json'
-                ),
-              ],
-              providerStatesSetupUrl,
-            }).verify()
-          ).to.eventually.be.fulfilled;
-        });
-      }
-    );
+    describe('and there is an invalid verification HAL link in the Pact file', () => {
+      it('should fail with an error', async () => {
+        await verifierFactory({
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(
+              __dirname,
+              'integration/publish-verification-example-fail.json',
+            ),
+          ],
+          providerStatesSetupUrl,
+        }).verify();
+      });
+    });
   });
 });

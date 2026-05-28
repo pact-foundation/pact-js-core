@@ -1,6 +1,6 @@
 import { pactCrashMessage } from './crashMessage';
 import { createLogger } from './pino';
-import { LogLevel } from './types';
+import type { LogLevel } from './types';
 
 // TODO: Replace this hack with https://www.npmjs.com/package/@npmcli/package-json
 // TODO: abstract this so it's not repeated in src/verifier/nativeVerifier.ts

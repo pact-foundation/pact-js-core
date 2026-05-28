@@ -1,7 +1,7 @@
-import { pino, Logger } from 'pino';
+import { type Logger, pino } from 'pino';
 import { prettyFactory } from 'pino-pretty';
 
-import { LogLevel } from './types';
+import type { LogLevel } from './types';
 
 export const createLogger = (level: LogLevel): Logger => {
   const prettify = prettyFactory({ sync: true });
@@ -16,6 +16,6 @@ export const createLogger = (level: LogLevel): Logger => {
       write(data: unknown) {
         console.log(prettify(data));
       },
-    }
+    },
   );
 };

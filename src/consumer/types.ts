@@ -133,21 +133,21 @@ export type PluginInteraction = RequestPluginInteraction &
 export type RequestPluginInteraction = {
   withPluginRequestInteractionContents: (
     contentType: string,
-    contents: string
+    contents: string,
   ) => boolean;
 };
 
 export type ResponsePluginInteraction = {
   withPluginResponseInteractionContents: (
     contentType: string,
-    contents: string
+    contents: string,
   ) => boolean;
 };
 
 export type RequestResponsePluginInteraction = {
   withPluginRequestResponseInteractionContents: (
     contentType: string,
-    contents: string
+    contents: string,
   ) => boolean;
 };
 
@@ -168,7 +168,7 @@ export type ConsumerInteraction = PluginInteraction & {
   addInteractionReference: (
     group: string,
     name: string,
-    value: string
+    value: string,
   ) => boolean;
   setInteractionTestName: (name: string) => number;
   withRequest: (method: string, path: string) => boolean;
@@ -181,7 +181,7 @@ export type ConsumerInteraction = PluginInteraction & {
     contentType: string,
     filename: string,
     mimePartName: string,
-    boundary?: string
+    boundary?: string,
   ) => boolean;
   withRequestMatchingRules: (rules: string) => boolean;
   withResponseMatchingRules: (rules: string) => boolean;
@@ -192,7 +192,7 @@ export type ConsumerInteraction = PluginInteraction & {
     contentType: string,
     filename: string,
     mimePartName: string,
-    boundary?: string
+    boundary?: string,
   ) => boolean;
 };
 
@@ -204,7 +204,7 @@ export type ConsumerPact = PluginPact & {
     address: string,
     transport: string,
     config: string,
-    port?: number
+    port?: number,
   ) => number;
   createMockServer: (address: string, port?: number, tls?: boolean) => number;
   mockServerMismatches: (port: number) => MatchingResult[];
@@ -230,7 +230,7 @@ export type ConsumerPact = PluginPact & {
   writePactFileForPluginServer: (
     port: number,
     dir: string,
-    merge?: boolean
+    merge?: boolean,
   ) => void;
   /**
    * Check if a mock server has matched all its requests.
@@ -254,7 +254,7 @@ export type AsynchronousMessage = RequestPluginInteraction & {
   addInteractionReference: (
     group: string,
     name: string,
-    value: string
+    value: string,
   ) => boolean;
   setInteractionTestName: (name: string) => number;
   expectsToReceive: (description: string) => void;
@@ -278,7 +278,7 @@ export type SynchronousMessage = PluginInteraction & {
   addInteractionReference: (
     group: string,
     name: string,
-    value: string
+    value: string,
   ) => boolean;
   setInteractionTestName: (name: string) => number;
   withMetadata: (name: string, value: string) => void;
@@ -300,7 +300,7 @@ export type ConsumerMessagePact = PluginPact & {
     address: string,
     transport: string,
     config: string,
-    port?: number
+    port?: number,
   ) => number;
   /**
    * This function writes the pact file, regardless of whether or not the test was successful.
@@ -322,7 +322,7 @@ export type ConsumerMessagePact = PluginPact & {
   writePactFileForPluginServer: (
     port: number,
     dir: string,
-    merge?: boolean
+    merge?: boolean,
   ) => void;
   addMetadata: (namespace: string, name: string, value: string) => boolean;
   mockServerMismatches: (port: number) => MatchingResult[];

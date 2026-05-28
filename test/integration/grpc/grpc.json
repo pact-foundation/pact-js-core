@@ -8,18 +8,13 @@
       "pending": false,
       "request": {
         "body": {
-          "content": {
-          },
+          "content": {},
           "contentType": "application/json",
           "encoded": false
         },
         "headers": {
-          "Authorization": [
-            "Bearer 1234"
-          ],
-          "Content-Type": [
-            "application/json"
-          ]
+          "Authorization": ["Bearer 1234"],
+          "Content-Type": ["application/json"]
         },
         "method": "POST",
         "path": "/foobar"
@@ -31,15 +26,13 @@
           "encoded": false
         },
         "headers": {
-          "Content-Type": [
-            "application/json"
-          ]
+          "Content-Type": ["application/json"]
         },
         "status": 200
       },
       "transport": "http",
       "type": "Synchronous/HTTP"
-    },    
+    },
     {
       "description": "Route guide - GetFeature",
       "interactionMarkup": {

@@ -15,8 +15,7 @@
       },
       "response": {
         "status": 200,
-        "headers": {
-        },
+        "headers": {},
         "body": {
           "greeting": "State data!"
         }
@@ -30,8 +29,7 @@
       },
       "response": {
         "status": 200,
-        "headers": {
-        },
+        "headers": {},
         "body": {
           "greeting": "Hello"
         }

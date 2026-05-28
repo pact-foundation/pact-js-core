@@ -14,8 +14,7 @@
       },
       "response": {
         "status": 200,
-        "headers": {
-        },
+        "headers": {},
         "body": {
           "greeting": "Hello"
         }

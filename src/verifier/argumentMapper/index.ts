@@ -1,14 +1,14 @@
-import { values, invert } from 'underscore';
-import { FnValidationResult, FnValidationStatus } from './types';
+import { invert, values } from 'underscore';
+import type { Ffi, FfiVerifierHandle } from '../../ffi/types';
 import logger, { logCrashAndThrow, logErrorAndThrow } from '../../logger';
-import { InternalPactVerifierOptions } from '../types';
+import type { InternalPactVerifierOptions } from '../types';
 import { ffiFnMapping, orderOfExecution } from './arguments';
-import { Ffi, FfiVerifierHandle } from '../../ffi/types';
+import { type FnValidationResult, FnValidationStatus } from './types';
 
 export const setupVerification = (
   ffi: Ffi,
   handle: FfiVerifierHandle,
-  options: InternalPactVerifierOptions
+  options: InternalPactVerifierOptions,
 ): void => {
   const order = values(orderOfExecution).sort((a, b) => a - b);
   const functionsToCall = invert(orderOfExecution);
@@ -18,18 +18,18 @@ export const setupVerification = (
     const validation: FnValidationResult = ffiFnMapping[fn].validateAndExecute(
       ffi,
       handle,
-      options
+      options,
     );
 
     switch (validation.status) {
       case FnValidationStatus.FAIL:
         logErrorAndThrow(
-          `the required ffi function '${fn}' failed validation with errors: ${validation.messages}`
+          `the required ffi function '${fn}' failed validation with errors: ${validation.messages}`,
         );
         break;
       case FnValidationStatus.IGNORE:
         logger.debug(
-          `the optional ffi function '${fn}' was not executed as it had non-fatal validation errors: ${validation.messages}`
+          `the optional ffi function '${fn}' was not executed as it had non-fatal validation errors: ${validation.messages}`,
         );
         break;
       case FnValidationStatus.SUCCESS:
@@ -38,7 +38,7 @@ export const setupVerification = (
         logCrashAndThrow(
           `the ffi function '${fn}' returned the following unrecognised validation signal: '${
             (validation as FnValidationResult).status
-          }'`
+          }'`,
         );
     }
   });

@@ -1,9 +1,8 @@
-import { VerifierOptions } from './types';
-import logger, { setLogLevel } from '../logger';
 import { getFfiLib } from '../ffi';
 import { VERIFY_PROVIDER_RESPONSE } from '../ffi/types';
-
+import logger, { setLogLevel } from '../logger';
 import { setupVerification } from './argumentMapper';
+import type { VerifierOptions } from './types';
 
 // TODO: Replace this hack with https://www.npmjs.com/package/@npmcli/package-json
 // TODO: abstract this so it's not repeated in src/logger.ts
@@ -18,7 +17,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
 
   const handle = ffi.pactffiVerifierNewForApplication(
     pkg.name.split('/')[1],
-    pkg.version
+    pkg.version,
   );
 
   setupVerification(ffi, handle, opts);
@@ -39,7 +38,7 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
           logger.error(err.message);
         }
         logger.pactCrash(
-          'The underlying pact core returned an error through the ffi interface'
+          'The underlying pact core returned an error through the ffi interface',
         );
         reject(err);
       } else {
@@ -54,13 +53,13 @@ export const verify = (opts: VerifierOptions): Promise<string> => {
             break;
           case VERIFY_PROVIDER_RESPONSE.INVALID_ARGUMENTS:
             logger.pactCrash(
-              'The underlying pact core was invoked incorrectly.'
+              'The underlying pact core was invoked incorrectly.',
             );
             reject(new Error('Verification was unable to run'));
             break;
           default:
             logger.pactCrash(
-              'The underlying pact core crashed in an unexpected way.'
+              'The underlying pact core crashed in an unexpected way.',
             );
             reject(new Error('Pact core crashed'));
             break;

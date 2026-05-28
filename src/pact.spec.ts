@@ -1,43 +1,40 @@
-import * as chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import type { LogLevel } from './logger/types';
 import pact from './pact';
 
-chai.use(chaiAsPromised);
-
-describe('Pact Spec', function () {
-  describe('Set Log Level', function () {
-    let originalLogLevel: any;
+describe('Pact Spec', () => {
+  describe('Set Log Level', () => {
+    let originalLogLevel: LogLevel | undefined;
     // Reset log level after the tests
-    before(function () {
-      originalLogLevel = pact.logLevel();
+    beforeAll(() => {
+      // logLevel() returns void — the current level cannot be read via the public API;
+      // afterAll will restore to undefined (default).
+      pact.logLevel();
     });
 
-    after(function () {
-      return pact.logLevel(originalLogLevel);
-    });
+    afterAll(() => pact.logLevel(originalLogLevel));
 
-    context('when setting a log level', function () {
-      it("should be able to set log level 'trace'", function () {
+    describe('when setting a log level', () => {
+      it("should be able to set log level 'trace'", () => {
         pact.logLevel('trace');
         pact.logLevel();
       });
 
-      it("should be able to set log level 'debug'", function () {
+      it("should be able to set log level 'debug'", () => {
         pact.logLevel('debug');
         pact.logLevel();
       });
 
-      it("should be able to set log level 'info'", function () {
+      it("should be able to set log level 'info'", () => {
         pact.logLevel('info');
         pact.logLevel();
       });
 
-      it("should be able to set log level 'warn'", function () {
+      it("should be able to set log level 'warn'", () => {
         pact.logLevel('warn');
         pact.logLevel();
       });
 
-      it("should be able to set log level 'error'", function () {
+      it("should be able to set log level 'error'", () => {
         pact.logLevel('error');
         pact.logLevel();
       });
