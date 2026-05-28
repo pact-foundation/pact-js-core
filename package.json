@@ -88,7 +88,7 @@
     "vitest": "4.1.7"
   },
   "overrides": {
-    "semver": "7.8.0"
+    "semver": "7.8.1"
   },
   "scripts": {
     "clean": "rimraf -g '{src,test}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
