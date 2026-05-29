@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [20.0.0](https://github.com/pact-foundation/pact-js-core/compare/v19.2.0...v20.0.0) (2026-05-29)
+
+
+### ⚠ BREAKING CHANGES
+
+* drop Node 18/20 support, target Node 22+ (#885)
+
+* drop Node 18/20 support, target Node 22+ ([#885](https://github.com/pact-foundation/pact-js-core/issues/885)) ([60313ee](https://github.com/pact-foundation/pact-js-core/commit/60313ee47a5c4264c140c171bd37510fca78daba))
+
 ## [19.2.0](https://github.com/pact-foundation/pact-js-core/compare/v19.1.0...v19.2.0) (2026-05-01)
 
 
