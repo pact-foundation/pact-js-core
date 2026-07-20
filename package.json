@@ -51,7 +51,7 @@
     "underscore": "1.13.8"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.16",
+    "@biomejs/biome": "2.5.4",
     "@grpc/grpc-js": "1.14.4",
     "@grpc/proto-loader": "0.8.1",
     "@snyk/protect": "1.1306.1",
