@@ -34,6 +34,32 @@ npm --version
 echo "OS: $OS"
 echo "ARCH: $ARCH"
 
+# The Windows runner images now ship Visual Studio 2026, whose version
+# node-gyp only learned to recognise in 12.1.0. Older versions detect the
+# install, fail to read its version and abort with "Could not find any
+# Visual Studio installation to use", so the native build cannot run at
+# all. node-gyp is bundled with npm, and 12.1.0 first shipped in npm 11.6.3.
+if [[ $OS == win32 ]]; then
+  MIN_NPM_VERSION=11.6.3
+  MIN_NODE_GYP_VERSION=12.1.0
+
+  if ! version_gte "$(npm --version)" "${MIN_NPM_VERSION}"; then
+    log "npm $(npm --version) bundles a node-gyp that cannot detect Visual Studio 2026, upgrading"
+    npm install --global "npm@>=${MIN_NPM_VERSION}"
+  fi
+
+  require_min_version npm "$(npm --version)" "${MIN_NPM_VERSION}"
+
+  NODE_GYP_BIN="$(npm root --global)/npm/node_modules/node-gyp/bin/node-gyp.js"
+  if [[ -f ${NODE_GYP_BIN} ]]; then
+    require_min_version node-gyp "$(node "${NODE_GYP_BIN}" --version)" "${MIN_NODE_GYP_VERSION}"
+  else
+    error "Could not find the node-gyp bundled with npm at ${NODE_GYP_BIN}"
+    echo "   - unable to verify it is new enough to detect Visual Studio 2026"
+    exit 1
+  fi
+fi
+
 ./script/download-libs.sh
 npm ci --ignore-scripts || npm i --ignore-scripts
 export npm_config_target=${NODE_VERSION}
