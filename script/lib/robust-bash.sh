@@ -34,6 +34,33 @@ if [ -z "${LIB_ROBUST_BASH_SH:-}" ]; then
     fi
   }
 
+  # Retry a command with exponential backoff, so that a transient
+  # failure from a remote service doesn't fail the whole build.
+  #
+  # Tunable with RETRY_MAX_ATTEMPTS and RETRY_INITIAL_DELAY.
+  function retry {
+    local max_attempts="${RETRY_MAX_ATTEMPTS:-5}"
+    local delay="${RETRY_INITIAL_DELAY:-5}"
+    local attempt=1
+
+    while true; do
+      if "$@"; then
+        return 0
+      fi
+
+      if [ "$attempt" -ge "$max_attempts" ]; then
+        error "Command failed after ${max_attempts} attempts: $*"
+        return 1
+      fi
+
+      warn "Attempt ${attempt}/${max_attempts} failed: $*"
+      log "Retrying in ${delay}s"
+      sleep "$delay"
+      attempt=$((attempt + 1))
+      delay=$((delay * 2))
+    done
+  }
+
   # Check to see that we have a required environment variable set,
   # and fail the script if it is not set.
   #
