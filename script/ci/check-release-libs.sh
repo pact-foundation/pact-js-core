@@ -90,30 +90,30 @@ ls *.gz | xargs -n1 tar -xzf
 rm *.tar.gz
 ls -1 prebuilds/**
 
-[[ -f prebuilds/darwin-arm64/libpact_ffi.dylib ]] || ERRORS='prebuilds/darwin-arm64/libpact_ffi.dylib'
-[[ -f prebuilds/darwin-arm64/node.napi.node ]] || ERRORS='prebuilds/darwin-arm64/node.napi.node'
+[[ -f prebuilds/darwin-arm64/libpact_ffi.dylib ]] || ERRORS+=('prebuilds/darwin-arm64/libpact_ffi.dylib')
+[[ -f prebuilds/darwin-arm64/node.napi.node ]] || ERRORS+=('prebuilds/darwin-arm64/node.napi.node')
 
-[[ -f prebuilds/darwin-x64/libpact_ffi.dylib ]] || ERRORS='prebuilds/darwin-x64/libpact_ffi.dylib'
-[[ -f prebuilds/darwin-x64/node.napi.node ]] || ERRORS='prebuilds/darwin-x64/node.napi.node'
+[[ -f prebuilds/darwin-x64/libpact_ffi.dylib ]] || ERRORS+=('prebuilds/darwin-x64/libpact_ffi.dylib')
+[[ -f prebuilds/darwin-x64/node.napi.node ]] || ERRORS+=('prebuilds/darwin-x64/node.napi.node')
 
-[[ -f prebuilds/linux-arm64/libpact_ffi.so ]] || ERRORS='prebuilds/linux-arm64/libpact_ffi.so'
-[[ -f prebuilds/linux-arm64/node.napi.node ]] || ERRORS='prebuilds/linux-arm64/node.napi.node'
+[[ -f prebuilds/linux-arm64/libpact_ffi.so ]] || ERRORS+=('prebuilds/linux-arm64/libpact_ffi.so')
+[[ -f prebuilds/linux-arm64/node.napi.node ]] || ERRORS+=('prebuilds/linux-arm64/node.napi.node')
 
-[[ -f prebuilds/linux-arm64/libpact_ffi_musl.so ]] || ERRORS='prebuilds/linux-arm64/libpact_ffi_musl.so'
-[[ -f prebuilds/linux-arm64/node.napi.musl.node ]] || ERRORS='prebuilds/linux-arm64/node.napi.musl.node'
+[[ -f prebuilds/linux-arm64/libpact_ffi_musl.so ]] || ERRORS+=('prebuilds/linux-arm64/libpact_ffi_musl.so')
+[[ -f prebuilds/linux-arm64/node.napi.musl.node ]] || ERRORS+=('prebuilds/linux-arm64/node.napi.musl.node')
 
-[[ -f prebuilds/linux-x64/libpact_ffi.so ]] || ERRORS='prebuilds/linux-x64/libpact_ffi.so'
-[[ -f prebuilds/linux-x64/node.napi.node ]] || ERRORS='prebuilds/linux-x64/node.napi.node'
+[[ -f prebuilds/linux-x64/libpact_ffi.so ]] || ERRORS+=('prebuilds/linux-x64/libpact_ffi.so')
+[[ -f prebuilds/linux-x64/node.napi.node ]] || ERRORS+=('prebuilds/linux-x64/node.napi.node')
 
-[[ -f prebuilds/linux-x64/libpact_ffi_musl.so ]] || ERRORS='prebuilds/linux-x64/libpact_ffi_musl.so'
-[[ -f prebuilds/linux-x64/node.napi.musl.node ]] || ERRORS='prebuilds/linux-x64/node.napi.musl.node'
+[[ -f prebuilds/linux-x64/libpact_ffi_musl.so ]] || ERRORS+=('prebuilds/linux-x64/libpact_ffi_musl.so')
+[[ -f prebuilds/linux-x64/node.napi.musl.node ]] || ERRORS+=('prebuilds/linux-x64/node.napi.musl.node')
 
-[[ -f prebuilds/win32-x64/pact_ffi.dll ]] || ERRORS='prebuilds/win32-x64/pact_ffi.dll'
-[[ -f prebuilds/win32-x64/node.napi.node ]] || ERRORS='prebuilds/win32-x64/node.napi.node'
+[[ -f prebuilds/win32-x64/pact_ffi.dll ]] || ERRORS+=('prebuilds/win32-x64/pact_ffi.dll')
+[[ -f prebuilds/win32-x64/node.napi.node ]] || ERRORS+=('prebuilds/win32-x64/node.napi.node')
 
-if [ ! -z "${ERRORS:-}" ]; then
+if [ "${#ERRORS[@]}" -gt 0 ]; then
     echo "The following files are missing from the release:"
-    echo $ERRORS
+    printf '  - %s\n' "${ERRORS[@]}"
     exit 1
 else
     echo "All release files are present"

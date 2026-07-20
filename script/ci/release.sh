@@ -48,7 +48,7 @@ if [ "${GH_CREATE_PRE_RELEASE:-}" = true ]; then
   exit 0
 elif [ "${GH_PRE_RELEASE_UPLOAD:-}" = true ]; then
   echo "Uploading pre-release ${NEXT_TAG}"
-  gh release upload ${NEXT_TAG} prebuilds/*.tar.gz --repo ${REPO} --clobber
+  retry gh release upload ${NEXT_TAG} prebuilds/*.tar.gz --repo ${REPO} --clobber
   exit 0
 fi
 
