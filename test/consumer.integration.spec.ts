@@ -636,6 +636,47 @@ describe('FFI integration test for the HTTP Consumer API', () => {
     },
   );
 
+  describe('when setting plugin interaction contents fails', () => {
+    // The FFI reports failure with a non-zero status code rather than by
+    // throwing. That result used to be discarded, so a rejected configuration
+    // silently produced an interaction with no body and a still-passing test.
+    // Neither case below needs a plugin installed: the contents are rejected
+    // before any plugin is consulted.
+    beforeEach(() => {
+      pact = makeConsumerPact(
+        'foo-consumer',
+        'bar-provider',
+        FfiSpecificationVersion.SPECIFICATION_VERSION_V4,
+      );
+    });
+
+    it('throws when the contents are not valid JSON', () => {
+      const interaction = pact.newInteraction('some description');
+      interaction.uponReceiving('a request with unparseable plugin contents');
+      interaction.withRequest('GET', '/broken');
+
+      expect(() =>
+        interaction.withPluginRequestInteractionContents(
+          'application/json',
+          'this is not JSON',
+        ),
+      ).toThrowError(/not valid JSON/);
+    });
+
+    it('throws when the content type is not valid', () => {
+      const interaction = pact.newInteraction('some description');
+      interaction.uponReceiving('a request with an invalid content type');
+      interaction.withRequest('GET', '/broken');
+
+      expect(() =>
+        interaction.withPluginResponseInteractionContents(
+          'not a content type',
+          JSON.stringify({ some: 'contents' }),
+        ),
+      ).toThrowError(/content type is not valid/);
+    });
+  });
+
   describe('with multipart data', () => {
     const form = new FormData();
     const f: string = path.resolve(__dirname, './monkeypatch.rb');

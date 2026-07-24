@@ -248,12 +248,21 @@ export type FfiConsumerFunctions = {
   ): FfiConfigurePluginResponse;
   pactffiSetTestRunId(testRunId: string): void;
   pactffiCleanupPlugins(handle: FfiPactHandle): void;
+  /**
+   * Configures a part of an interaction via a plugin.
+   *
+   * Returns a status code: zero on success, a positive value on failure (`6`
+   * meaning the plugin itself returned an error). Call `pactffiGetErrorMessage`
+   * for the detail.
+   */
   pactffiPluginInteractionContents(
     handle: FfiInteractionHandle,
     part: FfiInteractionPart,
     contentType: string,
     contents: string,
-  ): void;
+  ): number;
+  /** The most recent FFI error message, or an empty string if there is none. */
+  pactffiGetErrorMessage(): string;
   pactffiNewAsyncMessage(
     handle: FfiPactHandle,
     description: string,
