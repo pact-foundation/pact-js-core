@@ -70,7 +70,7 @@
     "@types/unixify": "1.0.2",
     "@types/url-join": "5.0.0",
     "@vitest/coverage-v8": "4.1.10",
-    "axios": "1.18.1",
+    "axios": "1.19.0",
     "basic-auth": "2.0.1",
     "body-parser": "2.3.0",
     "commit-and-tag-version": "13.1.0",
