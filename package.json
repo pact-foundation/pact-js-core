@@ -78,7 +78,7 @@
     "express": "5.2.1",
     "form-data": "4.0.6",
     "grpc-promise": "1.4.0",
-    "node-addon-api": "8.9.0",
+    "node-addon-api": "8.9.1",
     "nodemon": "3.1.14",
     "protobufjs": "8.7.1",
     "rimraf": "6.1.3",
