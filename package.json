@@ -72,7 +72,7 @@
     "axios": "1.19.0",
     "basic-auth": "2.0.1",
     "body-parser": "2.3.0",
-    "commit-and-tag-version": "13.1.0",
+    "commit-and-tag-version": "13.1.2",
     "cors": "2.8.6",
     "decamelize": "6.0.1",
     "express": "5.2.1",
