@@ -13,29 +13,66 @@ const parseMattMessage = (raw: string): string =>
   raw.replace(/(MATT)+/g, '').trim();
 const generateMattMessage = (raw: string): string => `MATT${raw}MATT`;
 
+const CONNECT_TIMEOUT_MS = 10000;
+const CONNECT_RETRY_MS = 50;
+
 const sendMattMessageTCP = (
   message: string,
   host: string,
   port: number,
-): Promise<string> => {
-  const socket = net.connect({
-    port,
-    host,
-  });
+  deadline: number = Date.now() + CONNECT_TIMEOUT_MS,
+): Promise<string> =>
+  new Promise<string>((resolve, reject) => {
+    const socket = net.connect({ port, host });
+    let settled = false;
 
-  const res = socket.write(`${generateMattMessage(message)}\n`);
-
-  if (!res) {
-    throw Error('unable to connect to host');
-  }
-
-  return new Promise((resolve) => {
-    socket.on('data', (data) => {
-      resolve(parseMattMessage(data.toString()));
+    const settle = (action: () => void) => {
+      if (settled) {
+        return;
+      }
+      settled = true;
       socket.destroy();
+      action();
+    };
+
+    socket.on('connect', () => {
+      socket.write(`${generateMattMessage(message)}\n`);
+    });
+
+    socket.on('data', (data) => {
+      settle(() => resolve(parseMattMessage(data.toString())));
+    });
+
+    socket.on('close', () => {
+      settle(() =>
+        reject(
+          new Error(
+            `connection to ${host}:${port} closed before a MATT message arrived`,
+          ),
+        ),
+      );
+    });
+
+    socket.on('error', (err: NodeJS.ErrnoException) => {
+      // The mock server reports its port before the plugin is necessarily
+      // accepting on it, so a refused connection is retried until the deadline
+      // rather than failing the test.
+      if (err.code === 'ECONNREFUSED' && Date.now() < deadline) {
+        settle(() => {
+          setTimeout(
+            () =>
+              sendMattMessageTCP(message, host, port, deadline).then(
+                resolve,
+                reject,
+              ),
+            CONNECT_RETRY_MS,
+          );
+        });
+        return;
+      }
+      settle(() => reject(err));
     });
   });
-};
 
 const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
 (skipPluginTests ? describe.skip : describe)('MATT protocol test', () => {
