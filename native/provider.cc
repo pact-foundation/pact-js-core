@@ -629,6 +629,45 @@ Napi::Value PactffiVerifierSetFailIfNoPactsFound(const Napi::CallbackInfo& info)
 
 
 /**
+ * Set whether the verifier follows redirects returned by the provider.
+ *
+ * `follow` is a boolean value. Set it to greater than zero to follow redirects, and set it
+ * to zero to leave them unfollowed.
+ *
+ * # Safety
+ *
+ * This function is safe as long as the handle pointer points to a valid handle.
+ *
+ * C interface:
+ *
+ *     void pactffi_verifier_set_follow_redirects(VerifierHandle *handle,
+ *                                                unsigned char follow);
+ *
+ */
+Napi::Value PactffiVerifierSetFollowRedirects(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiVerifierSetFollowRedirects received < 2 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetFollowRedirects(arg 0) expected a VerifierHandle");
+  }
+
+  if (!info[1].IsBoolean()) {
+    throw Napi::Error::New(env, "pactffiVerifierSetFollowRedirects(arg 1) expected a boolean");
+  }
+
+  uint32_t handleId = info[0].As<Napi::Number>().Uint32Value();
+  bool follow = info[1].As<Napi::Boolean>().Value();
+
+  pactffi_verifier_set_follow_redirects(handles[handleId], follow);
+
+  return info.Env().Undefined();
+}
+
+
+/**
  * Adds a custom header to be added to the requests made to the provider.
  *
  * # Safety

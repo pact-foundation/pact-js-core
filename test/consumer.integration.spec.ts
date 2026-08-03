@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import * as https from 'node:https';
 import * as path from 'node:path';
 import * as zlib from 'node:zlib';
 import axios from 'axios';
@@ -6,6 +7,7 @@ import FormData from 'form-data';
 import { load } from 'protobufjs';
 import {
   type ConsumerPact,
+  getTlsCaCertificate,
   type MatchingResultRequestMismatch,
   makeConsumerPact,
 } from '../src';
@@ -222,6 +224,125 @@ describe('FFI integration test for the HTTP Consumer API', () => {
           // Yes, this writes the pact file.
           // Yes, even though the tests have failed
           pact.writePactFile(path.join(__dirname, '__testoutput__'));
+        })
+        .then(() => {
+          pact.cleanupMockServer(port);
+        }));
+  });
+
+  // TLS mock servers are broken in pact-ffi 0.5.5. Starting one panics inside the core with
+  // "Could not automatically determine the process-level CryptoProvider from Rustls crate
+  // features", which surfaces as a CORE_PANIC (-4) from createMockServer. The panic also
+  // poisons an internal mutex, so any subsequent FFI call against the same pact handle
+  // aborts the process outright - hence this suite is skipped rather than failing.
+  describe.skip('with a TLS mock server', () => {
+    beforeEach(() => {
+      pact = makeConsumerPact(
+        'tls-consumer',
+        'tls-provider',
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V3'],
+      );
+
+      const interaction = pact.newInteraction('tls interaction');
+      interaction.uponReceiving('a request over TLS');
+      interaction.withRequest('GET', '/tls');
+      interaction.withStatus(200);
+      interaction.withResponseBody(
+        JSON.stringify({
+          ok: true,
+        }),
+        'application/json',
+      );
+
+      port = pact.createMockServer(HOST, undefined, true);
+    });
+
+    it('serves requests over TLS using the exposed CA certificate', () => {
+      const ca = getTlsCaCertificate();
+      expect(ca).toContain('BEGIN CERTIFICATE');
+
+      return axios
+        .request({
+          baseURL: `https://${HOST}:${port}`,
+          headers: {
+            Accept: 'application/json',
+          },
+          method: 'GET',
+          url: '/tls',
+          httpsAgent: new https.Agent({
+            ca: ca as string,
+            // The mock server certificate is issued for a fixed name, which will
+            // not match the loopback address the server is bound to.
+            checkServerIdentity: () => undefined,
+          }),
+        })
+        .then((res) => {
+          expect(res.data).toEqual({
+            ok: true,
+          });
+          expect(pact.mockServerMatchedSuccessfully(port)).toBe(true);
+        })
+        .then(() => {
+          pact.cleanupMockServer(port);
+        });
+    });
+  });
+
+  describe('with an interaction key', () => {
+    beforeEach(() => {
+      pact = makeConsumerPact(
+        'key-consumer',
+        'key-provider',
+        FfiSpecificationVersion['SPECIFICATION_VERSION_V4'],
+      );
+
+      const interaction = pact.newInteraction('keyed interaction');
+      interaction.uponReceiving('a request to /keyed');
+      interaction.withRequest('GET', '/keyed');
+      interaction.withStatus(200);
+      interaction.withResponseBody(
+        JSON.stringify({
+          ok: true,
+        }),
+        'application/json',
+      );
+      interaction.setKey('a-known-interaction-key');
+
+      port = pact.createMockServer(HOST);
+    });
+
+    it('writes the interaction key to the pact file', () =>
+      axios
+        .request({
+          baseURL: `http://${HOST}:${port}`,
+          headers: {
+            Accept: 'application/json',
+          },
+          method: 'GET',
+          url: '/keyed',
+        })
+        .then((res) => {
+          expect(res.data).toEqual({
+            ok: true,
+          });
+        })
+        .then(() => {
+          pact.writePactFile(path.join(__dirname, '__testoutput__'));
+          const pactPath = path.join(
+            __dirname,
+            '__testoutput__',
+            'key-consumer-key-provider.json',
+          );
+          const pactJson = JSON.parse(fs.readFileSync(pactPath, 'utf8'));
+          const interaction = (
+            pactJson.interactions as Array<{
+              description?: string;
+              key?: string;
+            }>
+          ).find((entry) => entry.description === 'a request to /keyed');
+
+          expect(interaction).toBeDefined();
+          expect(interaction?.key).toBe('a-known-interaction-key');
         })
         .then(() => {
           pact.cleanupMockServer(port);

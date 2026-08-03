@@ -153,6 +153,7 @@ export type FfiConsumerFunctions = {
     params: string,
   ): boolean;
   pactffiSetPending(handle: FfiInteractionHandle, pending: boolean): boolean;
+  pactffiSetKey(handle: FfiInteractionHandle, value: string): boolean;
   pactffiSetComment(
     handle: FfiInteractionHandle,
     key: string,
@@ -227,7 +228,7 @@ export type FfiConsumerFunctions = {
   pactffiCleanupMockServer(port: number): boolean;
   pactffiMockServerMatched(port: number): boolean;
   pactffiMockServerMismatches(port: number): string;
-  pactffiGetTlsCaCertificate(): string;
+  pactffiGetTlsCaCertificate(): string | null;
   pactffiLogMessage(source: string, logLevel: string, message: string): void;
   pactffiLogToBuffer(level: FfiLogLevelFilter): number;
   pactffiInitWithLogLevel(level: string): void;
@@ -239,6 +240,13 @@ export type FfiConsumerFunctions = {
     name: string,
     version: string,
   ): FfiConfigurePluginResponse;
+  pactffiUsingPluginWithDelay(
+    handle: FfiPactHandle,
+    name: string,
+    version: string,
+    completionDelay: number,
+  ): FfiConfigurePluginResponse;
+  pactffiSetTestRunId(testRunId: string): void;
   pactffiCleanupPlugins(handle: FfiPactHandle): void;
   pactffiPluginInteractionContents(
     handle: FfiInteractionHandle,
@@ -395,6 +403,10 @@ export type FfiVerificationFunctions = {
   pactffiVerifierSetFailIfNoPactsFound(
     handle: FfiVerifierHandle,
     failIfNoPactsFound: boolean,
+  ): void;
+  pactffiVerifierSetFollowRedirects(
+    handle: FfiVerifierHandle,
+    followRedirects: boolean,
   ): void;
   pactffiVerifierAddCustomHeader(
     handle: FfiVerifierHandle,

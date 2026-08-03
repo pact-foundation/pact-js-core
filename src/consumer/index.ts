@@ -53,6 +53,7 @@ const asyncMessage = (
     ffi.pactffiMessageGivenWithParams(interactionPtr, state, params),
   setPending: (pending: boolean) =>
     ffi.pactffiSetPending(interactionPtr, pending),
+  setKey: (value: string) => ffi.pactffiSetKey(interactionPtr, value),
   setComment: (key: string, value: string) =>
     ffi.pactffiSetComment(interactionPtr, key, value),
   addTextComment: (comment: string) =>
@@ -83,6 +84,36 @@ const asyncMessage = (
     ffi.pactffiGetAsyncMessageRequestContents(pactPtr, messageCount, index),
 });
 
+/**
+ * Returns the PEM encoded CA certificate used by TLS mock servers, or null if it is
+ * unavailable.
+ *
+ * Mock servers created with `tls: true` present a self-signed certificate. Clients must trust
+ * this CA certificate in order to connect to them.
+ */
+export const getTlsCaCertificate = (
+  logLevel = getLogLevel(),
+  logFile?: string,
+): string | null => getFfiLib(logLevel, logFile).pactffiGetTlsCaCertificate();
+
+/**
+ * Sets the test run ID for the current thread. The ID is included in the `testContext` of
+ * outgoing plugin requests, so that plugin log entries can be correlated with a specific test.
+ *
+ * Pass an empty string to clear a previously set ID.
+ *
+ * Note that the pact FFI does not currently expose a usable way to read the plugin log entries
+ * this correlates against - see `pactffi_get_plugin_logs` and
+ * `pactffi_register_plugin_log_callback`, both of which are unusable as of pact-ffi 0.5.5.
+ */
+export const setTestRunId = (
+  testRunId: string,
+  logLevel = getLogLevel(),
+  logFile?: string,
+): void => {
+  getFfiLib(logLevel, logFile).pactffiSetTestRunId(testRunId);
+};
+
 export const makeConsumerPact = (
   consumer: string,
   provider: string,
@@ -108,6 +139,18 @@ export const makeConsumerPact = (
   return {
     addPlugin: (name: string, pluginVersion: string) => {
       ffi.pactffiUsingPlugin(pactPtr, name, pluginVersion);
+    },
+    addPluginWithDelay: (
+      name: string,
+      pluginVersion: string,
+      completionDelay: number,
+    ) => {
+      ffi.pactffiUsingPluginWithDelay(
+        pactPtr,
+        name,
+        pluginVersion,
+        completionDelay,
+      );
     },
     cleanupPlugins: () => {
       ffi.pactffiCleanupPlugins(pactPtr);
@@ -222,6 +265,7 @@ export const makeConsumerPact = (
           ffi.pactffiGivenWithParams(interactionPtr, state, params),
         setPending: (pending: boolean) =>
           ffi.pactffiSetPending(interactionPtr, pending),
+        setKey: (value: string) => ffi.pactffiSetKey(interactionPtr, value),
         setComment: (key: string, value: string) =>
           ffi.pactffiSetComment(interactionPtr, key, value),
         addTextComment: (comment: string) =>
@@ -323,6 +367,7 @@ export const makeConsumerPact = (
           ffi.pactffiGivenWithParams(interactionPtr, state, params),
         setPending: (pending: boolean) =>
           ffi.pactffiSetPending(interactionPtr, pending),
+        setKey: (value: string) => ffi.pactffiSetKey(interactionPtr, value),
         setComment: (key: string, value: string) =>
           ffi.pactffiSetComment(interactionPtr, key, value),
         addTextComment: (comment: string) =>
@@ -523,6 +568,18 @@ export const makeConsumerMessagePact = (
     addPlugin: (name: string, pluginVersion: string) => {
       ffi.pactffiUsingPlugin(pactPtr, name, pluginVersion);
     },
+    addPluginWithDelay: (
+      name: string,
+      pluginVersion: string,
+      completionDelay: number,
+    ) => {
+      ffi.pactffiUsingPluginWithDelay(
+        pactPtr,
+        name,
+        pluginVersion,
+        completionDelay,
+      );
+    },
     cleanupPlugins: () => {
       ffi.pactffiCleanupPlugins(pactPtr);
     },
@@ -603,6 +660,7 @@ export const makeConsumerMessagePact = (
           ffi.pactffiGivenWithParams(interactionPtr, state, params),
         setPending: (pending: boolean) =>
           ffi.pactffiSetPending(interactionPtr, pending),
+        setKey: (value: string) => ffi.pactffiSetKey(interactionPtr, value),
         setComment: (key: string, value: string) =>
           ffi.pactffiSetComment(interactionPtr, key, value),
         addTextComment: (comment: string) =>

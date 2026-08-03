@@ -57,6 +57,7 @@ export interface VerifierOptions {
    */
   providerBranch?: string;
   failIfNoPactsFound?: boolean;
+  followRedirects?: boolean;
 }
 
 /** These are the deprecated verifier options, removed prior to this verison,
