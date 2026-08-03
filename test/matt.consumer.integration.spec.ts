@@ -37,7 +37,7 @@ const sendMattMessageTCP = (
   });
 };
 
-const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
+const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
 (skipPluginTests ? describe.skip : describe)('MATT protocol test', () => {
   let provider: ConsumerPact;
   let tcpProvider: ConsumerMessagePact;
