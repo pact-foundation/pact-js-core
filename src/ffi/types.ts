@@ -9,54 +9,44 @@ export type FfiMessageHandle = number;
 
 export type FfiSpecificationVersion = 0 | 1 | 2 | 3 | 4 | 5;
 
-export const FfiSpecificationVersion: Record<string, FfiSpecificationVersion> =
-  {
-    SPECIFICATION_VERSION_UNKNOWN: 0,
-    SPECIFICATION_VERSION_V1: 1,
-    SPECIFICATION_VERSION_V1_1: 2,
-    SPECIFICATION_VERSION_V2: 3,
-    SPECIFICATION_VERSION_V3: 4,
-    SPECIFICATION_VERSION_V4: 5,
-  };
+export const FfiSpecificationVersion = {
+  SPECIFICATION_VERSION_UNKNOWN: 0,
+  SPECIFICATION_VERSION_V1: 1,
+  SPECIFICATION_VERSION_V1_1: 2,
+  SPECIFICATION_VERSION_V2: 3,
+  SPECIFICATION_VERSION_V3: 4,
+  SPECIFICATION_VERSION_V4: 5,
+} as const satisfies Record<string, FfiSpecificationVersion>;
 
 export type FfiWritePactResponse = 0 | 1 | 2 | 3;
 
-export const FfiWritePactResponse: Record<string, FfiWritePactResponse> = {
+export const FfiWritePactResponse = {
   SUCCESS: 0,
   GENERAL_PANIC: 1,
   UNABLE_TO_WRITE_PACT_FILE: 2,
   MOCK_SERVER_NOT_FOUND: 3,
-};
+} as const satisfies Record<string, FfiWritePactResponse>;
 
 export type FfiWriteMessagePactResponse = 0 | 1 | 2;
 
-export const FfiWriteMessagePactResponse: Record<
-  string,
-  FfiWriteMessagePactResponse
-> = {
+export const FfiWriteMessagePactResponse = {
   SUCCESS: 0,
   UNABLE_TO_WRITE_PACT_FILE: 1,
   MESSAGE_HANDLE_INVALID: 2,
-};
+} as const satisfies Record<string, FfiWriteMessagePactResponse>;
 
 export type FfiConfigurePluginResponse = 0 | 1 | 2 | 3;
 
-export const FfiConfigurePluginResponse: Record<
-  string,
-  FfiConfigurePluginResponse
-> = {
+export const FfiConfigurePluginResponse = {
   SUCCESS: 0,
   GENERAL_PANIC: 1,
   FAILED_TO_LOAD_PLUGIN: 2,
   PACT_HANDLE_INVALID: 3,
-};
+} as const satisfies Record<string, FfiConfigurePluginResponse>;
 
 export type FfiPluginInteractionResponse = 0 | 1 | 2 | 3 | 4 | 5 | 6;
 
-export const FfiPluginInteractionResponse: Record<
-  string,
-  FfiPluginInteractionResponse
-> = {
+export const FfiPluginInteractionResponse = {
   SUCCESS: 0,
   A_GENERAL_PANIC_WAS_CAUGHT: 1,
   MOCK_SERVER_HAS_ALREADY_BEEN_STARTED: 2,
@@ -64,7 +54,7 @@ export const FfiPluginInteractionResponse: Record<
   CONTENT_TYPE_IS_NOT_VALID: 4,
   CONTENTS_JSON_IS_NOT_VALID_JSON: 5,
   PLUGIN_RETURNED_AN_ERROR: 6,
-};
+} as const satisfies Record<string, FfiPluginInteractionResponse>;
 
 export type FfiInteractionPart = 0 | 1;
 

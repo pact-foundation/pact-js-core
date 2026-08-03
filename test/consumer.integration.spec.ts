@@ -437,7 +437,7 @@ describe('FFI integration test for the HTTP Consumer API', () => {
   });
 
   // Should only run this if the plugin is installed
-  const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
+  const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
   (skipPluginTests ? describe.skip : describe)(
     'using a plugin (protobufs)',
     () => {

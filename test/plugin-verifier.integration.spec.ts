@@ -5,6 +5,7 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import verifierFactory from '../src/verifier';
+import { loadRouteGuide } from './integration/grpc-utils';
 
 const HTTP_PORT = 50051;
 const GRPC_PORT = 50052;
@@ -20,11 +21,11 @@ const getGRPCServer = () => {
     oneofs: true,
   };
   const packageDefinition = loadSync(PROTO_PATH, options);
-  const { routeguide } = grpc.loadPackageDefinition(packageDefinition);
+  const routeGuide = loadRouteGuide(packageDefinition);
 
   const server = new grpc.Server();
 
-  server.addService(routeguide.RouteGuide.service, {
+  server.addService(routeGuide.service, {
     // biome-ignore lint/suspicious/noExplicitAny: gRPC service handlers loaded via dynamic proto definition have no static type for their callback
     getFeature: (_: unknown, callback: any) => {
       callback(null, {
@@ -72,15 +73,12 @@ const startHTTPServer = (port: number): Promise<http.Server> => {
 
 const getFeature = async (address: string, protoFile: string) => {
   const def = loadSync(protoFile);
-  const { routeguide } = grpc.loadPackageDefinition(def);
+  const RouteGuide = loadRouteGuide(def);
 
-  const client = new routeguide.RouteGuide(
-    address,
-    grpc.credentials.createInsecure(),
-  );
+  const client = new RouteGuide(address, grpc.credentials.createInsecure());
 
   return new Promise<unknown>((resolve, reject) => {
-    client.GetFeature(
+    client['GetFeature'](
       {
         latitude: 180,
         longitude: 200,
@@ -96,7 +94,7 @@ const getFeature = async (address: string, protoFile: string) => {
   });
 };
 
-const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
+const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
 (skipPluginTests ? describe.skip : describe)(
   'Plugin Verifier Integration Spec',
   () => {

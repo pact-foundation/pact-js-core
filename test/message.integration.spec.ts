@@ -7,18 +7,16 @@ import * as rimraf from 'rimraf';
 import { type ConsumerMessagePact, makeConsumerMessagePact } from '../src';
 import { FfiSpecificationVersion } from '../src/ffi/types';
 import { setLogLevel } from '../src/logger';
+import { loadRouteGuide } from './integration/grpc-utils';
 
 const getFeature = async (address: string, protoFile: string) => {
   const def = await load(protoFile);
-  const { routeguide } = grpc.loadPackageDefinition(def);
+  const RouteGuide = loadRouteGuide(def);
 
-  const client = new routeguide.RouteGuide(
-    address,
-    grpc.credentials.createInsecure(),
-  );
+  const client = new RouteGuide(address, grpc.credentials.createInsecure());
 
   return new Promise<unknown>((resolve, reject) => {
-    client.GetFeature(
+    client['GetFeature'](
       {
         latitude: 180,
         longitude: 200,
@@ -279,7 +277,7 @@ describe('FFI integration test for the Message Consumer API', () => {
       });
     });
 
-    const skipPluginTests = process.env.SKIP_PLUGIN_TESTS === 'true';
+    const skipPluginTests = process.env['SKIP_PLUGIN_TESTS'] === 'true';
     (skipPluginTests ? describe.skip : describe)(
       'with plugin contents (gRPC)',
       () => {
