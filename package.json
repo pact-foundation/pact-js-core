@@ -2,9 +2,9 @@
   "name": "@pact-foundation/pact-core",
   "version": "20.0.0",
   "description": "Core of @pact-foundation/pact. You almost certainly don't want to depend on this directly.",
-  "main": "src/index.js",
+  "main": "dist/index.js",
   "homepage": "https://github.com/pact-foundation/pact-js-core#readme",
-  "types": "src/index.d.ts",
+  "types": "dist/index.d.ts",
   "os": [
     "darwin",
     "linux",
@@ -90,7 +90,7 @@
     "semver": "7.8.5"
   },
   "scripts": {
-    "clean": "rimraf -g '{src,test}/**/*.{js,map,d.ts}' 'package.zip' '.tmp' 'tmp'",
+    "clean": "rimraf -g 'dist' 'package.zip' '.tmp' 'tmp'",
     "lint": "biome lint",
     "lint:fix": "biome lint --write",
     "format": "biome format",
