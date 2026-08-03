@@ -101,6 +101,7 @@
     "download-libs": "npm run clean && bash script/download-libs.sh",
     "clean-libs": "rimraf 'ffi'",
     "build": "tsc --project tsconfig.build.json",
+    "typecheck": "tsc --project tsconfig.json",
     "release": "commit-and-tag-version",
     "test": "vitest run",
     "test:watch": "vitest",

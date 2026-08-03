@@ -5,7 +5,6 @@ export default defineConfig({
     globals: true,
     testTimeout: 60000,
     pool: 'forks',
-    maxForks: 1,
     retry: 2,
     sequence: { concurrent: false },
     include: ['src/**/*.spec.ts', 'test/**/*.spec.ts'],

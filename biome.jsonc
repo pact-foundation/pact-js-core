@@ -1,5 +1,9 @@
 {
   "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "files": {
+    // Pact files written by the integration tests, reformatted on every run
+    "includes": ["**", "!test/__testoutput__"]
+  },
   "linter": {
     "enabled": true,
     "rules": {

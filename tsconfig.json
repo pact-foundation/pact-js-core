@@ -2,13 +2,10 @@
   "$schema": "https://www.schemastore.org/tsconfig",
   "extends": "@tsconfig/node22",
   "compilerOptions": {
-    "outDir": "dist",
-    "sourceMap": true,
-    "declaration": true,
+    "noEmit": true,
     "types": ["node", "vitest/globals"],
-    "stripInternal": true,
     "noPropertyAccessFromIndexSignature": true
   },
-  "include": ["src", "test"],
+  "include": ["src", "test", "vitest.config.ts"],
   "exclude": ["node_modules"]
 }
