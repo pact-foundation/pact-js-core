@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [20.1.0](https://github.com/pact-foundation/pact-js-core/compare/v20.0.0...v20.1.0) (2026-08-05)
+
+### Features
+
+* wire up FFI functions that were never exposed ([a65f708](https://github.com/pact-foundation/pact-js-core/commit/a65f7089d88ebd30a289c0e33a8a67032aea0195))
+
+### Fixes and Improvements
+
+* **build:** set rootDir explicitly for the build config ([f66d0b0](https://github.com/pact-foundation/pact-js-core/commit/f66d0b0a90fb7b7083d682e69b54af4f2892619d))
+* **ci:** build against Visual Studio 2026 on Windows ([5eefc9b](https://github.com/pact-foundation/pact-js-core/commit/5eefc9b976d05211afadccf9d6e4598fe2ed5167))
+* **ci:** survive transient failures when publishing release assets ([349b6d5](https://github.com/pact-foundation/pact-js-core/commit/349b6d52525ceccd48e127c8d4efbabd86fd698c))
+* **deps:** pact-ffi 0.5.5 (rebuild) ([08a1c18](https://github.com/pact-foundation/pact-js-core/commit/08a1c18cfc2418a9013fe1635ed97c8444dabd9f))
+* **package:** point the entry points at the compiled output ([939e704](https://github.com/pact-foundation/pact-js-core/commit/939e704de0d62295707e9e33731f9f2018d938f2))
+* **test:** make the MATT TCP helper survive a not-yet-listening server ([7fe2d28](https://github.com/pact-foundation/pact-js-core/commit/7fe2d28f4d427138767ad7046f60fc8066533af2))
+* **types:** resolve type errors in the test suite ([9e2f07e](https://github.com/pact-foundation/pact-js-core/commit/9e2f07e4fbebc814e68140a10817cf6f5a2340e4))
 ## [20.0.0](https://github.com/pact-foundation/pact-js-core/compare/v19.2.0...v20.0.0) (2026-05-29)
 
 
