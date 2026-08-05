@@ -153,6 +153,16 @@ export type RequestResponsePluginInteraction = {
 
 export type PluginPact = {
   addPlugin: (plugin: string, version: string) => void;
+  /**
+   * Add a plugin, waiting `completionDelay` milliseconds for any asynchronous plugin startup
+   * tasks to finish before returning. Use this in preference to `addPlugin` when a plugin needs
+   * time to become ready to accept connections.
+   */
+  addPluginWithDelay: (
+    plugin: string,
+    version: string,
+    completionDelay: number,
+  ) => void;
   cleanupPlugins: () => void;
   cleanupMockServer: (port: number) => boolean;
 };
@@ -163,6 +173,7 @@ export type ConsumerInteraction = PluginInteraction & {
   givenWithParam: (state: string, name: string, value: string) => boolean;
   givenWithParams: (state: string, params: string) => boolean;
   setPending: (pending: boolean) => boolean;
+  setKey: (value: string) => boolean;
   setComment: (key: string, value: string) => boolean;
   addTextComment: (comment: string) => boolean;
   addInteractionReference: (
@@ -249,6 +260,7 @@ export type AsynchronousMessage = RequestPluginInteraction & {
   givenWithParam: (state: string, name: string, value: string) => void;
   givenWithParams: (state: string, params: string) => void;
   setPending: (pending: boolean) => void;
+  setKey: (value: string) => boolean;
   setComment: (key: string, value: string) => boolean;
   addTextComment: (comment: string) => boolean;
   addInteractionReference: (
@@ -273,6 +285,7 @@ export type SynchronousMessage = PluginInteraction & {
   givenWithParam: (state: string, name: string, value: string) => void;
   givenWithParams: (state: string, params: string) => void;
   setPending: (pending: boolean) => void;
+  setKey: (value: string) => boolean;
   setComment: (key: string, value: string) => boolean;
   addTextComment: (comment: string) => boolean;
   addInteractionReference: (

@@ -262,6 +262,31 @@ Napi::Value PactffiCreateMockServerForTransport(const Napi::CallbackInfo& info) 
 }
 
 /**
+ * Returns the CA certificate used by TLS mock servers, as a PEM encoded string.
+ *
+ * Clients connecting to a mock server started with the `https` transport need to trust this
+ * certificate, as it is self-signed. Returns null if the certificate is unavailable.
+ *
+ * C interface:
+ *
+ *    char *pactffi_get_tls_ca_certificate(void);
+ */
+Napi::Value PactffiGetTlsCaCertificate(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  char* res = pactffi_get_tls_ca_certificate();
+
+  if (res == NULL) {
+    return env.Null();
+  }
+
+  Napi::String cert = Napi::String::New(env, res);
+  pactffi_string_delete(res);
+
+  return cert;
+}
+
+/**
  * External interface to cleanup a mock server. This function will try terminate the mock server
  * with the given port number and cleanup any memory allocated for it. Returns true, unless a
  * mock server with the given port number does not exist, or the function panics.
@@ -740,6 +765,36 @@ Napi::Value PactffiSetComment(const Napi::CallbackInfo& info) {
   std::string value = info[2].As<Napi::String>().Utf8Value();
 
   bool res = pactffi_set_comment(interaction, key.c_str(), value.c_str());
+
+  return Napi::Boolean::New(env, res);
+}
+
+/**
+ * Sets the unique key for an interaction.
+ *
+ * C interface:
+ *
+ *    bool pactffi_set_key(InteractionHandle interaction, const char *value);
+ */
+Napi::Value PactffiSetKey(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 2) {
+    throw Napi::Error::New(env, "PactffiSetKey received < 2 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiSetKey(arg 0) expected a InteractionHandle (uint32_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiSetKey(arg 1) expected a string");
+  }
+
+  InteractionHandle interaction = info[0].As<Napi::Number>().Uint32Value();
+  std::string value = info[1].As<Napi::String>().Utf8Value();
+
+  bool res = pactffi_set_key(interaction, value.c_str());
 
   return Napi::Boolean::New(env, res);
 }
@@ -1961,6 +2016,90 @@ Napi::Value PactffiUsingPlugin(const Napi::CallbackInfo& info) {
   uint16_t result = pactffi_using_plugin(pact, name.c_str(), version.c_str());
 
   return Number::New(env, result);
+}
+
+/**
+ * Add a plugin to be used by the test, waiting the given delay for any asynchronous plugin
+ * startup tasks to complete before returning.
+ *
+ * `completion_delay` is specified in milliseconds.
+ *
+ * # Errors
+ *
+ * * `1` - A general panic was caught.
+ * * `2` - Failed to load the plugin.
+ * * `3` - Pact Handle is not valid.
+ *
+ * When an error errors, LAST_ERROR will contain the error message.
+ *
+ * C interface:
+ *
+ *    unsigned int pactffi_using_plugin_with_delay(PactHandle pact,
+ *                                                 const char *plugin_name,
+ *                                                 const char *plugin_version,
+ *                                                 uint64_t completion_delay);
+ */
+Napi::Value PactffiUsingPluginWithDelay(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 4) {
+    throw Napi::Error::New(env, "PactffiUsingPluginWithDelay received < 4 arguments");
+  }
+
+  if (!info[0].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiUsingPluginWithDelay(arg 0) expected a PactHandle (uint16_t)");
+  }
+
+  if (!info[1].IsString()) {
+    throw Napi::Error::New(env, "PactffiUsingPluginWithDelay(arg 1) expected a string");
+  }
+
+  if (!info[2].IsString()) {
+    throw Napi::Error::New(env, "PactffiUsingPluginWithDelay(arg 2) expected a string");
+  }
+
+  if (!info[3].IsNumber()) {
+    throw Napi::Error::New(env, "PactffiUsingPluginWithDelay(arg 3) expected a number");
+  }
+
+  PactHandle pact = info[0].As<Napi::Number>().Int32Value();
+  std::string name = info[1].As<Napi::String>().Utf8Value();
+  std::string version = info[2].As<Napi::String>().Utf8Value();
+  uint64_t completionDelay = info[3].As<Napi::Number>().Int64Value();
+
+  uint16_t result = pactffi_using_plugin_with_delay(pact, name.c_str(), version.c_str(), completionDelay);
+
+  return Number::New(env, result);
+}
+
+/**
+ * Set the test run ID for the current thread, so that plugin log entries can be correlated
+ * with a specific test. Passing an empty string clears any previously set ID.
+ *
+ * C interface:
+ *
+ *    void pactffi_set_test_run_id(const char *test_run_id);
+ */
+Napi::Value PactffiSetTestRunId(const Napi::CallbackInfo& info) {
+   Napi::Env env = info.Env();
+
+  if (info.Length() < 1) {
+    throw Napi::Error::New(env, "PactffiSetTestRunId received < 1 arguments");
+  }
+
+  if (!info[0].IsString()) {
+    throw Napi::Error::New(env, "PactffiSetTestRunId(arg 0) expected a string");
+  }
+
+  std::string testRunId = info[0].As<Napi::String>().Utf8Value();
+
+  if (testRunId.empty()) {
+    pactffi_set_test_run_id(NULL);
+  } else {
+    pactffi_set_test_run_id(testRunId.c_str());
+  }
+
+  return env.Undefined();
 }
 
 /**

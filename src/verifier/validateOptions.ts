@@ -251,6 +251,7 @@ export const validationRules: ArgumentValidationRules<InternalPactVerifierOption
     logFile: [assertNonEmptyString],
     consumerFilters: [assertNonEmptyString],
     failIfNoPactsFound: [assertBoolean],
+    followRedirects: [assertBoolean],
     transports: [],
   };
 

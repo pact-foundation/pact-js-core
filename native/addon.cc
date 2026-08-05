@@ -15,6 +15,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiMockServerMismatches"), Napi::Function::New(env, PactffiMockServerMismatches));
   exports.Set(Napi::String::New(env, "pactffiCreateMockServerForTransport"), Napi::Function::New(env, PactffiCreateMockServerForTransport));
   exports.Set(Napi::String::New(env, "pactffiCleanupMockServer"), Napi::Function::New(env, PactffiCleanupMockServer));
+  exports.Set(Napi::String::New(env, "pactffiGetTlsCaCertificate"), Napi::Function::New(env, PactffiGetTlsCaCertificate));
   exports.Set(Napi::String::New(env, "pactffiWritePactFile"), Napi::Function::New(env, PactffiWritePactFile));
   exports.Set(Napi::String::New(env, "pactffiWritePactFileByPort"), Napi::Function::New(env, PactffiWritePactFileByPort));
   exports.Set(Napi::String::New(env, "pactffiNewPact"), Napi::Function::New(env, PactffiNewPact));
@@ -24,6 +25,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiGivenWithParam"), Napi::Function::New(env, PactffiGivenWithParam));
   exports.Set(Napi::String::New(env, "pactffiGivenWithParams"), Napi::Function::New(env, PactffiGivenWithParams));
   exports.Set(Napi::String::New(env, "pactffiSetPending"), Napi::Function::New(env, PactffiSetPending));
+  exports.Set(Napi::String::New(env, "pactffiSetKey"), Napi::Function::New(env, PactffiSetKey));
   exports.Set(Napi::String::New(env, "pactffiSetComment"), Napi::Function::New(env, PactffiSetComment));
   exports.Set(Napi::String::New(env, "pactffiAddTextComment"), Napi::Function::New(env, PactffiAddTextComment));
   exports.Set(Napi::String::New(env, "pactffiAddInteractionReference"), Napi::Function::New(env, PactffiAddInteractionReference));
@@ -39,6 +41,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiWithMultipartFile"), Napi::Function::New(env, PactffiWithMultipartFile));
   exports.Set(Napi::String::New(env, "pactffiResponseStatus"), Napi::Function::New(env, PactffiResponseStatus));
   exports.Set(Napi::String::New(env, "pactffiUsingPlugin"), Napi::Function::New(env, PactffiUsingPlugin));
+  exports.Set(Napi::String::New(env, "pactffiUsingPluginWithDelay"), Napi::Function::New(env, PactffiUsingPluginWithDelay));
+  exports.Set(Napi::String::New(env, "pactffiSetTestRunId"), Napi::Function::New(env, PactffiSetTestRunId));
   exports.Set(Napi::String::New(env, "pactffiCleanupPlugins"), Napi::Function::New(env, PactffiCleanupPlugins));
   exports.Set(Napi::String::New(env, "pactffiPluginInteractionContents"), Napi::Function::New(env, PactffiPluginInteractionContents));
 
@@ -79,6 +83,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiVerifierBrokerSourceWithSelectors"), Napi::Function::New(env, PactffiVerifierBrokerSourceWithSelectors));
   exports.Set(Napi::String::New(env, "pactffiVerifierAddProviderTransport"), Napi::Function::New(env, PactffiVerifierAddProviderTransport));
   exports.Set(Napi::String::New(env, "pactffiVerifierSetNoPactsIsError"), Napi::Function::New(env, PactffiVerifierSetNoPactsIsError));
+  exports.Set(Napi::String::New(env, "pactffiVerifierSetFollowRedirects"), Napi::Function::New(env, PactffiVerifierSetFollowRedirects));
   exports.Set(Napi::String::New(env, "pactffiVerifierJson"), Napi::Function::New(env, PactffiVerifierJson));
 
   return exports;

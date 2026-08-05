@@ -41,10 +41,11 @@ export const orderOfExecution: OrderedExecution = {
   pactffiVerifierSetPublishOptions: 5,
   pactffiVerifierSetConsumerFilters: 6,
   pactffiVerifierSetFailIfNoPactsFound: 7,
-  pactffiVerifierAddCustomHeader: 8,
-  pactffiVerifierAddDirectorySource: 9,
-  pactffiVerifierBrokerSourceWithSelectors: 10,
-  pactffiVerifierAddProviderTransport: 11,
+  pactffiVerifierSetFollowRedirects: 8,
+  pactffiVerifierAddCustomHeader: 9,
+  pactffiVerifierAddDirectorySource: 10,
+  pactffiVerifierBrokerSourceWithSelectors: 11,
+  pactffiVerifierAddProviderTransport: 12,
 };
 
 export const ffiFnMapping: FnMapping<
@@ -207,6 +208,18 @@ export const ffiFnMapping: FnMapping<
       return {
         status: FnValidationStatus.IGNORE,
         messages: ['No failIfNoPactsFound option provided'],
+      };
+    },
+  },
+  pactffiVerifierSetFollowRedirects: {
+    validateAndExecute(ffi, handle, options) {
+      if (options.followRedirects !== undefined) {
+        ffi.pactffiVerifierSetFollowRedirects(handle, options.followRedirects);
+        return { status: FnValidationStatus.SUCCESS };
+      }
+      return {
+        status: FnValidationStatus.IGNORE,
+        messages: ['No followRedirects option provided'],
       };
     },
   },

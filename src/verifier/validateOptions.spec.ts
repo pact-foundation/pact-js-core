@@ -153,6 +153,27 @@ describe('Verifier argument validator', () => {
     });
   });
 
+  describe('when using followRedirects', () => {
+    it('should accept a boolean', () => {
+      expectSuccessWith({
+        providerBaseUrl: 'http://localhost',
+        pactUrls: ['http://idontexist'],
+        followRedirects: false,
+      });
+    });
+
+    it('should not accept a non-boolean', () => {
+      expect(() =>
+        validateOptions({
+          providerBaseUrl: 'http://localhost',
+          pactUrls: ['http://idontexist'],
+          // @ts-expect-error followRedirects must be a boolean
+          followRedirects: 'yes',
+        }),
+      ).toThrow(Error);
+    });
+  });
+
   describe('when an using format option', () => {
     it("should work with either 'json' or 'xml'", () => {
       expect(() =>

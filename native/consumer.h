@@ -19,6 +19,7 @@ Napi::Value PactffiGiven(const Napi::CallbackInfo& info);
 Napi::Value PactffiGivenWithParam(const Napi::CallbackInfo& info);
 Napi::Value PactffiGivenWithParams(const Napi::CallbackInfo& info);
 Napi::Value PactffiSetPending(const Napi::CallbackInfo& info);
+Napi::Value PactffiSetKey(const Napi::CallbackInfo& info);
 Napi::Value PactffiSetComment(const Napi::CallbackInfo& info);
 Napi::Value PactffiAddTextComment(const Napi::CallbackInfo& info);
 Napi::Value PactffiAddInteractionReference(const Napi::CallbackInfo& info);
