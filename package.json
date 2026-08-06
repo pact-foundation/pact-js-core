@@ -70,7 +70,7 @@
     "@types/url-join": "5.0.0",
     "@vitest/coverage-v8": "4.1.10",
     "axios": "1.19.0",
-    "basic-auth": "2.0.1",
+    "basic-auth": "3.0.0",
     "body-parser": "2.3.0",
     "commit-and-tag-version": "13.1.2",
     "cors": "2.8.6",
