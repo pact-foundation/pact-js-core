@@ -54,7 +54,7 @@
     "@biomejs/biome": "2.5.8",
     "@grpc/grpc-js": "1.14.4",
     "@grpc/proto-loader": "0.8.1",
-    "@tsconfig/node22": "22.0.5",
+    "@tsconfig/node22": "22.0.6",
     "@types/basic-auth": "1.1.8",
     "@types/check-types": "11.2.2",
     "@types/cors": "2.8.19",
