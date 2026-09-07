@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file. See [commit-and-tag-version](https://github.com/absolute-version/commit-and-tag-version) for commit guidelines.
 
+## [20.1.1](https://github.com/pact-foundation/pact-js-core/compare/v20.1.0...v20.1.1) (2026-09-07)
+
+### Fixes and Improvements
+
+* surface errors from pactffiPluginInteractionContents (rebuild) ([#956](https://github.com/pact-foundation/pact-js-core/issues/956)) ([b51bc7f](https://github.com/pact-foundation/pact-js-core/commit/b51bc7f245f98e0725fa43ce62547699fddc170e))
 ## [20.1.0](https://github.com/pact-foundation/pact-js-core/compare/v20.0.0...v20.1.0) (2026-08-05)
 
 ### Features
