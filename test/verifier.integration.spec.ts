@@ -87,6 +87,16 @@ describe('Verifier Integration Spec', () => {
         }).verify();
         const parsed = JSON.parse(results);
         expect(parsed).toHaveProperty('result', true);
+        expect(parsed.interactionResults).toHaveLength(1);
+        expect(parsed.interactionResults[0]).toMatchObject({
+          consumer: 'me',
+          provider: 'they',
+          description: 'Provider state success',
+          providerStates: ['There is a greeting'],
+          pending: false,
+          result: 'OK',
+        });
+        expect(parsed.interactionResults[0]).not.toHaveProperty('mismatch');
       });
     });
 
@@ -140,6 +150,22 @@ describe('Verifier Integration Spec', () => {
       const parsed = JSON.parse((err as Error).message);
       expect(parsed).toHaveProperty('result', false);
       expect(parsed).toHaveProperty('errors');
+      expect(parsed.interactionResults).toHaveLength(1);
+      const [interaction] = parsed.interactionResults;
+      expect(interaction).toMatchObject({
+        consumer: 'me',
+        provider: 'they',
+        description: 'Greeting fail',
+        providerStates: [],
+        pending: false,
+        result: 'Error',
+      });
+      expect(interaction.mismatch).toHaveProperty('type', 'mismatches');
+      expect(interaction.mismatch.mismatches).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ type: 'StatusMismatch', expected: 201 }),
+        ]),
+      );
     });
   });
 
@@ -164,6 +190,28 @@ describe('Verifier Integration Spec', () => {
           ],
           providerStatesSetupUrl,
         }).verify();
+      });
+
+      it('should attribute every interaction result to its pact', async () => {
+        const results = await verifierFactory({
+          providerBaseUrl,
+          pactUrls: [
+            path.resolve(__dirname, 'integration/me-they-success.json'),
+            path.resolve(__dirname, 'integration/me-they-multi.json'),
+          ],
+          providerStatesSetupUrl,
+        }).verify();
+        const parsed = JSON.parse(results);
+        expect(parsed.interactionResults).toHaveLength(3);
+        const byPact = parsed.interactionResults.map(
+          (r: { consumer: string; provider: string; description: string }) =>
+            `${r.consumer} -> ${r.provider}: ${r.description}`,
+        );
+        expect(byPact).toEqual([
+          'me -> they: Greeting',
+          'anotherclient -> they: Provider state success',
+          'anotherclient -> they: Greeting',
+        ]);
       });
     });
 
