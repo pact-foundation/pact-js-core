@@ -45,6 +45,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports) {
   exports.Set(Napi::String::New(env, "pactffiSetTestRunId"), Napi::Function::New(env, PactffiSetTestRunId));
   exports.Set(Napi::String::New(env, "pactffiCleanupPlugins"), Napi::Function::New(env, PactffiCleanupPlugins));
   exports.Set(Napi::String::New(env, "pactffiPluginInteractionContents"), Napi::Function::New(env, PactffiPluginInteractionContents));
+  exports.Set(Napi::String::New(env, "pactffiGetErrorMessage"), Napi::Function::New(env, PactffiGetErrorMessage));
 
   // exports.Set(Napi::String::New(env, "pactffiNewMessagePact"), Napi::Function::New(env, PactffiNewMessagePact));
   // exports.Set(Napi::String::New(env, "pactffiWriteMessagePactFile"), Napi::Function::New(env, PactffiWriteMessagePactFile));

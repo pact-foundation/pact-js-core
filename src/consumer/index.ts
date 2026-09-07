@@ -2,6 +2,7 @@ import { getFfiLib } from '../ffi';
 import {
   CREATE_MOCK_SERVER_ERRORS,
   type Ffi,
+  type FfiInteractionPart,
   type FfiSpecificationVersion,
   INTERACTION_PART_REQUEST,
   INTERACTION_PART_RESPONSE,
@@ -23,6 +24,52 @@ import type {
   SynchronousMessage,
 } from './types';
 
+const PLUGIN_INTERACTION_CONTENTS_ERRORS: Record<number, string> = {
+  1: 'a general panic was caught',
+  2: 'the mock server has already been started',
+  3: 'the interaction handle is invalid',
+  4: 'the content type is not valid',
+  5: 'the contents are not valid JSON',
+  6: 'the plugin returned an error',
+};
+
+/**
+ * Configures part of an interaction via a plugin, throwing if the FFI reports a
+ * failure.
+ *
+ * `pactffiPluginInteractionContents` returns zero on success and a positive
+ * status code on failure, with the detail in LAST_ERROR. Previously the result
+ * was discarded, so a plugin rejecting the supplied configuration produced a
+ * silently mis-recorded interaction (a part with no body) and a passing test.
+ */
+const setPluginInteractionContents = (
+  ffi: Ffi,
+  interactionPtr: number,
+  part: FfiInteractionPart,
+  contentType: string,
+  contents: string,
+): boolean => {
+  const code = ffi.pactffiPluginInteractionContents(
+    interactionPtr,
+    part,
+    contentType,
+    contents,
+  );
+
+  if (code !== 0) {
+    const detail = ffi.pactffiGetErrorMessage();
+    const reason =
+      PLUGIN_INTERACTION_CONTENTS_ERRORS[code] ?? `unknown error (${code})`;
+    logErrorAndThrow(
+      `Failed to set plugin interaction contents for content type '${contentType}': ${reason}${
+        detail ? `: ${detail}` : ''
+      }`,
+    );
+  }
+
+  return true;
+};
+
 const asyncMessage = (
   ffi: Ffi,
   interactionPtr: number,
@@ -36,13 +83,13 @@ const asyncMessage = (
     contentType: string,
     contents: string,
   ) => {
-    ffi.pactffiPluginInteractionContents(
+    return setPluginInteractionContents(
+      ffi,
       interactionPtr,
       INTERACTION_PART_REQUEST,
       contentType,
       contents,
     );
-    return true;
   },
   expectsToReceive: (description: string) =>
     ffi.pactffiMessageExpectsToReceive(interactionPtr, description),
@@ -226,37 +273,37 @@ export const makeConsumerPact = (
           contentType: string,
           contents: string,
         ) => {
-          ffi.pactffiPluginInteractionContents(
+          return setPluginInteractionContents(
+            ffi,
             interactionPtr,
             INTERACTION_PART_REQUEST,
             contentType,
             contents,
           );
-          return true;
         },
         withPluginResponseInteractionContents: (
           contentType: string,
           contents: string,
         ) => {
-          ffi.pactffiPluginInteractionContents(
+          return setPluginInteractionContents(
+            ffi,
             interactionPtr,
             INTERACTION_PART_RESPONSE,
             contentType,
             contents,
           );
-          return true;
         },
         withPluginRequestResponseInteractionContents: (
           contentType: string,
           contents: string,
         ) => {
-          ffi.pactffiPluginInteractionContents(
+          return setPluginInteractionContents(
+            ffi,
             interactionPtr,
             INTERACTION_PART_REQUEST,
             contentType,
             contents,
           );
-          return true;
         },
         given: (state: string) => ffi.pactffiGiven(interactionPtr, state),
         givenWithParam: (state: string, name: string, value: string) =>
@@ -503,39 +550,37 @@ export const makeConsumerPact = (
           contentType: string,
           contents: string,
         ) => {
-          ffi.pactffiPluginInteractionContents(
+          return setPluginInteractionContents(
+            ffi,
             interactionPtr,
             INTERACTION_PART_REQUEST,
             contentType,
             contents,
           );
-
-          return true;
         },
         withPluginRequestResponseInteractionContents: (
           contentType: string,
           contents: string,
         ) => {
-          ffi.pactffiPluginInteractionContents(
+          return setPluginInteractionContents(
+            ffi,
             interactionPtr,
             INTERACTION_PART_REQUEST,
             contentType,
             contents,
           );
-
-          return true;
         },
         withPluginResponseInteractionContents: (
           contentType: string,
           contents: string,
         ) => {
-          ffi.pactffiPluginInteractionContents(
+          return setPluginInteractionContents(
+            ffi,
             interactionPtr,
             INTERACTION_PART_RESPONSE,
             contentType,
             contents,
           );
-          return true;
         },
       });
     },
@@ -621,37 +666,37 @@ export const makeConsumerMessagePact = (
           contentType: string,
           contents: string,
         ) => {
-          ffi.pactffiPluginInteractionContents(
+          return setPluginInteractionContents(
+            ffi,
             interactionPtr,
             INTERACTION_PART_REQUEST,
             contentType,
             contents,
           );
-          return true;
         },
         withPluginResponseInteractionContents: (
           contentType: string,
           contents: string,
         ) => {
-          ffi.pactffiPluginInteractionContents(
+          return setPluginInteractionContents(
+            ffi,
             interactionPtr,
             INTERACTION_PART_RESPONSE,
             contentType,
             contents,
           );
-          return true;
         },
         withPluginRequestResponseInteractionContents: (
           contentType: string,
           contents: string,
         ) => {
-          ffi.pactffiPluginInteractionContents(
+          return setPluginInteractionContents(
+            ffi,
             interactionPtr,
             INTERACTION_PART_REQUEST,
             contentType,
             contents,
           );
-          return true;
         },
         given: (state: string) => ffi.pactffiGiven(interactionPtr, state),
         givenWithParam: (state: string, name: string, value: string) =>

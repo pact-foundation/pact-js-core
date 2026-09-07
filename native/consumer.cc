@@ -1,4 +1,7 @@
 #include <napi.h>
+#include <algorithm>
+#include <string>
+#include <vector>
 #include "pact-cpp.h"
 
 
@@ -2191,9 +2194,52 @@ Napi::Value PactffiPluginInteractionContents(const Napi::CallbackInfo& info) {
   std::string contentType = info[2].As<Napi::String>().Utf8Value();
   std::string contents = info[3].As<Napi::String>().Utf8Value();
 
-  bool res = pactffi_interaction_contents(interaction, part, contentType.c_str(), contents.c_str());
+  // NOTE: pactffi_interaction_contents returns an unsigned int status code where
+  // zero means success and any positive value is an error (see pact.h). It must
+  // not be coerced to a bool: that maps 0 (success) to false and 6 (the plugin
+  // returned an error) to true, i.e. exactly backwards. Return the code as-is and
+  // let the caller check it against zero.
+  unsigned int res = pactffi_interaction_contents(interaction, part, contentType.c_str(), contents.c_str());
 
-  return Napi::Boolean::New(env, res);
+  return Napi::Number::New(env, res);
+}
+
+/**
+ * Provide the most recent error message, if there is one.
+ *
+ * Many FFI functions signal failure by returning a non-zero status code and
+ * storing the detail in LAST_ERROR. Without access to this, callers can only
+ * report the numeric code, which is rarely actionable — particularly for plugin
+ * errors, where the useful text comes from the plugin itself.
+ *
+ * Returns the message, or an empty string when there is no error to report.
+ *
+ * C interface:
+ *
+ * int pactffi_get_error_message(char *buffer, size_t length);
+ */
+Napi::Value PactffiGetErrorMessage(const Napi::CallbackInfo& info) {
+  Napi::Env env = info.Env();
+
+  // pactffi_get_error_message writes into a caller-supplied buffer and returns
+  // the number of bytes written, 0 when there is no error, or a negative value
+  // on failure.
+  std::vector<char> buffer(1024, '\0');
+  int written = pactffi_get_error_message(buffer.data(), buffer.size());
+
+  if (written <= 0) {
+    return Napi::String::New(env, "");
+  }
+
+  // Guard against a length that would run past the buffer, and stop at the first
+  // NUL so a partially-filled buffer does not leak trailing zero bytes.
+  size_t length = std::min(static_cast<size_t>(written), buffer.size());
+  size_t end = 0;
+  while (end < length && buffer[end] != '\0') {
+    end++;
+  }
+
+  return Napi::String::New(env, std::string(buffer.data(), end));
 }
 
 /**
