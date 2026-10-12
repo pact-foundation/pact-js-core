@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "2.5.15",
-    "@grpc/grpc-js": "1.14.5",
+    "@grpc/grpc-js": "1.14.6",
     "@grpc/proto-loader": "0.8.1",
     "@tsconfig/node22": "22.0.6",
     "@types/basic-auth": "1.1.8",
