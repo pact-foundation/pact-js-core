@@ -4,7 +4,10 @@ LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"; pwd)" # Figure out where the scr
 . "${LIB_DIR}/download-file.sh"
 
 require_binary curl
-require_binary gunzip
+require_binary tar
+require_binary xz
+require_binary unzip
+require_binary mktemp
 
 require_env_var FFI_VERSION
 
@@ -38,7 +41,7 @@ function download_ffi_file {
   FFI_FILENAME="$1"
   OUTPUT_FILENAME="$2"
 
-  URL="${BASEURL}/libpact_ffi-${FFI_VERSION}/${FFI_FILENAME}"
+  URL="${BASEURL}/pact_ffi-${FFI_VERSION}/${FFI_FILENAME}"
   DOWNLOAD_LOCATION="$FFI_DIR/${OUTPUT_FILENAME}"
 
   log "Downloading ffi $FFI_VERSION for $FFI_FILENAME"
@@ -46,18 +49,55 @@ function download_ffi_file {
   debug_log " ... downloaded to '$DOWNLOAD_LOCATION'"
 }
 
+function verify_sha256 {
+  # Checks <archive> against the <archive>.sha256 file next to it. The .sha256 files end
+  # in a blank line, which sha256sum warns about, so it is stripped.
+  local dir archive
+  dir="$(dirname "$1")"
+  archive="$(basename "$1")"
+  if command -v sha256sum > /dev/null; then
+    (cd "$dir" && sed '/^$/d' "${archive}.sha256" | sha256sum -c -)
+  else
+    (cd "$dir" && sed '/^$/d' "${archive}.sha256" | shasum -a 256 -c -)
+  fi
+}
+
+# download_ffi <rust target> <archive extension> <name of the library in the archive> <output file under ffi/>...
+# Extracts each listed library into the output file given after it.
 function download_ffi {
-  if [ -z "${1:-}" ]; then
-    error "${FUNCNAME[0]} requires the environment filename suffix"
+  if [ -z "${1:-}" ] || [ -z "${2:-}" ] || [ -z "${3:-}" ] || [ -z "${4:-}" ]; then
+    error "${FUNCNAME[0]} requires the target, archive extension, and at least one library/output pair"
     exit 1
   fi
-  SUFFIX="$1"
-  PREFIX="${2:-}"
-  OUTPUT_FILENAME="${3:-}"
+  TARGET="$1"
+  EXT="$2"
+  shift 2
 
-  download_ffi_file "${PREFIX}pact_ffi-$SUFFIX" "${OUTPUT_FILENAME}"
-  debug_log " ... unzipping '$DOWNLOAD_LOCATION'"
-  gunzip -f "$DOWNLOAD_LOCATION"
+  ARCHIVE="pact_ffi-${TARGET}.${EXT}"
+  WORK_DIR="$(mktemp -d)"
+  URL="${BASEURL}/pact_ffi-${FFI_VERSION}/${ARCHIVE}"
+
+  log "Downloading ffi $FFI_VERSION for $TARGET"
+  download_to "$URL" "$WORK_DIR/$ARCHIVE"
+  download_to "$URL.sha256" "$WORK_DIR/$ARCHIVE.sha256"
+  verify_sha256 "$WORK_DIR/$ARCHIVE"
+
+  if [[ "$EXT" == "zip" ]]; then
+    EXTRACT_DIR="$WORK_DIR/extracted"
+    mkdir -p "$EXTRACT_DIR"
+    unzip -q "$WORK_DIR/$ARCHIVE" -d "$EXTRACT_DIR"
+    ARCHIVE_ROOT="$EXTRACT_DIR"
+  else
+    tar -xJf "$WORK_DIR/$ARCHIVE" -C "$WORK_DIR"
+    ARCHIVE_ROOT="$WORK_DIR/pact_ffi-${TARGET}"
+  fi
+
+  while [ $# -ge 2 ]; do
+    cp "$ARCHIVE_ROOT/$1" "$FFI_DIR/$2"
+    debug_log " ... extracted '$1' to '$FFI_DIR/$2'"
+    shift 2
+  done
+  rm -rf "$WORK_DIR"
 }
 
 if [[ ${RUNNER_OS:-} == 'Windows' ]]; then
@@ -65,18 +105,19 @@ if [[ ${RUNNER_OS:-} == 'Windows' ]]; then
 fi
 
 if [ -z "${ONLY_DOWNLOAD_PACT_FOR_WINDOWS:-}" ]; then
-  download_ffi "linux-x86_64.so.gz" "lib" "linux-x86_64/libpact_ffi.so.gz"
-  download_ffi "linux-aarch64.so.gz" "lib" "linux-aarch64/libpact_ffi.so.gz"
-  download_ffi "linux-x86_64-musl.so.gz" "lib" "linux-musl-x86_64/libpact_ffi_musl.so.gz"
-  download_ffi "linux-aarch64-musl.so.gz" "lib" "linux-musl-aarch64/libpact_ffi_musl.so.gz"
-  download_ffi "macos-x86_64.dylib.gz" "lib" "macos-x86_64/libpact_ffi.dylib.gz"
-  download_ffi "macos-aarch64.dylib.gz" "lib" "macos-aarch64/libpact_ffi.dylib.gz"
+  download_ffi x86_64-unknown-linux-gnu tar.xz libpact_ffi.so linux-x86_64/libpact_ffi.so
+  download_ffi aarch64-unknown-linux-gnu tar.xz libpact_ffi.so linux-aarch64/libpact_ffi.so
+  download_ffi x86_64-unknown-linux-musl tar.xz libpact_ffi.so linux-musl-x86_64/libpact_ffi_musl.so
+  download_ffi aarch64-unknown-linux-musl tar.xz libpact_ffi.so linux-musl-aarch64/libpact_ffi_musl.so
+  download_ffi x86_64-apple-darwin tar.xz libpact_ffi.dylib macos-x86_64/libpact_ffi.dylib
+  download_ffi aarch64-apple-darwin tar.xz libpact_ffi.dylib macos-aarch64/libpact_ffi.dylib
 else
   warn "Skipped download of non-windows FFI libs because ONLY_DOWNLOAD_PACT_FOR_WINDOWS is set"
 fi
 
-download_ffi "windows-x86_64.dll.gz" "" "windows-x86_64/pact_ffi.dll.gz"
-download_ffi "windows-x86_64.dll.lib.gz" "" "windows-x86_64/pact_ffi.dll.lib.gz"
+download_ffi x86_64-pc-windows-msvc zip \
+  pact_ffi.dll windows-x86_64/pact_ffi.dll \
+  pact_ffi.dll.lib windows-x86_64/pact_ffi.dll.lib
 
 download_ffi_file "pact.h" "pact.h"
 download_ffi_file "pact-cpp.h" "pact-cpp.h"

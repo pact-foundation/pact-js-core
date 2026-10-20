@@ -7,7 +7,7 @@ PREBUILDIFY_VERSION=6.0.1
 NODE_VERSION=$(node -p process.version)
 PREBUILD_NAME="node.napi"
 
-apk add bash curl python3 make g++
+apk add bash curl python3 make g++ xz unzip
 
 . "${SCRIPT_DIR}/../lib/export-binary-versions.sh"
 "${SCRIPT_DIR}/../lib/download-ffi.sh"
