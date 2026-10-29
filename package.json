@@ -71,7 +71,7 @@
     "@vitest/coverage-v8": "5.0.5",
     "axios": "1.20.0",
     "basic-auth": "2.0.1",
-    "body-parser": "2.3.0",
+    "body-parser": "2.4.0",
     "commit-and-tag-version": "13.3.0",
     "cors": "2.8.6",
     "decamelize": "7.0.0",
