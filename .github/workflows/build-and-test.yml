@@ -171,7 +171,7 @@ jobs:
 
     env:
       NODE_VERSION: ${{ matrix.node-version }}
-      LOG_LEVEL: debug
+      LOG_LEVEL: info
       PACT_DO_NOT_TRACK: true
 
     steps:
@@ -197,7 +197,7 @@ jobs:
       - if: matrix.os == 'macos-14' ||  matrix.os == 'macos-latest'
         run: brew install protobuf
 
-      - run: LOG_LEVEL=debug ./script/ci/unpack-and-test.sh
+      - run: ./script/ci/unpack-and-test.sh
         if: ${{ matrix.docker != true }}
 
       - if: ${{ matrix.docker == true && matrix.alpine == true && matrix.arch == 'amd64' && matrix.os == 'ubuntu-latest' }}
