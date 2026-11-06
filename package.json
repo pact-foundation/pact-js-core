@@ -87,7 +87,7 @@
     "vitest": "5.0.5"
   },
   "overrides": {
-    "semver": "7.8.5"
+    "semver": "7.8.6"
   },
   "scripts": {
     "clean": "rimraf -g 'dist' 'package.zip' '.tmp' 'tmp'",
